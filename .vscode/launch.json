@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-SwitApplication<swit>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.swit.swit.SwitApplication",
+      "projectName": "swit",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
