@@ -14,7 +14,7 @@ public class SwitApplication {
   public static void main(String[] args) {
     SpringApplication.run(SwitApplication.class, args);
     Sample sample = new Sample();
-    sample.setName("aaa");
+    sample.setName("domain_test_name");
     log.info("sample domain test" + sample.getName());
   }
 
