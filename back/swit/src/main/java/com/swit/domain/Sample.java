@@ -2,8 +2,7 @@ package com.swit.domain;
 
 import lombok.Data;
 
-
-//data
+//d
 @Data
 public class Sample {
   private String name;
