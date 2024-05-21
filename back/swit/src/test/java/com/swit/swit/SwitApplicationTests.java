@@ -8,7 +8,7 @@ class SwitApplicationTests {
 
 	@Test
 	void contextLoads() {
-		//테스트
+		//테스트 pr test
 	}
 
 }
