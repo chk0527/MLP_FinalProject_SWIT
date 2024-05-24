@@ -1,4 +1,4 @@
-package com.swit.swit;
+package com.swit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
