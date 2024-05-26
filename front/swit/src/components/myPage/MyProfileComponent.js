@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+//import { API_SERVER_HOST, getUserProfile } from '../../api/UserApi';
 
 const MyProfileComponent = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +46,7 @@ const MyProfileComponent = () => {
 
     return (
         <>
+            {/* 프로필 정보 디자인 */}
             <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
                 <div className="flex items-center">
                     {profileImage ? (
@@ -84,102 +85,7 @@ const MyProfileComponent = () => {
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
-                <h2 className="text-lg font-bold mb-4">My 스터디 (신청현황)</h2>
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">스터디 제목</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">유형</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">신청일자</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">리액트 같이 공부하실 분 모집해요~!</td>
-                            <td className="px-6 py-4 whitespace-nowrap">대면</td>
-                            <td className="px-6 py-4 whitespace-nowrap">2024-05-16</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    승인 대기중
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">(전공자 환영)이스트부룩 같이할 파티원 구...</td>
-                            <td className="px-6 py-4 whitespace-nowrap">비대면</td>
-                            <td className="px-6 py-4 whitespace-nowrap">2024-05-15</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    승인 완료
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
-                <h2 className="text-lg font-bold mb-4">My 즐겨찾기(★)</h2>
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">나의 장소</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">나의 시험 및 채용정보</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">작심스터디카페 대치점 부근</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex justify-between">
-                                    <span>2024년 정기 기사 3회</span>
-                                    <button className="bg-green-500 text-white px-4 py-2 rounded">위치 보기</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">브리즈스터디카페 신흥동점</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex justify-between">
-                                    <span>엘리베터 정규직 개발자 채용</span>
-                                    <button className="bg-green-500 text-white px-4 py-2 rounded">위치 보기</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
-                <h2 className="text-lg font-bold mb-4">My 작성한 글</h2>
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">글 제목</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작성일자</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">조회수</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">댓글 수</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">리액트 같이 공부하실 분 모집해요~!</td>
-                            <td className="px-6 py-4 whitespace-nowrap">2024-05-16</td>
-                            <td className="px-6 py-4 whitespace-nowrap">12</td>
-                            <td className="px-6 py-4 whitespace-nowrap">1</td>
-                        </tr>
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">(전공자 환영)이스트부룩 같이할 파티원 구...</td>
-                            <td className="px-6 py-4 whitespace-nowrap">2024-05-15</td>
-                            <td className="px-6 py-4 whitespace-nowrap">5</td>
-                            <td className="px-6 py-4 whitespace-nowrap">2</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
+            {/* 모달창 디자인 */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative">
