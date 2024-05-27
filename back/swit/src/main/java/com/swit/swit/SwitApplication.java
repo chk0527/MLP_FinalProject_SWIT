@@ -1,9 +1,9 @@
-package com.swit;
+package com.swit.swit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.swit.domain.Sample;
+import com.swit.swit.domain.Sample;
 
 import lombok.extern.log4j.Log4j2;
 

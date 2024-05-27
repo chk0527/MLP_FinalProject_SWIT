@@ -1,4 +1,4 @@
-package com.swit.domain;
+package com.swit.swit.domain;
 
 import lombok.Data;
 
