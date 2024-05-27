@@ -1,31 +1,26 @@
-package com.swit.swit.domain;
+package com.swit.dto;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "study")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Study {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class StudyDTO {
     private Integer studyNo;
     private String studyTitle;
     private String studyContent;
     private String studyType;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate studyStartDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate studyEndDate;
     private Integer studyHeadcount;
     private Boolean studyOnlineChk;

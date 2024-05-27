@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.swit.swit.dto.StudyDTO;
-import com.swit.swit.service.StudyService;
+import com.swit.dto.StudyDTO;
+import com.swit.service.StudyService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -33,5 +33,12 @@ public class StudyServiceTest {
 
         Integer studyNo = studyService.register(studyDTO);
         log.info("studyNo" + studyNo);
+    }
+
+    @Test
+    public void testGet(){
+        Integer studyNo = 1;
+        StudyDTO studyDTO = studyService.get(studyNo);
+        log.info(studyDTO);
     }
 }
