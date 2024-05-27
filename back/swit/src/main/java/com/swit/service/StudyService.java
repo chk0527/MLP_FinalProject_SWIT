@@ -1,12 +1,12 @@
-package com.swit.swit.service;
+package com.swit.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.swit.swit.domain.Study;
-import com.swit.swit.dto.StudyDTO;
-import com.swit.swit.repository.StudyRepository;
+import com.swit.domain.Study;
+import com.swit.dto.StudyDTO;
+import com.swit.repository.StudyRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

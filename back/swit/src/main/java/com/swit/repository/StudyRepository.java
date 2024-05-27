@@ -1,8 +1,8 @@
-package com.swit.swit.repository;
+package com.swit.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.swit.swit.domain.Study;
+import com.swit.domain.Study;
 
 public interface StudyRepository extends JpaRepository<Study, Integer> {
 

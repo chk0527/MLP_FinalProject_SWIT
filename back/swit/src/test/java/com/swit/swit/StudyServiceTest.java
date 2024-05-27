@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.swit.swit.dto.StudyDTO;
-import com.swit.swit.service.StudyService;
+import com.swit.dto.StudyDTO;
+import com.swit.service.StudyService;
 
 import lombok.extern.log4j.Log4j2;
 
