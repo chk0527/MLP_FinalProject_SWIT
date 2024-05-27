@@ -1,21 +1,26 @@
 package com.swit.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swit.domain.User;
-import com.swit.repository.UserRepository;
+import com.swit.dto.UserDTO;
+import com.swit.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
-public class UserController {
-    
-    @Autowired
-    private UserRepository userRepository;
+@RequiredArgsConstructor
+@Log4j2
+@RequestMapping("/api/user")
 
-    @GetMapping("/api/user")
-    public User getUser(@RequestParam String user_id) {
-        return userRepository.findById(user_id).orElse(null);
+public class UserController {
+    private final UserService service;
+
+    @GetMapping("/{user_id}")
+    public UserDTO get(@PathVariable(name="user_id") String user_id) {
+        return service.get(user_id);
     }
 }

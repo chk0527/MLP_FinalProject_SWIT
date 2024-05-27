@@ -1,14 +1,8 @@
 package com.swit.service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.swit.domain.User;
@@ -24,21 +18,27 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class UserService {
+    //자동 주입 대상은 final로 설정
+    private final ModelMapper modelMapper;
+
     private final UserRepository userRepository;
 
+    //프로필 정보 조회(마이페이지)
     public UserDTO get(String user_id) {
         Optional<User> result = userRepository.selectOne(user_id);
         User user = result.orElseThrow();
-        UserDTO userDTO = entityToDTO(user);
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         return userDTO;
     }
 
-    private UserDTO entityToDTO(User user) {
-        UserDTO userDTO = UserDTO.builder()
-                .user_id(user.getUser_id()).user_password(user.getUser_password())
-                .user_name(user.getUser_name()).user_nick(user.getUser_nick())
-                .user_email(user.getUser_email()).user_phone(user.getUser_phone())
-                .build();
-        return userDTO;
+    //프로필 수정(모달창)
+    public void modify(UserDTO userDTO){
+        Optional<User> result = userRepository.findById(userDTO.getUser_id());
+        User user = result.orElseThrow();
+        user.setUser_name(userDTO.getUser_name());
+        user.setUser_nick(userDTO.getUser_nick());
+        user.setUser_phone(userDTO.getUser_phone());
+        user.setUser_email(userDTO.getUser_email());
+        userRepository.save(user);
     }
 }

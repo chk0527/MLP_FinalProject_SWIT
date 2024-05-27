@@ -10,7 +10,7 @@ import com.swit.domain.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-    //user_ID로 프로필 조회
+    //user_ID의 마이페이지 프로필 정보 표시
     @Query("select u from User u where u.user_id = :user_id")
     Optional<User> selectOne(@Param("user_id") String user_id);
 }

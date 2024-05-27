@@ -1,18 +1,29 @@
 import { useState, useEffect } from 'react';
-//import { API_SERVER_HOST, getUserProfile } from '../../api/UserApi';
+import { API_SERVER_HOST, getUserProfile } from '../../api/UserApi';
 
-const MyProfileComponent = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [profileImage, setProfileImage] = useState(null);
-    const [updateProfileImage, setUpdateProfileImage] = useState(null);
+const initState = {
+    user_id: '',
+    user_name: '',
+    user_nick: '',
+    user_phone: '',
+    user_email: '',
+    user_password: '',
+    user_image: ''
+}
 
+const host = API_SERVER_HOST
+
+const MyProfileComponent = ({ user_id }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [profileImage, setProfileImage] = useState(null)
+    const [updateProfileImage, setUpdateProfileImage] = useState(null)
+    const [user, setUser] = useState(initState)
     useEffect(() => {
-        // 로컬 스토리지에서 프로필 이미지를 가져옴
-        const storedProfileImage = localStorage.getItem('profileImage');
-        if (storedProfileImage) {
-            setProfileImage(storedProfileImage);
-        }
-    }, []);
+        getUserProfile(user_id).then(data => {
+            console.log(data)
+            setUser(data)
+        })
+    }, [user_id])
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -41,7 +52,6 @@ const MyProfileComponent = () => {
             localStorage.setItem('profileImage', updateProfileImage); // 새로운 프로필 이미지를 로컬 스토리지에 저장
             closeModal(); // 수정하기 버튼을 누르면 모달 닫기
         }
-
     };
 
     return (
@@ -61,19 +71,19 @@ const MyProfileComponent = () => {
                     <div className="flex-grow">
                         <div className="mb-2">
                             <span className="text-gray-500">이름: </span>
-                            <span className="font-bold text-black">김기환</span>
+                            <span className="font-bold text-black">{user.user_name}</span>
                         </div>
                         <div className="mb-2">
                             <span className="text-gray-500">닉네임: </span>
-                            <span className="font-bold text-black">고리스</span>
+                            <span className="font-bold text-black">{user.user_nick}</span>
                         </div>
                         <div className="mb-2">
                             <span className="text-gray-500">전화번호: </span>
-                            <span className="font-bold text-black">010-0000-0000</span>
+                            <span className="font-bold text-black">{user.user_phone}</span>
                         </div>
                         <div className="mb-2">
                             <span className="text-gray-500">이메일: </span>
-                            <span className="font-bold text-black">dankkh418@naver.com</span>
+                            <span className="font-bold text-black">{user.user_email}</span>
                         </div>
                     </div>
                     <button
@@ -105,19 +115,19 @@ const MyProfileComponent = () => {
                         </label>
                         <div className="mb-4">
                             <label className="block mb-1">이름:</label>
-                            <input type="text" defaultValue="김기환" className="w-full border border-gray-300 p-2 rounded" />
+                            <input type="text" defaultValue={user.user_name} className="w-full border border-gray-300 p-2 rounded" />
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1">닉네임:</label>
-                            <input type="text" defaultValue="고리스" className="w-full border border-gray-300 p-2 rounded" />
+                            <input type="text" defaultValue={user.user_nick} className="w-full border border-gray-300 p-2 rounded" />
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1">전화번호:</label>
-                            <input type="text" defaultValue="010-0000-0000" className="w-full border border-gray-300 p-2 rounded" />
+                            <input type="text" defaultValue={user.user_phone} className="w-full border border-gray-300 p-2 rounded" />
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1">이메일:</label>
-                            <input type="text" defaultValue="dankkh418@naver.com" className="w-full border border-gray-300 p-2 rounded" />
+                            <input type="text" defaultValue={user.user_email} className="w-full border border-gray-300 p-2 rounded" />
                         </div>
                         <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={handleProfileUpdate}>수정하기</button>
                     </div>
