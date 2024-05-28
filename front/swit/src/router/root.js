@@ -9,6 +9,7 @@ const Loading = <div>Loading...</div>
 const Main = lazy(() => import("../pages/MainPage"))
 const ExamjobList = lazy(() => import("../pages/examjob/ExamjobList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
+const StudyDetail = lazy(() => import("../pages/StudyDetailPage"))
 
 const root = createBrowserRouter([
     {
@@ -23,6 +24,10 @@ const root = createBrowserRouter([
         path:"/mypage",
         element:<Suspense fallback={Loading}><MyPage/></Suspense>,
         children: myPageRouter()
+    },
+    {
+        path:"/studyDetail/:studyNo",
+        element:<Suspense fallback={Loading}><StudyDetail/></Suspense>
     }
 ])
 

@@ -1,5 +1,7 @@
 package com.swit.service;
 
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +26,12 @@ public class StudyService {
         Study study = modelMapper.map(studyDTO, Study.class);
         Study saveStudy = studyRepository.save(study);
         return saveStudy.getStudyNo();
+    }
+
+    public StudyDTO get(Integer studyNo) {
+        Optional<Study> result = studyRepository.findById(studyNo);
+        Study study = result.orElseThrow();
+        StudyDTO dto = modelMapper.map(study, StudyDTO.class);
+        return dto;
     }
 }
