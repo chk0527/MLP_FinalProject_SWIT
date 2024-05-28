@@ -10,7 +10,6 @@ import com.swit.controller.formatter.LocalDateFormatter;
 @Configuration
 public class CustomSerlvetConfig implements WebMvcConfigurer {
     @SuppressWarnings("null")
-    @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new LocalDateFormatter());
     }
@@ -18,7 +17,6 @@ public class CustomSerlvetConfig implements WebMvcConfigurer {
     @SuppressWarnings("null")
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS")

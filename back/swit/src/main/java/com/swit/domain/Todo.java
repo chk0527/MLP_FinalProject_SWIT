@@ -1,7 +1,5 @@
 package com.swit.domain;
 
-//김기환 브랜치
-
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
