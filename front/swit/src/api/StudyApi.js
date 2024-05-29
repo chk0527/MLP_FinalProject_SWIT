@@ -7,3 +7,8 @@ export const getStudy = async (studyNo) => {
     const res = await axios.get(`${prefix}/${studyNo}`);
     return res.data;
 }
+
+export const postAdd = async (studyObj) => {
+    const res = await axios.post(`${prefix}/`, studyObj)
+    return res.data;
+}

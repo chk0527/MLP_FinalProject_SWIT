@@ -2,6 +2,7 @@ import myPageRouter from "./myPageRouter";
 
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
+import studyRouter from "./studyRouter";
 const { createBrowserRouter } = require("react-router-dom");
 // 컴포넌트의 처리가 끝나지 않은 경우 화면에 'Loading…' 메시지 출력
 const Loading = <div>Loading...</div>
@@ -9,8 +10,7 @@ const Loading = <div>Loading...</div>
 const Main = lazy(() => import("../pages/MainPage"))
 const ExamjobList = lazy(() => import("../pages/examjob/ExamjobList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
-const StudyDetail = lazy(() => import("../pages/StudyDetailPage"))
-
+const DummyPage = lazy(() => import("../pages/study/DummyPage"))
 const root = createBrowserRouter([
     {
         path:"",
@@ -25,9 +25,14 @@ const root = createBrowserRouter([
         element:<Suspense fallback={Loading}><MyPage/></Suspense>,
         children: myPageRouter()
     },
+    // {
+    //     path:"/studyDetail/:studyNo",
+    //     element:<Suspense fallback={Loading}><StudyDetail/></Suspense>
+    // }
     {
-        path:"/studyDetail/:studyNo",
-        element:<Suspense fallback={Loading}><StudyDetail/></Suspense>
+        path: "study",
+        element:<Suspense fallback={Loading}><DummyPage/></Suspense>,
+        children: studyRouter()
     }
 ])
 

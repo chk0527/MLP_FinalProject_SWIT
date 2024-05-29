@@ -4,10 +4,16 @@ import {getStudy} from "../../api/StudyApi"
 
 const initState = {
     studyNo:0,
-    studyTitle:'',
-    studyContent:'',
+    studyTitle:'읽기',
+    studyContent:'콘텐츠',
+    studyType: "스터디",
     studyStartDate : null,
-    studyOnlineChk: false
+    studyEndDate : null,
+    studyHeadcount : 1,
+    studyOnlineChk: false,
+    studySubject : "개발",
+    studyComm : "오픈채팅",
+    studyLink : "kakao.com"
 }
 
 const StudyReadComponent =({studyNo}) =>{
