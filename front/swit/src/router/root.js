@@ -23,6 +23,11 @@ const root = createBrowserRouter([
         path:"/mypage",
         element:<Suspense fallback={Loading}><MyPage/></Suspense>,
         children: myPageRouter()
+    },
+    {
+        path:"/placeList",
+        element:<Suspense fallback={Loading}><placeList/></Suspense>,
+        children: myPageRouter()
     }
 ])
 
