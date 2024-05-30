@@ -4,26 +4,47 @@ import myPageRouter from "./myPageRouter";
 import { Suspense, lazy } from "react";
 const { createBrowserRouter } = require("react-router-dom");
 // 컴포넌트의 처리가 끝나지 않은 경우 화면에 'Loading…' 메시지 출력
-const Loading = <div>Loading...</div>
+const Loading = <div>Loading...</div>;
 
-const Main = lazy(() => import("../pages/MainPage"))
-const ExamjobList = lazy(() => import("../pages/examjob/ExamjobList"))
-const MyPage = lazy(() => import("../pages/MyPage"))
+const Main = lazy(() => import("../pages/MainPage"));
+const ExamjobList = lazy(() => import("../pages/examjob/ExamjobList"));
+const MyPage = lazy(() => import("../pages/MyPage"));
 
 const root = createBrowserRouter([
-    {
-        path:"",
-        element:<Suspense fallback={Loading}><Main/></Suspense>
-    },
-    {
-        path:"/examjob",
-        element:<Suspense fallback={Loading}><ExamjobList/></Suspense>
-    },
-    {
-        path:"/mypage",
-        element:<Suspense fallback={Loading}><MyPage/></Suspense>,
-        children: myPageRouter()
-    }
-])
+  {
+    path: "",
+    element: (
+      <Suspense fallback={Loading}>
+        <Main />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/examjob",
+    element: (
+      <Suspense fallback={Loading}>
+        <ExamjobList />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/mypage",
+    element: (
+      <Suspense fallback={Loading}>
+        <MyPage />
+      </Suspense>
+    ),
+    children: myPageRouter(),
+  },
+  {
+    path: "/placeList",
+    element: (
+      <Suspense fallback={Loading}>
+        <placeList />
+      </Suspense>
+    ),
+    children: myPageRouter(),
+  },
+]);
 
 export default root;
