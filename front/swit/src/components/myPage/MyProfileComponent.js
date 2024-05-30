@@ -17,6 +17,7 @@ const MyProfileComponent = ({ user_id }) => {
     const [user, setUser] = useState(initState)             //최종 반영된 마이페이지 프로필
     const [modalUser, setModalUser] = useState(initState)   //모달창에서만 보이는 임시 프로필 정보
     const [userImage, setUserImage] = useState(null)        //이미지 관리
+    //console.info("ccccccc")
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -32,6 +33,7 @@ const MyProfileComponent = ({ user_id }) => {
         };
         fetchUserProfile();
     }, [user_id])
+    //console.info("ddddddd")
 
     const openModal = () => {
         setModalUser({ ...user }); // 모달창을 열 때 현재 프로필 데이터 복사

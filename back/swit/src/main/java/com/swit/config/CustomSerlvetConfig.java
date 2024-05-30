@@ -14,13 +14,13 @@ import com.swit.controller.formatter.LocalDateTimeFormatter;
 
 @Configuration
 public class CustomSerlvetConfig implements WebMvcConfigurer {
-    @SuppressWarnings("null")
+    //@SuppressWarnings("null")
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new LocalDateTimeFormatter());
     }
 
-    @SuppressWarnings("null")
+    //@SuppressWarnings("null")
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
