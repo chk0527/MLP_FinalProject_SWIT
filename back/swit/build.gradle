@@ -35,6 +35,16 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.21.0'
+	// https://mvnrepository.com/artifact/org.json/json
+	implementation 'org.json:json:20240303'
+	// https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
+	compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+  implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 }
 
 tasks.named('test') {
