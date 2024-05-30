@@ -1,20 +1,78 @@
-// eslint-disable-next-line
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { API_SERVER_HOST, postOne, getOne } from "../../api/loginApi"
 
-const LoginComponent = () => {
-    return (
-        <div>
-            <div className="divide-y divide-slate-100">
-
-                  <label for="M_ID" id="lb_id" class="label-form label-id">아이디</label>
-						      <input type="text" placeholder="아이디" name="user_id" id="user_id" size="25" maxlength="25" title="아이디 입력" required/><br/>
-						      <label for="M_PWD" id="lb_pw" class="label-form label-password">비밀번호</label>
-						      <input type="password" class="inpTxt" placeholder="비밀번호" name="user_password" id="user_password" size="25" title="비밀번호 입력" required/><br/>
-						      <button type="submit" class="login-button">로그인</button>
-
-            </div>
-        </div>
-    )
+const initState = { 
+    user_id:'', 
+    user_password:''
 }
 
+const initStateNaver = { 
+    naverURL:''
+}
+
+const host = API_SERVER_HOST
+
+const LoginComponent =() => {
+    const [user, setUser] = useState({...initState})
+    const [naver, setNaver] = useState({...initStateNaver})
+
+    // 로그인 화면 최초 Host 호출
+    console.info("aaa");
+    useEffect(() => {
+        getOne().then(data => setNaver(data))
+    },[])
+    console.info("bbb");
+
+    const handleChangeUser = (e) => {
+        user[e.target.name] = e.target.value
+        setUser({...user})
+    }
+
+    const handleClickLogin = () => { 
+        console.log(user)
+        postOne(user).then(result => {
+            console.log(result)
+            setUser({...initState})
+        }).catch(e=>{
+            console.error(e)
+        })
+    }
+
+    return (
+        <>
+            <div className="divide-y divide-slate-100">
+                <div className="mb-4">
+                    <label className="block mb-1">아이디</label>
+                    <input type={"text"} placeholder="아이디" name='user_id' className="w-full border border-gray-300 p-2 rounded" value={user.user_id} onChange={handleChangeUser}></input>
+                    
+                </div>
+                <div className="mb-4">
+                    <label className="block mb-1">비밀번호</label>
+                    <input type={"password"} placeholder="비밀번호" name='user_password' className="w-full border border-gray-300 p-2 rounded" value={user.user_password} onChange={handleChangeUser}></input>
+                </div>
+                <div className="mb-4">
+                    <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={handleClickLogin}>로그인</button>
+                </div>
+                <div className="mb-4 flex flex-wrap">
+                    <a href={naver.naverURL}>
+                        <img
+                            src={`${process.env.PUBLIC_URL}/naver.svg`}
+                            className='Naver'
+                            alt='React'
+                        />
+                    </a>
+                    <a href="https://github.com/wnsgur1855">
+                        <img
+                            
+                            src={`${process.env.PUBLIC_URL}/free-icon-kakao-talk-3669973.png`}
+                            className='Kakao'
+                            alt='React'
+                        />
+                    </a>
+                </div>
+            </div>
+        </>
+    )
+
+}
 export default LoginComponent;

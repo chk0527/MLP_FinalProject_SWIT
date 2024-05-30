@@ -38,6 +38,10 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
 	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.21.0'
+	// https://mvnrepository.com/artifact/org.json/json
+	implementation 'org.json:json:20240303'
+	// https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
+	compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 
 }
 

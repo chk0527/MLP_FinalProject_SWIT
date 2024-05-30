@@ -1,4 +1,5 @@
 import myPageRouter from "./myPageRouter";
+import loginRouter from "./loginRouter";
 
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
@@ -9,6 +10,8 @@ const Loading = <div>Loading...</div>
 const Main = lazy(() => import("../pages/MainPage"))
 const ExamjobList = lazy(() => import("../pages/examjob/ExamjobList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
+const Login = lazy(() => import("../pages/login/Login"))
+const Callback = lazy(() => import("../pages/login/Callback"))
 
 const root = createBrowserRouter([
     {
@@ -23,7 +26,17 @@ const root = createBrowserRouter([
         path:"/mypage",
         element:<Suspense fallback={Loading}><MyPage/></Suspense>,
         children: myPageRouter()
+    },
+    {
+        path:"/login",
+        element:<Suspense fallback={Loading}><Login /></Suspense>,
+        // children: loginRouter()
+    },
+    {
+        path:"/callback",
+        element:<Suspense fallback={Loading}><Callback /></Suspense>,
     }
+
 ])
 
 export default root;
