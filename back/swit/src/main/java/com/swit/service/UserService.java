@@ -52,7 +52,7 @@ public class UserService {
         
         // 기존 이미지 파일 삭제
         String oldImageName = user.getUser_image();
-        log.info(user.getUser_name() + "님의 삭제된 기존 이미지: " + oldImageName);
+        log.info(user.getUser_name() + "님의 현재 이미지: " + oldImageName);
         if (oldImageName != null) {
             removeOldImage(oldImageName);
         }
