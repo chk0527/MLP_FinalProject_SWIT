@@ -12,7 +12,7 @@ const MyPage = () => {
             <div className="text-3xl">
                 <div>마이페이지</div>
             </div>
-            <MyProfileComponent user_id={user_id}></MyProfileComponent>
+            <MyProfileComponent user_id={user_id} />
             <MyStudyComponent/>
             <MyFavoritesComponent/>
             <MyPostComponent/>
