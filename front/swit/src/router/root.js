@@ -7,7 +7,7 @@ const { createBrowserRouter } = require("react-router-dom");
 const Loading = <div>Loading...</div>
 
 const Main = lazy(() => import("../pages/MainPage"))
-const ExamjobList = lazy(() => import("../pages/examjob/ExamjobList"))
+const ExamList = lazy(() => import("../pages/examjob/ExamList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
 
 const root = createBrowserRouter([
@@ -16,8 +16,8 @@ const root = createBrowserRouter([
         element:<Suspense fallback={Loading}><Main/></Suspense>
     },
     {
-        path:"/examjob",
-        element:<Suspense fallback={Loading}><ExamjobList/></Suspense>
+        path:"/exam",
+        element:<Suspense fallback={Loading}><ExamList/></Suspense>,
     },
     {
         path:"/mypage",
