@@ -1,6 +1,6 @@
-
 import LoginComponent from "../../components/login/LoginComponent";
 import BasicLayout from "../../layouts/BasicLayout";
+// import { useParams } from "react-router-dom";
 
 const Login = () => {
     return (
