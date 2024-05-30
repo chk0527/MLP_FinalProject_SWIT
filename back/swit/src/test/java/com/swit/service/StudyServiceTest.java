@@ -1,4 +1,4 @@
-package com.swit;
+package com.swit.service;
 
 import java.time.LocalDate;
 
