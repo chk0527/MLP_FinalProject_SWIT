@@ -24,7 +24,9 @@ public class UserDTO {
     private String  user_sns_connect;
     private String  user_image;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    // LocalDateTime의 JSON 포맷 설정
+    // 기존 "yyyy-MM-dd"로 하면 포맷 비일치로 인한 충돌 에러 발생!!
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime user_create_date;
     private boolean user_delete_chk;
     private Date    user_delete_date;
