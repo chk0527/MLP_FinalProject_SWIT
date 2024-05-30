@@ -1,4 +1,4 @@
-package com.swit.util;
+// package com.swit.util;
 
 // import java.time.Duration;
 
@@ -40,15 +40,15 @@ package com.swit.util;
 //         WEB_DRIVER_PATH = path;    
 //     }     
 
-    public static void quit(WebDriver driver) {    	
-        if (!ObjectUtils.isEmpty(driver)) {    		
-            driver.quit();    	
-        }    
-    }        
-    public static void close(WebDriver driver) {    	
-        if (!ObjectUtils.isEmpty(driver)) {    		
-            driver.close();    	
-        }    
-    }    
-}
+//     public static void quit(WebDriver driver) {    	
+//         if (!ObjectUtils.isEmpty(driver)) {    		
+//             driver.quit();    	
+//         }    
+//     }        
+//     public static void close(WebDriver driver) {    	
+//         if (!ObjectUtils.isEmpty(driver)) {    		
+//             driver.close();    	
+//         }    
+//     }    
+// }
 
