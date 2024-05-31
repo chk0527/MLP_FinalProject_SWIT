@@ -19,13 +19,10 @@ const DummyPage = lazy(() => import("../pages/study/DummyPage"))
 const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
 const JobList = lazy(() => import("../pages/examjob/JobList") )
-<<<<<<< HEAD
 const ExamjobIndex = lazy(() => import("../pages/examjob/ExamjobIndex"))
-=======
 const PlaceList = lazy(() => import("../pages/place/PlaceList"))
 
 
->>>>>>> develop
 const root = createBrowserRouter([
     {
         path:"",

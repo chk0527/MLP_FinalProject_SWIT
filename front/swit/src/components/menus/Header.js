@@ -36,7 +36,7 @@ const Header = () => {
             <Link to={"/"}>스터디 장소</Link>
           </li>
           <li>
-            <Link to={"/examjob"}>시험 및 채용</Link>
+            <Link to={"/exam"}>시험 및 채용</Link>
           </li>
           <li>
             <Link to={"/"}>Q&A</Link>
