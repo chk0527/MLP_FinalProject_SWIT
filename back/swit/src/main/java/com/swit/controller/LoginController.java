@@ -17,29 +17,27 @@ import org.json.JSONObject;
 // SpringBoot 3.x 부터는 jakarta 사용
 // import javax.servlet.http.HttpServletRequest;
 // import javax.servlet.http.HttpSession;
+// --------
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+// import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.AllArgsConstructor;
 
 import com.swit.dto.UserDTO;
 import com.swit.service.UserService;
-import com.swit.domain.User;
+
+import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,12 +46,20 @@ import com.swit.domain.User;
 public class LoginController {
     private final UserService userService;
 
+	@Value("${api.naver.clientKey}")
+    private String naverClientKey;
+    @Value("${api.naver.secretKey}")
+    private String naverClientSecret;
+    @Value("${api.naver.redirectUrl}")
+    private String naverRedirectUrl;
+	
+
     @GetMapping("/")
 	public Map<String, String> get(HttpSession session) {
 		log.info("login --------- start");
 		Map<String, String> map = new HashMap<>();
 		
-		// map = naverLogin(session);  개발중 
+		map = naverLogin(session);  
 		// kakaoLogin(session);
 
 		return map;
@@ -73,7 +79,7 @@ public class LoginController {
 			session.setAttribute("userId", searchUser.getUser_id());
 			session.setAttribute("userEmail", searchUser.getUser_email());
 
-			log.info("UserDTO33333333333333333333333333333333 : "+ searchUser);
+			log.info("UserDTO : "+ searchUser);
 
 		}
 
@@ -84,8 +90,9 @@ public class LoginController {
 		log.info("naver --------- start");
 		String naverURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
 		try {
-		    String clientId = "L5I5wLWO4xVWs4nssClM";//애플리케이션 클라이언트 아이디값";
-            String redirectURI = URLEncoder.encode("http://localhost:8080/naverLogin/callbank", "UTF-8");
+		    String clientId = naverClientKey;
+			String url = naverRedirectUrl;
+            String redirectURI = URLEncoder.encode(url, "UTF-8");
 
 		    SecureRandom random = new SecureRandom();
 		    String state = new BigInteger(130, random).toString();
@@ -101,6 +108,71 @@ public class LoginController {
 		log.info("naverURL : ["+ naverURL + "]");
 
 		return Map.of("naverURL", naverURL);
+	}
+
+	@GetMapping("/callback")
+	//public ModelAndView callback(@RequestParam ("code") String code,
+	public String callback(@RequestParam ("code") String code,
+						   @RequestParam ("state") String state,
+						   RedirectAttributes rttr,
+						   HttpServletRequest request) {
+		Map<String, String> profile = null;
+        UserDTO user = new UserDTO();
+	    try {
+		    String clientId = naverClientKey;
+			String url_2 = naverRedirectUrl;
+		    String clientSecret = naverClientSecret;
+		    String redirectURI = URLEncoder.encode(url_2, "UTF-8");
+		    String apiURL;
+		    apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&";
+		    apiURL += "client_id=" + clientId;
+		    apiURL += "&client_secret=" + clientSecret;
+		    apiURL += "&redirect_uri=" + redirectURI;
+		    apiURL += "&code=" + code;
+		    apiURL += "&state=" + state;
+		    String access_token = "";
+            // String refresh_token = "";
+		    // System.out.println("apiURL="+apiURL);
+
+            URL url = new URL(apiURL);
+	        HttpURLConnection con = (HttpURLConnection)url.openConnection();
+	        con.setRequestMethod("GET");
+	        int responseCode = con.getResponseCode();
+	        BufferedReader br;
+	        // System.out.print("responseCode="+responseCode);
+	        if(responseCode==200) { // 정상 호출
+	            br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	        } else {  // 에러 발생
+	            br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+	        }
+	        String inputLine;
+	        StringBuffer res = new StringBuffer();
+	        while ((inputLine = br.readLine()) != null) {
+	            res.append(inputLine);
+	        }
+            
+	        JSONObject obj = new   JSONObject(res.toString());
+		    access_token = obj.getString("access_token");
+		    //System.out.print("access_token="+access_token);
+		  
+            profile = getProfile(access_token);
+		  
+            user = userService.userCheck((String)profile.get("name"), (String)profile.get("email"));
+	      
+            br.close();
+	        if(responseCode==200) {
+    	        System.out.println("responseCode == 200" + res.toString());
+	        }
+	    } catch (Exception e) {
+	      System.out.println(e);
+	    }
+	      
+	    rttr.addFlashAttribute("user", user);
+	    // rttr.addFlashAttribute("msg", "naver계정으로 회원 가입 성공!!!");
+        rttr.addFlashAttribute("msg", "naver계정으로 로그인 성공!!!");
+		// return new ModelAndView("/api/login/success");
+		return "redirect:/success";
+
 	}
 
 	//ApiExamMemberProfile 예제 코드의 메소드들  
@@ -186,6 +258,7 @@ public class LoginController {
     @GetMapping("/success")
     public void success() {
     	log.info("success로 이동 ..........");
+        return ;
 
 	}
 

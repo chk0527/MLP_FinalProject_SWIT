@@ -49,10 +49,6 @@ const root = createBrowserRouter([
         // children: loginRouter()
     },
     {
-        path:"/callback",
-        element:<Suspense fallback={Loading}><Callback /></Suspense>,
-    },
-    {
         path: "study",
         element:<Suspense fallback={Loading}><DummyPage/></Suspense>,
         children: studyRouter()
