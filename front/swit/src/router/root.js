@@ -2,6 +2,7 @@ import myPageRouter from "./myPageRouter";
 import loginRouter from "./loginRouter";
 import examRouter from "./examRouter";
 import jobRouter from "./jobRouter";
+import placeRouter from "./placeRouter";
 
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
