@@ -22,7 +22,7 @@ public class ExamjobServiceTest {
         .page(2)
         .size(5)
         .build();
-        PageResponseDTO<ExamDTO> response = examjobService.list(pageRequestDTO);
+        PageResponseDTO<ExamDTO> response = examjobService.examList(pageRequestDTO);
         log.info(response);
     }
    

@@ -15,7 +15,7 @@ const BasicMenu = () => {
                         <Link to={'/'}>스터디 장소</Link>
                     </li>
                     <li className="pr-6 text-1xl">
-                        <Link to={'/examjob'}>시험 및 채용</Link>
+                        <Link to={'/exam'}>시험 및 채용</Link>
                     </li>
                     <li className="pr-6 text-1xl">
                         <Link to={'/'}>Q&A</Link>

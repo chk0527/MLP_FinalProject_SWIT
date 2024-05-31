@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getList } from "../../api/ExamJob"
+import { getJobList } from "../../api/ExamJob"
 import useCustomMove from "../../hooks/useCustomMove"
 import PageComponent from "../common/PageComponent";
 
@@ -19,10 +19,10 @@ const initState = {
 }
 
 const ListComponent = () => {
-  const { page, size, moveToExamList } = useCustomMove()
+  const { page, size, moveToJobList } = useCustomMove()
   const [serverData, setServerData] = useState(initState)
   useEffect(() => {
-    getList({page, size}).then(data => {
+    getJobList({page, size}).then(data => {
       console.log(data)
       setServerData(data)
     })
@@ -32,15 +32,15 @@ const ListComponent = () => {
     <div>
       <div className="divide-y divide-slate-100">
         <ul className="divide-y divide-slate-100">
-          {serverData.dtoList.map(exam =>
+          {serverData.dtoList.map(job =>
             <article className="flex items-start space-x-6 p-6">
               <div>
                 <dt className="sr-only">채용/시험</dt>
-                <dd className="px-2.5 rounded-full bg-[#A4CEF5]/[0.6] text-white">시험</dd>
+                <dd className="px-2.5 rounded-full bg-[#A4CEF5]/[0.6] text-white">채용</dd>
               </div>
 
               <div className="min-w-0 relative flex-auto">
-                <h2 className="font-semibold text-slate-900 truncate pr-20"> <Link to={'/'}>{exam.examTitle}</Link></h2>
+                <h2 className="font-semibold text-slate-900 truncate pr-20"> <Link to={'/'}>{job.jobTitle}</Link></h2>
                 <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="text-sky-500">
@@ -53,16 +53,16 @@ const ListComponent = () => {
                   </div>
 
                   <div className="ml-2">
-                    <dt className="sr-only">회사/필기시험</dt>
-                    <dd><Link to={'/'}>필기시험 : {exam.examDocStart} ~ {exam.examDocEnd}</Link></dd>
+                    <dt className="sr-only">회사</dt>
+                    <dd><Link to={'/'}>{job.jobCompany}</Link></dd>
                   </div>
                   <div>
-                    <dt className="sr-only">직무/실기시험</dt>
+                    <dt className="sr-only">직무</dt>
                     <dd className="flex items-center">
                       <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                         <circle cx="1" cy="1" r="1" />
                       </svg>
-                      <Link to={'/'}>실기시험 : {exam.examPracStart} ~ {exam.examPracEnd}</Link>
+                      <Link to={'/'}>{job.jobField}</Link>
                     </dd>
                   </div>
                   <div>
@@ -71,7 +71,7 @@ const ListComponent = () => {
                       <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                         <circle cx="1" cy="1" r="1" />
                       </svg>
-                      <Link to={'/'}></Link>
+                      <Link to={'/'}>마감일 : {job.jobDeadline}</Link>
                     </dd>
                   </div>
 
@@ -87,7 +87,7 @@ const ListComponent = () => {
         </ul>
             
       </div>
-      <PageComponent serverData={serverData} movePage={moveToExamList}/>
+      <PageComponent serverData={serverData} movePage={moveToJobList}/>
     </div>
   )
 }
