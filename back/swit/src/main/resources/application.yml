@@ -2,6 +2,7 @@ server:
   port: 8181
 
 spring:
+  profiles.include: login
   datasource:
     url: jdbc:mysql://localhost:3306/switdb
     username: swit
@@ -16,4 +17,14 @@ spring:
       hibernate:
         '[format_sql]': true
 
+  servlet:
+    multipart: 
+      max-request-size: 30MB
+      max-file-size: 20MB  
+
+
+com:
+    swit:
+        upload:
+            path: upload
    

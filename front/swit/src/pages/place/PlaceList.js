@@ -1,13 +1,13 @@
+import BasicLayout from "../../layouts/BasicLayout";
+
 const PlaceList = () => {
     return (
         <BasicLayout>
             <div className="text-3xl">
-                <div>마이페이지</div>
+                <div>스터디 장소</div>
             </div>
-            <MyProfileComponent user_id={user_id}></MyProfileComponent>
-            <MyStudyComponent/>
-            <MyFavoritesComponent/>
-            <MyPostComponent/>
         </BasicLayout>       
     )
 }
+
+export default PlaceList;
