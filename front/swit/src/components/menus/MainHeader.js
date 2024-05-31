@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
+import image from "../../img/logoWhite.png"
 
 const BasicMenu = () => {
     return (
         <nav id='navbar' className="flex bg-blue-300">
             <div className="w-1/5 A4CEF5  text-white font-bold p-4">
-                <Link to={'/'}>Logo</Link>
+                <Link to={'/'}><Link to={'/'}><img className="w-4/5" src={image} style={{width:"100px", padding:"20"}}></img></Link>
+</Link>
             </div> 
             <div className="w-4/5 flex justify-end A4CEF5">
                 <ul className="flex p-4 text-white font-bold">

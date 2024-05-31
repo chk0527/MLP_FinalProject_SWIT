@@ -17,4 +17,5 @@ const placeRouter = () => {
         },
     ]
 }
+
 export default placeRouter;

@@ -1,6 +1,7 @@
 package com.swit.repository;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -28,13 +29,13 @@ public class placeData {
   public void testGoogleSearch() throws InterruptedException {
     // Optional. If not specified, WebDriver searches the PATH for chromedriver.
     // System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
-    int count = 0;
+    long count = 0;
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("--headless");
+    // options.addArguments("--headless");
 
     WebDriver driver = new ChromeDriver(options);
 
-    driver.get("https://map.naver.com/p/search/서울%20스터디카페?c=13.00,0,0,0,dh"); // 네이버장소 검색창에 스터디 검색
+    driver.get("https://map.naver.com/p/search/경기도%20스터디카페"); // 네이버장소 검색창에 스터디 검색
     // Thread.sleep(5000);
     // Let the user actually see something!
 
@@ -133,16 +134,17 @@ public class placeData {
       }
       log.info("메뉴: " + placeMenu);
 
-      // db저장
+      //db저장
       PlaceEntity place = PlaceEntity.builder()
-          .place_name(placeName).place_addr(placeAddr)
-          .place_tel(placeTel).place_time(placeTime)
-          .place_Img(placeImg).place_detail(placeMenu)
-          .build();
+      .place_name(placeName).place_addr(placeAddr)
+      .place_tel(placeTel).place_time(placeTime)
+      .place_Img(placeImg).place_detail(placeMenu)
+      .build();
 
       placeRepository.save(place);
+
       count++;
-      log.info(count);
+      log.info(count+1);
       log.info("---------------------------------------------------------------------");
 
     }
