@@ -41,4 +41,12 @@ public class UserService {
         user.setUser_email(userDTO.getUser_email());
         userRepository.save(user);
     }
+
+    // 로그인 확인 처리(소셜 로그인)
+	public UserDTO userCheck(String name, String email) {
+        Optional<User> result = userRepository.userCheck(name, email);
+        User user = result.orElseThrow();
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+		return userDTO;
+	}
 }
