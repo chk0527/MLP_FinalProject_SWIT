@@ -25,5 +25,11 @@ public class ExamjobServiceTest {
         PageResponseDTO<ExamDTO> response = examjobService.examList(pageRequestDTO);
         log.info(response);
     }
+
+    @Test
+    public void testRead(){
+        ExamDTO dto = examjobService.examRead(2);
+        log.info(dto);
+    }
    
 }

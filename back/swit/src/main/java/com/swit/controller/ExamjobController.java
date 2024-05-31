@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 
@@ -42,6 +43,17 @@ public class ExamjobController {
         log.info(pageRequestDTO);
         return service.jobList(pageRequestDTO);
     }
+
+    @GetMapping("/exam/{examNo}")
+    public ExamDTO examRead(@PathVariable(name="examNo")Integer examNo) {
+        return service.examRead(examNo);
+    }
+
+    @GetMapping("/job/{jobNo}")
+    public JobDTO jobRead(@PathVariable(name="jobNo")Integer jobNo) {
+        return service.jobRead(jobNo);
+    }
+    
     
 
 }

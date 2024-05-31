@@ -3,6 +3,7 @@ import loginRouter from "./loginRouter";
 import examRouter from "./examRouter";
 import jobRouter from "./jobRouter";
 
+
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
 import studyRouter from "./studyRouter";
@@ -17,7 +18,7 @@ const DummyPage = lazy(() => import("../pages/study/DummyPage"))
 const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
 const JobList = lazy(() => import("../pages/examjob/JobList") )
-
+const ExamjobIndex = lazy(() => import("../pages/examjob/ExamjobIndex"))
 const root = createBrowserRouter([
     {
         path:"",
@@ -25,12 +26,12 @@ const root = createBrowserRouter([
     },
     {
         path:"exam",
-        element:<Suspense fallback={Loading}><ExamList/></Suspense>,
+        element:<Suspense fallback={Loading}><ExamjobIndex/></Suspense>,
         children: examRouter(),
     },
     {
         path:"/job",
-        element:<Suspense fallback={Loading}><JobList/></Suspense>,
+        element:<Suspense fallback={Loading}><ExamjobIndex/></Suspense>,
         children: jobRouter(),
     },
     {

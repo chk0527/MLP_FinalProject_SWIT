@@ -77,4 +77,18 @@ public class ExamjobService {
             return responseDTO;
     }
 
+    public ExamDTO examRead(Integer examNo){
+        Optional<Exam> result = examRepository.findById(examNo);
+        Exam exam = result.orElseThrow();
+        ExamDTO dto = modelMapper.map(exam, ExamDTO.class);
+        return dto;
+    }
+
+    public JobDTO jobRead(Integer jobNo){
+        Optional<Job> result = jobRepository.findById(jobNo);
+        Job job = result.orElseThrow();
+        JobDTO dto = modelMapper.map(job, JobDTO.class);
+        return dto;
+    }
+
 }
