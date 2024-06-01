@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudyDTO {
     private Integer studyNo;
+    private String userId;
     private String studyTitle;
     private String studyContent;
     private String studyType;
@@ -27,4 +28,5 @@ public class StudyDTO {
     private String studySubject;
     private String studyComm;
     private String studyLink;
+    private String studyUuid;
 }

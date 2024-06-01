@@ -22,14 +22,16 @@ public class Study {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer studyNo;
+    private String user_id;
     private String studyTitle;
     private String studyContent;
     private String studyType;
     private LocalDate studyStartDate;
     private LocalDate studyEndDate;
     private Integer studyHeadcount;
-    private Boolean studyOnlineChk;
+    private Boolean studyOnline;
     private String studySubject;
     private String studyComm;
     private String studyLink;
+    private String studyUuid;
 }

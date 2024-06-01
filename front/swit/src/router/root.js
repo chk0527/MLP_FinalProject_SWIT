@@ -17,10 +17,12 @@ const ExamList = lazy(() => import("../pages/examjob/ExamList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
 const AdminPage = lazy(() => import("../pages/admin/AdminPage"))
 const DummyPage = lazy(() => import("../pages/study/DummyPage"))
+const StudyList = lazy(() => import("../pages/study/StudyList"))
 const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
 const JobList = lazy(() => import("../pages/examjob/JobList") )
 const PlaceList = lazy(() => import("../pages/place/PlaceList"))
+
 
 
 const root = createBrowserRouter([
@@ -50,7 +52,7 @@ const root = createBrowserRouter([
     },
     {
         path:"/placeList",
-        element:<Suspense fallback={Loading}><placeList/></Suspense>,
+        element:<Suspense fallback={Loading}><PlaceList/></Suspense>,
         children: placeRouter()
     },
     {
@@ -59,9 +61,8 @@ const root = createBrowserRouter([
         // children: loginRouter()
     },
     {
-        path: "study",
-        element:<Suspense fallback={Loading}><DummyPage/></Suspense>,
-        children: studyRouter()
+      path: "study",
+      children: studyRouter()
     }
 ])
 
