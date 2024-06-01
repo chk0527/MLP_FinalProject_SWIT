@@ -52,7 +52,7 @@ public class UserService {
         
         // 기존 이미지 파일 삭제
         String oldImageName = user.getUser_image();
-        log.info(user.getUser_name() + "님의 삭제된 기존 이미지: " + oldImageName);
+        log.info(user.getUser_name() + "님의 현재 이미지: " + oldImageName);
         if (oldImageName != null) {
             removeOldImage(oldImageName);
         }
@@ -64,7 +64,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // upload 폴더에 이미지 저장 메소드
+    // upload 폴더에 이미지 저장 메서드
     public String saveUserImage(String user_id, MultipartFile user_image) throws IOException {
         String originalFileName = user_image.getOriginalFilename(); // 업로드할 이미지 원래 파일명
         String newFileName = user_id + "_" + originalFileName; // db에 담을 새로운 파일명(유저id+원래 파일명)
@@ -74,7 +74,7 @@ public class UserService {
         return newFileName;
     }
 
-    // 사용자 프로필 이미지 파일명 조회 메소드
+    // 사용자 프로필 이미지 파일명 조회 메서드
     public String getUserImageName(String user_id) {
         User user = userRepository
                 .findById(user_id)
