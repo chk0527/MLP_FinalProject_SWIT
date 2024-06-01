@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { postAdd } from "../../api/StudyApi"
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
 
@@ -18,9 +21,11 @@ const initState = {
 }
 
 const StudyAddComponent = () => {
-    const [study, setStudy] = useState({...initState})
+    const [study, setStudy] = useState({ ...initState })
     const [result, setResult] = useState(null)
-    const {moveToRead} = useCustomMove();
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const { moveToRead } = useCustomMove();
 
     const handleChangeStudy = (e) => {
         study[e.target.name] = e.target.value
@@ -28,10 +33,12 @@ const StudyAddComponent = () => {
     }
 
     const handleClickAdd = () => {
+        study['studyStartDate'] = startDate
+        study['studyEndDate'] = endDate
         postAdd(study).then(result => {
             console.log("추가 실행")
             setResult(result.studyNo)
-            setStudy({...initState})
+            setStudy({ ...initState })
         }).catch(e => {
             console.error(e)
         })
@@ -62,15 +69,35 @@ const StudyAddComponent = () => {
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">studyStartDate</div>
-                    <input className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shawdow-md"
-                        name="studyStartDate" type={'date'} value={study.studyStartDate} onChange={handleChangeStudy}></input>
+                    {/* <input className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shawdow-md"
+                        name="studyStartDate" type={'date'} value={study.studyStartDate} onChange={handleChangeStudy}></input> */}
+                    <DatePicker
+                        className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shawdow-md"
+                        name="studyStartDate"
+                        minDate={new Date()}
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                    />
                 </div>
             </div>
-                        <div className="flex justify-center">
+            <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">studyEndDate</div>
-                    <input className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shawdow-md"
-                        name="studyEndDate" type={'date'} value={study.studyEndDate} onChange={handleChangeStudy}></input>
+                    {/* <input className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shawdow-md"
+                        name="studyEndDate" type={'date'} value={study.studyEndDate} onChange={handleChangeStudy}></input> */}
+                    <DatePicker
+                        className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shawdow-md"
+                        name="studyEndDate"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        selectsEnd
+                        startDate={startDate}
+                        endDate={endDate}
+                        minDate={startDate}
+                    />
                 </div>
             </div>
             <div className="flex justify-end">

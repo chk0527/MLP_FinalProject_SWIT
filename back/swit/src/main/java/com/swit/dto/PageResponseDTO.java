@@ -1,5 +1,6 @@
 package com.swit.dto;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,4 +41,3 @@ public class PageResponseDTO<E> {
         this.current = pageRequestDTO.getPage();
     }
 }
-

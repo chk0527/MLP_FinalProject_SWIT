@@ -10,18 +10,15 @@ const initStateNaver = {
     naverURL:''
 }
 
-const host = API_SERVER_HOST
-
 const LoginComponent =() => {
     const [user, setUser] = useState({...initState})
     const [naver, setNaver] = useState({...initStateNaver})
 
     // 로그인 화면 최초 Host 호출
-    console.info("aaa");
     useEffect(() => {
+        console.info("aaa");
         getOne().then(data => setNaver(data))
     },[])
-    console.info("bbb");
 
     const handleChangeUser = (e) => {
         user[e.target.name] = e.target.value
