@@ -30,7 +30,7 @@ const Header = () => {
       <div className="p-6 flex justify-center border-y-2 bg-gray-100 border-gray-300 font-medium">
         <ul className="flex text-black space-x-32 text-xl">
           <li>
-            <Link to={"/"}>스터디 그룹</Link>
+            <Link to={"/study"}>스터디 그룹</Link>
           </li>
           <li>
             <Link to={"/"}>스터디 장소</Link>

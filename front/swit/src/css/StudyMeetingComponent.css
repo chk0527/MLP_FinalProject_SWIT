@@ -23,11 +23,11 @@
   background-color: rgb(65, 100, 192); /* 호버 시 색상 변화 */
 }
 
-a {
+.join-button-a {
   color: #0645ad; /* 링크 색상 */
   text-decoration: none; /* 링크 밑줄 제거 */
 }
 
-a:hover {
+.join-button-a:hover {
   text-decoration: underline; /* 호버 시 밑줄 추가 */
 }
