@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -25,8 +27,10 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)  // Auditing 기능을 포함시킨다!
 public class User {
     @Id                                         // 기본 키
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private String  user_id;
+    
     private String  user_email;
     private String  user_name;
     private String  user_password;

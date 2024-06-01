@@ -40,6 +40,7 @@ public class UserController {
     public UserDTO get(@PathVariable(name = "user_id") String user_id) {
         return service.get(user_id);
     }
+   
 
     // 아이디로 조회한 유저 데이터 수정
     @PutMapping("/{user_id}")

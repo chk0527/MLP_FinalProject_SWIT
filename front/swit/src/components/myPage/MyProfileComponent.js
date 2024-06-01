@@ -101,7 +101,8 @@ const MyProfileComponent = ({ user_id }) => {
                 <div className="flex items-center">
                     <div className="w-32 h-32 rounded-lg mr-6 bg-gray-500 border border-gray-800 flex items-center justify-center">
                         <img
-                            src={userImage ? userImage : "/default_profile_image.png"}
+                            // front/swit/public 폴더에 접근하는 절대경로
+                            src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
                             alt="Profile"
                             className="w-32 h-32 rounded-lg object-cover"
                         />
@@ -147,7 +148,8 @@ const MyProfileComponent = ({ user_id }) => {
                         <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
                             <div className="w-32 h-32 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center">
                                 <img
-                                    src={userImage ? userImage : "/default_profile_image.png"}
+                                    // front/swit/public 폴더에 접근하는 절대경로
+                                    src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
                                     alt="Profile"
                                     className="w-32 h-32 rounded-lg object-cover"
                                 />
