@@ -64,7 +64,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // upload 폴더에 이미지 저장 메소드
+    // upload 폴더에 이미지 저장 메서드
     public String saveUserImage(String user_id, MultipartFile user_image) throws IOException {
         String originalFileName = user_image.getOriginalFilename(); // 업로드할 이미지 원래 파일명
         String newFileName = user_id + "_" + originalFileName; // db에 담을 새로운 파일명(유저id+원래 파일명)
@@ -74,7 +74,7 @@ public class UserService {
         return newFileName;
     }
 
-    // 사용자 프로필 이미지 파일명 조회 메소드
+    // 사용자 프로필 이미지 파일명 조회 메서드
     public String getUserImageName(String user_id) {
         User user = userRepository
                 .findById(user_id)

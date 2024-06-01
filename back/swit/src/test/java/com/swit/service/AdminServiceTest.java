@@ -12,21 +12,12 @@ import lombok.extern.log4j.Log4j2;
 
 @SpringBootTest
 @Log4j2
-public class UserServiceTest {
+public class AdminServiceTest {
     @Autowired
-    private UserService userService;
     private AdminService adminService;
 
     @Test
-    public void testGet() {
-        String user_id = "user1";
-        UserDTO userDTO = userService.get(user_id);
-        log.info(userDTO);
-        // log.info(userDTO.getUploadFileNames());
-    }
-
-    @Test
-    public void testList() {
+    public void testUserList() {
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(1)
                 .size(10)
@@ -36,3 +27,4 @@ public class UserServiceTest {
     }
 
 }
+

@@ -6,6 +6,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swit.domain.User;
@@ -17,6 +21,8 @@ import lombok.extern.log4j.Log4j2;
 public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AdminRepository adminRepository;
 
     @Test
     public void test() {
@@ -61,4 +67,13 @@ public class UserRepositoryTest {
         userRepository.save(user);
     }
 
+    @Test
+    public void testPaging(){
+        // User 엔티티에서 "user_id"의 실제 필드명은 "userId"임
+        // Sort.by()에서 그대로 "user_id"로 치면 인식 X
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("user_id").descending());
+        Page<User> result = adminRepository.findAllUsers(pageable);
+        log.info(result.getTotalElements());
+        result.getContent().stream().forEach(user ->log.info(user));
+    }
 }
