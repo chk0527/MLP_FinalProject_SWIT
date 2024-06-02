@@ -18,8 +18,16 @@ const StudyGroupComponent = () => {
   const handleSelectSlot = ({ start, end }) => {
     const title = prompt('일정을 새로 작성하세요');
     if (title) {
-      setEvents([...events, { start, end, title }]);
+      setEvents([...events, { start, end, title, completed: false }]);
     }
+  };
+
+  // 캘린더 - 일정 완료 토글
+  const handleTaskComplete = (index) => {
+    const newEvents = events.map((event, i) =>
+      i === index ? { ...event, completed: !event.completed } : event
+    );
+    setEvents(newEvents);
   };
 
   // 캘린더 - 할 일 추가
@@ -58,6 +66,7 @@ const StudyGroupComponent = () => {
 
   return (
     <div className="p-4 flex flex-col items-center">
+      {/*스터디 정보란*/}
       <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
         <h1 className="text-2xl font-bold text-center">리액트 같이 공부하실 분 모집해요~!</h1>
         <div className="flex items-start mt-4">
@@ -92,7 +101,7 @@ const StudyGroupComponent = () => {
 
       <div className="h-1 bg-gray-300 my-4 w-full"></div>
 
-      <div className="flex justify-center my-4 w-full">
+      <div className="flex justify-center my-3 w-full">
         <span
           onClick={() => setView('calendar')}
           className={`mx-2 px-4 py-2 cursor-pointer ${view === 'calendar' ? 'font-bold text-red-500' : 'text-gray-500'}`}
@@ -110,71 +119,84 @@ const StudyGroupComponent = () => {
 
       {/* 뷰 - 캘린더 항목 */}
       {view === 'calendar' && (
-        <>
-          <div className="my-4 w-full max-w-screen-lg">
-            <Calendar
-              selectable
-              localizer={localizer}
-              events={events}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: 500 }}
-              messages={{
-                month: '월',
-                week: '주',
-                day: '일',
-                today: '오늘',
-                back: '이전달',
-                next: '다음달',
-                today: '오늘',
-                agenda: '일정',
-                date: '날짜',
-                time: '시간',
-                event: '이벤트',
-                showMore: (total) => `+${total} 더 보기`,
-              }}
-              onSelectSlot={handleSelectSlot}
-            />
-          </div>
-
-          <div className="my-4 w-full max-w-screen-lg">
-            <h2 className="text-xl font-bold">일정</h2>
-            <ul>
-              {events.map((event, index) => (
-                <li key={index} className="my-2">
-                  {event.title} - {moment(event.start).format('YYYY년 MM월 DD일 HH:mm')}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="my-4 w-full max-w-screen-lg">
-            <h2 className="text-xl font-bold">할 일</h2>
-            <form onSubmit={handleAddTask} className="flex my-2">
-              <input
-                type="text"
-                value={taskInput}
-                onChange={(e) => setTaskInput(e.target.value)}
-                className="flex-grow p-2 border border-gray-300 rounded-l-lg"
+        <div className="flex w-full max-w-screen-lg">
+          <div className="w-7/12">
+            <div className="my-4">
+              <Calendar
+                selectable
+                localizer={localizer}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: 500 }}
+                messages={{
+                  month: '월',
+                  week: '주',
+                  day: '일',
+                  today: '오늘',
+                  back: '이전달',
+                  next: '다음달',
+                  today: '오늘',
+                  agenda: '일정',
+                  date: '날짜',
+                  time: '시간',
+                  event: '이벤트',
+                  showMore: (total) => `+${total} 더 보기`,
+                }}
+                onSelectSlot={handleSelectSlot} // 캘린더의 빈 슬롯을 클릭하면 handleSelectSlot 함수가 호출됨
               />
-              <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">Enter</button>
-            </form>
-            <ul>
-              {tasks.map((task, index) => (
-                <li key={index} className="flex items-center my-2">
-                  <input
-                    type="checkbox"
-                    checked={task.completed}
-                    onChange={() => handleToggleTask(index)}
-                    className="mr-2"
-                  />
-                  {task.text}
-                  <button onClick={() => handleRemoveTask(index)} className="ml-auto bg-red-500 text-white p-1 rounded-lg">X</button>
-                </li>
-              ))}
-            </ul>
+            </div>
           </div>
-        </>
+          <div className="w-5/12 pl-4">
+            <div className="my-4">
+              <h2 className="text-xl font-bold">일정</h2>
+              <ul>
+                {events.map((event, index) => (
+                  <li key={index} className="flex items-center my-2">
+                    <input
+                      type="checkbox"
+                      checked={event.completed}
+                      onChange={() => handleTaskComplete(index)} // 이벤트 완료 상태 토글
+                      className="mr-2"
+                    />
+                    <span className={event.completed ? 'line-through' : ''}>
+                      {event.title} - {moment(event.start).format('YYYY년 MM월 DD일 HH:mm')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="my-4">
+              <h2 className="text-xl font-bold">할 일</h2>
+              <form onSubmit={handleAddTask} className="flex my-2">
+                <input
+                  type="text"
+                  value={taskInput}
+                  onChange={(e) => setTaskInput(e.target.value)}
+                  className="flex-grow p-2 border border-gray-300 rounded-l-lg"
+                />
+                <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">Enter</button>
+              </form>
+              <ul>
+                {tasks.map((task, index) => (
+                  <li key={index} className="flex items-center my-2">
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => handleToggleTask(index)} // 할 일의 완료 상태 토글
+                      className="mr-2"
+                    />
+                    <span className={task.completed ? 'line-through' : ''}>
+                      {task.text}
+                    </span>
+                    <button onClick={() => handleRemoveTask(index)} className="ml-auto bg-red-500 text-white p-1 rounded-lg">X</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 뷰 - 신청 항목 */}
@@ -192,7 +214,7 @@ const StudyGroupComponent = () => {
             <input
               type="text"
               value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
+              onChange={(e) => setChatInput(e.target.value)}  //채팅 입력 필드값 업데이트
               className="flex-grow p-2 border border-gray-300 rounded-l-lg"
             />
             <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">입력</button>
