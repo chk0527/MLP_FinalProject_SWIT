@@ -2,7 +2,6 @@ import { Suspense, lazy } from "react"
 
 const Loading = <div>Loading...</div>
 const PlaceList = lazy(() => import("../pages/place/PlaceList"))
-
 const PlaceDetail = lazy(() => import("../pages/place/PlaceDetail"))
 
 const placeRouter = () => {

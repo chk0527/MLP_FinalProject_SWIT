@@ -43,7 +43,7 @@ const root = createBrowserRouter([
     },
     {
         path:"/placeList",
-        element:<Suspense fallback={Loading}><placeList/></Suspense>,
+        element:<Suspense fallback={Loading}><PlaceList/></Suspense>,
         children: placeRouter()
     },
     {
