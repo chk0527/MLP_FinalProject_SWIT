@@ -1,0 +1,139 @@
+.study-group .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+  
+  .study-info {
+    margin-top: 10px;
+  }
+  
+  .study-info p {
+    margin: 5px 0;
+  }
+  
+  .zoom-link {
+    color: blue;
+    cursor: pointer;
+  }
+  
+  .study-notice {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #fff3cd;
+    text-align: left;
+  }
+  
+  .study-notice p {
+    margin: 5px 0;
+  }
+  
+  .study-notice a {
+    color: blue;
+  }
+  
+  .view-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .view-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .view-buttons button.active {
+    border: 2px solid red;
+    font-weight: bold;
+    box-shadow: 0 0 10px red;
+  }
+  
+  .view-separator {
+    height: 2px;
+    background-color: #ccc;
+    margin: 20px 0;
+  }
+  
+  .calendar-container {
+    margin: 20px;
+  }
+  
+  .schedule-container, .task-container {
+    margin: 20px;
+  }
+  
+  .task-container ul, .schedule-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .task-container li, .schedule-container li {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .task-container li input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .task-container li button {
+    margin-left: auto;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .chat-messages {
+    width: 100%;
+    max-width: 600px;
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .chat-message {
+    margin: 10px 0;
+  }
+  
+  .chat-container form {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .chat-container form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+  }
+  
+  .chat-container form button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+  }
