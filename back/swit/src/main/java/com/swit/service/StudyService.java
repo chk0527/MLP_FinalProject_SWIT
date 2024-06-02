@@ -2,6 +2,7 @@ package com.swit.service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,11 @@ public class StudyService {
     private final ModelMapper modelMapper;
     private final StudyRepository studyRepository;
     private final HttpSession session;
+
+    public List<Study> getAllStudies() {
+      return studyRepository.findAll();
+  }
+  
 
     public Integer register(StudyDTO studyDTO) {
         log.info("-----------------------------");
