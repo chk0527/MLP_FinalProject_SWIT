@@ -1,4 +1,3 @@
-
 import BasicLayout from "../layouts/BasicLayout";
 
 const MainPage = () => {
