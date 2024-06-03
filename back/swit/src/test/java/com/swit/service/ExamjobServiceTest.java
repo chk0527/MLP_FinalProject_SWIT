@@ -31,5 +31,6 @@ public class ExamjobServiceTest {
         ExamDTO dto = examjobService.examRead(2);
         log.info(dto);
     }
+
    
 }
