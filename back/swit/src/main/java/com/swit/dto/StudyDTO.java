@@ -24,7 +24,7 @@ public class StudyDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate studyEndDate;
     private Integer studyHeadcount;
-    private Boolean studyOnlineChk;
+    private Boolean studyOnline;
     private String studySubject;
     private String studyComm;
     private String studyLink;
