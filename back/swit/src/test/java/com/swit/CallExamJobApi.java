@@ -18,7 +18,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.test.context.TestPropertySource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,29 +31,35 @@ import org.w3c.dom.NodeList;
 
 import com.swit.domain.Exam;
 import com.swit.domain.Job;
-import com.swit.dto.ExamDTO;
-import com.swit.dto.PageRequestDTO;
-import com.swit.dto.PageResponseDTO;
+
 import com.swit.repository.ExamRepository;
 import com.swit.repository.JobRepository;
 import com.swit.service.ExamjobService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@SpringBootTest
-public class CallExamApi {
+@SpringBootTest(properties = "spring.config.location=" +
+        "classpath:/application.yml" +
+        ",classpath:/application-apiKey.yml")
+@RequiredArgsConstructor
+
+public class CallExamJobApi {
     @Autowired
     private ExamRepository examRepository;
     @Autowired
     private JobRepository jobRepository;
 
-    // 시험 api
-    // 인증키
-    private String key = "GmenJGwfc4CKDCLZVLszwp%2Bw7JEUeUxBMQl1PEQh4D9K3CBSJsFJ3iW7Q5FXWMHLXnwqqM84wczdmkOC%2FAacfQ%3D%3D";
+    @Value("${apiKey.saramin_KEY}")
+    private String saraminKey;
+    @Value("${apiKey.data_KEY}")
+    private String dataKey;
 
     @Test
     public void examApi() throws IOException {
+        String key = dataKey;
+        System.out.println("공공데이터키: " + key);
         String[] aUrl = { "http://openapi.q-net.or.kr/api/service/rest/InquiryTestInformationNTQSVC/getPEList", // 기술사
                 "http://openapi.q-net.or.kr/api/service/rest/InquiryTestInformationNTQSVC/getMCList", // 기능장
                 "http://openapi.q-net.or.kr/api/service/rest/InquiryTestInformationNTQSVC/getEList", // 기사, 산업기사
@@ -87,7 +98,6 @@ public class CallExamApi {
                                 .build();
                         examRepository.save(exam);
                     } else {
-
                         Exam exam = Exam.builder()
                                 .examTitle(getTagValue("description", eElement))
                                 .examDocEnd(LocalDate.parse(getTagValue("docexamdt", eElement), formatter))
@@ -103,7 +113,6 @@ public class CallExamApi {
                         examRepository.save(exam);
                     }
                 }
-
             } catch (Exception e) {
                 e.getMessage();
             }
@@ -112,7 +121,6 @@ public class CallExamApi {
 
     // api 불러오기
     private void apiExplorer(StringBuilder urlBuilder) throws IOException {
-
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -153,25 +161,27 @@ public class CallExamApi {
     @Test
     public void jobApi() throws Exception {
 
-        String accessKey = "accessKey"; // 발급받은 accessKey";
-        String apiURL = "https://oapi.saramin.co.kr/job-search?access-key=5WfTQnusxozEwHKwFt0s9RG2FshLOTgEi64MPALe9isBjEldePcq&stock=kospi+kosdaq+konex&job_type=&edu_lv=&fields=posting-date+expiration-date+keyword-code+count&start=1&count=100";
-        
-        
+        String accessKey = saraminKey; // 발급받은 accessKey";
+        String apiURL = "https://oapi.saramin.co.kr/job-search?access-key=" + accessKey
+                + "&stock=kospi+kosdaq+konex&job_type=&edu_lv=&fields=posting-date+expiration-date+keyword-code+count&start=1&count=100";
+
         try {
             // String text = URLEncoder.encode("", "UTF-8");
-            // String apiURL = "https://oapi.saramin.co.kr/job-search?access-key="+accessKey+"&keyword="+ text;
+            // String apiURL =
+            // "https://oapi.saramin.co.kr/job-search?access-key="+accessKey+"&keyword="+
+            // text;
 
             URL url = new URL(apiURL);
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "application/json");
 
             int responseCode = con.getResponseCode();
             BufferedReader br;
 
-            if(responseCode==200) { // 정상 호출
+            if (responseCode == 200) { // 정상 호출
                 br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            } else {  // 에러 발생
+            } else { // 에러 발생
                 br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
             }
 
@@ -181,63 +191,48 @@ public class CallExamApi {
                 response.append(inputLine);
             }
             br.close();
-            //System.out.println(response.toString());
+            // System.out.println(response.toString());
 
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(response.toString());
             JSONObject jobs = (JSONObject) jsonObject.get("jobs");
 
-           
             JSONArray job = (JSONArray) jobs.get("job");
 
-           
-           for(int i=0;i<job.size();i++){
-               
+            for (int i = 0; i < job.size(); i++) {
+
                 JSONObject tmp = (JSONObject) job.get(i);
                 JSONObject companyObject = (JSONObject) jsonParser.parse(tmp.get("company").toString());
                 JSONObject companyDetail = (JSONObject) companyObject.get("detail");
                 JSONObject positionObject = (JSONObject) jsonParser.parse(tmp.get("position").toString());
-                
-                
-                String loc = (((JSONObject)jsonParser.parse(positionObject.get("location").toString())).get("name")).toString();
-                loc = loc.replace(" &gt; "," "); //근무지
+
+                String loc = (((JSONObject) jsonParser.parse(positionObject.get("location").toString())).get("name"))
+                        .toString();
+                loc = loc.replace(" &gt; ", " "); // 근무지
 
                 String expirationDate = (tmp.get("expiration-date")).toString();
                 expirationDate = expirationDate.substring(0, 10); // 마감날짜
-              
+
                 Job aJob = Job.builder()
-                .jobTitle((positionObject.get("title")).toString())
-                .jobCompany((companyDetail.get("name")).toString())
-                .jobField((((JSONObject)jsonParser.parse(positionObject.get("job-mid-code").toString())).get("name")).toString())
-                .jobLoc(loc)
-                .jobDeadline(LocalDate.parse(expirationDate,DateTimeFormatter.ISO_DATE))
-                .jobActive(Integer.parseInt((tmp.get("active")).toString()))
-                .jobExperience((((JSONObject)jsonParser.parse(positionObject.get("experience-level").toString())).get("name")).toString())
-                .jobType( (((JSONObject)jsonParser.parse(positionObject.get("job-type").toString())).get("name")).toString())
-                .jobUrl((companyDetail.get("href")).toString())
-                .build();
+                        .jobTitle((positionObject.get("title")).toString())
+                        .jobCompany((companyDetail.get("name")).toString())
+                        .jobField((((JSONObject) jsonParser.parse(positionObject.get("job-mid-code").toString()))
+                                .get("name")).toString())
+                        .jobLoc(loc)
+                        .jobDeadline(LocalDate.parse(expirationDate, DateTimeFormatter.ISO_DATE))
+                        .jobActive(Integer.parseInt((tmp.get("active")).toString()))
+                        .jobExperience(
+                                (((JSONObject) jsonParser.parse(positionObject.get("experience-level").toString()))
+                                        .get("name")).toString())
+                        .jobType(
+                                (((JSONObject) jsonParser.parse(positionObject.get("job-type").toString())).get("name"))
+                                        .toString())
+                        .jobUrl((companyDetail.get("href")).toString())
+                        .build();
                 jobRepository.save(aJob);
-                
-                
-
-           
-               
-
-               
             }
-            
-
-            
         } catch (Exception e) {
             System.out.println(e);
         }
-    
-        
-
-       
-
     }
-
-    
-
 }

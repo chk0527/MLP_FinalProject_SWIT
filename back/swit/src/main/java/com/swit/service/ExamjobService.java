@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +47,6 @@ public class ExamjobService {
     private final ModelMapper modelMapper;
     private final ExamRepository examRepository;
     private final JobRepository jobRepository;
-
     public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO){
         Pageable pageable = PageRequest.of(
             pageRequestDTO.getPage()-1, //1페이지가 0
@@ -105,5 +105,8 @@ public class ExamjobService {
         return dto;
     }
 
+        
+
+    
 
 }
