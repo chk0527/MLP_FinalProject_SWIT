@@ -15,7 +15,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.swit.domain.PlaceEntity;
+import com.swit.domain.Place;
+import com.swit.domain.Todo;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -85,8 +86,9 @@ public class placeData {
 
       // 운영시간
       driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-      List<WebElement> Expand1 = driver.findElements(By.cssSelector("div.O8qbU.pSavy > div > a > div > div > span > svg"));
-      if(Expand1.size()!=0){
+      List<WebElement> Expand1 = driver
+          .findElements(By.cssSelector("div.O8qbU.pSavy > div > a > div > div > span > svg"));
+      if (Expand1.size() != 0) {
         Expand1.get(0).click();
       }
 
@@ -103,7 +105,7 @@ public class placeData {
       driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
       List<WebElement> tel = driver.findElements(By.className("xlx7Q"));
       String placeTel = "";
-      if(tel.size()!=0) {
+      if (tel.size() != 0) {
         placeTel = tel.get(0).getText();
       }
       log.info("전화번호: " + placeTel);
@@ -116,12 +118,10 @@ public class placeData {
           .replace("\");", "");
       log.info("이미지: " + placeImg);
 
-
-
       // 메뉴 가져오기
       driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
       List<WebElement> Expand2 = driver.findElements(By.cssSelector("div.crtyj > a"));
-      if(Expand2.size()!=0){
+      if (Expand2.size() != 0) {
         Expand2.get(0).click();
       }
       driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -134,17 +134,17 @@ public class placeData {
       }
       log.info("메뉴: " + placeMenu);
 
-      //db저장
-      PlaceEntity place = PlaceEntity.builder()
-      .place_name(placeName).place_addr(placeAddr)
-      .place_tel(placeTel).place_time(placeTime)
-      .place_Img(placeImg).place_detail(placeMenu)
-      .build();
+      // db저장
+      Place place = Place.builder()
+          .placeName(placeName).placeAddr(placeAddr)
+          .placeTel(placeTel).placeTime(placeTime)
+          .placeImg(placeImg).placeDetail(placeMenu)
+          .build();
 
       placeRepository.save(place);
 
       count++;
-      log.info(count+1);
+      log.info(count + 1);
       log.info("---------------------------------------------------------------------");
 
     }
