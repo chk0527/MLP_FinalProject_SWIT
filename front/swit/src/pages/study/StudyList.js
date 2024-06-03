@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import BasicLayout from '../../layouts/BasicLayout';
 import { getAllStudies } from '../../api/StudyApi'; // getAllStudies 함수를 가져옴
+import StudyChatComponent from '../../components/study/StudyChatComponent';
 
 const StudyListPage = () => {
     const [studyList, setStudyList] = useState([]); // 스터디 목록을 저장할 상태
