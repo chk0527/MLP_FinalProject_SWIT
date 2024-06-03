@@ -35,8 +35,12 @@ const useCustomMove = () => {
         }else{
             queryStr = queryDefault
         }
+<<<<<<< HEAD
         navigate({pathname:`../list`,search:queryStr})
 
+=======
+        navigate({pathname:`../job`,search:queryStr})
+>>>>>>> develop
     }
 
     const moveToExamRead = (examNo) => {
@@ -52,10 +56,14 @@ const useCustomMove = () => {
         navigate({ pathname: `../read/${num}`}) //조회시에 기존의 쿼리문자열을 유지하기 위해
 
     }
+<<<<<<< HEAD
     
 
    
     return {moveToExamList, page, size, moveToRead, moveToJobList, moveToExamRead, moveToJobRead}
+=======
+    return {moveToExamList, page, size, moveToRead, moveToJobList}
+>>>>>>> develop
 }
 
 export default useCustomMove;

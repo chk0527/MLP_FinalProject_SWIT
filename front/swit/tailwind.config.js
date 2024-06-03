@@ -5,7 +5,12 @@ module.exports = {
 
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        'tenada': ['Tenada'],
+        'blackHans':['BlackHansSans']
+      },
+    },
   },
   plugins: [],
 }

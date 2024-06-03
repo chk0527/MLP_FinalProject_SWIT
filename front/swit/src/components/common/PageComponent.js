@@ -1,3 +1,6 @@
+
+//PageComponent : 페이징 처리
+
 const PageComponent = ({ serverData, movePage }) => {
     return (
       <div className="m-6 flex justify-center">

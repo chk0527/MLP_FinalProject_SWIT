@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudyDTO {
     private Integer studyNo;
+    private String userId;
     private String studyTitle;
     private String studyContent;
     private String studyType;
@@ -23,8 +24,9 @@ public class StudyDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate studyEndDate;
     private Integer studyHeadcount;
-    private Boolean studyOnlineChk;
+    private Boolean studyOnline;
     private String studySubject;
     private String studyComm;
     private String studyLink;
+    private String studyUuid;
 }

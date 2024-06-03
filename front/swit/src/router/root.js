@@ -1,5 +1,7 @@
 import myPageRouter from "./myPageRouter";
 import loginRouter from "./loginRouter";
+import studyRouter from "./studyRouter";
+import adminRouter from "./adminRouter";
 import examRouter from "./examRouter";
 import jobRouter from "./jobRouter";
 import placeRouter from "./placeRouter";
@@ -7,7 +9,6 @@ import placeRouter from "./placeRouter";
 
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
-import studyRouter from "./studyRouter";
 const { createBrowserRouter } = require("react-router-dom");
 // 컴포넌트의 처리가 끝나지 않은 경우 화면에 'Loading…' 메시지 출력
 const Loading = <div>Loading...</div>;
@@ -15,12 +16,15 @@ const Loading = <div>Loading...</div>;
 const Main = lazy(() => import("../pages/MainPage"))
 const ExamList = lazy(() => import("../pages/examjob/ExamList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
+const AdminPage = lazy(() => import("../pages/admin/AdminPage"))
 const DummyPage = lazy(() => import("../pages/study/DummyPage"))
+const StudyList = lazy(() => import("../pages/study/StudyList"))
 const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
 const JobList = lazy(() => import("../pages/examjob/JobList") )
 const ExamjobIndex = lazy(() => import("../pages/examjob/ExamjobIndex"))
 const PlaceList = lazy(() => import("../pages/place/PlaceList"))
+
 
 
 const root = createBrowserRouter([
@@ -39,13 +43,18 @@ const root = createBrowserRouter([
         children: jobRouter(),
     },
     {
+        path:"/admin",
+        element:<Suspense fallback={Loading}><AdminPage/></Suspense>,
+        children: adminRouter()
+    },
+    {
         path:"/mypage",
         element:<Suspense fallback={Loading}><MyPage/></Suspense>,
         children: myPageRouter()
     },
     {
         path:"/placeList",
-        element:<Suspense fallback={Loading}><placeList/></Suspense>,
+        element:<Suspense fallback={Loading}><PlaceList/></Suspense>,
         children: placeRouter()
     },
     {
@@ -54,9 +63,8 @@ const root = createBrowserRouter([
         // children: loginRouter()
     },
     {
-        path: "study",
-        element:<Suspense fallback={Loading}><DummyPage/></Suspense>,
-        children: studyRouter()
+      path: "study",
+      children: studyRouter()
     }
 ])
 
