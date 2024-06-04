@@ -1,12 +1,37 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import searchIcon from "../../img/search-icon.png";
-import placeImg from "../../img/placeEx.jpg";
+import { getPlaceList } from "../../api/PlaceApi";
+import useCustomMove from "../../hooks/useCustomMove";
+import PlacePageComponent from "../common/PlacePageComponent ";
+
+const initState = {
+  dtoList: [],
+  pageNumList: [],
+  pageRequestDTO: null,
+  prev: false,
+  next: false,
+  totalCount: 0,
+  prevPage: 0,
+  nextPage: 0,
+  totalPage: 0,
+  current: 0,
+};
 
 const PlaceListComponent = () => {
+  const { PlacePage, PlaceSize, moveToPlaceList } = useCustomMove();
+  const [serverData, setServerData] = useState(initState);
+
+  useEffect(() => {
+    getPlaceList({ PlacePage, PlaceSize }).then((data) => {
+      console.log(data);
+      setServerData(data);
+    });
+  }, [PlacePage, PlaceSize]);
+
   return (
-    //검색창
     <div className="relative w-full">
+      {/* 검색창 */}
       <div className="absolute right-0 -top-28 text-right">
         <div className="text-xl">
           <input
@@ -26,62 +51,26 @@ const PlaceListComponent = () => {
           </select>
         </div>
       </div>
+      {/* 목록 */}
       <div className="flex flex-row flex-wrap w-full justify-center">
-        <div className="w-72 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center">
-          <div>
-            <img src={placeImg}></img>
+        {serverData.dtoList.map((place) => (
+          <div
+            key={place.placeNo}
+            className="w-76 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center"
+          >
+            <Link to={{pathname:`/place/read/${place.placeNo}`}}>
+              <div className="overflow-hidden ">
+                <img className="w-72 h-48 object-cover" src={place.placeImg}></img>
+              </div>
+              <div className="p-1">
+                <p className="font-bold">{place.placeAddr.substring(0, 6)}</p>
+                <p>{place.placeName}</p>
+              </div>
+            </Link>
           </div>
-          <div className="p-1">
-            <p className="font-bold">경기도 부천시</p>
-            <p>브리즈 스터디 카페 신중동점</p>
-          </div>
-        </div>
-        <div className="w-72 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center">
-          <div>
-            <img src={placeImg}></img>
-          </div>
-          <div className="p-1">
-            <p className="font-bold">경기도 부천시</p>
-            <p>브리즈 스터디 카페 신중동점</p>
-          </div>
-        </div>
-        <div className="w-72 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center">
-          <div>
-            <img src={placeImg}></img>
-          </div>
-          <div className="p-1">
-            <p className="font-bold">경기도 부천시</p>
-            <p>브리즈 스터디 카페 신중동점</p>
-          </div>
-        </div>
-        <div className="w-72 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center">
-          <div>
-            <img src={placeImg}></img>
-          </div>
-          <div className="p-1">
-            <p className="font-bold">경기도 부천시</p>
-            <p>브리즈 스터디 카페 신중동점</p>
-          </div>
-        </div>
-        <div className="w-72 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center">
-          <div>
-            <img src={placeImg}></img>
-          </div>
-          <div className="p-1">
-            <p className="font-bold">경기도 부천시</p>
-            <p>브리즈 스터디 카페 신중동점</p>
-          </div>
-        </div>
-        <div className="w-72 h-64 my-4 mx-8 border-solid border-2 border-gray-200 text-center">
-          <div>
-            <img src={placeImg}></img>
-          </div>
-          <div className="p-1">
-            <p className="font-bold">경기도 부천시</p>
-            <p>브리즈 스터디 카페 신중동점</p>
-          </div>
-        </div>
+        ))}
       </div>
+      <PlacePageComponent serverData={serverData} movePage={moveToPlaceList} />
     </div>
   );
 };
