@@ -16,7 +16,6 @@ const StudyMeetingComponent = ({ studyUuid }) => {
 
   return (
     <div className="meeting-container">
-      <h2>회의 참가</h2>
       <p>
         회의 URL:{" "}
         <a className="join-button-a" href={meetingUrl} target="_blank" rel="noopener noreferrer">
