@@ -78,7 +78,7 @@ const StudyGroupComponent = () => {
               className="w-64 h-54 rounded-lg object-cover"
             />
           </div>
-          <div className="ml-auto text-left flex flex-col justify-center h-54">
+          <div className="ml-auto text-left flex flex-col items-center h-54">
             <p><strong>소개:</strong> 리액트 스터디입니다.</p>
             <p><strong>주제:</strong> 개발</p>
             <p><strong>진행방식:</strong> 비대면</p>
