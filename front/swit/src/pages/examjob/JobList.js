@@ -19,13 +19,16 @@ const ExamjobList = () => {
     })
 
     return (
-        <BasicLayout>
+        // <BasicLayout>
 
-            <div className="text-2xl font-medium ">
-                <div className="flex"><div onClick={handleClickExam}>시험</div>&nbsp;|&nbsp;<div onClick={handleClickJob}>채용</div></div>
-            </div>
-            <JobListComponent />
-        </BasicLayout>
+        //     <div className="text-2xl font-medium ">
+        //         <div className="flex"><div onClick={handleClickExam}>시험</div>&nbsp;|&nbsp;<div onClick={handleClickJob}>채용</div></div>
+        //     </div>
+        //     <JobListComponent />
+        // </BasicLayout>
+        <div className="p-4 w-full">
+           <JobListComponent/>
+        </div>
 
     )
 }

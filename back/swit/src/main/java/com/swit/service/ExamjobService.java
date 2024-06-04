@@ -1,15 +1,28 @@
 package com.swit.service;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.*;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.swit.domain.Exam;
 import com.swit.domain.Job;
@@ -21,6 +34,8 @@ import com.swit.repository.ExamRepository;
 import com.swit.repository.JobRepository;
 
 import jakarta.transaction.Transactional;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -32,7 +47,6 @@ public class ExamjobService {
     private final ModelMapper modelMapper;
     private final ExamRepository examRepository;
     private final JobRepository jobRepository;
-
     public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO){
         Pageable pageable = PageRequest.of(
             pageRequestDTO.getPage()-1, //1페이지가 0
@@ -76,5 +90,23 @@ public class ExamjobService {
             .build();
             return responseDTO;
     }
+
+    public ExamDTO examRead(Integer examNo){
+        Optional<Exam> result = examRepository.findById(examNo);
+        Exam exam = result.orElseThrow();
+        ExamDTO dto = modelMapper.map(exam, ExamDTO.class);
+        return dto;
+    }
+
+    public JobDTO jobRead(Integer jobNo){
+        Optional<Job> result = jobRepository.findById(jobNo);
+        Job job = result.orElseThrow();
+        JobDTO dto = modelMapper.map(job, JobDTO.class);
+        return dto;
+    }
+
+        
+
+    
 
 }

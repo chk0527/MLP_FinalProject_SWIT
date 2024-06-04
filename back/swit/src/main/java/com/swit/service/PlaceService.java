@@ -1,8 +1,8 @@
 package com.swit.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -11,9 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.swit.domain.Place;
-import com.swit.dto.PageRequestDTO;
-import com.swit.dto.PageResponseDTO;
 import com.swit.dto.PlaceDTO;
+import com.swit.dto.PlacePageRequestDTO;
+import com.swit.dto.PlacePageResponseDTO;
 import com.swit.repository.PlaceRepository;
 
 import jakarta.transaction.Transactional;
@@ -37,10 +37,10 @@ public class PlaceService {
         }
 
         //place 전체 목록
-        public PageResponseDTO<PlaceDTO> getPlaceList(PageRequestDTO pageRequestDTO) {
+        public PlacePageResponseDTO<PlaceDTO> getPlaceList(PlacePageRequestDTO pageRequestDTO) {
                 Pageable pageable = PageRequest.of(
-                                pageRequestDTO.getPage() - 1, // 1페이지가 0
-                                pageRequestDTO.getSize());
+                                pageRequestDTO.getPlacePage() - 1, // 1페이지가 0
+                                pageRequestDTO.getPlaceSize());
 
                 Page<Place> result = placeRepository.findAll(pageable);
                 List<PlaceDTO> placeList = result.getContent().stream()
@@ -48,7 +48,7 @@ public class PlaceService {
                                 .collect(Collectors.toList());
 
                 long totalCount = result.getTotalElements();
-                PageResponseDTO<PlaceDTO> responseDTO = PageResponseDTO.<PlaceDTO>withAll()
+                PlacePageResponseDTO<PlaceDTO> responseDTO = PlacePageResponseDTO.<PlaceDTO>withAll()
                                 .dtoList(placeList)
                                 .pageRequestDTO(pageRequestDTO)
                                 .totalCount(totalCount)

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import searchIcon from "../../img/search-icon.png";
 import { getPlaceList } from "../../api/PlaceApi";
 import useCustomMove from "../../hooks/useCustomMove";
-import PageComponent from "../common/PageComponent";
+import PlacePageComponent from "../common/PlacePageComponent ";
 
 const initState = {
   dtoList: [],
@@ -19,14 +19,15 @@ const initState = {
 };
 
 const PlaceListComponent = () => {
-  const { page, size, moveToPlaceList } = useCustomMove();
+  const { PlacePage, PlaceSize, moveToPlaceList } = useCustomMove();
   const [serverData, setServerData] = useState(initState);
+
   useEffect(() => {
-    getPlaceList({ page, size }).then((data) => {
+    getPlaceList({ PlacePage, PlaceSize }).then((data) => {
       console.log(data);
       setServerData(data);
     });
-  }, [page, size]);
+  }, [PlacePage, PlaceSize]);
 
   return (
     <div className="relative w-full">
@@ -69,7 +70,7 @@ const PlaceListComponent = () => {
           </div>
         ))}
       </div>
-      <PageComponent serverData={serverData} movePage={moveToPlaceList} />
+      <PlacePageComponent serverData={serverData} movePage={moveToPlaceList} />
     </div>
   );
 };

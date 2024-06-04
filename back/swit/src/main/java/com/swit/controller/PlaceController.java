@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swit.dto.PageRequestDTO;
-import com.swit.dto.PageResponseDTO;
 import com.swit.dto.PlaceDTO;
+import com.swit.dto.PlacePageRequestDTO;
+import com.swit.dto.PlacePageResponseDTO;
 import com.swit.service.PlaceService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class PlaceController {
     }
 
     @GetMapping("/list")
-    public PageResponseDTO<PlaceDTO> getPlaceList(PageRequestDTO pageRequestDTO) {
+    public PlacePageResponseDTO<PlaceDTO> getPlaceList(PlacePageRequestDTO pageRequestDTO) {
         log.info(pageRequestDTO);
         return service.getPlaceList(pageRequestDTO);
     }

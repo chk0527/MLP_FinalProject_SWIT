@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getExamList } from "../../api/ExamJob"
+import { getExamList } from "../../api/ExamJobApi"
 import useCustomMove from "../../hooks/useCustomMove"
 import PageComponent from "../common/PageComponent";
 
@@ -19,7 +19,7 @@ const initState = {
 }
 
 const ListComponent = () => {
-  const { page, size, moveToExamList } = useCustomMove()
+  const { page, size, moveToExamList, moveToExamRead } = useCustomMove()
   const [serverData, setServerData] = useState(initState)
   useEffect(() => {
     getExamList({page, size}).then(data => {
@@ -40,7 +40,7 @@ const ListComponent = () => {
               </div>
 
               <div className="min-w-0 relative flex-auto">
-                <h2 className="font-semibold text-slate-900 truncate pr-20"> <Link to={'/'}>{exam.examTitle}</Link></h2>
+                <h2 className="font-semibold text-slate-900 truncate pr-20" onClick={()=>moveToExamRead(exam.examNo)}> {exam.examTitle}</h2>
                 <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="text-sky-500">
@@ -54,7 +54,7 @@ const ListComponent = () => {
 
                   <div className="ml-2">
                     <dt className="sr-only">회사/필기시험</dt>
-                    <dd><Link to={'/'}>필기시험 : {exam.examDocStart} ~ {exam.examDocEnd}</Link></dd>
+                    <dd>필기시험 : {exam.examDocStart} ~ {exam.examDocEnd}</dd>
                   </div>
                   <div>
                     <dt className="sr-only">직무/실기시험</dt>
@@ -62,7 +62,7 @@ const ListComponent = () => {
                       <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                         <circle cx="1" cy="1" r="1" />
                       </svg>
-                      <Link to={'/'}>실기시험 : {exam.examPracStart} ~ {exam.examPracEnd}</Link>
+                      실기시험 : {exam.examPracStart} ~ {exam.examPracEnd}
                     </dd>
                   </div>
                   <div>
@@ -71,7 +71,7 @@ const ListComponent = () => {
                       <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                         <circle cx="1" cy="1" r="1" />
                       </svg>
-                      <Link to={'/'}></Link>
+                        {/* 여기 데이터넣기 */}
                     </dd>
                   </div>
 

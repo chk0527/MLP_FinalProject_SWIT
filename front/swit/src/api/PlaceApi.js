@@ -9,7 +9,7 @@ export const getPlaceDetail = async (placeNo) =>{
     }
 //스터디 장소 전체 목록
 export const getPlaceList = async (pageParam) => {
-    const {placePage,placeSize} = pageParam
-    const res = await axios.get(`${prefix}/list`,{params:{placePage:placePage,placeSize:placeSize}});
+    const {PlacePage,PlaceSize} = pageParam
+    const res = await axios.get(`${prefix}/list`,{params:{PlacePage:PlacePage,PlaceSize:PlaceSize}});
     return res.data;
 }

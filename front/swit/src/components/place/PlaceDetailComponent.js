@@ -8,7 +8,7 @@ const initState = {
   placeAddr: "",
   placeTime: "",
   placeTel: "",
-  PlaceDetail: "",
+  placeDetail: "",
   placeImg: "",
 };
 
@@ -28,6 +28,7 @@ const PlaceDetailComponent = ({ placeNo }) => {
   return (
     <div>
       {place.placeNo} {place.placeName} {place.placeAddr}
+      {place.placeDetail}
       <button
         type="button"
         className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500"
