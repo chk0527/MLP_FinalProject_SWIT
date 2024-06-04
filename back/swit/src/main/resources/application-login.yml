@@ -1,8 +1,0 @@
-api:
-  naver:
-    clientKey: L5I5wLWO4xVWs4nssClM
-    secretKey: 4_tm8cqPd2
-    redirectUrl: http://localhost:8181/api/login/callback
-  kakao:
-    clientKey: 418db4e94491294edac4b8a67de1c3c3
-    redirectUrl: http://localhost:8181/api/login/callback_kakao

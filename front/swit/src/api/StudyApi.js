@@ -12,3 +12,8 @@ export const postAdd = async (studyObj) => {
     const res = await axios.post(`${prefix}/`, studyObj)
     return res.data;
 }
+
+export const getAllStudies = async () => {
+  const res = await axios.get(`${prefix}/all`);
+  return res.data;
+}

@@ -19,16 +19,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlaceEntity {
+public class Place {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long place_no; //키값
-    private String place_name; //상호명
-    private String place_addr; //주소
-    private String place_time; //운영시간
-    private String place_tel; // 전화번호
+    private Long placeNo; //키값
+    private String placeName; //상호명
+    private String placeAddr; //주소
+    private String placeTime; //운영시간
+    private String placeTel; // 전화번호
     @Column(length = 1000)
-    private String place_detail; //상세정보
+    private String placeDetail; //상세정보
     @Column(length = 1000)
-    private String place_Img; //이미지
+    private String placeImg; //이미지
 }

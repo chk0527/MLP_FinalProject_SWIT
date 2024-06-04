@@ -15,3 +15,15 @@ code {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Tenada';
+  src: url("../fonts/Tenada.ttf"),
+}
+
+@font-face {
+  font-family: 'BlackHansSans';
+  src: url("../fonts/BlackHanSans-Regular.ttf"),
+}
+
+

@@ -26,7 +26,7 @@ public class StudyServiceTest {
         .studyStartDate(LocalDate.of(2024, 5, 27))
         .studyEndDate(LocalDate.of(2024, 5, 29))
         .studyHeadcount(7)
-        .studyOnlineChk(true)
+        .studyOnline(true)
         .studySubject("개발")
         .studyComm("ZOOM")
         .build();

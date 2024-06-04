@@ -1,0 +1,58 @@
+package com.swit.service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.swit.domain.Place;
+import com.swit.dto.PlaceDTO;
+import com.swit.dto.PlacePageRequestDTO;
+import com.swit.dto.PlacePageResponseDTO;
+import com.swit.repository.PlaceRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
+@Service
+@Transactional
+@Log4j2
+@RequiredArgsConstructor
+public class PlaceService {
+        private final ModelMapper modelMapper;
+        private final PlaceRepository placeRepository;
+
+        //place 하나
+        public PlaceDTO getPlace(Long place_no) {
+                Optional<Place> result = placeRepository.findById(place_no);
+                Place place = result.orElseThrow();
+                PlaceDTO placeDto = modelMapper.map(place, PlaceDTO.class);
+                return placeDto;
+        }
+
+        //place 전체 목록
+        public PlacePageResponseDTO<PlaceDTO> getPlaceList(PlacePageRequestDTO pageRequestDTO) {
+                Pageable pageable = PageRequest.of(
+                                pageRequestDTO.getPlacePage() - 1, // 1페이지가 0
+                                pageRequestDTO.getPlaceSize());
+
+                Page<Place> result = placeRepository.findAll(pageable);
+                List<PlaceDTO> placeList = result.getContent().stream()
+                                .map(Place -> modelMapper.map(Place, PlaceDTO.class))
+                                .collect(Collectors.toList());
+
+                long totalCount = result.getTotalElements();
+                PlacePageResponseDTO<PlaceDTO> responseDTO = PlacePageResponseDTO.<PlaceDTO>withAll()
+                                .dtoList(placeList)
+                                .pageRequestDTO(pageRequestDTO)
+                                .totalCount(totalCount)
+                                .build();
+                return responseDTO;
+        }
+}
