@@ -8,15 +8,7 @@ const ExamRead = () => {
     const navigate = useNavigate()
 
     return (
-        // <BasicLayout>
-
-        //     <div className="text-2xl font-medium ">
-        //         <h1>채용상세페이지</h1>
-        //     </div>
-
-        // </BasicLayout>
-        <div>
-            채용상세페이지 {jobNo}
+        <div>   
             <JobReadComponent jobNo = {jobNo}></JobReadComponent>
         </div>
 

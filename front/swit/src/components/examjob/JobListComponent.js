@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getJobList } from "../../api/ExamJobApi"
-import useCustomMove from "../../hooks/useCustomMove"
+import { getJobList } from "../../api/ExamJobApi";
+import useCustomMove from "../../hooks/useCustomMove";
 import PageComponent from "../common/PageComponent";
-
 
 const initState = {
   dtoList: [],
@@ -16,32 +14,32 @@ const initState = {
   nextPage: 0,
   totalPage: 0,
   current: 0
-}
+};
 
 const ListComponent = () => {
-  const { page, size, moveToJobList, moveToJobRead } = useCustomMove()
-  const [serverData, setServerData] = useState(initState)
+  const { page, size, moveToJobList, moveToJobRead } = useCustomMove();
+  const [serverData, setServerData] = useState(initState);
+
   useEffect(() => {
-    getJobList({page, size}).then(data => {
-      console.log(data)
-      setServerData(data)
-    })
-  }, [page, size])
+    getJobList({ page, size }).then(data => {
+      setServerData(data);
+    });
+  }, [page, size]);
 
   return (
-    <div>
-      <div className="divide-y divide-slate-100">
-        <ul className="divide-y divide-slate-100">
-          {serverData.dtoList.map(job =>
-            <article className="flex items-start space-x-6 p-6">
+    <div className="max-w-4xl mx-auto mt-8">
+      <div className="divide-y divide-slate-200">
+        <ul className="divide-y divide-slate-200">
+          {serverData.dtoList.map(job => (
+            <article key={job.jobNo} className="flex items-start space-x-6 p-6">
               <div>
                 <dt className="sr-only">채용/시험</dt>
-                <dd className="px-2.5 rounded-full bg-[#A4CEF5]/[0.6] text-white">채용</dd>
+                <dd className="px-2.5 py-1 rounded-full bg-[#A4CEF5]/60 text-white">채용</dd>
               </div>
 
               <div className="min-w-0 relative flex-auto">
-                <h2 className="font-semibold text-slate-900 truncate pr-20" onClick={() => moveToJobRead(job.jobNo)}>{job.jobTitle}</h2>
-                <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
+                <h2 className="font-semibold text-slate-900 truncate pr-20 cursor-pointer" onClick={() => moveToJobRead(job.jobNo)}>{job.jobTitle}</h2>
+                <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium text-slate-500">
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="text-sky-500">
                       <span className="sr-only">Star rating</span>
@@ -56,40 +54,28 @@ const ListComponent = () => {
                     <dt className="sr-only">회사</dt>
                     <dd>{job.jobCompany}</dd>
                   </div>
-                  <div>
-                    <dt className="sr-only">직무</dt>
-                    <dd className="flex items-center">
-                      <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
-                        <circle cx="1" cy="1" r="1" />
-                      </svg>
-                      {job.jobField}
-                    </dd>
+                  <div className="flex items-center">
+                    <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
+                      <circle cx="1" cy="1" r="1" />
+                    </svg>
+                    <dd>{job.jobField}</dd>
                   </div>
-                  <div>
-                    <dt className="sr-only">접수마감일</dt>
-                    <dd className="flex items-center">
-                      <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
-                        <circle cx="1" cy="1" r="1" />
-                      </svg>
-                      마감일 : {job.jobDeadline}
-                    </dd>
+                  <div className="flex items-center">
+                    <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
+                      <circle cx="1" cy="1" r="1" />
+                    </svg>
+                    <dd>마감일: {job.jobDeadline}</dd>
                   </div>
-
                 </dl>
               </div>
             </article>
-          )}
-
-
-
-
-
+          ))}
         </ul>
-            
       </div>
-      <PageComponent serverData={serverData} movePage={moveToJobList}/>
+      <PageComponent serverData={serverData} movePage={moveToJobList} />
     </div>
-  )
-}
+  );
+};
 
 export default ListComponent;
+

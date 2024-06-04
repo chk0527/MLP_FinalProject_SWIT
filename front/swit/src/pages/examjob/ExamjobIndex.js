@@ -12,9 +12,9 @@ const ExamjobIndex = () => {
     })
     return(
         <BasicLayout>
-            <div className="w-full flex m-2 p-2">
-                <div className="text-xl m-1 p-2 w-20 text-center" onClick={handleClickExamList}>시험</div>
-                <div className="text-xl m-1 p-2 w-20 text-center" onClick={handleClickJobList}>채용</div>
+            <div className="w-full flex justify-center">
+                <div className="text-xl mx-1 -my-10 p-2 w-20 text-center" onClick={handleClickExamList}>시험</div>
+                <div className="text-xl mx-1 -my-10 p-2 w-20 text-center" onClick={handleClickJobList}>채용</div>
                
             </div>
             <div className="flex flex-wrap w-full">
