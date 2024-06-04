@@ -1,8 +1,10 @@
 package com.swit.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.swit.dto.StudyDTO;
 import com.swit.service.StudyService;
@@ -35,6 +37,8 @@ public class StudyController {
     @PostMapping("/")
     public Map<String, Integer> register(@RequestBody StudyDTO StudyDTO) {
         Integer studyNo = service.register(StudyDTO);
+        // List<MultipartFile> files = productDTO.getFiles();
+        // List<String> uploadFileNames = fileUtil.saveFiles(files);
         return Map.of("studyNo", studyNo);
     }
     
