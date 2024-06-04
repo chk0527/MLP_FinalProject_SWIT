@@ -4,6 +4,7 @@ const Loading = <div>Loading...</div>
 const StudyRead = lazy(() => import("../pages/study/StudyReadPage"))
 const StudyAddPage = lazy(() => import("../pages/study/StudyAddPage"))
 const StudyList = lazy(() => import("../pages/study/StudyList"))
+const StudyGroupPage = lazy(() => import("../pages/study/StudyGroupPage"))
 const studyRouter = () => {
   return [
     {
@@ -17,6 +18,10 @@ const studyRouter = () => {
     {
       path: "add",
       element: <Suspense fallback={Loading}><StudyAddPage /></Suspense>
+    },
+    {
+      path: "group",
+      element: <Suspense fallback={Loading}><StudyGroupPage /></Suspense>
     }
   ];
 };
