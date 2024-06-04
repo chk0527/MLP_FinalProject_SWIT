@@ -28,7 +28,7 @@ const useCustomMove = () => {
         }else{
             queryStr = queryDefault
         }
-        navigate({pathname:`../exam`,search:queryStr})
+        navigate({pathname:`../list`,search:queryStr})
 
     }
 
@@ -41,7 +41,17 @@ const useCustomMove = () => {
         }else{
             queryStr = queryDefault
         }
-        navigate({pathname:`../job`,search:queryStr})
+        navigate({pathname:`../list`,search:queryStr})
+
+    }
+
+    const moveToExamRead = (examNo) => {
+        console.log(queryDefault);
+        navigate({pathname:`../read/${examNo}`, search:queryDefault})   
+    }
+
+    const moveToJobRead = (jobNo) => {
+        navigate({pathname:`../read/${jobNo}`, search:queryDefault})
     }
 
     const moveToPlaceList = (pageParam) => {
@@ -60,7 +70,11 @@ const useCustomMove = () => {
         navigate({ pathname: `../read/${num}`}) //조회시에 기존의 쿼리문자열을 유지하기 위해
 
     }
-    return {moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList,moveToPlaceList}
+    
+
+   
+    
+    return {moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList,moveToPlaceList, moveToExamRead, moveToJobRead}
 }
 
 export default useCustomMove;

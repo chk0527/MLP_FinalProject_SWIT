@@ -36,7 +36,7 @@ public class Exam {
 
     //필기 접수
     private LocalDate examDocRegStart;
-    private LocalDate examDogRegEnd;
+    private LocalDate examDocRegEnd;
 
     //실기시험
     private LocalDate examPracStart;
@@ -47,7 +47,7 @@ public class Exam {
     private LocalDate examPracRegEnd;
 
     //합격일
-    private LocalDate examDogPass;
+    private LocalDate examDocPass;
     private LocalDate examPracPass;
 
     
