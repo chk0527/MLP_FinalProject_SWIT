@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.swit.domain.Study;
 import com.swit.dto.StudyDTO;
@@ -50,6 +51,8 @@ public class StudyController {
     @PostMapping("/")
     public Map<String, Integer> register(@RequestBody StudyDTO StudyDTO) {
         Integer studyNo = service.register(StudyDTO);
+        // List<MultipartFile> files = productDTO.getFiles();
+        // List<String> uploadFileNames = fileUtil.saveFiles(files);
         return Map.of("studyNo", studyNo);
     }
     
