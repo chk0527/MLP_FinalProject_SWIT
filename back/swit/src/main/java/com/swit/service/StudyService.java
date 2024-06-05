@@ -2,6 +2,7 @@ package com.swit.service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swit.domain.Study;
+import com.swit.domain.StudyImage;
 import com.swit.dto.StudyDTO;
 import com.swit.repository.StudyRepository;
 
@@ -49,13 +51,44 @@ public class StudyService {
     public StudyDTO get(Integer studyNo) {
         Optional<Study> result = studyRepository.findById(studyNo);
         Study study = result.orElseThrow();
-        StudyDTO dto = modelMapper.map(study, StudyDTO.class);
-        return dto;
+        StudyDTO studyDTO = entityToDTO(study);
+        // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
+        return studyDTO;
     }
 
      private String generateStudyUuid() {
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
     }
+
+    private StudyDTO entityToDTO(Study study) {
+    StudyDTO studyDTO = StudyDTO.builder()
+        .studyNo(study.getStudyNo())
+        .userId(study.getUser_id())
+        .studyTitle(study.getStudyTitle())
+        .studyContent(study.getStudyContent())
+        .studyType(study.getStudyType())
+        .studyStartDate(study.getStudyStartDate())
+        .studyEndDate(study.getStudyEndDate())
+        .studyHeadcount(study.getStudyHeadcount())
+        .studyOnline(study.getStudyOnline())
+        .studySubject(study.getStudySubject())
+        .studyComm(study.getStudyComm())
+        .studyLink(study.getStudyLink())
+        .studyUuid(study.getStudyUuid())
+        .build();
+
+    List<StudyImage> imageList = study.getImageList();
+    if (imageList == null || imageList.isEmpty()) {
+        return studyDTO;
+    }
+
+    List<String> fileNameList = imageList.stream()
+        .map(StudyImage::getFileName)
+        .collect(Collectors.toList());
+    studyDTO.setUploadFileNames(fileNameList);
+
+    return studyDTO;
+}
 
     private Study dtoToEntity(StudyDTO studyDTO) {
         Study study = Study.builder()
