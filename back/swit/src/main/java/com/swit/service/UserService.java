@@ -82,6 +82,7 @@ public class UserService {
         return user.getUser_image();
     }
 
+    // upload 폴더의 기존 이미지 파일 삭제
     public void removeOldImage(String fileName) {
         try {
             Path oldImagePath = Paths.get("upload", fileName);

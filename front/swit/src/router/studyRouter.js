@@ -20,7 +20,7 @@ const studyRouter = () => {
       element: <Suspense fallback={Loading}><StudyAddPage /></Suspense>
     },
     {
-      path: "group",
+      path: "group/:studyNo",
       element: <Suspense fallback={Loading}><StudyGroupPage /></Suspense>
     }
   ];

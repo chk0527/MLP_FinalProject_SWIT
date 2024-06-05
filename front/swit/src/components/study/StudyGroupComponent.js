@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getCalendar, addEvent, deleteEvent, updateEvent } from "../../api/CalendarApi";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -6,29 +7,82 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 //Momonet로 로컬 시간대 설정
 const localizer = momentLocalizer(moment);
 
-const StudyGroupComponent = () => {
-  const [events, setEvents] = useState([]); // 캘린더 - 메인 이벤트
+const StudyGroupComponent = ({studyNo}) => {
+  const [events, setEvents] = useState([]); // 캘린더 - 일정 관리
   const [tasks, setTasks] = useState([]); // 캘린더 - 할 일 저장
   const [taskInput, setTaskInput] = useState(''); // 캘린더 - 할 일 입력
   const [chatMessages, setChatMessages] = useState([]); // 신청 - 채팅 화면
   const [chatInput, setChatInput] = useState(''); // 신청 - 채팅 입력창
   const [view, setView] = useState('calendar'); // 뷰 설정(캘린더|신청)
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalStartDate, setModalStartDate] = useState('');
+  const [modalEndDate, setModalEndDate] = useState('');
 
-  // 캘린더 - 일정 작성
-  const handleSelectSlot = ({ start, end }) => {
-    const title = prompt('일정을 새로 작성하세요');
-    if (title) {
-      setEvents([...events, { start, end, title, completed: false }]);
+  // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const data = await getCalendar(studyNo);
+        setEvents(data.map(event => ({
+          ...event,
+          start: moment(event.startDate).local().toDate(),
+          end: moment(event.endDate).local().toDate(),
+        })))
+      } catch (error) {
+        console.error('일정 데이터를 가져오는 중 오류 발생:', error);
+        setEvents([]);  // 해당 스터디의 일정이 하나도 없으면, [] 반환
+      }
+    };
+    fetchEvents();
+  }, [studyNo]);
+
+  // 캘린더 - 일정 생성
+  const handleCreateEvent = async ({ start, end }) => {
+    const content = prompt('일정을 새로 작성하세요');
+    if (content) {
+      const newEvent = {
+        startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
+        endDate: moment(end).format('YYYY-MM-DDTHH:mm'),
+        content,
+        completeChk: false // 새로 만든 일정의 기본값은 false
+      };
+      try {
+        const data = await addEvent(studyNo, newEvent);
+        setEvents([...events, {
+          ...data,
+          start: moment(data.startDate).toDate(),
+          end: moment(data.endDate).toDate(),
+        }]);
+      } catch (error) {
+        console.error('일정 추가 중 오류 발생:', error);
+      }
     }
   };
 
-  // 캘린더 - 일정 완료 토글
-  const handleTaskComplete = (index) => {
-    const newEvents = events.map((event, i) =>
-      i === index ? { ...event, completed: !event.completed } : event
-    );
-    setEvents(newEvents);
+  // 캘린더 - 일정 삭제
+  const handleRemoveEvent = async (eventId) => {
+    try {
+      await deleteEvent(studyNo, eventId);
+      setEvents(events.filter(event => event.calendarNo !== eventId));
+    } catch (error) {
+      console.error('일정 삭제 중 오류 발생:', error);
+    }
   };
+
+  // 캘린더 - 일정 완료 상태 업데이트
+  const handleCompleteEvent = async (eventId, completeChk) => {
+    try {
+      const updatedEvent
+        = await updateEvent(studyNo, eventId, completeChk);
+      setEvents(events.map(event =>
+        event.calendarNo === eventId ? { ...event, completeChk: updatedEvent.completeChk } : event
+      ));
+    } catch (error) {
+      console.error('일정 완료 상태 업데이트 중 오류 발생:', error);
+    }
+  };
+
+  //==============================================================
 
   // 캘린더 - 할 일 추가
   const handleAddTask = (e) => {
@@ -67,37 +121,6 @@ const StudyGroupComponent = () => {
   return (
     <div className="p-4 flex flex-col items-center">
       {/*스터디 정보란*/}
-      <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
-        <h1 className="text-2xl font-bold text-center">리액트 같이 공부하실 분 모집해요~!</h1>
-        <div className="flex items-start mt-4">
-          <div className="w-256 h-192 rounded-lg mr-6 bg-gray-500 border border-gray-800 flex items-center justify-center">
-            <img
-              // front/swit/public 폴더에 접근하는 절대경로
-              src={`${process.env.PUBLIC_URL}/study_group.png`}
-              alt="Profile"
-              className="w-64 h-54 rounded-lg object-cover"
-            />
-          </div>
-          <div className="ml-auto text-left flex flex-col items-center h-54">
-            <p><strong>소개:</strong> 리액트 스터디입니다.</p>
-            <p><strong>주제:</strong> 개발</p>
-            <p><strong>진행방식:</strong> 비대면</p>
-            <p><strong>인원:</strong> 6명</p>
-            <p><strong>날짜:</strong> 2024-05-20 ~ 2024-06-20</p>
-            <p><strong>방장:</strong> 고리스</p>
-          </div>
-        </div>
-        <div className="flex justify-center">
-          <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">ZOOM 참여</button>
-        </div>
-        <div className="mt-4 p-4 border border-gray-300 bg-yellow-100 text-left">
-          <p>✏️ 주 4회 상시 자율 출석 취업 스터디반 운영 중입니다! (현재 모집X)</p>
-          <p>스터디 멤버가 아니어도 줌 참석 자유 이용 가능합니다!</p>
-          <p>(타이머 정지 없이 캠 off 5분 이상 금지, 캠 화면에 책이나 모니터 등 공부하는 모습이 잘 보이게 부탁드립니다.)</p>
-          <p>오류 발생 시 임시 대피소:</p>
-          <a href="https://study.whaleon.naver.com/detail/9503d642815e4355987b9afd00bbb6d3" className="text-blue-500">https://study.whaleon.naver.com/detail/9503d642815e4355987b9afd00bbb6d3</a>
-        </div>
-      </div>
 
       <div className="h-1 bg-gray-300 my-4 w-full"></div>
 
@@ -128,22 +151,22 @@ const StudyGroupComponent = () => {
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
-                style={{ height: 500 }}
+                titleAccessor="content"
+                style={{ height: 600 }}
                 messages={{
                   month: '월',
                   week: '주',
                   day: '일',
                   today: '오늘',
-                  back: '이전달',
-                  next: '다음달',
-                  today: '오늘',
+                  back: '이전',
+                  next: '다음',
                   agenda: '일정',
                   date: '날짜',
                   time: '시간',
                   event: '이벤트',
                   showMore: (total) => `+${total} 더 보기`,
                 }}
-                onSelectSlot={handleSelectSlot} // 캘린더의 빈 슬롯을 클릭하면 handleSelectSlot 함수가 호출됨
+                onSelectSlot={handleCreateEvent} // 캘린더의 빈 슬롯을 클릭하면 handleCreateEvent 함수 호출
               />
             </div>
           </div>
@@ -155,13 +178,16 @@ const StudyGroupComponent = () => {
                   <li key={index} className="flex items-center my-2">
                     <input
                       type="checkbox"
-                      checked={event.completed}
-                      onChange={() => handleTaskComplete(index)} // 이벤트 완료 상태 토글
+                      checked={event.completeChk}
+                      // 일정 완료 상태 업데이트
+                      onChange={() => handleCompleteEvent(event.calendarNo, !event.completeChk)}
                       className="mr-2"
                     />
-                    <span className={event.completed ? 'line-through' : ''}>
-                      {event.title} - {moment(event.start).format('YYYY년 MM월 DD일 HH:mm')}
+                    <span className={event.completeChk ? 'line-through' : ''}>
+                      {event.content} - {moment(event.startDate).format('YYYY년 MM월 DD일 HH:mm')}
                     </span>
+                    {/*일정 제거 이벤트*/}
+                    <button onClick={() => handleRemoveEvent(event.calendarNo)} className="ml-auto bg-red-500 text-white p-1 rounded-lg">X</button>
                   </li>
                 ))}
               </ul>
