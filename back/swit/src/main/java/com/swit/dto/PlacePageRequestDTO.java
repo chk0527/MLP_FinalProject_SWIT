@@ -15,5 +15,5 @@ public class PlacePageRequestDTO {
     @Builder.Default
     private int PlacePage=1;
     @Builder.Default
-    private int PlaceSize = 16;
+    private int PlaceSize = 15;
 }
