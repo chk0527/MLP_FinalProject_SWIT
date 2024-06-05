@@ -56,6 +56,33 @@ public class StudyService {
         return studyDTO;
     }
 
+    public void modify(StudyDTO studyDTO) {
+        Optional<Study> result = studyRepository.findById(studyDTO.getStudyNo());
+        Study study = result.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+
+        study.setStudyTitle(studyDTO.getStudyTitle());
+        study.setStudyContent(studyDTO.getStudyContent());
+        study.setStudyType(studyDTO.getStudyType());
+        study.setStudyStartDate(studyDTO.getStudyStartDate());
+        study.setStudyEndDate(studyDTO.getStudyEndDate());
+        study.setStudyHeadcount(studyDTO.getStudyHeadcount());
+        study.setStudyOnline(studyDTO.getStudyOnline());
+        study.setStudySubject(studyDTO.getStudySubject());
+        study.setStudyComm(studyDTO.getStudyComm());
+        study.setStudyLink(studyDTO.getStudyLink());
+        study.setStudyUuid(studyDTO.getStudyUuid());
+
+        // Update image list
+        study.getImageList().clear();
+        studyDTO.getUploadFileNames().forEach(study::addImageString);
+
+        studyRepository.save(study);
+    }
+
+    public void remove(Integer studyNo) {
+        studyRepository.deleteById(studyNo);
+    }
+
      private String generateStudyUuid() {
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
     }

@@ -84,4 +84,14 @@ public class CustomFileUtil {
             }
         });
     }
+
+    public List<String> modifyFiles(List<MultipartFile> newFiles, List<String> oldFileNames) throws RuntimeException {
+        // 기존 파일 삭제
+        deleteFiles(oldFileNames);
+        
+        log.info("-------------------------------------------");
+        log.info(newFiles);
+        // 새로운 파일 저장
+        return saveFiles(newFiles);
+    }
 }
