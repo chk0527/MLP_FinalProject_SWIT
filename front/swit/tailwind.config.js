@@ -10,6 +10,9 @@ module.exports = {
         'tenada': ['Tenada'],
         'blackHans':['BlackHansSans']
       },
+      spacing:{
+        '1000': '1000px'
+      }
     },
   },
   plugins: [],

@@ -9,8 +9,12 @@ const ExamRead = lazy(() => import("../pages/examjob/ExamRead"))
 const examRouter = () => {
     return [
         {
-            path: "",
+            path: "list",
             element: <Suspense fallback={Loading}><ExamList /></Suspense>
+        },
+        {
+            path: "",
+            element: <Navigate replace to="list"></Navigate>
         },
         {
             path: "read/:examNo",

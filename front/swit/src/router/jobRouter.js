@@ -9,11 +9,15 @@ const JobRead = lazy(() => import("../pages/examjob/JobRead"))
 const jobRouter = () => {
     return [
         {
-            path: "",
+            path: "list",
             element: <Suspense fallback={Loading}><JobList /></Suspense>
         },
         {
-            path: ":jobNo",
+            path: "",
+            element: <Navigate replace to="list"></Navigate>
+        },
+        {
+            path: "read/:jobNo",
             element: <Suspense fallback={Loading}><JobRead /></Suspense>
         },
     ]
