@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.swit.domain.Study;
 import com.swit.dto.StudyDTO;
 import com.swit.service.StudyService;
+import com.swit.util.CustomFileUtil;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import lombok.extern.log4j.Log4j2;
 public class StudyController {
     private final StudyService service;
     private final HttpSession session;
+    private final CustomFileUtil fileUtil;
 
 
     @GetMapping("/all")
@@ -49,10 +51,13 @@ public class StudyController {
     }
 
     @PostMapping("/")
-    public Map<String, Integer> register(@RequestBody StudyDTO StudyDTO) {
+    public Map<String, Integer> register(StudyDTO StudyDTO) {
+        List<MultipartFile> files = StudyDTO.getFiles();
+        List<String> uploadFileNames = fileUtil.saveFiles(files);
+        StudyDTO.setUploadFileNames(uploadFileNames);
+        log.info(uploadFileNames);
+        // 서비스 호출
         Integer studyNo = service.register(StudyDTO);
-        // List<MultipartFile> files = productDTO.getFiles();
-        // List<String> uploadFileNames = fileUtil.saveFiles(files);
         return Map.of("studyNo", studyNo);
     }
     

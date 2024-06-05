@@ -38,7 +38,10 @@ public class StudyService {
         studyDTO.setUserId(userId);
         studyDTO.setStudyUuid(studyUuid);
 
-        Study study = modelMapper.map(studyDTO, Study.class);
+        // Study study = modelMapper.map(studyDTO, Study.class);
+        
+        Study study = dtoToEntity(studyDTO);
+
         Study saveStudy = studyRepository.save(study);
         return saveStudy.getStudyNo();
     }
@@ -52,5 +55,34 @@ public class StudyService {
 
      private String generateStudyUuid() {
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
+    }
+
+    private Study dtoToEntity(StudyDTO studyDTO) {
+        Study study = Study.builder()
+            .studyNo(studyDTO.getStudyNo())
+            .user_id(studyDTO.getUserId())
+            .studyTitle(studyDTO.getStudyTitle())
+            .studyContent(studyDTO.getStudyContent())
+            .studyType(studyDTO.getStudyType())
+            .studyStartDate(studyDTO.getStudyStartDate())
+            .studyEndDate(studyDTO.getStudyEndDate())
+            .studyHeadcount(studyDTO.getStudyHeadcount())
+            .studyOnline(studyDTO.getStudyOnline())
+            .studySubject(studyDTO.getStudySubject())
+            .studyComm(studyDTO.getStudyComm())
+            .studyLink(studyDTO.getStudyLink())
+            .studyUuid(studyDTO.getStudyUuid())
+            .build();
+    
+        // 업로드 처리가 끝난 파일들의 이름
+        List<String> uploadFileNames = studyDTO.getUploadFileNames();
+        if (uploadFileNames == null) {
+            return study;
+        }
+        uploadFileNames.forEach(uploadName -> {
+            study.addImageString(uploadName);
+        });
+    
+        return study;
     }
 }

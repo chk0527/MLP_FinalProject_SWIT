@@ -4,13 +4,14 @@ const prefix = `${API_SERVER_HOST}/api/study`
 
 //
 export const getStudy = async (studyNo) => {
-    const res = await axios.get(`${prefix}/${studyNo}`);
-    return res.data;
+  const res = await axios.get(`${prefix}/${studyNo}`);
+  return res.data;
 }
 
 export const postAdd = async (studyObj) => {
-    const res = await axios.post(`${prefix}/`, studyObj)
-    return res.data;
+  const header = { headers: { "Content-Type": "multipart/form-data" } }
+  const res = await axios.post(`${prefix}/`, studyObj, header)
+  return res.data;
 }
 
 export const getAllStudies = async () => {
