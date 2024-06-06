@@ -26,4 +26,14 @@ code {
   src: url("../fonts/BlackHanSans-Regular.ttf"),
 }
 
+@font-face {
+  font-family: 'Buqueque';
+  src: url("../fonts/부크크고딕_굵은글씨.ttf"),
+}
+
+@font-face {
+  font-family: 'GmarketSans';
+  src: url("../fonts/GmarketSansTTFMedium.ttf"),
+}
+
 
