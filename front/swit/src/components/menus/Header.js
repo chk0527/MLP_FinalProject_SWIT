@@ -27,8 +27,8 @@ const Header = () => {
           ></img>
         </Link>
       </div>
-      <div className="p-6 sticky top-0 z-40 flex justify-center  border-y-2 bg-gray-100 border-gray-200 font-bold">
-        <ul className="flex  text-black space-x-32 text-xl">
+      <div className="p-6 sticky top-0 z-40 flex justify-center  border-y-2 bg-gray-100 border-gray-200 font-GSans">
+        <ul className="flex text-black space-x-32 text-xl">
           <li>
             <Link to={"/study"}>스터디 그룹</Link>
           </li>

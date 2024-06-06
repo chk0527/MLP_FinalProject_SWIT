@@ -3,6 +3,8 @@ import { Navigate } from "react-router-dom";
 const Loading = <div>Loading...</div>
 const StudyRead = lazy(() => import("../pages/study/StudyReadPage"))
 const StudyAddPage = lazy(() => import("../pages/study/StudyAddPage"))
+const StudyModifyPage = lazy(() => import("../pages/study/StudyModifyPage"))
+
 const StudyList = lazy(() => import("../pages/study/StudyList"))
 const StudyGroupPage = lazy(() => import("../pages/study/StudyGroupPage"))
 const studyRouter = () => {
@@ -20,7 +22,11 @@ const studyRouter = () => {
       element: <Suspense fallback={Loading}><StudyAddPage /></Suspense>
     },
     {
-      path: "group",
+      path: "modify/:studyNo",
+      element: <Suspense fallback={Loading}><StudyModifyPage /></Suspense>
+    },
+    {
+      path: "group/:studyNo",
       element: <Suspense fallback={Loading}><StudyGroupPage /></Suspense>
     }
   ];

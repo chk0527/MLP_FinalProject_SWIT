@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 public class PlaceDTO {
     
     private Long placeNo; // 키값
-    private String placeName; // 상호명
-    private String placeAddr; // 주소
+    @Builder.Default
+    private String placeName=""; // 상호명
+    @Builder.Default
+    private String placeAddr=""; // 주소
     private String placeTime; // 운영시간
     private String placeTel; // 전화번호
     private String placeDetail; // 상세정보
