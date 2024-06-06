@@ -12,5 +12,5 @@ import com.swit.dto.JobDTO;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job,Integer>{
-    Page<Job> findByJobTitleContaining(String jobSearchKeyword, Pageable pageable);
+    Page<Job> findByJobTitleContaining(String searchKeyword, Pageable pageable);//제목만 검색?
 }

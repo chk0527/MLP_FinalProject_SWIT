@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.modelmapper.ModelMapper;
@@ -47,90 +46,87 @@ public class ExamjobService {
     private final ModelMapper modelMapper;
     private final ExamRepository examRepository;
     private final JobRepository jobRepository;
-    public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO){
+
+    public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
-            pageRequestDTO.getPage()-1, //1페이지가 0
-            pageRequestDTO.getSize(),
-            Sort.by("examNo").descending());
-            System.out.println("====================");
-            System.out.println(pageable);
-         
-            Page<Exam> result = examRepository.findAll(pageable);
-            List<ExamDTO> dtoList = result.getContent().stream()
-            .map(exam-> modelMapper.map(exam, ExamDTO.class))
-            .collect(Collectors.toList());     
-            
-            long totalCount = result.getTotalElements();
-            PageResponseDTO<ExamDTO> responseDTO = PageResponseDTO.<ExamDTO>withAll()
-            .dtoList(dtoList)
-            .pageRequestDTO(pageRequestDTO)
-            .totalCount(totalCount)
-            .build();
-            return responseDTO;
+                pageRequestDTO.getPage() - 1, // 1페이지가 0
+                pageRequestDTO.getSize(),
+                Sort.by("examPracRegEnd").descending());
+        System.out.println("====================");
+        System.out.println(pageable);
+
+        Page<Exam> result = examRepository.findAll(pageable);
+        List<ExamDTO> dtoList = result.getContent().stream()
+                .map(exam -> modelMapper.map(exam, ExamDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<ExamDTO> responseDTO = PageResponseDTO.<ExamDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
     }
 
-    public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO){
+    public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
-            pageRequestDTO.getPage()-1, //1페이지가 0
-            pageRequestDTO.getSize(),
-            Sort.by("jobNo").descending());
-            System.out.println("====================");
-            System.out.println(pageable);
-         
-            Page<Job> result = jobRepository.findAll(pageable);
-            List<JobDTO> dtoList = result.getContent().stream()
-            .map(job-> modelMapper.map(job, JobDTO.class))
-            .collect(Collectors.toList());     
-            
-            long totalCount = result.getTotalElements();
-            PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
-            .dtoList(dtoList)
-            .pageRequestDTO(pageRequestDTO)
-            .totalCount(totalCount)
-            .build();
-            return responseDTO;
+                pageRequestDTO.getPage() - 1, // 1페이지가 0
+                pageRequestDTO.getSize(),
+                Sort.by("jobDeadline").descending());
+        System.out.println("====================");
+        System.out.println(pageable);
+
+        Page<Job> result = jobRepository.findAll(pageable);
+        List<JobDTO> dtoList = result.getContent().stream()
+                .map(job -> modelMapper.map(job, JobDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
     }
 
-
-
-    public ExamDTO examRead(Integer examNo){
+    public ExamDTO examRead(Integer examNo) {
         Optional<Exam> result = examRepository.findById(examNo);
         Exam exam = result.orElseThrow();
         ExamDTO dto = modelMapper.map(exam, ExamDTO.class);
         return dto;
     }
 
-    public JobDTO jobRead(Integer jobNo){
+    public JobDTO jobRead(Integer jobNo) {
         Optional<Job> result = jobRepository.findById(jobNo);
         Job job = result.orElseThrow();
         JobDTO dto = modelMapper.map(job, JobDTO.class);
         return dto;
     }
 
-    public PageResponseDTO<JobDTO> jobSearch(PageRequestDTO pageRequestDTO, String jobSearchKeyword){
+    // 검색
+    public PageResponseDTO<JobDTO> jobSearch(PageRequestDTO pageRequestDTO, String searchKeyword) {
         Pageable pageable = PageRequest.of(
-            pageRequestDTO.getPage()-1, //1페이지가 0
-            pageRequestDTO.getSize(),
-            Sort.by("jobNo").descending());
-            System.out.println("====================");
-            System.out.println(pageable);
-         
-            Page<Job> result = jobRepository.findByJobTitleContaining(jobSearchKeyword, pageable);
-            List<JobDTO> dtoList = result.getContent().stream()
-            .map(job-> modelMapper.map(job, JobDTO.class))
-            .collect(Collectors.toList());     
-            
-            long totalCount = result.getTotalElements();
-            PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
-            .dtoList(dtoList)
-            .pageRequestDTO(pageRequestDTO)
-            .totalCount(totalCount)
-            .build();
-            return responseDTO;
+                pageRequestDTO.getPage() - 1, // 1페이지가 0
+                pageRequestDTO.getSize(),
+                Sort.by("jobDeadline").descending());
+        System.out.println("====================");
+        System.out.println(pageable);
+
+        Page<Job> result = jobRepository.findByJobTitleContaining(searchKeyword, pageable);
+        List<JobDTO> dtoList = result.getContent().stream()
+                .map(job -> modelMapper.map(job, JobDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
 
     }
-        
-
-    
 
 }

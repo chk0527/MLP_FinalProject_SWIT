@@ -33,13 +33,11 @@ public class ExamjobController {
     }
 
     @GetMapping("/joblist")
-    public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO, @RequestParam(value="jobSearchKeyword", required = false) String jobSearchKeyword){
-        if(jobSearchKeyword != null){ // 검색어가 있을 경우
-            return service.jobSearch(pageRequestDTO, jobSearchKeyword);
+    public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO, @RequestParam(value="searchKeyword", required = false) String searchKeyword){
+        if(searchKeyword != null){ // 검색어가 있을 경우
+            return service.jobSearch(pageRequestDTO, searchKeyword);
         }
         return service.jobList(pageRequestDTO);
-       
-        
     }
 
     @GetMapping("/exam/{examNo}")
