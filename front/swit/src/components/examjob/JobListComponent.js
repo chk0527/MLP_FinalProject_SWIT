@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getJobList } from "../../api/ExamJobApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PageComponent from "../common/PageComponent";
+import searchIcon from "../../img/search-icon.png";
 
 const initState = {
   dtoList: [],
@@ -19,27 +20,54 @@ const initState = {
 const ListComponent = () => {
   const { page, size, moveToJobList, moveToJobRead } = useCustomMove();
   const [serverData, setServerData] = useState(initState);
+  const [jobSearchKeyword, setJobSearchKeyword] = useState("");
 
-  useEffect(() => {
-    getJobList({ page, size }).then(data => {
+  const handleSearchInputChange = (event) => {
+    setJobSearchKeyword(event.target.value);
+  };
+
+  const handleSearch = () => {
+    setJobSearchKeyword(jobSearchKeyword);
+  };
+
+  const fetchJobList = () => {
+    getJobList({ page, size, jobSearchKeyword: jobSearchKeyword }).then(data => {
       setServerData(data);
     });
-  }, [page, size]);
+  };
+
+
+  // const fetchJobList = () => {
+  //   getJobList({ page, size, jobSearchKeyword }).then(data => {
+  //     setServerData(data);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   getJobList({ page, size }).then(data => {
+  //     setServerData(data);
+  //   });
+  // }, [page, size]);
+
+  useEffect(() => {
+    fetchJobList();
+  }, [page, size, jobSearchKeyword]);
 
   return (
-    <div className="max-w-4xl mx-auto mt-8">
-      <div className="divide-y divide-slate-200">
-        <ul className="divide-y divide-slate-200">
+    <div className="">
+      
+      <div className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100">
           {serverData.dtoList.map(job => (
             <article key={job.jobNo} className="flex items-start space-x-6 p-6">
               <div>
                 <dt className="sr-only">채용/시험</dt>
-                <dd className="px-2.5 py-1 rounded-full bg-[#A4CEF5]/60 text-white">채용</dd>
+                <dd className="px-2.5 rounded-full bg-[#A4CEF5]/[0.6] text-white">채용</dd>
               </div>
 
               <div className="min-w-0 relative flex-auto">
                 <h2 className="font-semibold text-slate-900 truncate pr-20 cursor-pointer" onClick={() => moveToJobRead(job.jobNo)}>{job.jobTitle}</h2>
-                <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium text-slate-500">
+                <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium ">
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="text-sky-500">
                       <span className="sr-only">Star rating</span>
@@ -72,6 +100,21 @@ const ListComponent = () => {
           ))}
         </ul>
       </div>
+
+      {/* =========================검색부분 => 나중에 디쟌 바꾸기=============================== */}
+      <div className="text-xl">
+          <input
+            className="focus:outline-none"
+            type="text"
+            name="jobSearchKeyword"
+            placeholder="이름검색"
+          />
+          <button onClick={handleSearch}>
+            <img className="size-6" src={searchIcon}></img>
+          </button>
+        </div>
+        {/* =========================검색부분 => 나중에 디쟌 바꾸기=============================== */}
+
       <PageComponent serverData={serverData} movePage={moveToJobList} />
     </div>
   );

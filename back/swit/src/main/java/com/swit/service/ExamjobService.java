@@ -91,6 +91,8 @@ public class ExamjobService {
             return responseDTO;
     }
 
+
+
     public ExamDTO examRead(Integer examNo){
         Optional<Exam> result = examRepository.findById(examNo);
         Exam exam = result.orElseThrow();
@@ -105,6 +107,28 @@ public class ExamjobService {
         return dto;
     }
 
+    public PageResponseDTO<JobDTO> jobSearch(PageRequestDTO pageRequestDTO, String jobSearchKeyword){
+        Pageable pageable = PageRequest.of(
+            pageRequestDTO.getPage()-1, //1페이지가 0
+            pageRequestDTO.getSize(),
+            Sort.by("jobNo").descending());
+            System.out.println("====================");
+            System.out.println(pageable);
+         
+            Page<Job> result = jobRepository.findByJobTitleContaining(jobSearchKeyword, pageable);
+            List<JobDTO> dtoList = result.getContent().stream()
+            .map(job-> modelMapper.map(job, JobDTO.class))
+            .collect(Collectors.toList());     
+            
+            long totalCount = result.getTotalElements();
+            PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
+            .dtoList(dtoList)
+            .pageRequestDTO(pageRequestDTO)
+            .totalCount(totalCount)
+            .build();
+            return responseDTO;
+
+    }
         
 
     

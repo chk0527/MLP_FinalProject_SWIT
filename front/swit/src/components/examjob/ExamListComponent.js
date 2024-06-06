@@ -40,7 +40,7 @@ const ListComponent = () => {
               </div>
 
               <div className="min-w-0 relative flex-auto">
-                <h2 className="font-semibold text-slate-900 truncate pr-20" onClick={()=>moveToExamRead(exam.examNo)}> {exam.examTitle}</h2>
+                <h2 className="font-semibold text-slate-900 truncate pr-20 cursor-pointer" onClick={()=>moveToExamRead(exam.examNo)}> {exam.examTitle}</h2>
                 <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="text-sky-500">
@@ -71,7 +71,6 @@ const ListComponent = () => {
                       <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                         <circle cx="1" cy="1" r="1" />
                       </svg>
-                        {/* 여기 데이터넣기 */}
                     </dd>
                   </div>
 
@@ -79,13 +78,7 @@ const ListComponent = () => {
               </div>
             </article>
           )}
-
-
-
-
-
         </ul>
-            
       </div>
       <PageComponent serverData={serverData} movePage={moveToExamList}/>
     </div>

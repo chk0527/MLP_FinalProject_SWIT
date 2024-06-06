@@ -19,6 +19,7 @@ const ExamjobList = () => {
     })
 
     return (
+        
         // <BasicLayout>
 
         //     <div className="text-2xl font-medium ">

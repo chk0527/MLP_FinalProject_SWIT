@@ -9,10 +9,21 @@ export const getExamList = async(pageParam) => {
     return res.data
 }
 
+// export const getJobList = async(pageParam) => {
+//     const {page, size, jobSearchKeyword} = pageParam
+//     const res = await axios.get(`${prefix}/joblist`,{params:{jobSearchKeyword: jobSearchKeyword, page:page, size:size}})
+//     return res.data
+// }
 export const getJobList = async(pageParam) => {
-    const {page, size} = pageParam
-    const res = await axios.get(`${prefix}/joblist`,{params:{page:page, size:size}})
-    return res.data
+    const {page, size, jobSearchKeyword} = pageParam;
+
+    const params = { page: page, size: size };
+    if (jobSearchKeyword) {
+        params.jobSearchKeyword = jobSearchKeyword;
+    }
+
+    const res = await axios.get(`${prefix}/joblist`, { params });
+    return res.data;
 }
 
 export const getExamRead = async(examNo) => {

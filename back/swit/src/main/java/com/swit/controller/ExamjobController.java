@@ -28,20 +28,18 @@ public class ExamjobController {
 
     @GetMapping("/examlist")
     public PageResponseDTO<ExamDTO> ExamList(PageRequestDTO pageRequestDTO){
-        // pageRequestDTO = PageRequestDTO.builder()
-        // .size(5)
-        // .build();
-        log.info(pageRequestDTO);
+        
         return service.examList(pageRequestDTO);
     }
 
     @GetMapping("/joblist")
-    public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO){
-        // pageRequestDTO = PageRequestDTO.builder()
-        // .size(5)
-        // .build();
-        log.info(pageRequestDTO);
+    public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO, @RequestParam(value="jobSearchKeyword", required = false) String jobSearchKeyword){
+        if(jobSearchKeyword != null){ // 검색어가 있을 경우
+            return service.jobSearch(pageRequestDTO, jobSearchKeyword);
+        }
         return service.jobList(pageRequestDTO);
+       
+        
     }
 
     @GetMapping("/exam/{examNo}")
@@ -53,7 +51,7 @@ public class ExamjobController {
     public JobDTO jobRead(@PathVariable(name="jobNo")Integer jobNo) {
         return service.jobRead(jobNo);
     }
-    
-    
+
+
 
 }
