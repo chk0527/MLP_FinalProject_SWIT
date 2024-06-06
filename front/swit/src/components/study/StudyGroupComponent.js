@@ -2,21 +2,27 @@ import { useState, useEffect } from 'react';
 import { getCalendar, addEvent, deleteEvent, updateEvent } from "../../api/CalendarApi";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import DatePicker from "react-datepicker";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import "react-datepicker/dist/react-datepicker.css";
+import "../../css/StudyGroupComponent.css";
 
-//Momonet로 로컬 시간대 설정
+// Momonet로 로컬 시간대 설정
 const localizer = momentLocalizer(moment);
+// 드래그앤드롭 기능이 추가된 Calendar
+const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const StudyGroupComponent = ({studyNo}) => {
+const StudyGroupComponent = ({ studyNo }) => {
   const [events, setEvents] = useState([]); // 캘린더 - 일정 관리
   const [tasks, setTasks] = useState([]); // 캘린더 - 할 일 저장
   const [taskInput, setTaskInput] = useState(''); // 캘린더 - 할 일 입력
   const [chatMessages, setChatMessages] = useState([]); // 신청 - 채팅 화면
   const [chatInput, setChatInput] = useState(''); // 신청 - 채팅 입력창
   const [view, setView] = useState('calendar'); // 뷰 설정(캘린더|신청)
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [modalStartDate, setModalStartDate] = useState('');
-  const [modalEndDate, setModalEndDate] = useState('');
+  const [modalEvent, setModalEvent] = useState(null);
+  const [modalClass, setModalClass] = useState('modal');
 
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
   useEffect(() => {
@@ -38,26 +44,36 @@ const StudyGroupComponent = ({studyNo}) => {
 
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
-    const content = prompt('일정을 새로 작성하세요');
-    if (content) {
-      const newEvent = {
-        startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
-        endDate: moment(end).format('YYYY-MM-DDTHH:mm'),
-        content,
-        completeChk: false // 새로 만든 일정의 기본값은 false
-      };
-      try {
-        const data = await addEvent(studyNo, newEvent);
-        setEvents([...events, {
-          ...data,
-          start: moment(data.startDate).toDate(),
-          end: moment(data.endDate).toDate(),
-        }]);
-      } catch (error) {
-        console.error('일정 추가 중 오류 발생:', error);
-      }
+    const title = getNextTitle();
+    const newEvent = {
+      startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
+      endDate: moment(end).format('YYYY-MM-DDTHH:mm'),
+      title,
+      content: '',  // 초기값은 공백, 모달창에서 나중에 작성
+      completeChk: false // 초기값은 false
+    };
+    try {
+      const data = await addEvent(studyNo, newEvent);
+      setEvents([...events, {
+        ...data,
+        start: moment(data.startDate).toDate(),
+        end: moment(data.endDate).toDate(),
+      }]);
+    } catch (error) {
+      console.error('일정 추가 중 오류 발생:', error);
     }
-  };
+  }
+
+  // 캘린더 - 일정 제목(title) 네이밍 규칙
+  // "일정1", "일정2", "일정3" ... 순으로 생성
+  const getNextTitle = () => {
+    const titles = events.map(event => event.title);
+    for (let i = 1; ; i++) {
+      const nextTitle = `일정${i}`;
+      if (!titles.includes(nextTitle))
+        return nextTitle;
+    }
+  }
 
   // 캘린더 - 일정 삭제
   const handleRemoveEvent = async (eventId) => {
@@ -67,22 +83,85 @@ const StudyGroupComponent = ({studyNo}) => {
     } catch (error) {
       console.error('일정 삭제 중 오류 발생:', error);
     }
-  };
+  }
 
   // 캘린더 - 일정 완료 상태 업데이트
   const handleCompleteEvent = async (eventId, completeChk) => {
     try {
-      const updatedEvent
-        = await updateEvent(studyNo, eventId, completeChk);
+      const updatedEvent = await updateEvent(studyNo, eventId, { completeChk });
       setEvents(events.map(event =>
         event.calendarNo === eventId ? { ...event, completeChk: updatedEvent.completeChk } : event
       ));
     } catch (error) {
       console.error('일정 완료 상태 업데이트 중 오류 발생:', error);
     }
-  };
+  }
 
-  //==============================================================
+  // 캘린더 - 일정 선택 이벤트
+  const handleSelectEvent = (event) => {
+    setModalEvent(event);
+    setModalClass('modal fade-in');
+  }
+
+  // 캘린더 - 모달창 닫기
+  const handleCloseModal = () => {
+    setModalClass('modal fade-out');
+    setTimeout(() => {
+      setModalEvent(null);
+      setModalClass('modal');
+    }, 300); // 0.3초 후에 모달 창 닫음
+  }
+
+  // 캘린더 - 일정 드래그앤드롭 이벤트
+  const handleDragEvent = async ({ event, start, end }) => {
+    const updatedEvent = {
+      ...event,
+      startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
+      endDate: moment(end).format('YYYY-MM-DDTHH:mm')
+    }
+    try {
+      const updatedData = await updateEvent(studyNo, event.calendarNo, updatedEvent);
+      setEvents(events.map(ev => (ev.calendarNo === event.calendarNo ? { ...updatedData, start, end } : ev)));
+    } catch (error) {
+      console.error('일정 이동 중 오류 발생:', error);
+    }
+  }
+
+  // 캘린더 - 일정 바 사이즈 늘리기 이벤트(날짜 범위 변경)
+  const handleResizeEvent = async ({ event, start, end }) => {
+    const updatedEvent = {
+      ...event,
+      startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
+      endDate: moment(end).format('YYYY-MM-DDTHH:mm')
+    }
+    try {
+      const updatedData = await updateEvent(studyNo, event.calendarNo, updatedEvent);
+      setEvents(events.map(ev => (ev.calendarNo === event.calendarNo ? { ...updatedData, start, end } : ev)));
+    } catch (error) {
+      console.error('일정 크기 변경 중 오류 발생:', error);
+    }
+  }
+
+  // 캘린더 - 일정 정보 업데이트(모달창)
+  const handleUpdateEvent = async () => {
+    const updatedEvent = {
+      title: modalEvent.title,
+      content: modalEvent.content,
+      startDate: moment(modalEvent.start).format('YYYY-MM-DDTHH:mm'),
+      endDate: moment(modalEvent.end).format('YYYY-MM-DDTHH:mm'),
+      completeChk: modalEvent.completeChk
+    }
+    try {
+      const updatedData = await updateEvent(studyNo, modalEvent.calendarNo, updatedEvent);
+      setEvents(events.map(event => (event.calendarNo === modalEvent.calendarNo ? { ...updatedData, start: new Date(updatedData.startDate), end: new Date(updatedData.endDate) } : event)));
+      handleCloseModal();
+    } catch (error) {
+      console.error('일정 수정 중 오류 발생:', error);
+    }
+  }
+
+  //----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 
   // 캘린더 - 할 일 추가
   const handleAddTask = (e) => {
@@ -108,6 +187,9 @@ const StudyGroupComponent = ({studyNo}) => {
     setTasks(newTasks);
   };
 
+  //----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+
   // 신청 - 채팅 메시지 전송
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -121,9 +203,7 @@ const StudyGroupComponent = ({studyNo}) => {
   return (
     <div className="p-4 flex flex-col items-center">
       {/*스터디 정보란*/}
-
       <div className="h-1 bg-gray-300 my-4 w-full"></div>
-
       <div className="flex justify-center my-3 w-full">
         <span
           onClick={() => setView('calendar')}
@@ -145,14 +225,15 @@ const StudyGroupComponent = ({studyNo}) => {
         <div className="flex w-full max-w-screen-lg">
           <div className="w-7/12">
             <div className="my-4">
-              <Calendar
+              <DragAndDropCalendar
                 selectable
+                resizable
                 localizer={localizer}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
-                titleAccessor="content"
-                style={{ height: 600 }}
+                titleAccessor="title"
+                style={{ height: 800 }}
                 messages={{
                   month: '월',
                   week: '주',
@@ -166,7 +247,10 @@ const StudyGroupComponent = ({studyNo}) => {
                   event: '이벤트',
                   showMore: (total) => `+${total} 더 보기`,
                 }}
-                onSelectSlot={handleCreateEvent} // 캘린더의 빈 슬롯을 클릭하면 handleCreateEvent 함수 호출
+                onSelectSlot={handleCreateEvent} // 캘린더의 빈 슬롯 클릭 이벤트
+                onSelectEvent={handleSelectEvent}
+                onEventDrop={handleDragEvent}
+                onEventResize={handleResizeEvent}
               />
             </div>
           </div>
@@ -184,7 +268,7 @@ const StudyGroupComponent = ({studyNo}) => {
                       className="mr-2"
                     />
                     <span className={event.completeChk ? 'line-through' : ''}>
-                      {event.content} - {moment(event.startDate).format('YYYY년 MM월 DD일 HH:mm')}
+                      {event.title} - {moment(event.startDate).format('YYYY년 MM월 DD일 HH:mm')}
                     </span>
                     {/*일정 제거 이벤트*/}
                     <button onClick={() => handleRemoveEvent(event.calendarNo)} className="ml-auto bg-red-500 text-white p-1 rounded-lg">X</button>
@@ -220,6 +304,48 @@ const StudyGroupComponent = ({studyNo}) => {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 캘린더 - 일정 모달창 */}
+      {modalEvent && (
+        <div className={modalClass}>
+          <div className="modal-content">
+            <span className="close" onClick={handleCloseModal}>&times;</span>
+            <label>제목:</label>
+            <input
+              type="text"
+              value={modalEvent.title}
+              onChange={(e) => setModalEvent({ ...modalEvent, title: e.target.value })}
+              className="input-title"
+            />
+            <label>내용:</label>
+            <textarea
+              value={modalEvent.content}
+              onChange={(e) => setModalEvent({ ...modalEvent, content: e.target.value })}
+              className="input-content"
+            />
+            <label>시작 날짜:</label>
+            <DatePicker
+              selected={modalEvent.start}
+              onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
+              showTimeSelect
+              dateFormat="Pp"
+              className="input-date"
+            />
+            <label>종료 날짜:</label>
+            <DatePicker
+              selected={modalEvent.end}
+              onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
+              showTimeSelect
+              dateFormat="Pp"
+              className="input-date"
+            />
+            <div className="modal-buttons">
+            <button onClick={() => handleRemoveEvent(modalEvent.calendarNo)}>삭제</button>
+            <button onClick={handleUpdateEvent} className="button-save">저장</button>
             </div>
           </div>
         </div>

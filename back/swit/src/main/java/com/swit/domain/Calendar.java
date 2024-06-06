@@ -2,6 +2,9 @@ package com.swit.domain;
 
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,10 +32,15 @@ public class Calendar {
     //Study 테이블에서 studyID 외래키 조인
     @ManyToOne
     @JoinColumn(name = "studyNo", nullable = false)
-    private Study study;
+    private Study study;  
 
+    @Column(length = 8000)
     private String content;
+
+    private String title;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endDate;
     private boolean completeChk;    //일정 완료 여부
 }

@@ -8,7 +8,7 @@ export const getCalendar = async (studyNo) => {
         const res = await axios.get(`${prefix}/${studyNo}`);
         return res.data;
     } catch (error) {
-        console.error('Error fetching calendar data:', error);
+        console.error('해당 스터디에는 일정(캘린더)이 하나도 없습니다.');
         return []; // 스터디에 캘린더 일정이 아예 없으면 [] 반환
     }
 }
@@ -25,8 +25,9 @@ export const deleteEvent = async (studyNo, eventId) => {
     return res.data;
 }
 
-// 캘린더(일정) 완료 상태 업데이트
-export const updateEvent = async (studyNo, eventId, completeChk) => {
-    const res = await axios.patch(`${prefix}/${studyNo}/${eventId}`, { completeChk });
+// 캘린더(일정) 업데이트
+// 데이터들이 수정된 일정 객체를 반환
+export const updateEvent = async (studyNo, eventId, updatedEvent) => {
+    const res = await axios.patch(`${prefix}/${studyNo}/${eventId}`, updatedEvent);
     return res.data;
 }
