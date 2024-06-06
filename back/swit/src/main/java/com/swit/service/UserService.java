@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +25,15 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class UserService {
     // 자동 주입 대상은 final로 설정
+    @Autowired
     private final ModelMapper modelMapper;
+    @Autowired
     private final UserRepository userRepository;
 
     // 프로필 정보 조회(마이페이지)
-    public UserDTO get(String user_id) {
-        Optional<User> result = userRepository.findById(user_id);
+    public UserDTO get(String userId) {
+        // Optional<UserDTO> result = userRepository.findById(userId);
+        Optional<User> result = userRepository.findById(userId);
         User user = result.orElseThrow();
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         return userDTO;
@@ -37,49 +41,49 @@ public class UserService {
 
     // 프로필 수정(모달창)
     public void modify(UserDTO userDTO, MultipartFile userImage) throws IOException {
-        Optional<User> result = userRepository.findById(userDTO.getUser_id());
+        Optional<User> result = userRepository.findById(userDTO.getUserId());
         User user = result.orElseThrow();
-        user.setUser_name(userDTO.getUser_name());
-        user.setUser_nick(userDTO.getUser_nick());
-        user.setUser_phone(userDTO.getUser_phone());
-        user.setUser_email(userDTO.getUser_email());
+        user.setUserName(userDTO.getUserName());
+        user.setUserNick(userDTO.getUserNick());
+        user.setUserPhone(userDTO.getUserPhone());
+        user.setUserEmail(userDTO.getUserEmail());
         userRepository.save(user);
     }
 
     // 프로필 이미지 수정(모달창)
-    public User modifyImage(String user_id, MultipartFile user_image) throws IOException {
-        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
+    public User modifyImage(String userId, MultipartFile userImage) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         
         // 기존 이미지 파일 삭제
-        String oldImageName = user.getUser_image();
-        log.info(user.getUser_name() + "님의 현재 이미지: " + oldImageName);
+        String oldImageName = user.getUserImage();
+        log.info(user.getUserName() + "님의 현재 이미지: " + oldImageName);
         if (oldImageName != null) {
             removeOldImage(oldImageName);
         }
         // 새로운 이미지 파일 저장
-        String imageName = saveUserImage(user_id, user_image);
-        user.setUser_image(imageName);
+        String imageName = saveUserImage(userId, userImage);
+        user.setUserImage(imageName);
         log.info("저장된 새 이미지: " + imageName);
 
         return userRepository.save(user);
     }
 
     // upload 폴더에 이미지 저장 메서드
-    public String saveUserImage(String user_id, MultipartFile user_image) throws IOException {
-        String originalFileName = user_image.getOriginalFilename(); // 업로드할 이미지 원래 파일명
-        String newFileName = user_id + "_" + originalFileName; // db에 담을 새로운 파일명(유저id+원래 파일명)
+    public String saveUserImage(String userId, MultipartFile userImage) throws IOException {
+        String originalFileName = userImage.getOriginalFilename(); // 업로드할 이미지 원래 파일명
+        String newFileName = userId + "_" + originalFileName; // db에 담을 새로운 파일명(유저id+원래 파일명)
         Path imagePath = Paths.get("upload", newFileName); // upload 폴더 경로 지정
         Files.createDirectories(imagePath.getParent());
-        Files.write(imagePath, user_image.getBytes());
+        Files.write(imagePath, userImage.getBytes());
         return newFileName;
     }
 
     // 사용자 프로필 이미지 파일명 조회 메서드
-    public String getUserImageName(String user_id) {
+    public String getUserImageName(String userId) {
         User user = userRepository
-                .findById(user_id)
+                .findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getUser_image();
+        return user.getUserImage();
     }
 
     // upload 폴더의 기존 이미지 파일 삭제
@@ -92,11 +96,11 @@ public class UserService {
         }
     }
     
-    // 로그인 확인 처리(소셜 로그인)
-	public UserDTO userCheck(String name, String email) {
-        Optional<User> result = userRepository.userCheck(name, email);
-        User user = result.orElseThrow();
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-		return userDTO;
-	}
+//     // 로그인 확인 처리(소셜 로그인)
+// 	public UserDTO userCheck(String name, String email) {
+//         Optional<UserDTO> result = userRepository.userCheck(name, email);
+//         UserDTO user = result.orElseThrow();
+//         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+// 		return userDTO;
+// 	}
 }

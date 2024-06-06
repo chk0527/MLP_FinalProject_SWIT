@@ -37,6 +37,7 @@ import lombok.extern.log4j.Log4j2;
 import com.swit.dto.UserDTO;
 import com.swit.service.UserService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 @RestController
@@ -44,6 +45,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Log4j2
 @RequestMapping("/api/login")
 public class LoginController {
+	@Autowired
     private final UserService userService;
 
 	@Value("${api.naver.clientKey}")
@@ -73,15 +75,15 @@ public class LoginController {
 	@PostMapping("/")
     public Map<String, String> postOne(@RequestBody UserDTO userDTO, HttpSession session) {
 		// log.info("Login --------- user_id, user_password : "+ userDTO.getUser_id() + userDTO.getUser_password());
-		String  user_id    = userDTO.getUser_id();
+		String  user_id    = userDTO.getUserId();
 		
 		UserDTO searchUser = new UserDTO();
-        searchUser = userService.get(userDTO.getUser_id());
+        searchUser = userService.get(userDTO.getUserId());
 		
-		if (userDTO.getUser_id().equalsIgnoreCase(searchUser.getUser_id())
-		&&  userDTO.getUser_password().equals(searchUser.getUser_password())) {
-			session.setAttribute("userId", searchUser.getUser_id());
-			session.setAttribute("userEmail", searchUser.getUser_email());
+		if (userDTO.getUserId().equalsIgnoreCase(searchUser.getUserId())
+		&&  userDTO.getUserPassword().equals(searchUser.getUserPassword())) {
+			session.setAttribute("userId", searchUser.getUserId());
+			session.setAttribute("userEmail", searchUser.getUserEmail());
 
 			log.info("UserDTO : "+ searchUser);
 
@@ -185,7 +187,8 @@ public class LoginController {
 		  
             profile = getProfile(access_token);
 		  
-            user = userService.userCheck((String)profile.get("name"), (String)profile.get("email"));
+			// KYW TODO
+            //user = userService.userCheck((String)profile.get("name"), (String)profile.get("email")); 
 	      
             br.close();
 	        if(responseCode==200) {

@@ -34,11 +34,11 @@ public class UserRepositoryTest {
     public void testInsert() {
         for (int i = 1; i <= 100; i++) {
             User user = User.builder()
-                    .user_id("user" + i).user_email("user@swit" + i + ".com")
-                    .user_name("김철수" + i).user_password("1234")
-                    .user_phone("010-1234-1234").user_nick("슈퍼맨")
-                    .user_sns_connect("").user_delete_chk(false)
-                    .user_create_date(LocalDateTime.now())
+                    .userId("user" + i).userEmail("user@swit" + i + ".com")
+                    .userName("김철수" + i).userPassword("1234")
+                    .userPhone("010-1234-1234").userNick("슈퍼맨")
+                    .userSnsConnect("").userDeleteChk(false)
+                    .userCreateDate(LocalDateTime.now())
                     .build();
 
             userRepository.save(user);
@@ -62,7 +62,7 @@ public class UserRepositoryTest {
         String user_id = "user1";
         Optional<User> result = userRepository.findById(user_id);
         User user = result.orElseThrow();
-        user.setUser_name("아조나스1");
+        user.setUserName("아조나스1");
         log.info(user);
         userRepository.save(user);
     }

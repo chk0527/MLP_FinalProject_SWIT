@@ -43,11 +43,11 @@ public class UserController {
    
 
     // 아이디로 조회한 유저 데이터 수정
-    @PutMapping("/{user_id}")
+    @PutMapping("/{userId}")
     public Map<String, String> modify(
-            @PathVariable(name = "user_id") String user_id,
+            @PathVariable(name = "userId") String userId,
             @RequestBody UserDTO userDTO) {
-        userDTO.setUser_id(user_id);
+        userDTO.setUserId(userId);
         log.info("Modify : " + userDTO);
         try {
             service.modify(userDTO, null);
@@ -62,12 +62,12 @@ public class UserController {
 
     // 프로필 이미지 업로드 및 수정
     // !! 이미 사용자의 프사가 폴더에 있으면, 그걸 지우고 새로 추가
-    @PostMapping("/{user_id}/image")
+    @PostMapping("/{userId}/image")
     public ResponseEntity<User> modifyImage(
-            @PathVariable(name = "user_id") String user_id,
-            @RequestParam("user_image") MultipartFile user_image) {
+            @PathVariable(name = "userId") String userId,
+            @RequestParam("userImage") MultipartFile userImage) {
         try {
-            User updatedUser = service.modifyImage(user_id, user_image);
+            User updatedUser = service.modifyImage(userId, userImage);
             return ResponseEntity.ok(updatedUser);
         } catch (IOException e) {
             log.error("Error updating profile image", e);
@@ -76,11 +76,11 @@ public class UserController {
     }
 
     // 이미지 파일 조회하기
-    @GetMapping("/{user_id}/image")
+    @GetMapping("/{userId}/image")
     public ResponseEntity<Resource> getImage(
-            @PathVariable(name = "user_id") String user_id) throws IOException {
+            @PathVariable(name = "userId") String userId) throws IOException {
         try {
-            String fileName = service.getUserImageName(user_id);
+            String fileName = service.getUserImageName(userId);
             Path path = Paths.get("upload", fileName);
 
             if (Files.exists(path)) {
