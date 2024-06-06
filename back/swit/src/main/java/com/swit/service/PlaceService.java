@@ -28,7 +28,7 @@ public class PlaceService {
         private final ModelMapper modelMapper;
         private final PlaceRepository placeRepository;
 
-        //place 하나
+        // place 하나
         public PlaceDTO getPlace(Long place_no) {
                 Optional<Place> result = placeRepository.findById(place_no);
                 Place place = result.orElseThrow();
@@ -36,7 +36,7 @@ public class PlaceService {
                 return placeDto;
         }
 
-        //place 전체 목록
+        // place 전체 목록
         public PlacePageResponseDTO<PlaceDTO> getPlaceList(PlacePageRequestDTO pageRequestDTO) {
                 Pageable pageable = PageRequest.of(
                                 pageRequestDTO.getPlacePage() - 1, // 1페이지가 0
@@ -54,5 +54,28 @@ public class PlaceService {
                                 .totalCount(totalCount)
                                 .build();
                 return responseDTO;
+        }
+
+        // 이름or지역 검색
+        public PlacePageResponseDTO<PlaceDTO> getPlaceSearch(String placeName,
+                        String placeAddr, PlacePageRequestDTO pageRequestDTO) {
+                Pageable pageable = PageRequest.of(
+                                pageRequestDTO.getPlacePage() - 1, // 1페이지가 0
+                                pageRequestDTO.getPlaceSize());
+
+                Page<Place> result = placeRepository.findByPlaceNameContainingAndPlaceAddrContaining(placeName,
+                                placeAddr, pageable);
+                List<PlaceDTO> placeList = result.getContent().stream()
+                                .map(Place -> modelMapper.map(Place, PlaceDTO.class))
+                                .collect(Collectors.toList());
+
+                long totalCount = result.getTotalElements();
+                PlacePageResponseDTO<PlaceDTO> responseDTO = PlacePageResponseDTO.<PlaceDTO>withAll()
+                                .dtoList(placeList)
+                                .pageRequestDTO(pageRequestDTO)
+                                .totalCount(totalCount)
+                                .build();
+                return responseDTO;
+
         }
 }
