@@ -13,8 +13,7 @@ const PlaceDetail = () => {
 
   return (
     <BasicLayout>
-      <div className="text-5xl pb-16 font-blackHans">
-        <div>스터디 {placeNo}</div>
+      <div className="text-5xl font-buqueque flex">
       </div>
       <PlaceDetailComponent placeNo={placeNo} />
     </BasicLayout>
