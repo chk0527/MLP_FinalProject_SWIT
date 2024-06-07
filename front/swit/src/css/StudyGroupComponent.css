@@ -46,7 +46,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 24px;
+  font-size: 48px;
   cursor: pointer;
 }
 
@@ -56,6 +56,7 @@ button {
   font-size: 16px;
   cursor: pointer;
   border: none;
+  border-radius: 12px; /* 둥근 모서리 */
 }
 
 .fade-in {
@@ -77,8 +78,9 @@ button {
 }
 
 .input-content {
-  height: 100px;
+  height: 80%;
   resize: none;
+  padding: 10px;
 }
 
 .modal-buttons {

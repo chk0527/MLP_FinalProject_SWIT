@@ -15,14 +15,14 @@ const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 const StudyGroupComponent = ({ studyNo }) => {
-  const [events, setEvents] = useState([]); // 캘린더 - 일정 관리
-  const [tasks, setTasks] = useState([]); // 캘린더 - 할 일 저장
-  const [taskInput, setTaskInput] = useState(''); // 캘린더 - 할 일 입력
-  const [chatMessages, setChatMessages] = useState([]); // 신청 - 채팅 화면
-  const [chatInput, setChatInput] = useState(''); // 신청 - 채팅 입력창
-  const [view, setView] = useState('calendar'); // 뷰 설정(캘린더|신청)
-  const [modalEvent, setModalEvent] = useState(null);
-  const [modalClass, setModalClass] = useState('modal');
+  const [events, setEvents] = useState([]);               // 캘린더 - 일정 관리
+  const [tasks, setTasks] = useState([]);                 // 캘린더 - 할 일 저장
+  const [taskInput, setTaskInput] = useState('');         // 캘린더 - 할 일 입력
+  const [chatMessages, setChatMessages] = useState([]);   // 신청 - 채팅 화면
+  const [chatInput, setChatInput] = useState('');         // 신청 - 채팅 입력창
+  const [view, setView] = useState('calendar');           // 뷰 설정(캘린더|신청)
+  const [modalEvent, setModalEvent] = useState(null);     // 모달창 이벤트 설정
+  const [modalClass, setModalClass] = useState('modal');  // 모달창 css 클래스값 설정
 
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
   useEffect(() => {
@@ -321,13 +321,7 @@ const StudyGroupComponent = ({ studyNo }) => {
               onChange={(e) => setModalEvent({ ...modalEvent, title: e.target.value })}
               className="input-title"
             />
-            <label>내용:</label>
-            <textarea
-              value={modalEvent.content}
-              onChange={(e) => setModalEvent({ ...modalEvent, content: e.target.value })}
-              className="input-content"
-            />
-            <label>시작 날짜:</label>
+            <label>시작:</label>
             <DatePicker
               selected={modalEvent.start}
               onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
@@ -335,7 +329,7 @@ const StudyGroupComponent = ({ studyNo }) => {
               dateFormat="Pp"
               className="input-date"
             />
-            <label>종료 날짜:</label>
+            <label>종료:</label>
             <DatePicker
               selected={modalEvent.end}
               onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
@@ -343,9 +337,15 @@ const StudyGroupComponent = ({ studyNo }) => {
               dateFormat="Pp"
               className="input-date"
             />
+            <label>내용:</label>
+            <textarea
+              value={modalEvent.content}
+              onChange={(e) => setModalEvent({ ...modalEvent, content: e.target.value })}
+              className="input-content"
+            />
             <div className="modal-buttons">
-            <button onClick={() => handleRemoveEvent(modalEvent.calendarNo)}>삭제</button>
-            <button onClick={handleUpdateEvent} className="button-save">저장</button>
+              <button onClick={() => handleRemoveEvent(modalEvent.calendarNo)} className="button-delete">삭제</button>
+              <button onClick={handleUpdateEvent} className="button-save">저장</button>
             </div>
           </div>
         </div>
