@@ -7,7 +7,8 @@ const initState = {
 }
 
 const initStateNaver = { 
-    naverURL:''
+    naverURL:'',
+    kakaoURL:''
 }
 
 const LoginComponent =() => {
