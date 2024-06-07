@@ -67,7 +67,8 @@ public class UserRepositoryTest {
         userRepository.save(user);
     }
     
-
+    // 시큐리티 적용 후 jpa/JPQL 생성이 되지 않아 주석처리함
+    // 다른 방법으로 처리 필요
     // @Test
     // public void testPaging(){
     //     // User 엔티티에서 "user_id"의 실제 필드명은 "userId"임
