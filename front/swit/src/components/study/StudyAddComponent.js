@@ -37,15 +37,33 @@ const StudyAddComponent = () => {
     const handleClickAdd = () => {
         study['studyStartDate'] = startDate
         study['studyEndDate'] = endDate
-        
+
         const files = uploadRef.current.files;
         const formData = new FormData();
-    
-        for (let i = 0; i < files.length; i++) {
-          formData.append("files", files[i]);
-        }
 
-        postAdd(study).then(result => {
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+        }
+        
+        console.log(files[1])
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        
+        formData.append("studyTitle", study.studyTitle);
+        formData.append("studyContent", study.studyContent);
+        formData.append("studyType", study.studyType);
+        // formData.append("studyStartDate", study.studyStartDate);
+        // formData.append("studyEndDate", study.studyEndDate);
+        formData.append("studyStartDate", formatDate(startDate));
+        formData.append("studyEndDate", formatDate(endDate));
+        formData.append("studyHeadcount", study.studyHeadcount);
+        formData.append("studyOnline", study.studyOnline);
+        formData.append("studySubject", study.studySubject);
+        formData.append("studyComm", study.studyComm);
+        formData.append("studyLink", study.studyLink);
+        formData.append("country", study.country);
+
+        postAdd(formData).then(result => {
             console.log("추가 실행")
             setResult(result.studyNo)
             setStudy({ ...initState })
