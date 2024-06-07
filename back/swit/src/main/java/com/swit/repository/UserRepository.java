@@ -1,10 +1,12 @@
 package com.swit.repository;
 
-// import java.util.Optional;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 // import org.springframework.data.jpa.repository.Query;
 // import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.swit.domain.User;
 // import com.swit.dto.UserDTO;
@@ -12,7 +14,7 @@ import com.swit.domain.User;
 
 
 
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
     // //user_ID의 마이페이지 프로필 정보 표시
     // @Query("select u from User u where u.user_id = :user_id")
@@ -28,9 +30,13 @@ public interface UserRepository extends JpaRepository<User, String> {
     //username을 받아 DB 테이블에서 회원을 조회하는 메소드 작성
     User findByUserName(String userName);
 
-    //user_email로 회원정보 조회 - 소셜로그인시 확인(step 01)
-    // @Query("select user_id, user_name, user_password, user_email from User where user_name= :user_name and user_email = :user_email")
-    // Optional<User> userCheck(@Param("user_name")  String user_name
-    //                         ,@Param("user_email") String user_email);
+    Optional<User> findByUserId(String userId);
+
+    // 네이버 로그인 체크
+    Optional<User> findByUserNameAndUserEmail(String userName, String userEmail);
+    // @Query("SELECT u FROM User u WHERE u.userName = :userName AND u.userEmail = :userEmail")
+    // Optional<User> findByUserNameAndUserEmail(@Param("userName") String userName, @Param("userEmail") String userEmail);
+    // 카카오 로그인 체크
+    // Optional<User> findByUserNicKANDUserSnsConnect(String userNick, String userSnsConnect);
 
 }

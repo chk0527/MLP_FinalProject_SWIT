@@ -28,6 +28,8 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id                                         // 기본 키
     @Column(unique = true, nullable = false)
+    private Integer  userNo;
+    @Column(unique = true, nullable = true)
     private String  userId;
     private String  userEmail;
     private String  userName;
@@ -36,13 +38,11 @@ public class User {
     private String  userNick;
     private String  userSnsConnect;
     private String  userImage;
-    
+
     @CreatedDate                                    // Entity 생성시 일자 자동 저장
-    //@Column(updatable = false,nullable = false)   // update 안되게, null 안되게 
-    @Column(updatable = false)                      // update 안되게
     private LocalDateTime userCreateDate;
-    private boolean userDeleteChk;
-    private Date    userDeleteDate;
+    private boolean userDeleteChk;                  // true(1) : 정상 , false(0) : 탈퇴
+    private LocalDateTime userDeleteDate;
 
     private String  userRole;
 }

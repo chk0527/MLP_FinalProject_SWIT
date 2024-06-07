@@ -50,31 +50,31 @@ public class UserRepositoryTest {
     @Transactional
     @Test
     public void testRead() {
-        String user_id = "user1";
-        Optional<User> result = userRepository.findById(user_id);
+        String userId = "user1";
+        Optional<User> result = userRepository.findByUserId(userId);
         User user = result.orElseThrow();
         log.info(user);
     }
 
-    // //프로필 정보 수정
+    //프로필 정보 수정
     @Test
     public void testModify() {
-        String user_id = "user1";
-        Optional<User> result = userRepository.findById(user_id);
+        String userId = "user1";
+        Optional<User> result = userRepository.findByUserId(userId);
         User user = result.orElseThrow();
         user.setUserName("아조나스1");
         log.info(user);
         userRepository.save(user);
     }
     
-    // Security 적용 후 Spring boot 기동시 에러가 납니다.
-    // 다른 방법으로 구현해야 합니다.
+
     // @Test
     // public void testPaging(){
     //     // User 엔티티에서 "user_id"의 실제 필드명은 "userId"임
     //     // Sort.by()에서 그대로 "user_id"로 치면 인식 X
-    //     Pageable pageable = PageRequest.of(0, 10, Sort.by("user_id").descending());
-    //     Page<User> result = adminRepository.findAllUsers(pageable);
+    //     Pageable pageable = PageRequest.of(0, 10, Sort.by("userNo").descending());
+    //     // Page<User> result = adminRepository.findAllUsers(pageable);
+    //     Page<User> result = adminRepository.findByOrderByUserNoAsc(pageable);
     //     log.info(result.getTotalElements());
     //     result.getContent().stream().forEach(user ->log.info(user));
     // }

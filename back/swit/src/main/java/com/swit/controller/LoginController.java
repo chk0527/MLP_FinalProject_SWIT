@@ -185,8 +185,7 @@ public class LoginController {
 		  
             profile = getProfile(access_token);
 		  
-			// KYW TODO
-            //user = userService.userCheck((String)profile.get("name"), (String)profile.get("email")); 
+			user = userService.userCheck((String)profile.get("userName"), (String)profile.get("userEmail")); 
 	      
             br.close();
 	        if(responseCode==200) {
@@ -221,8 +220,8 @@ public class LoginController {
 	    JSONObject responseBody = get(apiURL,requestHeaders);
 
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", responseBody.getString("name"));
-		map.put("email", responseBody.getString("email"));
+		map.put("userName", responseBody.getString("userName"));
+		map.put("userEmail", responseBody.getString("userEmail"));
 		return map;
 		
 //	    System.out.println(responseBody);
