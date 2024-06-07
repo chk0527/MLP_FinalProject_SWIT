@@ -5,14 +5,13 @@ import { useCallback } from "react";
 import ExamReadComponent from "../../components/examjob/ExamReadComponent";
 import { createRoot } from "react-dom/client";
 const ExamRead = () => {
-    const {examNo} = useParams()
+    const { examNo } = useParams()
     const navigate = useNavigate()
 
     return (
-        <div>
+        <BasicLayout>
             <ExamReadComponent examNo={examNo}></ExamReadComponent>
-        </div>
-       
+        </BasicLayout>
     )
 }
 

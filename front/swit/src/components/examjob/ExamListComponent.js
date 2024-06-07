@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { getExamList } from "../../api/ExamJobApi"
 import useCustomMove from "../../hooks/useCustomMove"
 import PageComponent from "../common/PageComponent";
+import searchIcon from "../../img/search-icon.png";
+import { useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 
 
 const initState = {
@@ -21,6 +24,16 @@ const initState = {
 const ListComponent = () => {
   const { page, size, moveToExamList, moveToExamRead } = useCustomMove()
   const [serverData, setServerData] = useState(initState)
+
+  const navigate = useNavigate()
+
+  const handleClickExamList = useCallback(()=>{
+      navigate({pathname:'../../exam'})
+  })
+  const handleClickJobList= useCallback(()=>{
+      navigate({pathname:'../../job'})
+  })
+
   useEffect(() => {
     getExamList({page, size}).then(data => {
       console.log(data)
@@ -30,17 +43,30 @@ const ListComponent = () => {
 
   return (
     <div>
-      <div className="divide-y divide-slate-100">
+      <div className="">
+        {/* 채용/시험/검색 */}
+      <div className="flex justify-between items-center border-b-2 pb-4 mb-4">
+          <div className="flex space-x-8">
+            <h1 className="text-2xl font-bold hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickExamList}>시험</h1>
+            <h2 className="text-xl text-gray-500 hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickJobList}>채용</h2>
+          </div>
+         
+        </div>
+         {/* 채용/시험/검색  끝*/}
         <ul className="divide-y divide-slate-100">
+
+          
+
           {serverData.dtoList.map(exam =>
             <article className="flex items-start space-x-6 p-6">
-              <div>
+              {/* <div>
                 <dt className="sr-only">채용/시험</dt>
-                <dd className="px-2.5 rounded-full bg-[#A4CEF5]/[0.6] text-white">시험</dd>
-              </div>
+                <dd className="px-2.5 rounded-full text-white">시험</dd>
+              </div> */}
 
               <div className="min-w-0 relative flex-auto">
                 <h2 className="font-semibold text-slate-900 truncate pr-20 cursor-pointer" onClick={()=>moveToExamRead(exam.examNo)}> {exam.examTitle}</h2>
+                
                 <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="text-sky-500">
@@ -74,11 +100,29 @@ const ListComponent = () => {
                     </dd>
                   </div>
 
+
+                  {/* 간격 넓히려고 넣은거 => 수정필요 */}
+                  <div>
+                <dd className="px-2.5 rounded-full text-white">시험</dd>
+              </div>
+              <div>
+                <dd className="px-2.5 rounded-full text-white">시험</dd>
+              </div>
+              <div>
+                <dd className="px-2.5 rounded-full text-white">시험</dd>
+              </div>
+               {/* 간격 넓히려고 넣은거 => 수정필요 */}
+
                 </dl>
+
+                
+
+              
               </div>
             </article>
           )}
         </ul>
+        <div className="border-t-2 border-slate-200 mt-4"></div>
       </div>
       <PageComponent serverData={serverData} movePage={moveToExamList}/>
     </div>
