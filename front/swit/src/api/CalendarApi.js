@@ -15,7 +15,7 @@ export const getCalendar = async (studyNo) => {
 
 // 캘린더(일정) 새로 추가
 export const addEvent = async (studyNo, event) => {
-    const res = await axios.post(`${prefix}/${studyNo}`, event);
+    const res = await axios.post(`${prefix}/${studyNo}`, { ...event, studyNo });
     return res.data;
 }
 

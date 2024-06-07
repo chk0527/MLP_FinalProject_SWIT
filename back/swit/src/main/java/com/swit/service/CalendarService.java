@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swit.domain.Calendar;
+import com.swit.domain.Study;
 import com.swit.dto.CalendarDTO;
 import com.swit.repository.CalendarRepository;
+import com.swit.repository.StudyRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +28,7 @@ import lombok.extern.log4j.Log4j2;
 public class CalendarService {
     private final ModelMapper modelMapper;
     private final CalendarRepository calendarRepository;
+    private final StudyRepository studyRepository;
 
     // 해당 스터디의 모든 일정(캘린더) 가져오기
     public List<CalendarDTO> getAllEvents(Integer studyNo) {
@@ -42,6 +45,10 @@ public class CalendarService {
     // 해당 스터디에서 일정(캘린더) 새로 추가
     public CalendarDTO addEvent(CalendarDTO calendarDTO) {
         Calendar calendar = modelMapper.map(calendarDTO, Calendar.class);
+        Study study = studyRepository.findById(calendarDTO.getStudyNo())
+                .orElseThrow(() -> new NoSuchElementException("Study not found"));
+        
+        calendar.setStudy(study);
         calendar = calendarRepository.save(calendar);
         CalendarDTO dto = modelMapper.map(calendar, CalendarDTO.class);
         return dto;
