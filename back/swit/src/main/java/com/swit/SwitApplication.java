@@ -14,8 +14,8 @@ public class SwitApplication {
   public static void main(String[] args) {
     SpringApplication.run(SwitApplication.class, args);
     User user = new User();
-    user.setUser_id("domain_test_name2");
-    log.info("sample domain test" + user.getUser_id());
+    user.setUserId("domain_test_name2");
+    log.info("sample domain test" + user.getUserId());
   }
 
 }

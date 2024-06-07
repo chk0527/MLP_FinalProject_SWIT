@@ -37,6 +37,7 @@ import lombok.extern.log4j.Log4j2;
 import com.swit.dto.UserDTO;
 import com.swit.service.UserService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 @RestController
@@ -44,6 +45,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Log4j2
 @RequestMapping("/api/login")
 public class LoginController {
+	@Autowired
     private final UserService userService;
 
 	@Value("${api.naver.clientKey}")
@@ -52,32 +54,34 @@ public class LoginController {
     private String naverClientSecret;
     @Value("${api.naver.redirectUrl}")
     private String naverRedirectUrl;
+
+	@Value("${api.kakao.clientKey}")
+    private String kakaoClientKey;
+	@Value("${api.kakao.redirectUrl}")
+	private String kakaoRedirectUrl;
 	
 
     @GetMapping("/")
 	public Map<String, String> get(HttpSession session) {
 		log.info("login --------- start");
-		Map<String, String> map = new HashMap<>();
-		
-		map = naverLogin(session);  
-		// kakaoLogin(session);
 
-		return map;
+		String naverURL = naverLogin(session);  
+		String kakaoURL = kakaoLogin(session);  
+		
+		return Map.of("naverURL", naverURL, "kakaoURL", kakaoURL);
 
     }
 
 	@PostMapping("/")
     public Map<String, String> postOne(@RequestBody UserDTO userDTO, HttpSession session) {
-		log.info("Login --------- user_id, user_password : "+ userDTO.getUser_id() + userDTO.getUser_password());
-		String  user_id    = userDTO.getUser_id();
+		// log.info("Login --------- user_id, user_password : "+ userDTO.getUser_id() + userDTO.getUser_password());
+		String  user_id    = userDTO.getUserId();
 		
 		UserDTO searchUser = new UserDTO();
-        searchUser = userService.get(userDTO.getUser_id());
+        searchUser = userService.get(userDTO.getUserId());
 		
-		if (userDTO.getUser_id().equalsIgnoreCase(searchUser.getUser_id())
-		&&  userDTO.getUser_password().equals(searchUser.getUser_password())) {
-			session.setAttribute("userId", searchUser.getUser_id());
-			session.setAttribute("userEmail", searchUser.getUser_email());
+		if (userDTO.getUserId().equalsIgnoreCase(searchUser.getUserId())
+		&&  userDTO.getUserPassword().equals(searchUser.getUserPassword())) {
 
 			log.info("UserDTO : "+ searchUser);
 
@@ -86,7 +90,7 @@ public class LoginController {
         return Map.of("user_id", user_id);
     }
 
-    public  Map<String, String> naverLogin(HttpSession session) {
+    public  String naverLogin(HttpSession session) {
 		log.info("naver --------- start");
 		String naverURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
 		try {
@@ -107,7 +111,31 @@ public class LoginController {
 		}
 		log.info("naverURL : ["+ naverURL + "]");
 
-		return Map.of("naverURL", naverURL);
+		return naverURL;
+	}
+
+	public  String kakaoLogin(HttpSession session) {
+		log.info("kakao --------- start");
+		String kakaoURL = "https://kauth.kakao.com/oauth/authorize?response_type=code";
+		try {
+		    String clientId = kakaoClientKey;
+			String url = kakaoRedirectUrl;
+            String redirectURI = URLEncoder.encode(url, "UTF-8");
+
+		    // SecureRandom random = new SecureRandom();
+		    // String state = new BigInteger(130, random).toString();
+		    
+		    kakaoURL += "&client_id=" + clientId;
+		    kakaoURL += "&redirect_uri=" + redirectURI;
+		    // kakaoURL += "&state=" + state;
+		    // session.setAttribute("state", state);
+		    
+		} catch (Exception e) {
+		      System.out.println(e);
+		}
+		log.info("kakaoURL : ["+ kakaoURL + "]");
+
+		return kakaoURL;
 	}
 
 	@GetMapping("/callback")
@@ -157,7 +185,7 @@ public class LoginController {
 		  
             profile = getProfile(access_token);
 		  
-            user = userService.userCheck((String)profile.get("name"), (String)profile.get("email"));
+			user = userService.userCheck((String)profile.get("userName"), (String)profile.get("userEmail")); 
 	      
             br.close();
 	        if(responseCode==200) {
@@ -192,8 +220,8 @@ public class LoginController {
 	    JSONObject responseBody = get(apiURL,requestHeaders);
 
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", responseBody.getString("name"));
-		map.put("email", responseBody.getString("email"));
+		map.put("userName", responseBody.getString("userName"));
+		map.put("userEmail", responseBody.getString("userEmail"));
 		return map;
 		
 //	    System.out.println(responseBody);
@@ -263,9 +291,123 @@ public class LoginController {
 	}
 
 
-    public  void kakaoLogin(HttpSession session, Model model ) {
+    // @GetMapping("/callback_kakao")
+	// //public ModelAndView callback(@RequestParam ("code") String code,
+	// public String callbackKaKao(@RequestParam ("code") String code,
+	// 					   		@RequestParam ("state_kakao") String state,
+	// 					   		RedirectAttributes rttr,
+	// 					   		HttpServletRequest request) {
+	// 	Map<String, String> profile = null;
+    //     UserDTO user = new UserDTO();
+	//     try {
+	// 	    String clientId = kakaoClientKey;
+	// 		String url_2 = kakaoRedirectUrl;
+	// 	    //String clientSecret = naverClientSecret;
+	// 	    String redirectURI = URLEncoder.encode(url_2, "UTF-8");
+	// 	    String apiURL;
+	// 	    apiURL = "https://kauth.kakao.com/oauth/token?grant_type=authorization_code&";
+	// 	    apiURL += "client_id=" + clientId;
+	// 	    //apiURL += "&client_secret=" + clientSecret;
+	// 	    apiURL += "&redirect_uri=" + redirectURI;
+	// 	    apiURL += "&code=" + code;
+	// 	    //apiURL += "&state=" + state;
+	// 	    String access_token = "";
+    //         // String refresh_token = "";
+	// 	    // System.out.println("apiURL="+apiURL);
 
-    }
+    //         URL url = new URL(apiURL);
+	//         HttpURLConnection con = (HttpURLConnection)url.openConnection();
+	//         //con.setRequestMethod("GET");
+	// 		con.setDoOutput(true);     // Post 방식 처리
+	// 		con.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+			
+	//         int responseCode = con.getResponseCode();
+	//         BufferedReader br;
+	//         // System.out.print("responseCode="+responseCode);
+	//         if(responseCode==200) { // 정상 호출
+	//             br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	//         } else {  // 에러 발생
+	//             br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+	//         }
+	//         String inputLine;
+	//         StringBuffer res = new StringBuffer();
+	//         while ((inputLine = br.readLine()) != null) {
+	//             res.append(inputLine);
+	//         }
+            
+	//         JSONObject obj = new   JSONObject(res.toString());
+	// 	    access_token = obj.getString("access_token");
+	// 	    //System.out.print("access_token="+access_token);
+		  
+    //         profile = getProfileKakao(access_token);
+		  
+    //         user = userService.userCheck((String)profile.get("name"), (String)profile.get("email"));
+	      
+    //         br.close();
+	//         if(responseCode==200) {
+    // 	        System.out.println("responseCode == 200" + res.toString());
+	//         }
+	//     } catch (Exception e) {
+	//       System.out.println(e);
+	//     }
+	      
+	//     rttr.addFlashAttribute("user", user);
+	//     // rttr.addFlashAttribute("msg", "naver계정으로 회원 가입 성공!!!");
+    //     rttr.addFlashAttribute("msg", "naver계정으로 로그인 성공!!!");
+	// 	// return new ModelAndView("/api/login/success");
+	// 	return "redirect:/success";
+
+	// }
+
+	// private Map<String, String> getProfileKakao(String token){
+
+	// 	HashMap<String, Object> userInfo = new HashMap<>();
+	// 	String reqUrl = "https://kapi.kakao.com/v2/user/me";
+    // try{
+    //     URL url = new URL(reqUrl);
+    //     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    //     conn.setRequestMethod("POST");
+    //     conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+    //     conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+    //     int responseCode = conn.getResponseCode();
+    //     log.info("[KakaoApi.getUserInfo] responseCode : {}",  responseCode);
+
+    //     BufferedReader br;
+    //     if (responseCode >= 200 && responseCode <= 300) {
+    //         br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    //     } else {
+    //         br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+    //     }
+
+    //     String line = "";
+    //     StringBuilder responseSb = new StringBuilder();
+    //     while((line = br.readLine()) != null){
+    //         responseSb.append(line);
+    //     }
+    //     String result = responseSb.toString();
+    //     log.info("responseBody = {}", result);
+
+    //     JsonParser parser = new JsonParser();
+    //     JsonElement element = parser.parse(result);
+
+    //     JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
+    //     JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+
+    //     String nickname = properties.getAsJsonObject().get("nickname").getAsString();
+    //     String email = kakaoAccount.getAsJsonObject().get("email").getAsString();
+
+    //     userInfo.put("nickname", nickname);
+    //     userInfo.put("email", email);
+
+    //     br.close();
+
+    // }catch (Exception e){
+    //     e.printStackTrace();
+    // }
+    // return userInfo;
+    
+	// }
 
     
 

@@ -34,11 +34,11 @@ public class UserRepositoryTest {
     public void testInsert() {
         for (int i = 1; i <= 100; i++) {
             User user = User.builder()
-                    .user_id("user" + i).user_email("user@swit" + i + ".com")
-                    .user_name("김철수" + i).user_password("1234")
-                    .user_phone("010-1234-1234").user_nick("슈퍼맨")
-                    .user_sns_connect("").user_delete_chk(false)
-                    .user_create_date(LocalDateTime.now())
+                    .userId("user" + i).userEmail("user@swit" + i + ".com")
+                    .userName("김철수" + i).userPassword("1234")
+                    .userPhone("010-1234-1234").userNick("슈퍼맨")
+                    .userSnsConnect("").userDeleteChk(false)
+                    .userCreateDate(LocalDateTime.now())
                     .build();
 
             userRepository.save(user);
@@ -50,30 +50,33 @@ public class UserRepositoryTest {
     @Transactional
     @Test
     public void testRead() {
-        String user_id = "user1";
-        Optional<User> result = userRepository.findById(user_id);
+        String userId = "user1";
+        Optional<User> result = userRepository.findByUserId(userId);
         User user = result.orElseThrow();
         log.info(user);
     }
 
-    // //프로필 정보 수정
+    //프로필 정보 수정
     @Test
     public void testModify() {
-        String user_id = "user1";
-        Optional<User> result = userRepository.findById(user_id);
+        String userId = "user1";
+        Optional<User> result = userRepository.findByUserId(userId);
         User user = result.orElseThrow();
-        user.setUser_name("아조나스1");
+        user.setUserName("아조나스1");
         log.info(user);
         userRepository.save(user);
     }
-
-    @Test
-    public void testPaging(){
-        // User 엔티티에서 "user_id"의 실제 필드명은 "userId"임
-        // Sort.by()에서 그대로 "user_id"로 치면 인식 X
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("user_id").descending());
-        Page<User> result = adminRepository.findAllUsers(pageable);
-        log.info(result.getTotalElements());
-        result.getContent().stream().forEach(user ->log.info(user));
-    }
+    
+    // 시큐리티 적용 후 jpa/JPQL 생성이 되지 않아 주석처리함
+    // 다른 방법으로 처리 필요
+    // @Test
+    // public void testPaging(){
+    //     // User 엔티티에서 "user_id"의 실제 필드명은 "userId"임
+    //     // Sort.by()에서 그대로 "user_id"로 치면 인식 X
+    //     Pageable pageable = PageRequest.of(0, 10, Sort.by("userNo").descending());
+    //     // Page<User> result = adminRepository.findAllUsers(pageable);
+    //     Page<User> result = adminRepository.findByOrderByUserNoAsc(pageable);
+    //     log.info(result.getTotalElements());
+    //     result.getContent().stream().forEach(user ->log.info(user));
+    // }
 }
