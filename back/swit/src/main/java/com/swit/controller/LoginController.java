@@ -82,8 +82,6 @@ public class LoginController {
 		
 		if (userDTO.getUserId().equalsIgnoreCase(searchUser.getUserId())
 		&&  userDTO.getUserPassword().equals(searchUser.getUserPassword())) {
-			session.setAttribute("userId", searchUser.getUserId());
-			session.setAttribute("userEmail", searchUser.getUserEmail());
 
 			log.info("UserDTO : "+ searchUser);
 
