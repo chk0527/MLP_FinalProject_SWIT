@@ -8,4 +8,3 @@ export const addGroup = async (studyObj) => {
     const res = await axios.post(`${prefix}/add`, studyObj)
     return res.data;
 }
-

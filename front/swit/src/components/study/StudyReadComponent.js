@@ -3,6 +3,7 @@ import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
 import { useNavigate } from "react-router-dom";
 import StudyMeetingComponent from "./StudyMeetingComponent";
 import StudyCardComponent from "./StudyCardComponent";
+import GroupForm from "../group/GroupForm";
 
 const initState = {
   studyNo: 0,
@@ -69,6 +70,7 @@ const StudyReadComponent = ({ studyNo }) => {
       <div className="flex justify-between mt-4">
         <StudyCardComponent />
         <StudyMeetingComponent studyUuid={study.studyUuid} />
+        <GroupForm/>
       </div>
 
     </div>
