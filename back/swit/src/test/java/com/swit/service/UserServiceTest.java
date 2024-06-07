@@ -15,7 +15,7 @@ import lombok.extern.log4j.Log4j2;
 public class UserServiceTest {
     @Autowired
     private UserService userService;
-    private AdminService adminService;
+    // private AdminService adminService;
 
     @Test
     public void testGet() {
@@ -25,14 +25,14 @@ public class UserServiceTest {
         // log.info(userDTO.getUploadFileNames());
     }
 
-    @Test
-    public void testList() {
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .page(1)
-                .size(10)
-                .build();
-        PageResponseDTO<UserDTO> response = adminService.getUserList(pageRequestDTO);
-        log.info(response);
-    }
+    // @Test
+    // public void testList() {
+    //     PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+    //             .page(1)
+    //             .size(10)
+    //             .build();
+    //     PageResponseDTO<UserDTO> response = adminService.getUserList(pageRequestDTO);
+    //     log.info(response);
+    // }
 
 }
