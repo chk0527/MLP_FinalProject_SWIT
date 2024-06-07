@@ -14,7 +14,7 @@ const useCustomMove = () => {
     const size = getNum(queryParams.get('size'),5)
 
     const PlacePage = getNum(queryParams.get('PlacePage'),1)
-    const PlaceSize = getNum(queryParams.get('PlaceSize'),16)
+    const PlaceSize = getNum(queryParams.get('PlaceSize'),15)
     
     const queryDefault = createSearchParams({page,size}).toString()
     const PlaceQueryDefault = createSearchParams({PlacePage,PlaceSize}).toString()
@@ -58,7 +58,7 @@ const useCustomMove = () => {
         let queryStr = ""
         if(pageParam){
             const pageNum = getNum(pageParam.PlacePage,1)
-            const sizeNum = getNum(pageParam.PlaceSize,16)
+            const sizeNum = getNum(pageParam.PlaceSize,15)
             queryStr = createSearchParams({PlacePage:pageNum, PlaceSize:sizeNum}).toString()
         }else{
             queryStr = PlaceQueryDefault
