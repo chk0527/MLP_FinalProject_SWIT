@@ -31,7 +31,7 @@ import lombok.extern.log4j.Log4j2;
 public class GroupController {
     private final GroupService service;
 
-    @PostMapping("/")
+    @PostMapping("/add")
     public Map<String, Integer> register(@RequestBody GroupDTO groupDTO) {
         Integer groupNo = service.register(groupDTO);
         // List<MultipartFile> files = productDTO.getFiles();

@@ -32,11 +32,13 @@ public class Group {
   
   @ColumnDefault("0")
   @Column(nullable = false)
-  private Integer groupLeader;
+  private Integer groupLeader; //0: 스터디원 1: 스터디장
 
   @ColumnDefault("0")
   @Column(nullable = false)
-  private Integer groupJoin;
+  private Integer groupJoin; //0: 보류 1: 승인 2: 거절
+
+  private String groupSelfintro; //자기소개 같은 거
 
   @PrePersist
   protected void onCreate() {
