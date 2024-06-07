@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class CalendarDTO {
     private Integer calendarNo;
     private Integer studyNo;
+    private String title;
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startDate;
