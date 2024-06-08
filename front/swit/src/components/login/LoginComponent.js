@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { API_SERVER_HOST, postOne, getOne } from "../../api/loginApi"
 
 const initState = { 
-    user_id:'', 
-    user_password:''
+    username:'', 
+    password:''
 }
 
 const initStateNaver = { 
@@ -28,9 +28,9 @@ const LoginComponent =() => {
 
     const handleClickLogin = () => { 
         console.log(user)
-        postOne(user).then(result => {
+        postOne(username, password).then(result => {
             console.log(result)
-            setUser({...initState})
+            // setUser({...initState})
         }).catch(e=>{
             console.error(e)
         })
@@ -41,12 +41,12 @@ const LoginComponent =() => {
             <div className="divide-y divide-slate-100">
                 <div className="mb-4">
                     <label className="block mb-1">아이디</label>
-                    <input type={"text"} placeholder="아이디" name='user_id' className="w-full border border-gray-300 p-2 rounded" value={user.user_id} onChange={handleChangeUser}></input>
+                    <input type={"text"} placeholder="아이디" name='username' className="w-full border border-gray-300 p-2 rounded" value={user.username} onChange={handleChangeUser}></input>
                     
                 </div>
                 <div className="mb-4">
                     <label className="block mb-1">비밀번호</label>
-                    <input type={"password"} placeholder="비밀번호" name='user_password' className="w-full border border-gray-300 p-2 rounded" value={user.user_password} onChange={handleChangeUser}></input>
+                    <input type={"password"} placeholder="비밀번호" name='password' className="w-full border border-gray-300 p-2 rounded" value={user.password} onChange={handleChangeUser}></input>
                 </div>
                 <div className="mb-4">
                     <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={handleClickLogin}>로그인</button>

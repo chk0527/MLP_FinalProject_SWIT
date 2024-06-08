@@ -81,6 +81,6 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
         System.out.println("userRole3333 : " + userRole);		
         filterChain.doFilter(request, response);
-        System.out.println("userRole4444 : " + userRole);		
+        System.out.println("doFilterInternal ------- END");		
     }
 }

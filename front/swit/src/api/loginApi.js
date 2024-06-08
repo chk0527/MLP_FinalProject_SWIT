@@ -7,7 +7,7 @@ export const getOne = async () => {
     return res.data;
 }
 
-export const postOne = async (userObj) =>{
-    const res =await axios.post(`${prefix}/`, userObj)
+export const postOne = async (username, password) =>{
+    const res =await axios.post(`${API_SERVER_HOST}/login`, username, password)
     return res.data
 }
