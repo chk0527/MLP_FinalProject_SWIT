@@ -4,7 +4,6 @@ package com.swit.config;
 
 import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -86,17 +85,16 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**"
-                        , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/**","/api/login").permitAll()
-                        //.requestMatchers("/api/calendar/**", "/api/examjob/**", "/api/place/**", "/api/user/**").hasAnyRole("USER", "ADMIN")
-                        //.requestMatchers("/api/admin").hasRole("ADMIN")
+                        , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/**","/snslogin/**", "/login/info").permitAll()
+                        .requestMatchers("/api/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //JWTFilter 등록
-        // http
-        //         .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
         .sessionManagement((session) -> session
