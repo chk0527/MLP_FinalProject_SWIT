@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import api from "../api/api";
 import * as auth from "../api/loginApi"
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const LoginContext = createContext();
 LoginContext.displayName = "LoginContextName";
@@ -32,7 +32,7 @@ const LoginContextProvider = ({ children }) => {
     // 아이디 저장
     // const [remberUserId, setRememberUserId] = useState()
     // 페이지 이동
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     // -----------------------------------------------------------------------
     
     // 로그인 체크
@@ -117,7 +117,7 @@ const LoginContextProvider = ({ children }) => {
                 alert('로그인 성공')
 
                 // 메이 페이지로 이동
-                // navigate("/")
+                navigate("/")
             }
 
         } catch (error) {

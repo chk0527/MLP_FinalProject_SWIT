@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +15,7 @@ import java.io.IOException;
 import com.swit.domain.User;
 import com.swit.dto.CustomUserDetails;
 
-
+@Log4j2
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -87,9 +88,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-		//세션에 사용자 등록
+		    //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
-
+        log.info(SecurityContextHolder.getContext().getAuthentication()+"!!!!!!!!");
         filterChain.doFilter(request, response);
         System.out.println("doFilterInternal ------- END");		
     }

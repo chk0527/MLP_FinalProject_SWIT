@@ -12,6 +12,9 @@ import com.swit.domain.User;
 import com.swit.dto.CustomUserDetails;
 import com.swit.repository.UserRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -31,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userData.orElseThrow();
 
         if (user != null) {
-						
+						log.info(" 사용자 인증 정보 CustomUserDetails로 반환 성공");
 			//UserDetails에 담아서 return하면 AutneticationManager가 검증 함
             return new CustomUserDetails(user);
         }

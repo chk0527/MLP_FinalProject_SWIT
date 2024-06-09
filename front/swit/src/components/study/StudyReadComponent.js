@@ -70,7 +70,7 @@ const StudyReadComponent = ({ studyNo }) => {
       <div className="flex justify-between mt-4">
         <StudyCardComponent />
         <StudyMeetingComponent studyUuid={study.studyUuid} />
-        <GroupForm/>
+        <GroupForm studyNo={studyNo}/>
       </div>
 
     </div>

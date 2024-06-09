@@ -51,7 +51,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String userNo = customUserDetails.getUser().getUserNo().toString();
-        String  userId = customUserDetails.getUsername();
+        String userId = customUserDetails.getUsername();
         //String  userName = customUserDetails.getUser().getUserName();
         String  userNick = customUserDetails.getUser().getUserNick();
 
