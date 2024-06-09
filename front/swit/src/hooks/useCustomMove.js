@@ -1,4 +1,4 @@
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import { createSearchParams, useNavigate, useSearchParams,useLocation } from "react-router-dom";
 
 const getNum = (param, defaultValue) => {
     if(!param){
@@ -37,6 +37,8 @@ const useCustomMove = () => {
         if(pageParam){
             const pageNum = getNum(pageParam.page,1)
             const sizeNum = getNum(pageParam.size,5)
+            const location ="";
+            location.state = 1;
             queryStr = createSearchParams({page:pageNum, size:sizeNum}).toString()
         }else{
             queryStr = queryDefault
