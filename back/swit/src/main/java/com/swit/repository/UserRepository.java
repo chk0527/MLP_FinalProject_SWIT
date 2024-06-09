@@ -27,9 +27,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Boolean existsByUserId(String userId);
 
-    //username을 받아 DB 테이블에서 회원을 조회하는 메소드 작성
-    User findByUserName(String userName);
-
     Optional<User> findByUserId(String userId);
 
     // 네이버 로그인 체크
