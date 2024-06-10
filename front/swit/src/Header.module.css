@@ -1,0 +1,18 @@
+
+li { 
+  color: #000;
+  display:inline-block; 
+  margin:0;
+  text-transform:uppercase; }
+
+li::after {
+  display:block;
+  content: '';
+  border-bottom: solid 3px #ea2129;  
+  transform: scaleX(0);  
+  transition: transform 250ms ease-in-out;
+  transform-origin:100% 50%;
+}
+
+
+
