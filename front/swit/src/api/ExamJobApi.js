@@ -31,3 +31,8 @@ export const getJobRead = async (jobNo) => {
     const res = await axios.get(`${prefix}/job/${jobNo}`)
     return res.data
 }
+
+export const getExamAll = async() => {
+    const res = await axios.get(`${prefix}/examAll`)
+    return res;
+}

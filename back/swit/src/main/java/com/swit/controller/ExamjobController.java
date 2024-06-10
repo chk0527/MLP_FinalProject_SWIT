@@ -2,6 +2,7 @@ package com.swit.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.swit.domain.Exam;
 import com.swit.dto.ExamDTO;
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
@@ -13,6 +14,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -49,6 +53,12 @@ public class ExamjobController {
     public JobDTO jobRead(@PathVariable(name="jobNo")Integer jobNo) {
         return service.jobRead(jobNo);
     }
+
+    @GetMapping("/examAll")
+    public List<Exam> examAll() {
+        return service.examAll();
+    }
+      
 
 
 

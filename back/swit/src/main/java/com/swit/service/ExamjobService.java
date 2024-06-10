@@ -105,6 +105,11 @@ public class ExamjobService {
         return dto;
     }
 
+    //시험 전체 불러오기
+    public List<Exam> examAll(){
+        return examRepository.findAll();
+    }
+
     // 검색
     public PageResponseDTO<JobDTO> jobSearch(PageRequestDTO pageRequestDTO, String searchKeyword) {
         Pageable pageable = PageRequest.of(
