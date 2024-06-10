@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,13 +51,13 @@ public class StudyController {
     }
 
     @PostMapping("/")
-    public Map<String, Integer> register(StudyDTO studyDTO) {
+    public Map<String, Integer> register(StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
         List<MultipartFile> files = studyDTO.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         studyDTO.setUploadFileNames(uploadFileNames);
         log.info(uploadFileNames);
         // 서비스 호출
-        Integer studyNo = service.register(studyDTO);
+        Integer studyNo = service.register(studyDTO, questions);
         return Map.of("studyNo", studyNo);
     }
 
