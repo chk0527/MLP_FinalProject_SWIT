@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getCalendar, addEvent, deleteEvent, updateEvent } from "../../api/CalendarApi";
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar, momentLocalizer, Toolbar } from 'react-big-calendar';
 import moment from 'moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import DatePicker from "react-datepicker";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -41,6 +42,35 @@ const StudyGroupComponent = ({ studyNo }) => {
     };
     fetchEvents();
   }, [studyNo]);
+
+  // ======================= 포맷 설정 ================================
+  // =================================================================
+
+  // 이전,오늘,다음 화살표 디자인
+  const renderHeader = ({ label, onNavigate }) => {
+    return (
+      <div className="custom-calendar-header">
+        <button onClick={() => onNavigate('PREV')} className="nav-button"><FaChevronLeft /></button>
+        <span className="label">{label}</span>
+        <button onClick={() => onNavigate('TODAY')} className="nav-button">오늘</button>
+        <button onClick={() => onNavigate('NEXT')} className="nav-button"><FaChevronRight /></button>
+      </div>
+    );
+  }
+
+  // 캘린더 포맷을 한국어로 번역
+  const formatsKorean = {
+    dateFormat: 'D',
+    dayFormat: (date, culture, localizer) =>
+      localizer.format(date, 'dd', culture),
+    dayRangeHeaderFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, { month: 'long', day: 'numeric' }, culture)} - ${localizer.format(end, { month: 'long', day: 'numeric' }, culture)}`,
+    monthHeaderFormat: (date, culture, localizer) =>
+      localizer.format(date, 'YYYY년 MM월', culture),
+  }
+
+  // ======================= 기능 핸들러 관리 ===========================
+  // ===================================================================
 
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
@@ -160,8 +190,9 @@ const StudyGroupComponent = ({ studyNo }) => {
     }
   }
 
-  //----------------------------------------------------------------------------
-  //----------------------------------------------------------------------------
+  
+  // ======================= 캘린더 - 할 일 관리 =========================
+  // ====================================================================
 
   // 캘린더 - 할 일 추가
   const handleAddTask = (e) => {
@@ -187,8 +218,9 @@ const StudyGroupComponent = ({ studyNo }) => {
     setTasks(newTasks);
   };
 
-  //----------------------------------------------------------------------------
-  //----------------------------------------------------------------------------
+  
+  // ======================= 신청 view 관리(채팅) ===========================
+  // =======================================================================
 
   // 신청 - 채팅 메시지 전송
   const handleSendMessage = (e) => {
@@ -222,8 +254,8 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 캘린더 항목 */}
       {view === 'calendar' && (
-        <div className="flex w-full max-w-screen-lg">
-          <div className="w-7/12">
+        <div className="flex w-full">
+          <div className="w-8/12">
             <div className="my-4">
               <DragAndDropCalendar
                 selectable
@@ -247,6 +279,10 @@ const StudyGroupComponent = ({ studyNo }) => {
                   event: '이벤트',
                   showMore: (total) => `+${total} 더 보기`,
                 }}
+                components={{
+                  toolbar: renderHeader,
+                }}
+                formats={formatsKorean}
                 onSelectSlot={handleCreateEvent} // 캘린더의 빈 슬롯 클릭 이벤트
                 onSelectEvent={handleSelectEvent}
                 onEventDrop={handleDragEvent}
@@ -254,7 +290,7 @@ const StudyGroupComponent = ({ studyNo }) => {
               />
             </div>
           </div>
-          <div className="w-5/12 pl-4">
+          <div className="w-4/12 pl-4">
             <div className="my-4">
               <h2 className="text-xl font-bold">일정</h2>
               <ul>
@@ -353,7 +389,7 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 신청 항목 */}
       {view === 'chat' && (
-        <div className="my-4 w-full max-w-screen-lg">
+        <div className="my-4 w-full flex">
           <h2 className="text-xl font-bold">채팅</h2>
           <div className="border border-gray-300 rounded-lg p-4 mb-4 max-h-500px overflow-y-auto">
             {chatMessages.map((msg, index) => (
