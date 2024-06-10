@@ -32,5 +32,10 @@ public class ExamjobServiceTest {
         log.info(dto);
     }
 
+    @Test
+    public void testListAll(){
+        examjobService.examAll();
+    }
+
    
 }

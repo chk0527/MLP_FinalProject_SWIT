@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
-import { getJobList } from "../../api/ExamJobApi";
-import useCustomMove from "../../hooks/useCustomMove";
-import PageComponent from "../common/PageComponent";
+import React, { useState, useEffect } from 'react';
+import { getJobList } from '../../api/ExamJobApi';
+import useCustomMove from '../../hooks/useCustomMove';
+import PageComponent from '../common/PageComponent';
+import searchIcon from "../../img/search-icon.png";
+import { useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const initState = {
   dtoList: [],
@@ -19,24 +22,63 @@ const initState = {
 const ListComponent = () => {
   const { page, size, moveToJobList, moveToJobRead } = useCustomMove();
   const [serverData, setServerData] = useState(initState);
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const navigate = useNavigate()
+
+  const handleClickExamList = useCallback(()=>{
+      navigate({pathname:'../../exam'})
+  })
+  const handleClickJobList= useCallback(()=>{
+      navigate({pathname:'../../job'})
+  })
+
+  const fetchJobs = async () => {
+    const jobList = await getJobList({ page, size, searchKeyword: searchKeyword })
+    setServerData(jobList);
+  };
 
   useEffect(() => {
-    getJobList({ page, size }).then(data => {
-      setServerData(data);
-    });
+    fetchJobs();
   }, [page, size]);
 
+  const handleSearch = () => {
+    fetchJobs();
+  };
+
   return (
-    <div className="max-w-4xl mx-auto mt-8">
-      <div className="divide-y divide-slate-200">
+    
+      <div className="">
+
+      {/* 채용/시험/검색 */}
+      <div className="flex justify-between items-center border-b-2 pb-4 mb-4">
+          <div className="flex space-x-8">
+            <h1 className="text-2xl font-bold hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickJobList}>채용</h1>
+            <h2 className="text-xl text-gray-500 hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickExamList}>시험</h2>
+          </div>
+          <div className="text-xl">
+              <input
+                className="focus:outline-none"
+                type="text"
+                placeholder="검색"
+                value={searchKeyword}
+                onChange={e => setSearchKeyword(e.target.value)}
+              />
+              <button type="button" onClick={handleSearch}>
+                <img className="size-6" src={searchIcon}></img>
+              </button>
+            </div>
+        </div>
+         {/* 채용/시험/검색  끝*/}
+
+
         <ul className="divide-y divide-slate-200">
           {serverData.dtoList.map(job => (
             <article key={job.jobNo} className="flex items-start space-x-6 p-6">
-              <div>
+              {/* <div>
                 <dt className="sr-only">채용/시험</dt>
                 <dd className="px-2.5 py-1 rounded-full bg-[#A4CEF5]/60 text-white">채용</dd>
-              </div>
-
+              </div> */}
               <div className="min-w-0 relative flex-auto">
                 <h2 className="font-semibold text-slate-900 truncate pr-20 cursor-pointer" onClick={() => moveToJobRead(job.jobNo)}>{job.jobTitle}</h2>
                 <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium text-slate-500">
@@ -49,7 +91,6 @@ const ListComponent = () => {
                     </dt>
                     <dd></dd>
                   </div>
-
                   <div className="ml-2">
                     <dt className="sr-only">회사</dt>
                     <dd>{job.jobCompany}</dd>
@@ -71,11 +112,13 @@ const ListComponent = () => {
             </article>
           ))}
         </ul>
-      </div>
+        <div className="border-t-2 border-slate-200 mt-4"></div>
+      
       <PageComponent serverData={serverData} movePage={moveToJobList} />
     </div>
   );
 };
 
 export default ListComponent;
+
 

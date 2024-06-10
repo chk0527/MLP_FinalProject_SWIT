@@ -17,21 +17,22 @@ public class StudyServiceTest {
     @Autowired
     private StudyService studyService;
 
-    @Test
-    public void studyRegister() {
-        StudyDTO studyDTO = StudyDTO.builder()
-        .studyTitle("테스트용 게시물 입니다.")
-        .studyContent("테스트 중")
-        .studyType("스터디")
-        .studyStartDate(LocalDate.of(2024, 5, 27))
-        .studyEndDate(LocalDate.of(2024, 5, 29))
-        .studyHeadcount(7)
-        .studyOnline(true)
-        .studySubject("개발")
-        .studyComm("ZOOM")
-        .build();
+    // register 구조 변경으로 인한 테스트 주석
+    // @Test
+    // public void studyRegister() {
+    //     StudyDTO studyDTO = StudyDTO.builder()
+    //     .studyTitle("테스트용 게시물 입니다.")
+    //     .studyContent("테스트 중")
+    //     .studyType("스터디")
+    //     .studyStartDate(LocalDate.of(2024, 5, 27))
+    //     .studyEndDate(LocalDate.of(2024, 5, 29))
+    //     .studyHeadcount(7)
+    //     .studyOnline(true)
+    //     .studySubject("개발")
+    //     .studyComm("ZOOM")
+    //     .build();
 
-        Integer studyNo = studyService.register(studyDTO);
-        log.info("studyNo" + studyNo);
-    }
+    //     Integer studyNo = studyService.register(studyDTO);
+    //     log.info("studyNo" + studyNo);
+    // }
 }

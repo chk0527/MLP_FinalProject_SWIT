@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fullcalendar/core": "^6.1.14",
+    "@fullcalendar/daygrid": "^6.1.14",
+    "@fullcalendar/react": "^6.1.14",
     "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -10,6 +13,7 @@
     "axios": "^1.7.2",
     "babel-eslint": "^10.1.0",
     "framer-motion": "^11.2.10",
+    "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-big-calendar": "^1.12.2",
     "react-datepicker": "^6.9.0",
@@ -21,10 +25,9 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "web-vitals": "^2.1.4",
-    "js-cookie": "^3.0.5",
     "sweetalert2": "^11.10.1",
-    "sweetalert2-react-content": "^5.0.7"
+    "sweetalert2-react-content": "^5.0.7",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -53,6 +56,5 @@
   "devDependencies": {
     "tailwindcss": "^3.4.3"
   },
-  "proxy" : "http://localhost:8181"
-
+  "proxy": "http://localhost:8181"
 }
