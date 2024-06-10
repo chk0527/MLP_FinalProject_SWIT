@@ -27,5 +27,3 @@ com:
     swit:
         upload:
             path: upload
-jwt:
-  secret: your-secret-key
