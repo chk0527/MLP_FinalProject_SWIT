@@ -46,8 +46,8 @@ public class Study {
     @Builder.Default
     private List<StudyImage> imageList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Question question;
+    // @OneToOne(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private Question question;
 
     // Setter methods for updating fields
     public void setStudyTitle(String studyTitle) {
