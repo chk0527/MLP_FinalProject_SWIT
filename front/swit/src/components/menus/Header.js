@@ -70,7 +70,7 @@ const Header = () => {
           </ul>
       }
       </div>
-        {isLogin ? 
+        {result ? 
         <MyMenu callbackFn={closeModal} />: 
         <div className="fixed top-0 right-0 z-50">
           <button className="p-6 pb-10" onClick={openModal}>🖤</button>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import StudyMeetingComponent from "./StudyMeetingComponent";
 import StudyCardComponent from "./StudyCardComponent";
 import GroupForm from "../group/GroupForm";
+import StudyInfoComponent from "./StudyInfoComponent";
 
 const initState = {
   studyNo: 0,
@@ -50,7 +51,7 @@ const StudyReadComponent = ({ studyNo }) => {
             src={`${host}/api/study/display/${imgFile}`} />
         )}
       </div>
-
+{/* 
       {makeDiv("studyNo", study.studyNo)}
       {makeDiv("user_id", study.user_id)}
       {makeDiv("title", study.studyTitle)}
@@ -65,13 +66,15 @@ const StudyReadComponent = ({ studyNo }) => {
       )}
       {makeDiv("studyHeadcount", study.studySubject)}
       {makeDiv("studyComm", study.studyComm)}
-      {makeDiv("studyUuid", study.studyUuid)}
+      {makeDiv("studyUuid", study.studyUuid)} */}
       {/* studyList 페이지로 돌아가는 버튼 */}
       <div className="flex justify-between mt-4">
-        <StudyCardComponent />
+        <StudyInfoComponent studyNo={studyNo}/>
+      </div>  
         <StudyMeetingComponent studyUuid={study.studyUuid} />
+        
         <GroupForm studyNo={studyNo}/>
-      </div>
+      
 
     </div>
   );

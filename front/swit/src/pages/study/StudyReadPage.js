@@ -15,9 +15,9 @@ const StudyReadPage = () => {
                 <div className="w-3/4 pr-2">
                     <StudyReadComponent studyNo={studyNo} />
                 </div>
-                <div className="w-1/4 pl-2">
+                {/* <div className="w-1/4 pl-2 ">
                     <StudyChatPage />
-                </div>
+                </div> */}
             </div>
         </BasicLayout>       
     );
