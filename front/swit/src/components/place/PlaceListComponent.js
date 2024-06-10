@@ -8,6 +8,7 @@ import {
 } from "../../api/PlaceApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PlacePageComponent from "./PlacePageComponent ";
+import Cookies from 'js-cookie';
 
 const initState = {
   dtoList: [],
@@ -46,13 +47,31 @@ const PlaceListComponent = () => {
   };
 
   useEffect(() => {
-    getPlaceList(placeName, placeAddr, { PlacePage, PlaceSize }).then(
-      (data) => {
-        console.log(data);
-        setServerData(data);
-      }
-    );
+
+
+
+    // 쿠키에서 jwt 토큰 가져오기
+    const accessToken = Cookies.get("accessToken")
+    console.info(`accessToken : ${accessToken}`);
+    const token = `Bearer ${accessToken}`
+
+    try {
+        // getPlaceList(accessToken, placeName, placeAddr, { PlacePage, PlaceSize }).then(
+        getPlaceList(token, placeName, placeAddr, { PlacePage:'1', PlaceSize:'10' }).then(  
+        (data) => {
+          console.log(data);
+          setServerData(data);
+        });
+    } catch (error) {
+        console.log(`error : ${error}`)
+        // console.log(`status : ${response.status}`)
+        return
+    }
+
+    
+    
   }, [placeName, placeAddr, PlacePage, PlaceSize]);
+
 
 
   return (

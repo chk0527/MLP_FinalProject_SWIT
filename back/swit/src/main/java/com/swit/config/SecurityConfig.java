@@ -86,7 +86,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**"
                         , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/**","/snslogin/**", "/login/info").permitAll()
-                        .requestMatchers("/api/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/admin").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/place/{id}").authenticated() // 추가된 부분
                         .anyRequest().authenticated());
 
         http

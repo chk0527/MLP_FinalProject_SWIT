@@ -101,8 +101,8 @@ public class UserService {
   }
 
   // 로그인 확인 처리(네이버 소셜 로그인)
-  public UserDTO userCheck(String userName, String userEmail) {
-    Optional<User> result = userRepository.findByUserNameAndUserEmail(userName, userEmail);
+  public UserDTO userCheck(String userName, String userEmail, String userSnsConnect) {
+    Optional<User> result = userRepository.findByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail, userSnsConnect);
     User user = result.orElseThrow();
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
     return userDTO;
@@ -130,10 +130,10 @@ public class UserService {
     data.setUserEmail(userDTO.getUserEmail());
     data.setUserPhone(userDTO.getUserPhone());
     data.setUserNick(userDTO.getUserNick());
-    data.setUserSnsConnect(userDTO.getUserSnsConnect());
+    data.setUserSnsConnect("");      // "" 홈페이지 가입, "naver" , "kakao"
     data.setUserImage(userDTO.getUserImage());
     data.setUserDeleteChk(userDTO.isUserDeleteChk());
-    data.setUserRole(userDTO.getUserRole());
+    data.setUserRole("ROLE_USER");
 
     userRepository.save(data);
   }
