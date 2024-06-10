@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { API_SERVER_HOST, postOne, getOne } from "../../api/loginApi"
+import React, { useContext, useEffect, useState  } from "react";
+import { LoginContext } from "../../contexts/LoginContextProvider";
+//import { useEffect, useState } from "react";
+import { getOne } from "../../api/loginApi"
 
 const initState = { 
-    user_id:'', 
-    user_password:''
+    username:'', 
+    password:''
 }
 
 const initStateNaver = { 
@@ -12,13 +14,19 @@ const initStateNaver = {
 }
 
 const LoginComponent =() => {
+
     const [user, setUser] = useState({...initState})
     const [naver, setNaver] = useState({...initStateNaver})
 
+    const { login } = useContext(LoginContext)
+
     // 로그인 화면 최초 Host 호출
     useEffect(() => {
-        console.info("aaa");
-        getOne().then(data => setNaver(data))
+        // StrictMode(코드 검사 등) 에 의해 2회 실행 
+        // (index.js 파일에서 StrictMode 지우면 1회 실행)
+        
+        // 완성 되기 전까지 snslogin 잠시 주석 처리
+        // getOne().then(data => setNaver(data))
     },[])
 
     const handleChangeUser = (e) => {
@@ -26,14 +34,12 @@ const LoginComponent =() => {
         setUser({...user})
     }
 
-    const handleClickLogin = () => { 
-        console.log(user)
-        postOne(user).then(result => {
-            console.log(result)
-            setUser({...initState})
-        }).catch(e=>{
-            console.error(e)
-        })
+    const onLogin = (e) => {
+
+        console.info(`${user.username} ${user.password}`) 
+
+        login(user.username, user.password)
+        
     }
 
     return (
@@ -41,15 +47,15 @@ const LoginComponent =() => {
             <div className="divide-y divide-slate-100">
                 <div className="mb-4">
                     <label className="block mb-1">아이디</label>
-                    <input type={"text"} placeholder="아이디" name='user_id' className="w-full border border-gray-300 p-2 rounded" value={user.user_id} onChange={handleChangeUser}></input>
+                    <input type={"text"} placeholder="아이디" name='username' className="w-full border border-gray-300 p-2 rounded" value={user.username} onChange={handleChangeUser}></input>
                     
                 </div>
                 <div className="mb-4">
                     <label className="block mb-1">비밀번호</label>
-                    <input type={"password"} placeholder="비밀번호" name='user_password' className="w-full border border-gray-300 p-2 rounded" value={user.user_password} onChange={handleChangeUser}></input>
+                    <input type={"password"} placeholder="비밀번호" name='password' className="w-full border border-gray-300 p-2 rounded" value={user.password} onChange={handleChangeUser}></input>
                 </div>
                 <div className="mb-4">
-                    <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={handleClickLogin}>로그인</button>
+                    <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={() => onLogin()}>로그인</button>
                 </div>
                 <div className="mb-4 flex flex-wrap">
                     <a href={naver.naverURL}>
@@ -73,4 +79,56 @@ const LoginComponent =() => {
     )
 
 }
+
+// const LoginComponent =() => {
+    
+//     const { login } = useContext(LoginContext)
+    
+//     const onLogin = (e) => {
+//         e.preventDefault()
+
+//         const form = e.target
+//         const username = form.username.value
+//         const password = form.password.value
+//         console.info(`${username} ${password}`) 
+
+//         login(username, password)
+        
+//     }
+
+//     return (
+//         <>
+//             <div className="divide-y divide-slate-100">
+//                 <form className="divide-y divide-slate-100" onSubmit={ (e) => onLogin(e)}>
+//                     <div className="mb-4">
+//                         <label>아이디</label>
+//                         <input type="text"
+//                                id="username"
+//                                placeholder="id" 
+//                                name="username"
+//                                autoComplete="id"
+//                                required
+
+//                         />
+//                     </div>
+//                     <div className="mb-4">
+//                         <label>비밀번호</label>
+//                         <input type="password"
+//                                id="password"
+//                                placeholder="password" 
+//                                name="password"
+//                                autoComplete="password"
+//                                required
+//                         />
+//                     </div>
+//                     <button className='btn btn--form btn-login'>
+//                         Login
+//                     </button>
+
+                
+//                 </form>
+//             </div>
+//         </>
+//     )
+// }
 export default LoginComponent;

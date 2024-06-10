@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키
-  @Column(unique = true, nullable = false)
   private Integer userNo;
 
   @Column(unique = true, nullable = true)
@@ -45,7 +44,7 @@ public class User {
   @CreatedDate // Entity 생성시 일자 자동 저장
   private LocalDateTime userCreateDate;
 
-  private boolean userDeleteChk; // true(1) : 정상 , false(0) : 탈퇴
+  private boolean userDeleteChk; // false(0) : 정상 , true(1) : 탈퇴
   private LocalDateTime userDeleteDate;
 
   private String userRole;

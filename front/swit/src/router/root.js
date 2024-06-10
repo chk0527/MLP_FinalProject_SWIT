@@ -24,6 +24,7 @@ const Callback = lazy(() => import("../pages/login/Callback"))
 const JobList = lazy(() => import("../pages/examjob/JobList") )
 const ExamjobIndex = lazy(() => import("../pages/examjob/ExamjobIndex"))
 const PlaceList = lazy(() => import("../pages/place/PlaceListPage"))
+const Join = lazy(() => import("../pages/join/Join"))
 
 
 
@@ -60,6 +61,10 @@ const root = createBrowserRouter([
         path:"/login",
         element:<Suspense fallback={Loading}><Login /></Suspense>,
         // children: loginRouter()
+    },
+    {
+        path:"/join",
+        element:<Suspense fallback={Loading}><Join /></Suspense>,
     },
     {
       path: "study",

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 // import org.springframework.web.servlet.ModelAndView;
@@ -36,17 +37,30 @@ import lombok.extern.log4j.Log4j2;
 
 import com.swit.dto.UserDTO;
 import com.swit.service.UserService;
+import com.swit.jwt.JWTUtil;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;  // 추가: 새로운 방식으로 SecretKey 생성을 위한 클래스
+
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/api/login")
+
 public class LoginController {
-	@Autowired
+
     private final UserService userService;
+
+    private final JWTUtil JWTUtil;
 
 	@Value("${api.naver.clientKey}")
     private String naverClientKey;
@@ -61,9 +75,9 @@ public class LoginController {
 	private String kakaoRedirectUrl;
 	
 
-    @GetMapping("/")
+    @GetMapping("/snslogin")
 	public Map<String, String> get(HttpSession session) {
-		log.info("login --------- start");
+		log.info("snslogin --------- start");
 
 		String naverURL = naverLogin(session);  
 		String kakaoURL = kakaoLogin(session);  
@@ -74,7 +88,7 @@ public class LoginController {
 
 	@PostMapping("/")
     public Map<String, String> postOne(@RequestBody UserDTO userDTO, HttpSession session) {
-		// log.info("Login --------- user_id, user_password : "+ userDTO.getUser_id() + userDTO.getUser_password());
+		log.info("login --------- start" );
 		String  user_id    = userDTO.getUserId();
 		
 		UserDTO searchUser = new UserDTO();
@@ -88,6 +102,58 @@ public class LoginController {
 		}
 
         return Map.of("user_id", user_id);
+    }
+
+/**
+     * 🔐➡👩‍💼 JWT 를 해석하는 요청
+     * 
+     * @param header
+     * @return
+     */
+    @GetMapping("/login_user")
+    public ResponseEntity<?> userInfo(@RequestHeader(name="Authorization") String header) {
+
+        log.info("===== header =====");
+        log.info("Authorization : " + header);
+
+        String jwt = header.substring(7);           // "Bearer " + jwt  ➡ jwt 추출
+
+        log.info("jwt : " + jwt);
+
+        SecretKey secretKey = JWTUtil.getSecretKey();
+        // byte[] signingKey = JWTUtil.getSecretKey().getBytes();
+
+        log.info("secretKey : " + secretKey);
+        // log.info("signingKey : " + signingKey);
+
+        // TODO : deprecated 업애기 (version: before 1.0)
+        // Jws<Claims> parsedToken = Jwts.parser()
+        //                                 .setSigningKey(signingKey)
+        //                                 .build()
+        //                                 .parseClaimsJws(jwt);
+
+        // OK : deprecated 된 코드 업데이트 (version : after 1.0)
+        // - setSigningKey(byte[]) ➡ verifyWith(SecretKey)
+        // - parseClaimsJws(CharSequence) ➡ parseSignedClaims(CharSequence)
+        Jws<Claims> parsedToken = Jwts.parser()
+                                        .verifyWith(secretKey)
+                                        .build()
+                                        .parseSignedClaims(jwt);
+        log.info("parsedToken : " + parsedToken);
+                
+		String userNo = parsedToken.getPayload().get("userNo").toString();
+		int no = (userNo == null ? 0 : Integer.parseInt(userNo));
+		String userId = parsedToken.getPayload().get("userId").toString();
+		String userNick = parsedToken.getPayload().get("userNick").toString();
+		String userRole = parsedToken.getPayload().get("userRole").toString();
+
+		UserDTO userDTO = new UserDTO();
+		userDTO.setUserNo(no);
+		userDTO.setUserId(userId);
+		userDTO.setUserNick(userNick);
+		userDTO.setUserRole(userRole);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     public  String naverLogin(HttpSession session) {
@@ -138,7 +204,7 @@ public class LoginController {
 		return kakaoURL;
 	}
 
-	@GetMapping("/callback")
+	@GetMapping("/snslogin/naver_callback")
 	//public ModelAndView callback(@RequestParam ("code") String code,
 	public String callback(@RequestParam ("code") String code,
 						   @RequestParam ("state") String state,
@@ -291,7 +357,7 @@ public class LoginController {
 	}
 
 
-    // @GetMapping("/callback_kakao")
+    // @GetMapping("/snslogin/kakao_callback")
 	// //public ModelAndView callback(@RequestParam ("code") String code,
 	// public String callbackKaKao(@RequestParam ("code") String code,
 	// 					   		@RequestParam ("state_kakao") String state,

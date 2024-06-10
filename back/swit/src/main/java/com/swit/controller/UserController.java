@@ -36,9 +36,9 @@ public class UserController {
     private final UserService service;
 
     // 아이디로 유저 프로필 조회
-    @GetMapping("/{user_id}")
-    public UserDTO get(@PathVariable(name = "user_id") String user_id) {
-        return service.get(user_id);
+    @GetMapping("/{userId}")
+    public UserDTO get(@PathVariable(name = "userId") String userId) {
+        return service.get(userId);
     }
    
 
