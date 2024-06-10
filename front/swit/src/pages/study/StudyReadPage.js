@@ -12,12 +12,12 @@ const StudyReadPage = () => {
                 <div>스터디 상세 페이지</div>
             </div>
             <div className="flex">
-                <div className="w-3/4 pr-2">
+                <div className="w-full pr-2">
                     <StudyReadComponent studyNo={studyNo} />
                 </div>
-                <div className="w-1/4 pl-2">
+                {/* <div className="w-1/4 pl-2 ">
                     <StudyChatPage />
-                </div>
+                </div> */}
             </div>
         </BasicLayout>       
     );

@@ -85,7 +85,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**"
-                        , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/**","/snslogin/**", "/login/info").permitAll()
+                        , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/**","/snslogin/**", "/login/info","ws/**","/chat/**").permitAll()
                         .requestMatchers("/api/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
