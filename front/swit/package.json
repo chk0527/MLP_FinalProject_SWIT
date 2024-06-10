@@ -10,20 +10,22 @@
     "axios": "^1.7.2",
     "babel-eslint": "^10.1.0",
     "framer-motion": "^11.2.10",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-big-calendar": "^1.12.2",
     "react-datepicker": "^6.9.0",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
+    "react-modal": "^3.16.1",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "web-vitals": "^2.1.4",
-    "js-cookie": "^3.0.5",
     "sweetalert2": "^11.10.1",
-    "sweetalert2-react-content": "^5.0.7"
+    "sweetalert2-react-content": "^5.0.7",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,6 +54,5 @@
   "devDependencies": {
     "tailwindcss": "^3.4.3"
   },
-  "proxy" : "http://localhost:8181"
-
+  "proxy": "http://localhost:8181"
 }

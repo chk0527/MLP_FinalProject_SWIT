@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import BasicLayout from '../../layouts/BasicLayout';
 import { getAllStudies } from '../../api/StudyApi'; // getAllStudies 함수를 가져옴
-import StudyChatComponent from '../../components/study/StudyChatComponent';
+import { isMember } from '../../api/GroupApi'; // isMember 함수를 가져옴
+import { getUserIdFromToken } from '../../util/jwtDecode';
 
 const StudyListPage = () => {
     const [studyList, setStudyList] = useState([]); // 스터디 목록을 저장할 상태
@@ -22,8 +23,27 @@ const StudyListPage = () => {
         fetchStudyList(); // 함수 실행
     }, []); // 빈 배열을 두번째 인자로 넘겨 한 번만 실행되도록 설정
 
-    const handleReadStudy = (studyNo) => {
-        navigate(`/study/read/${studyNo}`);
+    const handleReadStudy = async (studyNo) => {
+        try {
+            // 현재 로그인된 사용자 ID를 가져옵니다 (예: 로컬 스토리지에서 가져옴)
+            console.log(getUserIdFromToken()+"!");
+            const userId = getUserIdFromToken();
+            if (!userId) {
+                alert("추후 삭제 될 알림: 비로그인")
+                navigate(`/study/read/${studyNo}`);
+                return;
+            }
+            alert("추후 삭제 될 알림: 로그인")
+            // 사용자가 해당 스터디에 참여하고 있는지 확인
+            const member = await isMember(studyNo);
+            if (member) {
+                navigate(`/study/group/${studyNo}`);
+            } else {
+                navigate(`/study/read/${studyNo}`);
+            }
+        } catch (error) {
+            console.error('Error checking membership:', error);
+        }
     };
 
     const handleAddStudy = () => {
@@ -44,12 +64,12 @@ const StudyListPage = () => {
                 ))}
             </div>
             <div className='grid place-items-end'>
-            <button
-                onClick={() => handleAddStudy()}
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
-            >
-                Go to StudyAddPage
-            </button>
+                <button
+                    onClick={() => handleAddStudy()}
+                    className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
+                >
+                    Go to StudyAddPage
+                </button>
             </div>
         </BasicLayout>
     );

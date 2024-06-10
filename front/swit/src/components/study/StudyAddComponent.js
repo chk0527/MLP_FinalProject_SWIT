@@ -27,7 +27,7 @@ const StudyAddComponent = () => {
     const [endDate, setEndDate] = useState(new Date());
     const uploadRef = useRef()
 
-    const { moveToRead } = useCustomMove();
+    const { moveToGroup } = useCustomMove();
 
     const handleChangeStudy = (e) => {
         study[e.target.name] = e.target.value
@@ -73,7 +73,7 @@ const StudyAddComponent = () => {
     }
 
     const closeModal = () => {
-        moveToRead(result)
+        moveToGroup(result)
         setResult(null)
     }
 

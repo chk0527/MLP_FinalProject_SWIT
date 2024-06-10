@@ -5,12 +5,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.List;
 
+import org.apache.catalina.authenticator.SpnegoAuthenticator.AuthenticateAction;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
+import com.swit.dto.CustomUserDetails;
 import com.swit.dto.StudyDTO;
 import com.swit.repository.StudyRepository;
 
@@ -34,10 +38,16 @@ public class StudyService {
 
     public Integer register(StudyDTO studyDTO) {
         log.info("-----------------------------");
-        String userId = "user1"; //추후 현재 로그인된 사용자 받아오도록 수정
-        String studyUuid = generateStudyUuid();
 
-        studyDTO.setUserId(userId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            String userId = userDetails.getUsername();
+            studyDTO.setUserId(userId);
+        } else {
+            throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
+        }
+        String studyUuid = generateStudyUuid();
         studyDTO.setStudyUuid(studyUuid);
 
         // Study study = modelMapper.map(studyDTO, Study.class);

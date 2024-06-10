@@ -3,6 +3,7 @@ import StudyInfoComponent from "../../components/study/StudyInfoComponent";
 import BasicLayout from "../../layouts/BasicLayout";
 import { useParams } from "react-router-dom";
 import StudyChatPage from "./StudyChatPage";
+import GroupMeetingComponent from "../../components/group/GroupMeetingComponent"
 
 const StudyGroupPage = () => {
     const { studyNo } = useParams();
@@ -14,7 +15,7 @@ const StudyGroupPage = () => {
             </div>
             <div className="flex">
                 <div className="w-3/4">
-                    <StudyInfoComponent studyNo={studyNo} />
+                    <StudyInfoComponent studyNo={studyNo} ActionComponent={GroupMeetingComponent} />
                 </div>
                 <div className="w-1/4 pl-2">
                   <StudyChatPage />

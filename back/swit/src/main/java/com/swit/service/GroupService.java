@@ -23,25 +23,27 @@ import lombok.extern.log4j.Log4j2;
 public class GroupService {
   private final ModelMapper modelMapper;
   private final GroupRepository groupRepository;
-  
-  public List<Group> getAllGroups(){
+
+  public List<Group> getAllGroups() {
     return groupRepository.findAll();
   }
 
-  public Integer register(GroupDTO groupDTO){
+  public Integer register(GroupDTO groupDTO) {
     Group group = modelMapper.map(groupDTO, Group.class);
-    
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            String userId = userDetails.getUsername();
-            group.setUserId(userId);
-        } else {
-            throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
-        }
+    if (authentication.getPrincipal() instanceof CustomUserDetails) {
+      CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+      String userId = userDetails.getUsername();
+      group.setUserId(userId);
+    } else {
+      throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
+    }
     Group saveGroup = groupRepository.save(group);
     return saveGroup.getGroupNo();
   }
-}
 
+  public boolean isMember(String userId, Integer studyNo) {
+    return groupRepository.existsByUserIdAndStudyNo(userId, studyNo);
+  }
+}
