@@ -21,13 +21,13 @@ const initState = {
 
 const ExamCalenderComponent = () => {
 
-    const [exam, setExam] = useState(initState)
-    useEffect(() => {
-        getExamAll().then(data => {
-            console.log(data)
-            setExam(data)
-        })
-    })
+    // const [exam, setExam] = useState(initState)
+    // useEffect(() => {
+    //     getExamAll().then(data => {
+    //         console.log(data)
+    //         setExam(data)
+    //     })
+    // })
 
 
 
