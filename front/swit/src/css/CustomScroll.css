@@ -1,0 +1,29 @@
+/* 전체 스크롤바 스타일 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* 스크롤바의 너비 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤바의 이동 가능한 부분 색상 */
+  border-radius: 10px; /* 스크롤바 모서리 반경 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤바의 트랙 부분 색상 */
+  border-radius: 10px; /* 트랙 모서리 반경 */
+}
+
+/* Firefox의 스크롤바 스타일 */
+.custom-scrollbar {
+  scrollbar-width: thin; /* 스크롤바 너비를 얇게 설정 */
+  scrollbar-color: #fff rgb(255,237,213); /* 스크롤바 이동 가능한 부분 색상과 트랙 색상 */
+}
+
+/* Edge와 IE의 스크롤바 스타일 */
+.custom-scrollbar {
+  -ms-overflow-style: none; /* IE와 Edge에서 스크롤바를 제거 */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Edge에서 스크롤바를 제거 */
+}
