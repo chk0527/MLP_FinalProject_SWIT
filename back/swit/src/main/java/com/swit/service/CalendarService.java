@@ -85,6 +85,9 @@ public class CalendarService {
         if (updates.containsKey("completeChk")) {
             calendar.setCompleteChk((Boolean) updates.get("completeChk"));
         }
+        if (updates.containsKey("color")) {
+            calendar.setColor((String) updates.get("color"));
+        }
 
         calendar = calendarRepository.save(calendar);
         return modelMapper.map(calendar, CalendarDTO.class);

@@ -43,4 +43,5 @@ public class Calendar {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endDate;
     private boolean completeChk;    //일정 완료 여부
+    private String color;           //일정 색상
 }

@@ -23,4 +23,5 @@ public class CalendarDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endDate;
     private boolean completeChk;
+    private String color;
 }
