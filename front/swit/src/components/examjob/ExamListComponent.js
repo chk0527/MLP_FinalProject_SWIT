@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { getExamList } from "../../api/ExamJobApi"
 import useCustomMove from "../../hooks/useCustomMove"
 import PageComponent from "../common/PageComponent";
+import searchIcon from "../../img/search-icon.png";
+import { useNavigate } from 'react-router-dom';
+import { useCallback } from "react";
 
 
 const initState = {
@@ -28,16 +31,54 @@ const ListComponent = () => {
     })
   }, [page, size])
 
+  
+  //채용,시험 클릭시 이동
+  const navigate = useNavigate()
+
+  const handleClickExamList = useCallback(()=>{
+      navigate({pathname:'../../exam'})
+  })
+  const handleClickJobList= useCallback(()=>{
+      navigate({pathname:'../../job'})
+  })
+
+
+
   return (
     <div>
-      <div className="divide-y divide-slate-100">
+      <div className="">
+
+      {/* 채용/시험/검색 */}
+      <div className="flex justify-between items-center border-b-2 pb-4 mb-4">
+          <div className="flex space-x-8">
+            <h1 className="text-2xl font-bold hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickExamList}>시험</h1>
+            <h2 className="text-xl text-gray-500 hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickJobList}>채용</h2>
+          </div>
+
+          {/* 검색 */}
+          {/* <div className="text-xl">
+              <input
+                className="focus:outline-none"
+                type="text"
+                placeholder="검색"
+                value={searchKeyword}
+                onChange={e => setSearchKeyword(e.target.value)}
+              />
+              <button type="button" onClick={handleSearch}>
+                <img className="size-6" src={searchIcon}></img>
+              </button>
+            </div> */}
+        </div>
+         {/* 채용/시험/검색  끝*/}
+
+
         <ul className="divide-y divide-slate-100">
           {serverData.dtoList.map(exam =>
             <article className="flex items-start space-x-6 p-6">
-              <div>
+              {/* <div>
                 <dt className="sr-only">채용/시험</dt>
                 <dd className="px-2.5 rounded-full bg-[#A4CEF5]/[0.6] text-white">시험</dd>
-              </div>
+              </div> */}
 
               <div className="min-w-0 relative flex-auto">
                 <h2 className="font-semibold text-slate-900 truncate pr-20" onClick={()=>moveToExamRead(exam.examNo)}> {exam.examTitle}</h2>
@@ -85,7 +126,7 @@ const ListComponent = () => {
 
 
         </ul>
-            
+        <div className="border-t-2 border-slate-200 mt-4"></div>
       </div>
       <PageComponent serverData={serverData} movePage={moveToExamList}/>
     </div>

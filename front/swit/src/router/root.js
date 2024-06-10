@@ -14,15 +14,12 @@ const { createBrowserRouter } = require("react-router-dom");
 const Loading = <div>Loading...</div>;
 
 const Main = lazy(() => import("../pages/MainPage"))
-const ExamList = lazy(() => import("../pages/examjob/ExamList"))
 const MyPage = lazy(() => import("../pages/MyPage"))
 const AdminPage = lazy(() => import("../pages/admin/AdminPage"))
 const DummyPage = lazy(() => import("../pages/study/DummyPage"))
 const StudyList = lazy(() => import("../pages/study/StudyList"))
 const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
-const JobList = lazy(() => import("../pages/examjob/JobList") )
-const ExamjobIndex = lazy(() => import("../pages/examjob/ExamjobIndex"))
 const PlaceList = lazy(() => import("../pages/place/PlaceListPage"))
 const Join = lazy(() => import("../pages/join/Join"))
 
@@ -35,12 +32,10 @@ const root = createBrowserRouter([
     },
     {
         path:"exam",
-        element:<Suspense fallback={Loading}><ExamjobIndex/></Suspense>,
         children: examRouter(),
     },
     {
         path:"/job",
-        element:<Suspense fallback={Loading}><ExamjobIndex/></Suspense>,
         children: jobRouter(),
     },
     {
