@@ -1,11 +1,10 @@
-import BasicLayout from "../layouts/BasicLayout";
+import BasicLayout from "../layouts/MainLayout";
+import BannerComponent from "../components/main/BannerComponent";
 
 const MainPage = () => {
     return (
         <BasicLayout>
-            <div className="text-3xl">
-                <div>Main Page</div>
-            </div>
+            <BannerComponent />
         </BasicLayout>
        
     )

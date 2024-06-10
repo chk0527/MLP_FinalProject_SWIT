@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link,useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import searchIcon from "../../img/search-icon.png";
 import {
@@ -54,6 +54,7 @@ const PlaceListComponent = () => {
     );
   }, [placeName, placeAddr, PlacePage, PlaceSize]);
 
+
   return (
     <div className="relative w-full">
       {/* 검색창 */}
@@ -91,21 +92,21 @@ const PlaceListComponent = () => {
       </div>
       {/* 목록 */}
       <div className="flex-wrap w-1300 font-GSans">
-        <div className="grid place-items-center md:grid-cols-3 ">
+        <div className="md:grid place-items-center md:grid-cols-3 ">
           {serverData.dtoList.map((place) => (
             <div
               key={place.placeNo}
-              className="w-96 h-96 text-center"
+              className="w-350 h-350 text-center mb-8"
             >
-              <Link to={{ pathname: `/place/read/${place.placeNo}` }}>
+              <Link to={{ pathname: `/place/read/${place.placeNo}`}} state={1}>
                 <div className="overflow-hidden ">
                   <img
-                    className="w-96 h-72 object-cover"
+                    className="w-400 h-96 object-cover"
                     src={place.placeImg}
                   ></img>
                 </div>
                 <div className="pt-2 text-start">
-                  <p className="font-bold mb-1">
+                  <p className="font-bold my-2">
                     {place.placeAddr.substring(0, 6)}
                   </p>
                   <p className="text-2xl">{place.placeName}</p>

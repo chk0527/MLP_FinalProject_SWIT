@@ -1,40 +1,89 @@
-import { Link } from "react-router-dom";
-import image from "../../img/logoWhite.png"
+import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import logo from "../../img/logoWhite.png";
+import MyMenu from "./MyMenu";
+import { motion, AnimatePresence } from "framer-motion";
 
-const BasicMenu = () => {
-    return (
-        <nav id='navbar' className="flex bg-blue-300">
-            <div className="w-1/5 A4CEF5  text-white font-bold p-4">
-                <Link to={'/'}><Link to={'/'}><img className="w-4/5" src={image} style={{width:"100px", padding:"20"}}></img></Link>
-</Link>
-            </div> 
-            <div className="w-4/5 flex justify-end A4CEF5">
-                <ul className="flex p-4 text-white font-bold">
-                    <li className="pr-6 text-1xl">
-                        <Link to={'/studyDetail'}>스터디</Link>
-                    </li>
-                    <li className="pr-6 text-1xl">
-                        <Link to={'/'}>스터디 장소</Link>
-                    </li>
-                    <li className="pr-6 text-1xl">
-                        <Link to={'/exam'}>시험 및 채용</Link>
-                    </li>
-                    <li className="pr-6 text-1xl">
-                        <Link to={'/'}>Q&A</Link>
-                    </li>
-                    <li>
-                        --- 
-                        {/* 아이콘 임포트? */}
-                    </li>
-                </ul>
-            </div>
-            {/* <div className="w-1/5 flex justify-end A4CEF5 p-4 font-medium">
+const items = [
+  { name: "스터디 그룹", path: "/study", no: 0 },
+  { name: "스터디 장소", path: "/place/list", no: 1 },
+  { name: "시험 및 채용", path: "/job/list", no: 2 },
+  { name: "Q & A", path: "/", no: 3 },
+];
+
+const Header = () => {
+  //모달창
+  const [result, setResult] = useState(false);
+  const closeModal = () => {
+    setResult(false);
+  };
+  const openModal = () => {
+    setResult(true);
+  };
+  //메뉴바
+  const location = useLocation();
+  const [clickItem, setClickItem] = useState(location.state);
+  const [currentItem, setCurrentItem] = useState(clickItem);
+
+  useEffect(() => {
+    setClickItem(location.state);
+    console.log("location.state",location.state);
+  }, [items.no]);
+
+   
+  return (
+    <nav id="navbar" className="absolute w-full h-full">
+      <div className="relative p-4 flex justify-center z-50">
+        <Link to={"/"}>
+          <img className="object-contain size-24" src={logo} alt="이미지"></img>
+        </Link>
+      </div>
+
+      <div className="p-6 flex sticky top-0 z-40 justify-center bg-gray-500/20 font-GSans">
+        <AnimatePresence>
+          <ul
+            className="flex space-x-32 text-xl text-white"
+            onMouseLeave={() => {
+              setCurrentItem(clickItem);
+            }}
+          >
+            {items.map((item, index) => (
+              <Link to={item.path} state={item.no} key={item.name}>
+                <li
+                  className={`cursor-pointer relative`}
+                  onMouseEnter={() => setCurrentItem(index)}
+                >
+                  <div className="px-5 py-2 z-10 relative">{item.name}</div>
+                  {index === currentItem && (
+                    <motion.div
+                      layoutId="underline"
+                      style={{ height: "4px" }}
+                      className="absolute bottom-0 w-full bg-indigo-200"
+                    />
+                  )}
+                </li>
+              </Link>
+            ))}
+          </ul>
+        </AnimatePresence>
+      </div>
+
+      {result ? (
+        <MyMenu callbackFn={closeModal} />
+      ) : (
+        <div className="fixed top-0 right-0 z-50">
+          <button className="p-6 pb-10" onClick={openModal}>
+          🤍
+          </button>
+        </div>
+      )}
+      {/* <div className="w-1/5 flex justify-end A4CEF5 p-4 font-medium">
                 <div className="text-white text-sm m-1 rounded">
                     Login
                 </div>
             </div> */}
-        </nav>
-    )
-}
+    </nav>
+  );
+};
 
-export default BasicMenu;
+export default Header;
