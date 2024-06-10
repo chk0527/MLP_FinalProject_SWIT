@@ -1,6 +1,10 @@
 package com.swit.jwt;
 
 import io.jsonwebtoken.Jwts;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -8,8 +12,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
-
 
 @Component
 public class JWTUtil {
@@ -23,15 +25,38 @@ public class JWTUtil {
         System.out.println("JWTUtil secretKey : " + secretKey);
     }
 
-    public String getUsername(String token) {
-        String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
-        System.out.println("JWTUtil username : " + temp);
+    public SecretKey getSecretKey() {
+        return secretKey;
+    }
+
+    public String getNo(String token) {
+        String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userNo", String.class);
+        System.out.println("JWTUtil no : " + temp);
+        return temp;
+    }
+
+    public String getUserId(String token) {
+        String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", String.class);
+        System.out.println("JWTUtil userId : " + temp);
         return temp;
         
     }
 
+    // public String getUsername(String token) {
+    //     String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userName", String.class);
+    //     System.out.println("JWTUtil username : " + temp);
+    //     return temp;
+        
+    // }
+
+    public String getNick(String token) {
+        String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userNick", String.class);
+        System.out.println("JWTUtil userNick : " + temp);
+        return temp;
+    }
+
     public String getRole(String token) {
-        String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        String temp = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userRole", String.class);
         System.out.println("JWTUtil userRole : " + temp);
         return temp;
     }
@@ -43,11 +68,15 @@ public class JWTUtil {
         return temp;
     }
 
-    public String createJwt(String username, String role, Long expiredMs) {
-
+    public String createJwt(String userNo, String userId, String userNick, String userRole, Long expiredMs) {
+        System.out.println("createJwt start ");
+        
         String temp = Jwts.builder()
-        .claim("username", username)
-        .claim("role", role)
+        .claim("userNo", userNo)
+        .claim("userId", userId)
+        // .claim("userName", username)
+        .claim("userNick", userNick)
+        .claim("userRole", userRole)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + expiredMs))
         .signWith(secretKey)

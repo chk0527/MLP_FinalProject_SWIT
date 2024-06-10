@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { API_SERVER_HOST, addGroup } from '../../api/GroupApi';
+import { addGroup } from '../../api/GroupApi';
 
-const GroupForm = () => {
+const GroupForm = ({ studyNo }) => {
     const [userId, setUserId] = useState('');
-    const [studyNo, setStudyNo] = useState('');
     const [groupSelfintro, setGroupSelfintro] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const groupData = {
-            userId,
+            // userId,
             studyNo: parseInt(studyNo),
             groupSelfintro
         };
@@ -27,14 +25,10 @@ const GroupForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div>
+            {/* <div>
                 <label>User ID:</label>
                 <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} required />
-            </div>
-            <div>
-                <label>Study Number:</label>
-                <input type="number" value={studyNo} onChange={(e) => setStudyNo(e.target.value)} required />
-            </div>
+            </div> */}
             <div>
                 <label>Self Introduction:</label>
                 <textarea value={groupSelfintro} onChange={(e) => setGroupSelfintro(e.target.value)} required></textarea>
