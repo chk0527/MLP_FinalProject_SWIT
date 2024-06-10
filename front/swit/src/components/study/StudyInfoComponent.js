@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getStudy } from "../../api/StudyApi";
 import { useNavigate } from "react-router-dom";
-import StudyMeetingComponent from './StudyMeetingComponent';
 
 const initState = {
     studyNo: 0,
@@ -15,9 +14,9 @@ const initState = {
     studySubject: "",
     studyComm: "",
     studyHeadcount: 0
-  };
+};
 
-const StudyInfoComponent = ({studyNo}) => {
+const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
     const [study, setStudy] = useState(initState);
     const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
@@ -26,7 +25,7 @@ const StudyInfoComponent = ({studyNo}) => {
           console.log(data);
           setStudy(data);
         });
-      }, [studyNo]);
+    }, [studyNo]);
 
     return (
         <div className="p-4 flex flex-col items-center">
@@ -34,15 +33,14 @@ const StudyInfoComponent = ({studyNo}) => {
             <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
                 <h1 className="text-2xl font-bold text-center">리액트 같이 공부하실 분 모집해요~!</h1>
                 <div className="flex items-start mt-4">
-                    <div className="w-256 h-192 rounded-lg mr-6 bg-gray-500 border border-gray-800 flex items-center justify-center">
+                    <div className="w-64 h-64 rounded-lg mr-6 bg-gray-500 border border-gray-800 flex items-center justify-center">
                         <img
-                            // front/swit/public 폴더에 접근하는 절대경로
                             src={`${process.env.PUBLIC_URL}/study_group.png`}
                             alt="Profile"
-                            className="w-64 h-54 rounded-lg object-cover"
+                            className="w-full h-full rounded-lg object-cover"
                         />
                     </div>
-                    <div className="ml-auto text-left flex flex-col items-center h-54">
+                    <div className="text-left flex flex-col justify-center h-64">
                         <p><strong>소개:</strong> {study.studyTitle}</p>
                         <p><strong>주제:</strong> {study.studySubject}</p>
                         <p><strong>진행방식:</strong> {study.studyComm}</p>
@@ -51,8 +49,8 @@ const StudyInfoComponent = ({studyNo}) => {
                         <p><strong>방장:</strong> {study.userId}</p>
                     </div>
                 </div>
-                <div className="flex justify-center">
-                    <StudyMeetingComponent studyUuid={study.studyUuid}/>
+                <div className="flex justify-start ml-24 mt-4">
+                    {ActionComponent && <ActionComponent studyUuid={study.studyUuid} />}
                 </div>
                 <div className="mt-4 p-4 border border-gray-300 bg-yellow-100 text-left">
                     <p>✏️ 주 4회 상시 자율 출석 취업 스터디반 운영 중입니다! (현재 모집X)</p>

@@ -70,13 +70,16 @@ const useCustomMove = () => {
 
     const moveToRead = (num) => {
         navigate({ pathname: `../read/${num}`}) //조회시에 기존의 쿼리문자열을 유지하기 위해
-
     }
+
+    const moveToGroup = (num) => {
+      navigate({ pathname: `../group/${num}`}) //조회시에 기존의 쿼리문자열을 유지하기 위해
+  }
     
 
    
     
-    return {moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList,moveToPlaceList, moveToExamRead, moveToJobRead}
+    return {moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList,moveToPlaceList, moveToExamRead, moveToJobRead, moveToGroup}
 }
 
 export default useCustomMove;

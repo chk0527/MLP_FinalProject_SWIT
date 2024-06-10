@@ -21,3 +21,21 @@ export const addGroup = async (studyObj) => {
 
   return res.data;
 };
+
+export const isMember = async (studyNo) => {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    throw new Error('No access token found');
+  }
+
+  const res = await axios.get(`${API_SERVER_HOST}/api/group/isMember`, {
+    params: {
+      studyNo
+    },
+    headers: {
+      'Authorization': `${token}`
+    }
+  });
+
+  return res.data;
+};

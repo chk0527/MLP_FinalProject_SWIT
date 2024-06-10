@@ -1,3 +1,4 @@
+// GroupForm.js
 import React, { useState } from 'react';
 import { addGroup } from '../../api/GroupApi';
 
@@ -8,7 +9,6 @@ const GroupForm = ({ studyNo }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const groupData = {
-            // userId,
             studyNo: parseInt(studyNo),
             groupSelfintro
         };
@@ -25,15 +25,11 @@ const GroupForm = ({ studyNo }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            {/* <div>
-                <label>User ID:</label>
-                <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} required />
-            </div> */}
-            <div>
-                <label>Self Introduction:</label>
+            <div >
+                <p>하고 싶은 말:</p>
                 <textarea value={groupSelfintro} onChange={(e) => setGroupSelfintro(e.target.value)} required></textarea>
             </div>
-            <button type="submit">Add Group</button>
+            <button type="submit" className="btn btn-primary mt-4 px-4 py-2 bg-green-500 text-white">제출</button>
         </form>
     );
 };

@@ -17,12 +17,12 @@ const GroupMeetingComponent = () => {
 
   return (
     <div className="meeting-container">
-      <p>
-        확인용 URL:{" "}
+      {/* <p>
+        확인용 URL(추후제거):{" "}
         <a href={meetingUrl} target="_blank" rel="noopener noreferrer">
           {meetingUrl}
         </a>
-      </p>
+      </p> */}
       <button className="join-button" onClick={handleJoinMeeting}>
         회의 참가
       </button>
