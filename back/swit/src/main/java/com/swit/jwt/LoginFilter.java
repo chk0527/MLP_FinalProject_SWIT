@@ -41,8 +41,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
         
-        System.out.println("attemptAuthentication authToken : " + authToken);
-        
         return authenticationManager.authenticate(authToken);
     }
 
@@ -52,17 +50,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String username = customUserDetails.getUsername();
+        String userNo = customUserDetails.getUser().getUserNo().toString();
+        String userId = customUserDetails.getUsername();
+        //String  userName = customUserDetails.getUser().getUserName();
+        String  userNick = customUserDetails.getUser().getUserNick();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
 
-        String role = auth.getAuthority();
-        System.out.println("successfulAuthentication username : " + username);
-        System.out.println("successfulAuthentication role : " + role);
+        String userRole = auth.getAuthority();
+        System.out.println("successfulAuthentication userNo : " + userNo.toString());
+        System.out.println("successfulAuthentication userId : " + userId);
+        //System.out.println("successfulAuthentication userName : " + userName);
+        System.out.println("successfulAuthentication userNick : " + userNick);
+        System.out.println("successfulAuthentication userRole : " + userRole);
 
-        String token = jwtUtil.createJwt(username, role, 60*60*1000L);
+        String token = jwtUtil.createJwt(userNo, userId, userNick, userRole, 60*60*1000L);
         System.out.println("successfulAuthentication token : " + token);
 
         response.addHeader("Authorization", "Bearer " + token);

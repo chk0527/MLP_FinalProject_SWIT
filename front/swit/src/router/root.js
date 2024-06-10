@@ -21,6 +21,7 @@ const StudyList = lazy(() => import("../pages/study/StudyList"))
 const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
 const PlaceList = lazy(() => import("../pages/place/PlaceListPage"))
+const Join = lazy(() => import("../pages/join/Join"))
 
 
 
@@ -55,6 +56,10 @@ const root = createBrowserRouter([
         path:"/login",
         element:<Suspense fallback={Loading}><Login /></Suspense>,
         // children: loginRouter()
+    },
+    {
+        path:"/join",
+        element:<Suspense fallback={Loading}><Join /></Suspense>,
     },
     {
       path: "study",
