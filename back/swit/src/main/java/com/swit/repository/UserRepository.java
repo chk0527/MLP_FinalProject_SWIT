@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserId(String userId);
 
     // 네이버 로그인 체크
-    Optional<User> findByUserNameAndUserEmail(String userName, String userEmail);
+    Optional<User> findByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
     // @Query("SELECT u FROM User u WHERE u.userName = :userName AND u.userEmail = :userEmail")
     // Optional<User> findByUserNameAndUserEmail(@Param("userName") String userName, @Param("userEmail") String userEmail);
     // 카카오 로그인 체크
