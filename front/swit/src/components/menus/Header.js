@@ -58,7 +58,7 @@ const Header = () => {
                     <motion.div
                       layoutId="underline"
                       style={{ height: "4px" }}
-                      className="absolute bottom-0 w-full bg-indigo-200"
+                      className="absolute bottom-0 w-full bg-yellow-200"
                     />
                   )}
                 </li>
