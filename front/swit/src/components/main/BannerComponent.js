@@ -26,7 +26,7 @@ const BannerComponent = () => {
             style={{ backgroundImage: `url(${banner1})` }}
           >
             <div className="absolute p-16 flex justify-center items-center z-20 text-white w-full h-full">
-              <TypeIt className="text-9xl" getBeforeInit={getBeforeInit}><span className="text-7xl">세상의 모든 스터디</span></TypeIt>
+              <TypeIt className="text-9xl text-yellow-200" getBeforeInit={getBeforeInit}><span className="text-7xl text-white">세상의 모든 스터디</span></TypeIt>
             </div>
           </div>
         </div>
