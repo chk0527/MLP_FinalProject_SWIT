@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.swit.domain.Study;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.findList;
 import com.swit.service.GroupService;
 import com.swit.service.StudyService;
@@ -53,6 +54,11 @@ public class StudyController {
     @GetMapping("/{studyNo}")
     public StudyDTO getStudy(@PathVariable(name = "studyNo") Integer studyNo) {
         return service.get(studyNo);
+    }
+
+    @GetMapping("question/{studyNo}")
+    public StudyWithQuestionDTO getStudyWithQuestion(@PathVariable(name = "studyNo") Integer studyNo) {
+        return service.getStudyWithQuestionDTO(studyNo);
     }
 
     @PostMapping("/")

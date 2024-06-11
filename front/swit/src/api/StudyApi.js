@@ -13,6 +13,10 @@ export const getStudy = async (studyNo) => {
   return res.data;
 }
 
+export const getStudyWithQuestion = async (studyNo) => {
+  const res = await axios.get(`${prefix}/question/${studyNo}`);
+  return res.data;
+}
 
 export const postAdd = async (study) => {
   const header = { headers: { "Content-Type": "multipart/form-data", 'Authorization': `${token}` } }
