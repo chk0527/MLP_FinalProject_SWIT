@@ -5,10 +5,14 @@ import moment from 'moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import DatePicker from "react-datepicker";
 import { FaChevronLeft, FaChevronRight, FaCalendarAlt, FaPalette } from 'react-icons/fa';
+import ReactQuill from 'react-quill';
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/StudyGroupComponent.css";
+import 'react-quill/dist/quill.snow.css';
+
 
 // Momonet로 로컬 시간대 설정
 const localizer = momentLocalizer(moment);
@@ -376,34 +380,34 @@ const StudyGroupComponent = ({ studyNo }) => {
               onChange={(e) => setModalEvent({ ...modalEvent, title: e.target.value })}
               className="input-title"
             />
-            <label>시작:</label>
-            <div className="input-date-container">
-              <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-start').focus()} />
-              <DatePicker
-                selected={modalEvent.start}
-                onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
-                showTimeSelect
-                dateFormat="Pp"
-                className="hidden-datepicker hidden-datepicker-start"
-              />
+            <div className="date-picker-container">
+              <div className="date-picker-item">
+                <label>시작:</label>
+                <div className="input-date-container">
+                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-start').focus()} />
+                  <DatePicker
+                    selected={modalEvent.start}
+                    onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
+                    showTimeSelect
+                    dateFormat="Pp"
+                    className="hidden-datepicker hidden-datepicker-start"
+                  />
+                </div>
+              </div>
+              <div className="date-picker-item">
+                <label>종료:</label>
+                <div className="input-date-container">
+                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-end').focus()} />
+                  <DatePicker
+                    selected={modalEvent.end}
+                    onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
+                    showTimeSelect
+                    dateFormat="Pp"
+                    className="hidden-datepicker hidden-datepicker-end"
+                  />
+                </div>
+              </div>
             </div>
-            <label>종료:</label>
-            <div className="input-date-container">
-              <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-end').focus()} />
-              <DatePicker
-                selected={modalEvent.end}
-                onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
-                showTimeSelect
-                dateFormat="Pp"
-                className="hidden-datepicker hidden-datepicker-end"
-              />
-            </div>
-            <label>내용:</label>
-            <textarea
-              value={modalEvent.content}
-              onChange={(e) => setModalEvent({ ...modalEvent, content: e.target.value })}
-              className="input-content expanded"
-            />
             <label>색깔:</label>
             <div className="color-picker-container">
               <button
@@ -422,6 +426,12 @@ const StudyGroupComponent = ({ studyNo }) => {
               )}
               <div className="selected-color" style={{ backgroundColor: modalEvent.color || "#000000" }}></div>
             </div>
+            <label>내용:</label>
+            <ReactQuill
+              value={modalEvent.content}
+              onChange={(value) => setModalEvent({ ...modalEvent, content: value })}
+              className="input-content expanded"
+            />
             <div className="modal-buttons">
               <button onClick={() => handleRemoveEvent(modalEvent.calendarNo)} className="button-delete">삭제</button>
               <button onClick={handleUpdateEvent} className="button-save">저장</button>

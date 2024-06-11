@@ -1,3 +1,4 @@
+/*=========== 캘린더 디자인 ==============*/
 .custom-calendar-header {
   display: flex;
   justify-content: space-between;
@@ -23,6 +24,7 @@
   background-color: #45a049;
 }
 
+/*=========== 모달창 - 색 변경 버튼 ==============*/
 .color-picker-container {
   display: flex;
   align-items: center;
@@ -44,19 +46,6 @@
   display: block;
 }
 
-.hidden-datepicker {
-  position: absolute;
-  z-index: 1000;
-}
-
-.hidden-datepicker-start {
-  left: 10px;
-}
-
-.hidden-datepicker-end {
-  right: 10px;
-}
-
 .selected-color {
   width: 24px;
   height: 24px;
@@ -65,60 +54,7 @@
   border-radius: 50%;
 }
 
-
-input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.line-through {
-  text-decoration: line-through;
-}
-
-.label {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.nav-button {
-  background-color: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  margin: 0 10px;
-}
-
-.nav-button:hover {
-  background-color: #f0f0f0;
-}
-
-.label {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0 1rem;
-}
-
-.view-buttons {
-  display: flex;
-}
-
-.view-button {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  cursor: pointer;
-}
-
-.view-button.active {
-  background-color: #007bff;
-  color: white;
-}
-
-.view-button:hover {
-  background-color: #f0f0f0;
-}
-
+/*=========== 모달창 디자인 ==============*/
 .modal {
   position: fixed;
   right: -100%;
@@ -177,7 +113,7 @@ input[type="checkbox"] {
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 48px;
+  font-size: 24px;
   cursor: pointer;
 }
 
@@ -210,15 +146,15 @@ button {
 }
 
 .input-content {
-  height: 80%;
+  height: 200px;
   resize: none;
-  padding: 10px;
 }
 
 .modal-buttons {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+  width: 100%;
 }
 
 .button-delete {
@@ -227,7 +163,6 @@ button {
   padding: 5px 10px;
   border: none;
   cursor: pointer;
-  margin-right: 5px;
   border-radius: 4px;
 }
 
@@ -266,7 +201,7 @@ button {
   border-top: 1px solid #e6e6e6;
 }
 
-/* Event styling */
+/*=========== 캘린더 이벤트 효과 스타일 ==============*/
 .rbc-event {
   background-color: #d1e7dd;
   border: 1px solid #0f5132;
@@ -279,8 +214,6 @@ button {
 .rbc-event-content {
   text-align: center;
 }
-
-
 
 @keyframes fadeIn {
   from {
@@ -300,4 +233,38 @@ button {
   to {
     right: -100%;
   }
+}
+
+/*=========== DatePicker(날짜선택) 스타일 ==============*/
+.date-picker-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.date-picker-item {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.date-picker-item:last-child {
+  margin-right: 0;
+}
+
+.input-date-container {
+  display: flex;
+  align-items: center;
+}
+
+.hidden-datepicker {
+  position: absolute;
+  z-index: 1000;
+}
+
+.hidden-datepicker-start {
+  left: 10px;
+}
+
+.hidden-datepicker-end {
+  right: 10px;
 }
