@@ -20,9 +20,12 @@ module.exports = {
         '650': '650px',
         '750': '750px',
         '1000':'1000px',
-        '1300':'1300px'
+        '1300':'1300px',
+        '1600':'1600px',
+        '1900':'1900px',
       },
       lineClamp: {
+        8: '8',
         9: '9',
       },
       brightness: {
@@ -37,7 +40,7 @@ module.exports = {
         'cover': 'cover',
         'contain': 'contain',
         '50%': '50%',
-        'mainBg': '15rem 4.3rem',
+        'mainBg': '14rem 4rem',
       }
     },
   },
