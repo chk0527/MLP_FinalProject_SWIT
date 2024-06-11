@@ -25,6 +25,7 @@ module.exports = {
         '1900':'1900px',
       },
       lineClamp: {
+        8: '8',
         9: '9',
       },
       brightness: {
