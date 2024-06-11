@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 
 import com.swit.jwt.LoginFilter;
@@ -86,6 +87,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**"
                         , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/**","/snslogin/**", "/login/info","ws/**","/chat/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()    // GET 호출 인증 제외
                         .requestMatchers("/api/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
 

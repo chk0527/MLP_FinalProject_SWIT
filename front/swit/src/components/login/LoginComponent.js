@@ -26,7 +26,7 @@ const LoginComponent =() => {
         // (index.js 파일에서 StrictMode 지우면 1회 실행)
         
         // 완성 되기 전까지 snslogin 잠시 주석 처리
-        // getOne().then(data => setNaver(data))
+        getOne().then(data => setNaver(data))
     },[])
 
     const handleChangeUser = (e) => {

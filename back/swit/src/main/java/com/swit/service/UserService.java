@@ -8,7 +8,9 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.swit.domain.User;
@@ -103,7 +105,7 @@ public class UserService {
   // 로그인 확인 처리(네이버 소셜 로그인)
   public UserDTO userCheck(String userName, String userEmail, String userSnsConnect) {
     Optional<User> result = userRepository.findByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail, userSnsConnect);
-    User user = result.orElseThrow();
+    User user = result.orElse(new User());
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
     return userDTO;
   }
@@ -111,26 +113,63 @@ public class UserService {
   // 회원 가입
   public void join(UserDTO userDTO) {
 
+    Integer userNo = userDTO.getUserNo();
     String userId = userDTO.getUserId();
     String userName = userDTO.getUserName();
     String password = userDTO.getUserPassword();
+    String userNick = userDTO.getUserNick();
 
-    Boolean isExist = userRepository.existsByUserId(userId);
+    String email = userDTO.getUserEmail();
+    String snsConnect = userDTO.getUserSnsConnect();
 
-    if (isExist) {
-      log.info("가입된 고객입니다.");
-      return;
+    Boolean isExist = true;
+    if (snsConnect.isEmpty()) {
+      isExist = userRepository.existsByUserId(userId);
+    } else if (snsConnect.equals("NAVER")) {
+      isExist = userRepository.existsByUserNameAndUserEmailAndUserSnsConnect(userName, email, snsConnect);
+    } else if (snsConnect.equals("KAKAO")) {
+
     }
 
     User data = new User();
+    
+    if (isExist) {
+      // sns 로그인시 userID update 처리
+      if (snsConnect.equals("NAVER") || snsConnect.equals("KAKAO")) {
+        data.setUserNo(userNo);
+        data.setUserCreateDate(userDTO.getUserCreateDate());
+      }
+      else {
+        log.info("가입된 고객입니다.");
+        return;
+      }
+    }
+    // System.out.println("pw [" + password + "] " + bCryptPasswordEncoder.encode(password));
+    // sns 로그인시 없는 경우 존재 
+    Optional<String> optionalUserNick = Optional.ofNullable(userNick);	
+	  if (optionalUserNick.map(String::isEmpty).orElse(true)) {
+      log.info("userNick1 " + userNick);
+      data.setUserNick(userName);
+    }
+    else {
+      log.info("userName1 " + userName);
+      data.setUserNick(userNick);
+    }
+    Optional<String> optionalUserName = Optional.ofNullable(userName);	
+	  if (optionalUserName.map(String::isEmpty).orElse(true)) {
+      log.info("userNick2 " + userNick);
+      data.setUserName(userNick);
+    }
+    else {
+      log.info("userName2 " + userName);
+      data.setUserName(userName);
+    }
 
     data.setUserId(userId);
-    data.setUserName(userName);
     data.setUserPassword(bCryptPasswordEncoder.encode(password));
     data.setUserEmail(userDTO.getUserEmail());
     data.setUserPhone(userDTO.getUserPhone());
-    data.setUserNick(userDTO.getUserNick());
-    data.setUserSnsConnect("");      // "" 홈페이지 가입, "naver" , "kakao"
+    data.setUserSnsConnect(userDTO.getUserSnsConnect());      // "" 홈페이지 가입, "naver" , "kakao"
     data.setUserImage(userDTO.getUserImage());
     data.setUserDeleteChk(userDTO.isUserDeleteChk());
     data.setUserRole("ROLE_USER");

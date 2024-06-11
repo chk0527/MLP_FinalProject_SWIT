@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { LoginContext } from "./LoginContextProvider";
-import { LoginContext } from "./LoginContextProvider";
+
 
 const LoginContextConsumer = () => {
     const { isLogin, logout } = useContext(LoginContext)
