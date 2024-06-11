@@ -46,9 +46,9 @@ const Callback = () => {
         console.info("bef isLogin" + isLogin)
         console.info("loginStatus" + loginStatus)
         if (loginStatus) {
-            navigate('/login');
-        } else {
             navigate('/');
+        } else {
+            navigate('/login');
         }
     }, [loginStatus, navigate])
 
