@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,6 +45,9 @@ public class Study {
     @ElementCollection
     @Builder.Default
     private List<StudyImage> imageList = new ArrayList<>();
+
+    // @OneToOne(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private Question question;
 
     // Setter methods for updating fields
     public void setStudyTitle(String studyTitle) {
@@ -132,24 +137,23 @@ public class Study {
 // @AllArgsConstructor
 // @NoArgsConstructor
 // public class Study {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Integer studyNo;
-//     private String user_id;
-//     private String studyTitle;
-//     private String studyContent;
-//     private String studyType;
-//     private LocalDate studyStartDate;
-//     private LocalDate studyEndDate;
-//     private Integer studyHeadcount;
-//     private Boolean studyOnline;
-//     private String studySubject;
-//     private String studyComm;
-//     private String studyLink;
-//     private String studyUuid;
+// @Id
+// @GeneratedValue(strategy = GenerationType.IDENTITY)
+// private Integer studyNo;
+// private String user_id;
+// private String studyTitle;
+// private String studyContent;
+// private String studyType;
+// private LocalDate studyStartDate;
+// private LocalDate studyEndDate;
+// private Integer studyHeadcount;
+// private Boolean studyOnline;
+// private String studySubject;
+// private String studyComm;
+// private String studyLink;
+// private String studyUuid;
 
-    
-//     @ElementCollection
-//     @Builder.Default
-//     private List<StudyImage> imageList = new ArrayList<>();
+// @ElementCollection
+// @Builder.Default
+// private List<StudyImage> imageList = new ArrayList<>();
 // }

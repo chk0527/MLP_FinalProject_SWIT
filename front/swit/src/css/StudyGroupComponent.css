@@ -1,3 +1,124 @@
+.custom-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.custom-calendar-header .nav-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.custom-calendar-header .label {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.custom-calendar-header .nav-button:hover {
+  background-color: #45a049;
+}
+
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.color-picker-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.color-picker-input {
+  display: block;
+}
+
+.hidden-datepicker {
+  position: absolute;
+  z-index: 1000;
+}
+
+.hidden-datepicker-start {
+  left: 10px;
+}
+
+.hidden-datepicker-end {
+  right: 10px;
+}
+
+.selected-color {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+  border-radius: 50%;
+}
+
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.label {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.nav-button {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.nav-button:hover {
+  background-color: #f0f0f0;
+}
+
+.label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 1rem;
+}
+
+.view-buttons {
+  display: flex;
+}
+
+.view-button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.view-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.view-button:hover {
+  background-color: #f0f0f0;
+}
+
 .modal {
   position: fixed;
   right: -100%;
@@ -20,12 +141,22 @@
 .modal-content {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   position: relative;
 }
 
 .modal-content label {
   font-weight: bold;
-  margin-top: 10px;
+  margin: 10px 0 5px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .modal-content h2 {
@@ -56,7 +187,8 @@ button {
   font-size: 16px;
   cursor: pointer;
   border: none;
-  border-radius: 12px; /* 둥근 모서리 */
+  border-radius: 12px;
+  /* 둥근 모서리 */
 }
 
 .fade-in {
@@ -92,17 +224,69 @@ button {
 .button-delete {
   background-color: #f44336;
   color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+  border-radius: 4px;
 }
 
 .button-save {
   background-color: #4CAF50;
   color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
 }
+
+/* Custom calendar styles */
+.rbc-calendar {
+  border: 2px solid #008000;
+  border-radius: 10px;
+}
+
+.rbc-month-view {
+  background-color: #ffffff;
+}
+
+.rbc-day-bg {
+  border-right: 1px solid #e6e6e6;
+}
+
+.rbc-today {
+  background-color: #e6ffe6;
+}
+
+.rbc-day-bg:nth-child(7n) {
+  border-right: none;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid #e6e6e6;
+}
+
+/* Event styling */
+.rbc-event {
+  background-color: #d1e7dd;
+  border: 1px solid #0f5132;
+  color: #0f5132;
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 0.85rem;
+}
+
+.rbc-event-content {
+  text-align: center;
+}
+
+
 
 @keyframes fadeIn {
   from {
     right: -100%;
   }
+
   to {
     right: 0;
   }
@@ -112,6 +296,7 @@ button {
   from {
     right: 0;
   }
+
   to {
     right: -100%;
   }

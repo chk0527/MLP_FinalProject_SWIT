@@ -251,7 +251,9 @@ public class LoginController {
 		  
             profile = getProfile(access_token);
 		  
-			user = userService.userCheck((String)profile.get("userName"), (String)profile.get("userEmail")); 
+			user = userService.userCheck((String)profile.get("userName")
+			                           , (String)profile.get("userEmail")
+									   , (String)profile.get("userSnsConnect")); 
 	      
             br.close();
 	        if(responseCode==200) {
@@ -288,6 +290,7 @@ public class LoginController {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("userName", responseBody.getString("userName"));
 		map.put("userEmail", responseBody.getString("userEmail"));
+		map.put("userSnsConnect", responseBody.getString("userSnsConnect"));
 		return map;
 		
 //	    System.out.println(responseBody);

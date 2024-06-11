@@ -1,17 +1,22 @@
 package com.swit.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
+import com.swit.dto.CustomUserDetails;
 import com.swit.dto.StudyDTO;
+import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +30,7 @@ import lombok.extern.log4j.Log4j2;
 public class StudyService {
     private final ModelMapper modelMapper;
     private final StudyRepository studyRepository;
+    private final QuestionRepository questionRepository;
     private final HttpSession session;
 
     public List<Study> getAllStudies() {
@@ -32,12 +38,17 @@ public class StudyService {
   }
   
 
-    public Integer register(StudyDTO studyDTO) {
+    public Integer register(StudyDTO studyDTO, List<String> questions) {
         log.info("-----------------------------");
-        String userId = "user1"; //추후 현재 로그인된 사용자 받아오도록 수정
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            String userId = userDetails.getUsername();
+            studyDTO.setUserId(userId);
+        } else {
+            throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
+        }
         String studyUuid = generateStudyUuid();
-
-        studyDTO.setUserId(userId);
         studyDTO.setStudyUuid(studyUuid);
 
         // Study study = modelMapper.map(studyDTO, Study.class);
@@ -45,6 +56,16 @@ public class StudyService {
         Study study = dtoToEntity(studyDTO);
 
         Study saveStudy = studyRepository.save(study);
+        Question question = new Question();
+        question.setStudy(saveStudy);
+        question.setQ1(questions.size() > 0 ? questions.get(0) : null);
+        question.setQ2(questions.size() > 1 ? questions.get(1) : null);
+        question.setQ3(questions.size() > 2 ? questions.get(2) : null);
+        question.setQ4(questions.size() > 3 ? questions.get(3) : null);
+        question.setQ5(questions.size() > 4 ? questions.get(4) : null);
+
+        questionRepository.save(question);
+
         return saveStudy.getStudyNo();
     }
 

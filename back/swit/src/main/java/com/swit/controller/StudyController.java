@@ -5,18 +5,23 @@ import java.util.Map;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.swit.domain.Study;
+import com.swit.dto.GroupDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.repository.findList;
+import com.swit.service.GroupService;
 import com.swit.service.StudyService;
 import com.swit.util.CustomFileUtil;
 
@@ -30,6 +35,7 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping("/api/study")
 public class StudyController {
     private final StudyService service;
+    private final GroupService groupService;
     private final HttpSession session;
     private final CustomFileUtil fileUtil;
 
@@ -50,13 +56,25 @@ public class StudyController {
     }
 
     @PostMapping("/")
-    public Map<String, Integer> register(StudyDTO studyDTO) {
+    public Map<String, Integer> register(StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
         List<MultipartFile> files = studyDTO.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         studyDTO.setUploadFileNames(uploadFileNames);
         log.info(uploadFileNames);
-        // 서비스 호출
-        Integer studyNo = service.register(studyDTO);
+    
+        Integer studyNo = service.register(studyDTO, questions);
+        // 현재 로그인된 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
+        // 그룹에 등록
+        GroupDTO groupDTO = new GroupDTO();
+        groupDTO.setUserId(userId);
+        groupDTO.setStudyNo(studyNo);
+        groupDTO.setGroupSelfintro("방장");
+        groupDTO.setGroupLeader(1);
+        groupService.register(groupDTO);
+
         return Map.of("studyNo", studyNo);
     }
 

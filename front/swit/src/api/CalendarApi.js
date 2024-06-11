@@ -25,7 +25,7 @@ export const deleteEvent = async (studyNo, eventId) => {
     return res.data;
 }
 
-// 캘린더(일정) 업데이트
+// 캘린더(일정) 데이터 수정
 // 데이터들이 수정된 일정 객체를 반환
 export const updateEvent = async (studyNo, eventId, updatedEvent) => {
     const res = await axios.patch(`${prefix}/${studyNo}/${eventId}`, updatedEvent);
