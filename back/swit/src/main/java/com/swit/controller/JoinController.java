@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestController
 @ResponseBody
 @Log4j2
-@RequestMapping("/api/join/")
+@RequestMapping("/api/join")
 public class JoinController {
     
     private final UserService userService;
@@ -26,7 +26,7 @@ public class JoinController {
         this.userService = userService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("")
     public String joinProcess(@RequestBody UserDTO userDTO) {
         log.info("before userDTO " + userDTO);
         System.out.println("JoinController userId : " + userDTO.getUserId());

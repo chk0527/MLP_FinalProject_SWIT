@@ -26,5 +26,15 @@
   }
   
   .dots_custom li.slick-active button {
-    background-color: rgb(165 180 252);
+    background-color: rgb(254 249 195);
   }
+
+  
+.slick-arrow {
+  background: #000;
+}
+.slick-slide { padding:0 100px;}
+
+:root {
+  --ti-cursor-color: transparent;
+}
