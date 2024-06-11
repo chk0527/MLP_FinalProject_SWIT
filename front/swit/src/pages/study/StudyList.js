@@ -33,14 +33,14 @@ const StudyListPage = () => {
                 navigate(`/study/read/${studyNo}`);
                 return;
             }
-            alert("추후 삭제 될 알림: 로그인")
-            // 사용자가 해당 스터디에 참여하고 있는지 확인
-            const member = await isMember(studyNo);
-            if (member) {
-                navigate(`/study/group/${studyNo}`);
-            } else {
-                navigate(`/study/read/${studyNo}`);
-            }
+            // alert("추후 삭제 될 알림: 로그인")
+            // // 사용자가 해당 스터디에 참여하고 있는지 확인
+            // const member = await isMember(studyNo);
+            // if (member) {
+            //     navigate(`/study/group/${studyNo}`);
+            // } else {
+            //     navigate(`/study/read/${studyNo}`);
+            // }
         } catch (error) {
             console.error('Error checking membership:', error);
         }

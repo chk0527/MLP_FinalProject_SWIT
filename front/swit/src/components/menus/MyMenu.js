@@ -7,12 +7,16 @@ const MyMenu = ({ callbackFn }) => {
   const [studyList, setStudyList] = useState(false); //모달창
 
   const myStudy = () => {
-    if (studyList) {
-      setStudyList(false);
-    } else {
-      setStudyList(true);
-    }
+    setStudyList(!studyList);
   };
+
+  const logout = () => {
+    localStorage.removeItem('accessToken');
+    // console.log("로그아웃 완료-로컬스토리지 저장값확인: " + localStorage.getItem("accessToken"));   
+    window.location.href = '/'; // 홈 페이지로 리디렉션
+    
+};
+
 
   return (
     <AnimatePresence>
@@ -34,8 +38,7 @@ const MyMenu = ({ callbackFn }) => {
         exit={{ opacity: 0, width: "250px" }}
         transition={{ duration: 0.5 }}
       >
-        {/* <div className="absolute z-50 top-0 right-0 w-96 flex justify-center h-dvh  bg-white border-l border-gray-300"> */}
-        <button className="absolute p-6 pb-10 right-0 " onClick={callbackFn}>
+        <button className="absolute p-6 pb-10 right-0" onClick={callbackFn}>
           🤍
         </button>
         <div className="pt-24">
@@ -57,12 +60,12 @@ const MyMenu = ({ callbackFn }) => {
             </Link>
             <button onClick={myStudy} className="py-2">
               내 스터디
-            </button>{" "}
+            </button>
             <div className="w-52 h-52 bg-white overflow-hidden text-xl">
               {studyList ? (
                 <motion.ul
                   className="myStudyList"
-                  initial={{ opacity: 1, y: -30}}
+                  initial={{ opacity: 1, y: -30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ y: -30 }}
                   transition={{ duration: 0.5 }}
@@ -77,7 +80,7 @@ const MyMenu = ({ callbackFn }) => {
           </div>
         </div>
         <div className="absolute bottom-0 pb-24">
-          <button>로그아웃</button>
+          <button onClick={logout}>로그아웃</button>
         </div>
       </motion.div>
     </AnimatePresence>
