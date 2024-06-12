@@ -4,7 +4,7 @@ export const API_SERVER_HOST = 'http://localhost:8181';
 const prefix = `${API_SERVER_HOST}/api/group`;
 
 export const addGroup = async (studyObj) => {
-  const token = localStorage.getItem('accessToken');
+  const token = sessionStorage.getItem('accessToken');
   if (!token) {
     throw new Error('No access token found');
   }

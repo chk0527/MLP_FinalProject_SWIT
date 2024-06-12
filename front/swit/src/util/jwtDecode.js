@@ -1,7 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 
 export const getUserIdFromToken = () => {
-  const token = localStorage.getItem('accessToken');
+  const token = sessionStorage.getItem('accessToken');
+  console.log(token+"!!!!!!!!!!");
   if (!token) {
     return null;
   }
