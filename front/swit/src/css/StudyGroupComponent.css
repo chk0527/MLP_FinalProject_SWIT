@@ -1,9 +1,35 @@
 /*=========== 캘린더 디자인 ==============*/
 .custom-calendar-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 20px;
+}
+
+.custom-calendar-header .right-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.custom-calendar-header .left-controls {
+  display: flex;
+  align-items: center;
+}
+
+.custom-calendar-header .view-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-calendar-header .view-button.active {
+  background-color: #2E8B57;
 }
 
 .custom-calendar-header .nav-button {
@@ -13,14 +39,35 @@
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 4px;
+  margin-right: 10px;
+}
+
+.custom-calendar-header .today-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 0.8em;
+  margin-right: 10px;
 }
 
 .custom-calendar-header .label {
   font-size: 1.5em;
   font-weight: bold;
+  margin-right: 10px;
 }
 
 .custom-calendar-header .nav-button:hover {
+  background-color: #45a049;
+}
+
+.custom-calendar-header .today-button:hover {
+  background-color: #0056b3;
+}
+
+.custom-calendar-header .view-button:hover {
   background-color: #45a049;
 }
 
@@ -32,7 +79,7 @@
   margin-bottom: 10px;
 }
 
-.color-picker-input {
+.color-picker-button {
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -42,12 +89,18 @@
   margin-right: 10px;
 }
 
+.color-picker-input {
+  display: block;
+}
+
 .selected-color {
   width: 24px;
   height: 24px;
   border: 1px solid #ccc;
   margin-left: 10px;
   border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 /*=========== 모달창 디자인 ==============*/
@@ -75,6 +128,7 @@
   flex-direction: column;
   align-items: flex-start;
   position: relative;
+  padding-top: 50px;
 }
 
 .modal-content label {
@@ -109,8 +163,9 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 36px;
+  font-size: 36px; /* 크기를 키움 */
   cursor: pointer;
+  z-index: 10; /* 최상단에 오도록 수정 */
 }
 
 button {
@@ -141,17 +196,17 @@ button {
 }
 
 .input-content {
-  height: 300px;
+  height: 300px; /* 높이를 늘림 */
   resize: none;
 }
 
 .modal-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
   width: 100%;
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
+  padding: 0 20px;
 }
 
 .button-delete {
@@ -251,17 +306,16 @@ button {
 .input-date-container {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .hidden-datepicker {
   width: 100%;
-  padding-right: 30px;
+  padding-right: 30px; /* 아이콘 공간 확보 */
 }
 
-.hidden-datepicker-start {
-  left: 10px;
-}
-
-.hidden-datepicker-end {
+.calendar-icon {
+  position: absolute;
   right: 10px;
+  cursor: pointer;
 }
