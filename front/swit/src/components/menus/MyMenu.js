@@ -13,8 +13,8 @@ const MyMenu = ({ callbackFn }) => {
   };
 
   const onlogout = () => {
-    localStorage.removeItem('accessToken');
-    console.log("로그아웃 완료-로컬스토리지 저장값확인: " + localStorage.getItem("accessToken"));   
+    sessionStorage.removeItem('accessToken');
+    console.log("로그아웃 완료-세션스토리지 저장값확인: " + sessionStorage.getItem("accessToken"));   
     logout();
     window.location.href = '/';
     

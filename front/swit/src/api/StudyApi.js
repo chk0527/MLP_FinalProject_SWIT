@@ -14,8 +14,8 @@ export const getStudyWithQuestion = async (studyNo) => {
 }
 
 export const postAdd = async (study) => {
-  const token = localStorage.getItem("accessToken");
-  console.log("react LocalStorage Token값:" + token);
+  const token = sessionStorage.getItem("accessToken");
+  console.log("react sessionStorage Token값:" + token);
   if (!token) {
     throw new Error("No access token found");
   }
