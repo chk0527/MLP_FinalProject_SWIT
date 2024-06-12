@@ -38,6 +38,6 @@ export const login = async (username, password) => {
 };
 
 
-export const info   = () => api.get(`/login_user`)
+export const info   = () => api.get(`/api/login_user`)
 export const join   = (user) => api.post(`/api/join`, user)
 export const remove = (userId) => api.delete(`/user/${userId}`)

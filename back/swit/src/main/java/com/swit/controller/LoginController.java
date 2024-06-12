@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.json.JSONObject;
 // SpringBoot 3.x 부터는 jakarta 사용
@@ -22,20 +23,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 // import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import com.swit.dto.UserDTO;
+import com.swit.domain.User;
 import com.swit.service.UserService;
 import com.swit.jwt.JWTUtil;
 
@@ -73,7 +79,7 @@ public class LoginController {
     private String kakaoClientKey;
 	@Value("${api.kakao.redirectUrl}")
 	private String kakaoRedirectUrl;
-	
+
 
     @GetMapping("/snslogin")
 	public Map<String, String> get(HttpSession session) {
@@ -86,23 +92,23 @@ public class LoginController {
 
     }
 
-	@PostMapping("/")
-    public Map<String, String> postOne(@RequestBody UserDTO userDTO, HttpSession session) {
-		log.info("login --------- start" );
-		String  user_id    = userDTO.getUserId();
+	// @PostMapping("/")
+    // public Map<String, String> postOne(@RequestBody UserDTO userDTO, HttpSession session) {
+	// 	log.info("login --------- start" );
+	// 	String  user_id    = userDTO.getUserId();
 		
-		UserDTO searchUser = new UserDTO();
-        searchUser = userService.get(userDTO.getUserId());
+	// 	UserDTO searchUser = new UserDTO();
+    //     searchUser = userService.get(userDTO.getUserId());
 		
-		if (userDTO.getUserId().equalsIgnoreCase(searchUser.getUserId())
-		&&  userDTO.getUserPassword().equals(searchUser.getUserPassword())) {
+	// 	if (userDTO.getUserId().equalsIgnoreCase(searchUser.getUserId())
+	// 	&&  userDTO.getUserPassword().equals(searchUser.getUserPassword())) {
 
-			log.info("UserDTO : "+ searchUser);
+	// 		log.info("UserDTO : "+ searchUser);
 
-		}
+	// 	}
 
-        return Map.of("user_id", user_id);
-    }
+    //     return Map.of("user_id", user_id);
+    // }
 
 /**
      * 🔐➡👩‍💼 JWT 를 해석하는 요청
@@ -110,7 +116,7 @@ public class LoginController {
      * @param header
      * @return
      */
-    @GetMapping("/login_user")
+    @GetMapping("/api/login_user")
     public ResponseEntity<?> userInfo(@RequestHeader(name="Authorization") String header) {
 
         log.info("===== header =====");
@@ -205,13 +211,16 @@ public class LoginController {
 	}
 
 	@GetMapping("/snslogin/naver_callback")
-	//public ModelAndView callback(@RequestParam ("code") String code,
-	public String callback(@RequestParam ("code") String code,
+	// public ModelAndView callback(@RequestParam ("code") String code,
+	// public String callback(@RequestParam ("code") String code,
+	public RedirectView  callback(@RequestParam ("code") String code,
 						   @RequestParam ("state") String state,
 						   RedirectAttributes rttr,
 						   HttpServletRequest request) {
 		Map<String, String> profile = null;
         UserDTO user = new UserDTO();
+		String access_token = "";
+		String password = "";
 	    try {
 		    String clientId = naverClientKey;
 			String url_2 = naverRedirectUrl;
@@ -224,7 +233,7 @@ public class LoginController {
 		    apiURL += "&redirect_uri=" + redirectURI;
 		    apiURL += "&code=" + code;
 		    apiURL += "&state=" + state;
-		    String access_token = "";
+
             // String refresh_token = "";
 		    // System.out.println("apiURL="+apiURL);
 
@@ -250,11 +259,52 @@ public class LoginController {
 		    //System.out.print("access_token="+access_token);
 		  
             profile = getProfile(access_token);
-		  
+
+			System.out.println("user="+profile.get("userName") + profile.get("userEmail") + profile.get("userSnsConnect"));
+		
 			user = userService.userCheck((String)profile.get("userName")
 			                           , (String)profile.get("userEmail")
 									   , (String)profile.get("userSnsConnect")); 
-	      
+			
+			password = access_token.substring(12, 29);
+
+			System.out.println("user1111="+user);
+			// Optional<UserDTO> optionalUser = Optional.ofNullable(user);				// UserId 숫자형일때
+			// if (optionalUser.map(UserDTO::getUserId).orElse(0L) == 0) {  			
+			// if (user.getUserId().equals(null) || user.getUserId().length() == 0) {  	// 에러 발생
+			// if (StringUtils.isEmpty(user.getUserId())) {								// 문자일때 방법 1
+			// if (user.getUserId() == null || user.getUserId().isEmpty()) {      		// 문자일때 방법 2
+			Optional<String> optionalUserId = Optional.ofNullable(user.getUserId());	// 문자일때 방법 3
+			if (optionalUserId.map(String::isEmpty).orElse(true)) {
+
+				System.out.println("user2222="+user);
+				user.setUserName((String)profile.get("userName"));
+				user.setUserEmail((String)profile.get("userEmail"));
+				user.setUserSnsConnect((String)profile.get("userSnsConnect"));  // "NAVER"
+
+				user.setUserPassword(password);
+				// 저장
+				System.out.println("user3333="+user);
+				userService.join(user);
+				System.out.println("user4444="+user);
+				// 저장 후 다시 조회
+				user = userService.userCheck((String)profile.get("userName")
+										   , (String)profile.get("userEmail")
+										   , (String)profile.get("userSnsConnect")); 
+				System.out.println("user5555="+user);						   
+				// userId 를 update 한다.
+				user.setUserId(user.getUserNo().toString());
+				// password가 암호화 있으므로 다시 set 해서 동일한 비번으로 처리한다.
+				user.setUserPassword(password);
+				System.out.println("user6666="+user);	
+				userService.join(user);
+			} else {
+				user.setUserPassword(password);
+				userService.join(user);
+
+			}
+			System.out.println("user7777="+user);
+			System.out.println("tok="+password);
             br.close();
 	        if(responseCode==200) {
     	        System.out.println("responseCode == 200" + res.toString());
@@ -262,12 +312,13 @@ public class LoginController {
 	    } catch (Exception e) {
 	      System.out.println(e);
 	    }
-	      
-	    rttr.addFlashAttribute("user", user);
-	    // rttr.addFlashAttribute("msg", "naver계정으로 회원 가입 성공!!!");
-        rttr.addFlashAttribute("msg", "naver계정으로 로그인 성공!!!");
-		// return new ModelAndView("/api/login/success");
-		return "redirect:/success";
+	    String userId = user.getUserId();
+	    rttr.addFlashAttribute("tok", password);
+        rttr.addFlashAttribute("name", userId);
+		// log.info("Transferred data: user={}, msg={}", user, "naver계정으로 로그인 성공!!!");
+
+		return new RedirectView("http://localhost:3000/callback?tok=" + access_token + "&name=" + userId);
+		// return new RedirectView("http://localhost:3000/callback");
 
 	}
 
@@ -288,13 +339,11 @@ public class LoginController {
 	    JSONObject responseBody = get(apiURL,requestHeaders);
 
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("userName", responseBody.getString("userName"));
-		map.put("userEmail", responseBody.getString("userEmail"));
-		map.put("userSnsConnect", responseBody.getString("userSnsConnect"));
+		map.put("userName", responseBody.getString("name"));
+		map.put("userEmail", responseBody.getString("email"));
+		map.put("userSnsConnect", "NAVER");
 		return map;
-		
-//	    System.out.println(responseBody);
-		
+	
 	}
 
 	private static JSONObject get(String apiUrl, Map<String, String> requestHeaders){
@@ -352,12 +401,12 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/success")
-    public void success() {
-    	log.info("success로 이동 ..........");
-        return ;
+    // @GetMapping("/success")
+    // public void success() {
+    // 	log.info("success로 이동 ..........");
+    //     return ;
 
-	}
+	// }
 
 
     // @GetMapping("/snslogin/kakao_callback")

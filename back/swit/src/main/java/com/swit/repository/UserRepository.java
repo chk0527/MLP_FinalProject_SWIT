@@ -27,6 +27,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Boolean existsByUserId(String userId);
 
+    Boolean existsByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
+
     Optional<User> findByUserId(String userId);
 
     // 네이버 로그인 체크
