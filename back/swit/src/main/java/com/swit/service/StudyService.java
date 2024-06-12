@@ -14,11 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
-<<<<<<< HEAD
 import com.swit.dto.QuestionDTO;
-=======
 import com.swit.dto.CustomUserDetails;
->>>>>>> develop
 import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
