@@ -85,7 +85,7 @@ public class StudyController {
     }
 
     @PutMapping("/{studyNo}")
-    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, StudyDTO studyDTO) {
+    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
         StudyDTO currentStudyDTO = service.get(studyNo); // 기존 파일 정보를 가져옴
         List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
         List<MultipartFile> newFiles = studyDTO.getFiles();
@@ -93,7 +93,7 @@ public class StudyController {
         studyDTO.setUploadFileNames(uploadFileNames);
         studyDTO.setStudyNo(studyNo);
         log.info("Modify:" + studyDTO);
-        service.modify(studyDTO);
+        service.modify(studyDTO, questions);
         return Map.of("RESULT", "SUCCESS");
     }
 

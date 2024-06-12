@@ -103,6 +103,9 @@ const StudyModifyComponent = ({ studyNo }) => {
         formData.append("studyLink", study.studyLink);
         formData.append("country", study.country);
 
+        studyQuestion.questions.forEach((question, index) => {
+            formData.append("questions", question);
+        });
 
         putOne(studyNo, formData).then(result => {
             console.log("modify result : " + result)

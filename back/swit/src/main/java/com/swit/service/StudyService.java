@@ -58,6 +58,7 @@ public class StudyService {
         Study study = dtoToEntity(studyDTO);
 
         Study saveStudy = studyRepository.save(study);
+
         Question question = new Question();
         question.setStudy(saveStudy);
         question.setQ1(questions.size() > 0 ? questions.get(0) : null);
@@ -65,7 +66,6 @@ public class StudyService {
         question.setQ3(questions.size() > 2 ? questions.get(2) : null);
         question.setQ4(questions.size() > 3 ? questions.get(3) : null);
         question.setQ5(questions.size() > 4 ? questions.get(4) : null);
-
         questionRepository.save(question);
 
         return saveStudy.getStudyNo();
@@ -88,7 +88,7 @@ public class StudyService {
         return new StudyWithQuestionDTO(studyDTO, questionDTO);
     }
 
-    public void modify(StudyDTO studyDTO) {
+    public void modify(StudyDTO studyDTO, List<String> questions) {
         Optional<Study> result = studyRepository.findById(studyDTO.getStudyNo());
         Study study = result.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
 
@@ -108,7 +108,17 @@ public class StudyService {
         study.getImageList().clear();
         studyDTO.getUploadFileNames().forEach(study::addImageString);
 
-        studyRepository.save(study);
+        Study saveStudy = studyRepository.save(study);
+
+        Optional<Question> questionResult = questionRepository.findById(studyDTO.getStudyNo());
+        Question question  = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        question.setStudy(saveStudy);
+        question.setQ1(questions.size() > 0 ? questions.get(0) : null);
+        question.setQ2(questions.size() > 1 ? questions.get(1) : null);
+        question.setQ3(questions.size() > 2 ? questions.get(2) : null);
+        question.setQ4(questions.size() > 3 ? questions.get(3) : null);
+        question.setQ5(questions.size() > 4 ? questions.get(4) : null);
+        questionRepository.save(question);
     }
 
     public void remove(Integer studyNo) {
