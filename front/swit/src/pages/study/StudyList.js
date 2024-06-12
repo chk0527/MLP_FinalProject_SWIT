@@ -45,7 +45,7 @@ const StudyListPage = () => {
         alert('승인 완료 or 방장');
         navigate(`/study/group/${studyNo}`, { state: 0 });
       } else {
-        alert('승인 대기중');
+        alert('승인 대기중 or 로그인 상태&미가입');
         navigate(`/study/read/${studyNo}`, { state: 0 });
       }
     } catch (error) {
@@ -98,7 +98,7 @@ const StudyListPage = () => {
             {studyList.map((study, index) => (
               <div
                 key={study.studyNo}
-                onMouseEnter={() => setCurrentItem(index + 1)}
+                onMouseEnter={() => setCurrentItem(study.studyNo)}
                 onMouseLeave={() => setCurrentItem(null)}
                 onClick={() => handleReadStudy(study.studyNo)}
                 className="relative w-72 h-72 mb-8"
