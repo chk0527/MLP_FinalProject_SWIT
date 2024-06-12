@@ -5,6 +5,7 @@ import moment from 'moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import DatePicker from "react-datepicker";
 import { FaChevronLeft, FaChevronRight, FaCalendarAlt, FaPalette } from 'react-icons/fa';
+import GroupJoinConfirmComponent from '../group/GroupJoinConfirmComponent';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -268,6 +269,13 @@ const StudyGroupComponent = ({ studyNo }) => {
         >
           신청
         </span>
+        <span className="mx-5">|</span>
+        <span
+          onClick={() => setView('join')}
+          className={`mx-2 px-4 py-2 cursor-pointer ${view === 'join' ? 'font-bold text-red-500' : 'text-gray-500'}`}
+        >
+          신청 내역
+        </span>
       </div>
 
       {/* 뷰 - 캘린더 항목 */}
@@ -450,6 +458,12 @@ const StudyGroupComponent = ({ studyNo }) => {
             />
             <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">입력</button>
           </form>
+        </div>
+      )}
+
+      {view === 'join' && (
+        <div>
+          <GroupJoinConfirmComponent/>
         </div>
       )}
     </div>

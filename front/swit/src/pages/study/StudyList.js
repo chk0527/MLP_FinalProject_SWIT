@@ -32,21 +32,22 @@ const StudyListPage = () => {
   const handleReadStudy = async (studyNo) => {
     try {
       // 현재 로그인된 사용자 ID를 가져옵니다 (예: 로컬 스토리지에서 가져옴)
-      console.log(getUserIdFromToken() + "!");
       const userId = getUserIdFromToken();
       if (!userId) {
         alert("추후 삭제 될 알림: 비로그인");
         navigate(`/study/read/${studyNo}`, { state: 0 });
         return;
       }
-    //   alert("추후 삭제 될 알림: 로그인");
-    //   // 사용자가 해당 스터디에 참여하고 있는지 확인
-    //   const member = await isMember(studyNo);
-    //   if (member) {
-    //     navigate(`/study/group/${studyNo}`, { state: 0 });
-    //   } else {
-    //     navigate(`/study/read/${studyNo}`, { state: 0 });
-    //   }
+      alert("추후 삭제 될 알림: 로그인");
+      // 사용자가 해당 스터디에 참여하고 있는지 확인
+      const isMemberStatus = await isMember(userId, studyNo);
+      if (isMemberStatus) {
+        alert('승인 완료 or 방장');
+        navigate(`/study/group/${studyNo}`, { state: 0 });
+      } else {
+        alert('승인 대기중');
+        navigate(`/study/read/${studyNo}`, { state: 0 });
+      }
     } catch (error) {
       console.error("Error checking membership:", error);
     }
