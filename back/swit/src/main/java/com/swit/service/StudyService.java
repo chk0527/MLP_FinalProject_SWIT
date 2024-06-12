@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
+import com.swit.dto.QuestionDTO;
 import com.swit.dto.CustomUserDetails;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
 
@@ -75,6 +77,15 @@ public class StudyService {
         StudyDTO studyDTO = entityToDTO(study);
         // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
         return studyDTO;
+    }
+
+    public StudyWithQuestionDTO getStudyWithQuestionDTO(Integer studyNo) {
+        Study study = studyRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
+        StudyDTO studyDTO = entityToDTO(study);
+        QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
+        // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
+        return new StudyWithQuestionDTO(studyDTO, questionDTO);
     }
 
     public void modify(StudyDTO studyDTO) {

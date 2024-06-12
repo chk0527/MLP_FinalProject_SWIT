@@ -18,13 +18,16 @@ const initState = {
     studySubject: "개발",
     studyComm: "오픈채팅",
     studyLink: "kakao.com",
-    questionCount: 1,
-    questions: []
+}
 
+const questionInit = {
+    questionCount: 1,
+    questions: [""]
 }
 
 const StudyAddComponent = () => {
     const [study, setStudy] = useState({ ...initState })
+    const [question, setQuestion] = useState({...questionInit})
     const [result, setResult] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
@@ -66,7 +69,7 @@ const StudyAddComponent = () => {
         formData.append("studyLink", study.studyLink);
         formData.append("country", study.country);
         
-        study.questions.forEach((question, index) => {
+        question.questions.forEach((question, index) => {
             formData.append("questions", question);
         });
 
@@ -74,6 +77,7 @@ const StudyAddComponent = () => {
             console.log("추가 실행")
             setResult(result.studyNo)
             setStudy({ ...initState })
+            setQuestion({...questionInit})
         }).catch(e => {
             console.error(e)
         })
@@ -93,7 +97,7 @@ const StudyAddComponent = () => {
 
     const handleQuestionCountChange = (e) => {
         const questionCount = parseInt(e.target.value);
-        setStudy(prevState => ({
+        setQuestion(prevState => ({
             ...prevState,
             questionCount,
             questions: Array(questionCount).fill('')
@@ -101,8 +105,8 @@ const StudyAddComponent = () => {
     };
 
     const handleQuestionChange = (index, value) => {
-        const updatedQuestions = study.questions.map((q, i) => (i === index ? value : q));
-        setStudy(prevState => ({
+        const updatedQuestions = question.questions.map((q, i) => (i === index ? value : q));
+        setQuestion(prevState => ({
             ...prevState,
             questions: updatedQuestions
         }));
@@ -296,7 +300,7 @@ const StudyAddComponent = () => {
                     </div>
                 </div>
 
-                {study.questions.map((question, index) => (
+                {question.questions.map((question, index) => (
                     <div key={index} className="sm:col-span-2 mt-5">
                         <label htmlFor={`question-${index}`} className="block text-sm font-semibold leading-6 text-gray-900">질문 {index + 1}</label>
                         <div className="mt-2.5">

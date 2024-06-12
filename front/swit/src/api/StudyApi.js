@@ -6,7 +6,12 @@ const prefix = `${API_SERVER_HOST}/api/study`;
 export const getStudy = async (studyNo) => {
   const res = await axios.get(`${prefix}/${studyNo}`);
   return res.data;
-};
+}
+
+export const getStudyWithQuestion = async (studyNo) => {
+  const res = await axios.get(`${prefix}/question/${studyNo}`);
+  return res.data;
+}
 
 export const postAdd = async (study) => {
   const token = localStorage.getItem("accessToken");
