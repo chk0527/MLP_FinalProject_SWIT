@@ -23,7 +23,7 @@ const items2 = [
 
 const Header = () => {
   const { isLogin, login, logout } = useContext(LoginContext)
-  console.info("Header isLogin [" + isLogin + "]");
+  // console.info("Header isLogin [" + isLogin + "]");
   //모달창
   const [result, setResult] = useState(false);
   const closeModal = () => {

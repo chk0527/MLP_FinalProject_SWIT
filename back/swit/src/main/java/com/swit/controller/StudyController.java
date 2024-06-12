@@ -79,6 +79,7 @@ public class StudyController {
         groupDTO.setStudyNo(studyNo);
         groupDTO.setGroupSelfintro("방장");
         groupDTO.setGroupLeader(1);
+        groupDTO.setGroupJoin(1);
         groupService.register(groupDTO);
 
         return Map.of("studyNo", studyNo);

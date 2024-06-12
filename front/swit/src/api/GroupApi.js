@@ -1,41 +1,58 @@
-import axios from "axios"
-export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/group`
+import axios from "axios";
+import { getUserIdFromToken } from "../util/jwtDecode";
 
-//그룹 테이블 관리를 위한 api
+export const API_SERVER_HOST = 'http://localhost:8181';
+const prefix = `${API_SERVER_HOST}/api/group`;
 
 export const addGroup = async (studyObj) => {
-  // 로컬 스토리지에서 토큰 가져오기
-  const token = localStorage.getItem('accessToken');
-  console.log(token+"@@@@@@@");
+  const token = sessionStorage.getItem('accessToken');
   if (!token) {
-      throw new Error('No access token found');
+    throw new Error('No access token found');
   }
 
-  // Axios 요청에 Authorization 헤더 추가
   const res = await axios.post(`${prefix}/add`, studyObj, {
-      headers: {
-          'Authorization': `${token}`
-      }
+    headers: {
+      Authorization: `${token}`,
+    }
   });
 
   return res.data;
 };
 
-export const isMember = async (studyNo) => {
-  const token = localStorage.getItem('accessToken');
+export const isMember = async (userId, studyNo) => {
+  const res = await axios.get(`${API_SERVER_HOST}/api/group/isMember`, {
+    params: {userId, studyNo }
+  });
+  return res.data; // 여기서 승인 상태를 반환합니다
+};
+
+export const isLeader = async (studyNo) => {
+  const token = sessionStorage.getItem('accessToken');
   if (!token) {
     throw new Error('No access token found');
   }
-
-  const res = await axios.get(`${API_SERVER_HOST}/api/group/isMember`, {
-    params: {
-      studyNo
-    },
+  const userId = getUserIdFromToken();
+  const res = await axios.get(`${prefix}/isLeader`, {
     headers: {
-      'Authorization': `${token}`
-    }
+      Authorization: `${token}`
+    },
+    params: { userId, studyNo },
   });
-
   return res.data;
+};
+
+export const fetchGroupRequests = async (studyNo) => {
+  const res = await axios.get(`${API_SERVER_HOST}/api/group/requests`, {
+      params: { studyNo }
+  });
+  return res.data;
+};
+
+export const confirmGroupJoin = async (groupNo, approve) => {
+  await axios.put(`${API_SERVER_HOST}/api/group/confirm`, null, {
+      params: {
+          groupNo,
+          approve
+      }
+  });
 };

@@ -3,7 +3,7 @@ import { Outlet, useNavigate, Link } from "react-router-dom";
 import BasicLayout from "../../layouts/BasicLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
-import { isMember } from "../../api/GroupApi"; // isMember 함수를 가져옴
+import { isMember, isLeader } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { getUserIdFromToken } from "../../util/jwtDecode";
 
 //아이콘
@@ -32,23 +32,38 @@ const StudyListPage = () => {
   const handleReadStudy = async (studyNo) => {
     try {
       // 현재 로그인된 사용자 ID를 가져옵니다 (예: 로컬 스토리지에서 가져옴)
-      console.log(getUserIdFromToken() + "!");
       const userId = getUserIdFromToken();
       if (!userId) {
-        alert("추후 삭제 될 알림: 비로그인");
+        alert("테스트: 비로그인");
         navigate(`/study/read/${studyNo}`, { state: 0 });
         return;
       }
-    //   alert("추후 삭제 될 알림: 로그인");
-    //   // 사용자가 해당 스터디에 참여하고 있는지 확인
-    //   const member = await isMember(studyNo);
-    //   if (member) {
-    //     navigate(`/study/group/${studyNo}`, { state: 0 });
-    //   } else {
-    //     navigate(`/study/read/${studyNo}`, { state: 0 });
-    //   }
+      alert("테스트: 로그인");
+      //방장인지 확인
+      const isLeaderStatus = await isLeader(studyNo);
+      if (isLeaderStatus) {
+        alert("테스트: 방장입니다.");
+        navigate(`/study/group/${studyNo}`, { state: 0 });
+        return;
+      }
+      // 사용자가 해당 스터디에 참여하고 있는지 확인
+      const isMemberStatus = await isMember(userId, studyNo);
+      console.log(isMemberStatus+"!!");
+      if (isMemberStatus === 1) {
+        alert("승인 완료");
+        navigate(`/study/group/${studyNo}`, { state: 0 });
+      } else if (isMemberStatus === 0) {
+        alert("승인 대기중");
+        navigate(`/study/read/${studyNo}`, { state: 0 });
+      } else if (isMemberStatus === 2) {
+        alert("거절되었습니다.");
+        navigate(`/study/read/${studyNo}`, { state: 0 });
+      } else {
+        alert("로그인 상태지만 미가입");
+        navigate(`/study/read/${studyNo}`, { state: 0 });
+      }
     } catch (error) {
-      console.error("Error checking membership:", error);
+      console.error("Error checking membership or leader status:", error);
     }
   };
 
@@ -97,7 +112,7 @@ const StudyListPage = () => {
             {studyList.map((study, index) => (
               <div
                 key={study.studyNo}
-                onMouseEnter={() => setCurrentItem(index + 1)}
+                onMouseEnter={() => setCurrentItem(study.studyNo)}
                 onMouseLeave={() => setCurrentItem(null)}
                 onClick={() => handleReadStudy(study.studyNo)}
                 className="relative w-72 h-72 mb-8"
