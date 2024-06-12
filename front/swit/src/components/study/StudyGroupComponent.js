@@ -213,6 +213,10 @@ const StudyGroupComponent = ({ studyNo }) => {
     };
   }
 
+  const handleColorPickerClick = () => {
+    setColorPickerVisible(!colorPickerVisible);
+  }
+
   // ======================= 캘린더 - 할 일 관리 =========================
   // ====================================================================
 
@@ -384,7 +388,6 @@ const StudyGroupComponent = ({ studyNo }) => {
               <div className="date-picker-item">
                 <label>시작:</label>
                 <div className="input-date-container">
-                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-start').focus()} />
                   <DatePicker
                     selected={modalEvent.start}
                     onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
@@ -392,12 +395,12 @@ const StudyGroupComponent = ({ studyNo }) => {
                     dateFormat="Pp"
                     className="hidden-datepicker hidden-datepicker-start"
                   />
+                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-start').focus()} />
                 </div>
               </div>
               <div className="date-picker-item">
                 <label>종료:</label>
                 <div className="input-date-container">
-                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-end').focus()} />
                   <DatePicker
                     selected={modalEvent.end}
                     onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
@@ -405,25 +408,18 @@ const StudyGroupComponent = ({ studyNo }) => {
                     dateFormat="Pp"
                     className="hidden-datepicker hidden-datepicker-end"
                   />
+                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-end').focus()} />
                 </div>
               </div>
             </div>
             <label>색깔:</label>
             <div className="color-picker-container">
-              <button
-                className="color-picker-button"
-                onClick={() => setColorPickerVisible(!colorPickerVisible)}
-              >
-                <FaPalette />
-              </button>
-              {colorPickerVisible && (
-                <input
-                  type="color"
-                  value={modalEvent.color || "#000000"}
-                  onChange={(e) => setModalEvent({ ...modalEvent, color: e.target.value })}
-                  className="color-picker-input"
-                />
-              )}
+              <input
+                type="color"
+                value={modalEvent.color || "#000000"}
+                onChange={(e) => setModalEvent({ ...modalEvent, color: e.target.value })}
+                className="color-picker-input"
+              />
               <div className="selected-color" style={{ backgroundColor: modalEvent.color || "#000000" }}></div>
             </div>
             <label>내용:</label>

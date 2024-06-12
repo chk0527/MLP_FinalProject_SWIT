@@ -32,7 +32,7 @@
   margin-bottom: 10px;
 }
 
-.color-picker-button {
+.color-picker-input {
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -40,10 +40,6 @@
   display: flex;
   align-items: center;
   margin-right: 10px;
-}
-
-.color-picker-input {
-  display: block;
 }
 
 .selected-color {
@@ -113,7 +109,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 24px;
+  font-size: 36px;
   cursor: pointer;
 }
 
@@ -124,7 +120,6 @@ button {
   cursor: pointer;
   border: none;
   border-radius: 12px;
-  /* 둥근 모서리 */
 }
 
 .fade-in {
@@ -146,7 +141,7 @@ button {
 }
 
 .input-content {
-  height: 200px;
+  height: 300px;
   resize: none;
 }
 
@@ -155,6 +150,8 @@ button {
   justify-content: space-between;
   margin-top: 20px;
   width: 100%;
+  position: absolute;
+  bottom: 20px;
 }
 
 .button-delete {
@@ -257,8 +254,8 @@ button {
 }
 
 .hidden-datepicker {
-  position: absolute;
-  z-index: 1000;
+  width: 100%;
+  padding-right: 30px;
 }
 
 .hidden-datepicker-start {
