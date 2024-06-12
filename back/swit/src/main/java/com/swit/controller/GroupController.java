@@ -37,11 +37,13 @@ public class GroupController {
   }
 
   @GetMapping("/isMember") //그룹 가입 승인 여부 판별
-  public boolean isMember(@RequestParam String userId, @RequestParam Integer studyNo) {
-    // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    // String userId = authentication.getName(); // 현재 로그인된 사용자의 아이디를 가져옴
-    
+  public Integer isMember(@RequestParam String userId, @RequestParam Integer studyNo) {
     return service.isMember(userId, studyNo);
+  }
+
+  @GetMapping("/isLeader") //그룹장 여부 판별
+  public boolean isLeader(@RequestParam String userId, @RequestParam Integer studyNo) {    
+    return service.isLeader(userId, studyNo);
   }
 
   @PutMapping("/confirm") //그룹 가입 승인, 거절(방장)

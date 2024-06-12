@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getUserIdFromToken } from "../util/jwtDecode";
 
 export const API_SERVER_HOST = 'http://localhost:8181';
 const prefix = `${API_SERVER_HOST}/api/group`;
@@ -11,7 +12,7 @@ export const addGroup = async (studyObj) => {
 
   const res = await axios.post(`${prefix}/add`, studyObj, {
     headers: {
-      'Authorization': `${token}`
+      Authorization: `${token}`,
     }
   });
 
@@ -23,6 +24,21 @@ export const isMember = async (userId, studyNo) => {
     params: {userId, studyNo }
   });
   return res.data; // 여기서 승인 상태를 반환합니다
+};
+
+export const isLeader = async (studyNo) => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    throw new Error('No access token found');
+  }
+  const userId = getUserIdFromToken();
+  const res = await axios.get(`${prefix}/isLeader`, {
+    headers: {
+      Authorization: `${token}`
+    },
+    params: { userId, studyNo },
+  });
+  return res.data;
 };
 
 export const fetchGroupRequests = async (studyNo) => {

@@ -50,11 +50,17 @@ public class GroupService {
     return saveGroup.getGroupNo();
   }
 
-  public boolean isMember(String userId, Integer studyNo) { //그룹 가입 승인 여부 판별
+  public Integer isMember(String userId, Integer studyNo) { //그룹 가입 승인 여부 판별
     Optional<Group> group = groupRepository.findByUserIdAndStudyNo(userId, studyNo);
     log.info(userId + "@@@@@@@" + studyNo);
     log.info(group + "!!!!!!!!!!");
-    return group.map(g -> g.getGroupJoin() == 1).orElse(false);
+    return group.map(Group::getGroupJoin).orElse(-1); // -1을 사용하여 그룹에 가입하지 않은 상태를 표시
+  }
+
+  public boolean isLeader(String userId, Integer studyNo) {
+    Optional<Group> group = groupRepository.findByUserIdAndStudyNoAndGroupLeader(userId, studyNo, 1);
+    log.info(group.isPresent()+"!!!");
+    return group.isPresent();
   }
 
   public boolean confirmGroupJoin(Integer groupNo, boolean approve) { //그룹 가입 승인,거절(방장)
