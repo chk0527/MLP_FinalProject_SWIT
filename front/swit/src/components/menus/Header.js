@@ -1,10 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import logo from "../../img/logoBlack.png";
 import MyMenu from "./MyMenu";
 import { motion, AnimatePresence } from "framer-motion";
+import { LoginContext } from "../../contexts/LoginContextProvider";
 
-const items = [
+const items1 = [
+  { name: "스터디 그룹", path: "/study", no: 0 },
+  { name: "스터디 장소", path: "/place/list", no: 1 },
+  { name: "시험 및 채용", path: "/job/list", no: 2 },
+  { name: "Q & A", path: "/", no: 3 },
+  { name: "로그인", path: "/login", no: 4 },
+  { name: "회원가입", path: "/join", no: 5 },
+];
+
+const items2 = [
   { name: "스터디 그룹", path: "/study", no: 0 },
   { name: "스터디 장소", path: "/place/list", no: 1 },
   { name: "시험 및 채용", path: "/job/list", no: 2 },
@@ -12,13 +22,15 @@ const items = [
 ];
 
 const Header = () => {
+  const { isLogin, login, logout } = useContext(LoginContext)
+  console.info("Header isLogin [" + isLogin + "]");
   //모달창
   const [result, setResult] = useState(false);
   const closeModal = () => {
     setResult(false);
   };
   const openModal = () => {
-    setResult(true);
+      setResult(true);
   };
   //메뉴바
   const location = useLocation();
@@ -28,9 +40,12 @@ const Header = () => {
   useEffect(() => {
     setClickItem(location.state);
     console.log("location.state",location.state);
-  }, [items.no]);
+  // }, [items.no]);
+  }, [location.state]);
+  
 
-   
+  const items = isLogin ? items2 : items1;
+
   return (
     <nav id="navbar" className="absolute w-full h-full">
       <div className="relative p-4 flex justify-center bg-white z-50">

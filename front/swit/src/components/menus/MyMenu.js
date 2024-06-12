@@ -1,19 +1,22 @@
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import profile from "../../img/profileEx.jpg";
+import { LoginContext } from "../../contexts/LoginContextProvider";
 
 const MyMenu = ({ callbackFn }) => {
   const [studyList, setStudyList] = useState(false); //모달창
-
+  const { isLogin, login, logout } = useContext(LoginContext)
+  console.info("MyMenu isLogin [" + isLogin + "]");
   const myStudy = () => {
     setStudyList(!studyList);
   };
 
-  const logout = () => {
+  const onlogout = () => {
     localStorage.removeItem('accessToken');
-    // console.log("로그아웃 완료-로컬스토리지 저장값확인: " + localStorage.getItem("accessToken"));   
-    window.location.href = '/'; // 홈 페이지로 리디렉션
+    console.log("로그아웃 완료-로컬스토리지 저장값확인: " + localStorage.getItem("accessToken"));   
+    logout();
+    window.location.href = '/';
     
 };
 
@@ -80,7 +83,7 @@ const MyMenu = ({ callbackFn }) => {
           </div>
         </div>
         <div className="absolute bottom-0 pb-24">
-          <button onClick={logout}>로그아웃</button>
+          <button onClick={onlogout}>로그아웃</button>
         </div>
       </motion.div>
     </AnimatePresence>
