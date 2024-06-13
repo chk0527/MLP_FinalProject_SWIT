@@ -1,11 +1,11 @@
-// StudyReadComponent.js
 import React, { useState, useEffect } from "react";
-import { API_SERVER_HOST, getStudy} from "../../api/StudyApi";
-import {memberCount} from "../../api/GroupApi";
+import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { memberCount } from "../../api/GroupApi";
 import { useNavigate } from "react-router-dom";
 import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInfoComponent from "./StudyInfoComponent";
 import GroupJoinComponent from "../group/GroupJoinComponent";
+import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 
 const initState = {
   studyNo: 0,
@@ -39,6 +39,13 @@ const StudyReadComponent = ({ studyNo }) => {
   }, [studyNo]);
 
   const openModal = async () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인 후 이용해주세요");
+      navigate("/login");
+      return;
+    }
+
     try {
       const currentMemberCount = await memberCount(studyNo);
       if (currentMemberCount >= study.studyHeadcount) {
@@ -79,7 +86,7 @@ const StudyReadComponent = ({ studyNo }) => {
       </div>  
     
       <div className="flex justify-start">
-      <StudyListBtnComponent />
+        <StudyListBtnComponent />
       </div>
 
       <GroupJoinComponent isModalOpen={isModalOpen} closeModal={closeModal} studyNo={studyNo} />

@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -23,33 +25,41 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Group {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer groupNo;
-  
-  private String userId;
-  
-  private Integer studyNo;
-  
-  @ManyToOne
-  @JoinColumn(name = "studyNo", insertable = false, updatable = false)
-  private Study study;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer groupNo;
 
-  @ColumnDefault("0")
-  @Column(nullable = false)
-  private Integer groupLeader; //0: 스터디원 1: 스터디장
+    @ManyToOne
+    @JoinColumn(name = "user_id",referencedColumnName="userId")
+    private User user;
 
-  @ColumnDefault("0")
-  @Column(nullable = false)
-  private Integer groupJoin; //0: 보류 1: 승인 2: 거절
+    @ManyToOne
+    @JoinColumn(name = "study_no")
+    private Study study;
 
-  @PrePersist
-  protected void onCreate() {
-      if (this.groupLeader == null) {
-          this.groupLeader = 0;
-      }
-      if (this.groupJoin == null) {
-          this.groupJoin = 0;
-      }
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer groupLeader; // 0: 스터디원 1: 스터디장
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer groupJoin; // 0: 보류 1: 승인 2: 거절
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.groupLeader == null) {
+            this.groupLeader = 0;
+        }
+        if (this.groupJoin == null) {
+            this.groupJoin = 0;
+        }
+    }
+
+    public String getUserId() {
+      return user.getUserId();
+    }
+
+  public Integer getStudyNo() {
+      return study.getStudyNo();
   }
 }

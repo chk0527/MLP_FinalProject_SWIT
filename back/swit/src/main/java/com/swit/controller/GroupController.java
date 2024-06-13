@@ -34,14 +34,21 @@ public class GroupController {
     // List<String> uploadFileNames = fileUtil.saveFiles(files);
     return Map.of("groupNo", groupNo);
   }
-
   @PostMapping("/join") // 그룹 가입
-    public Map<String, Integer> registerWithAnswer(@RequestBody Map<String, Object> request) {
-        GroupDTO groupDTO = new ObjectMapper().convertValue(request.get("group"), GroupDTO.class);
-        AnswerDTO answerDTO = new ObjectMapper().convertValue(request.get("answer"), AnswerDTO.class);
-        Integer groupNo = service.registerWithAnswer(groupDTO, answerDTO);
-        return Map.of("groupNo", groupNo);
-    }
+  public Map<String, Integer> registerWithAnswer(@RequestBody Map<String, Object> request) {
+      ObjectMapper objectMapper = new ObjectMapper();
+      GroupDTO groupDTO = objectMapper.convertValue(request.get("group"), GroupDTO.class);
+      AnswerDTO answerDTO = objectMapper.convertValue(request.get("answer"), AnswerDTO.class);
+      Integer groupNo = service.registerWithAnswer(groupDTO, answerDTO);
+      return Map.of("groupNo", groupNo);
+  }
+  // @PostMapping("/join") // 그룹 가입
+  //   public Map<String, Integer> registerWithAnswer(@RequestBody Map<String, Object> request) {
+  //       GroupDTO groupDTO = new ObjectMapper().convertValue(request.get("group"), GroupDTO.class);
+  //       AnswerDTO answerDTO = new ObjectMapper().convertValue(request.get("answer"), AnswerDTO.class);
+  //       Integer groupNo = service.registerWithAnswer(groupDTO, answerDTO);
+  //       return Map.of("groupNo", groupNo);
+  //   }
   
   @GetMapping("/isMember") //그룹 가입 승인 여부 판별
   public Integer isMember(@RequestParam String userId, @RequestParam Integer studyNo) {

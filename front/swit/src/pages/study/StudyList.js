@@ -22,6 +22,7 @@ const StudyListPage = () => {
     const fetchStudyList = async () => {
       try {
         const studyListData = await getAllStudies();
+        console.log("Fetched study list:", studyListData); // API 결과 로그
         
         // 각 스터디에 대한 상태 정보 추가
         const userId = getUserIdFromToken();
@@ -38,6 +39,7 @@ const StudyListPage = () => {
             return { ...study, isLeader: leaderStatus, isMemberStatus: memberStatus, currentMemberCount };
           })
         );
+        console.log("Study list with status:", studyListWithStatus); // 상태가 추가된 리스트 로그
         setStudyList(studyListWithStatus);
       } catch (error) {
         console.error("Error fetching study list:", error);
