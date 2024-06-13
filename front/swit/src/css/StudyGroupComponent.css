@@ -1,109 +1,100 @@
-/*=========== 캘린더 디자인 ==============*/
-.custom-calendar-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 20px;
+/*=========== 캘린더 스타일 ==============*/
+.rbc-calendar {
+  border: 2px solid #008000;
+  border-radius: 10px;
 }
 
-.custom-calendar-header .right-controls {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
+.rbc-month-view {
+  background-color: #ffffff;
 }
 
-.custom-calendar-header .left-controls {
-  display: flex;
-  align-items: center;
+.rbc-day-bg {
+  border-right: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
 }
 
-.custom-calendar-header .view-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-left: 10px;
-  transition: background-color 0.3s ease;
+.rbc-day-bg:nth-child(7n) {
+  border-right: none;
 }
 
-.custom-calendar-header .view-button.active {
-  background-color: #2E8B57;
+.rbc-off-range-bg {
+  background-color: #f0f0f0;
 }
 
-.custom-calendar-header .nav-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-right: 10px;
+.rbc-today {
+  background-color: #d9edf7;
 }
 
-.custom-calendar-header .today-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 0.8em;
-  margin-right: 10px;
+.rbc-header {
+  color: inherit;
 }
 
-.custom-calendar-header .label {
-  font-size: 1.5em;
+.rbc-header:first-child {
+  color: red;
+}
+
+.rbc-header:nth-child(7n) {
+  color: blue;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid #e6e6e6;
+}
+
+/*=========== 공휴일 및 주말 텍스트 스타일 ==============*/
+.sunday .rbc-date-cell,
+.sunday .rbc-button-link,
+.holiday .rbc-date-cell,
+.holiday .rbc-button-link {
+  color: red;
+}
+
+.saturday .rbc-date-cell,
+.saturday .rbc-button-link {
+  color: blue;
+}
+
+.holiday .holiday-text {
+  color: red;
   font-weight: bold;
-  margin-right: 10px;
-}
-
-.custom-calendar-header .nav-button:hover {
-  background-color: #45a049;
-}
-
-.custom-calendar-header .today-button:hover {
-  background-color: #0056b3;
-}
-
-.custom-calendar-header .view-button:hover {
-  background-color: #45a049;
-}
-
-/*=========== 모달창 - 색 변경 버튼 ==============*/
-.color-picker-container {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.color-picker-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.5em;
-  display: flex;
-  align-items: center;
-  margin-right: 10px;
-}
-
-.color-picker-input {
+  font-size: 0.8em;
+  text-align: center;
   display: block;
+  margin-top: 50%; /* 공휴일 텍스트 위치 조정 */
 }
 
-.selected-color {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #ccc;
-  margin-left: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
+.rbc-date-cell-content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/*=========== 모달창 디자인 ==============*/
+.rbc-date-cell {
+  text-align: center;
+}
+
+.rbc-off-range-bg {
+  background-color: #f0f0f0;
+}
+
+/*=========== 이벤트 스타일 ==============*/
+.rbc-event {
+  background-color: #000000; /* 기본 색상 검정색 */
+  border: none;
+  border-radius: 10px; /* 둥근 모서리 적용 */
+  color: white;
+  font-size: 0.85em;
+  padding: 2px;
+  text-align: center;
+}
+
+.rbc-event-content {
+  text-align: center;
+}
+
+/*=========== 모달창 스타일 ==============*/
 .modal {
   position: fixed;
   right: -100%;
@@ -204,8 +195,9 @@ button {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  position: absolute;
-  bottom: 30px;
+  position: relative;
+  bottom: -150px;
+  left: 0;
   padding: 0 20px;
 }
 
@@ -225,66 +217,6 @@ button {
   border: none;
   cursor: pointer;
   border-radius: 4px;
-}
-
-/* Custom calendar styles */
-.rbc-calendar {
-  border: 2px solid #008000;
-  border-radius: 10px;
-}
-
-.rbc-month-view {
-  background-color: #ffffff;
-}
-
-.rbc-day-bg {
-  border-right: 1px solid #e6e6e6;
-}
-
-.rbc-today {
-  background-color: #e6ffe6;
-}
-
-.rbc-day-bg:nth-child(7n) {
-  border-right: none;
-}
-
-.rbc-day-slot .rbc-time-slot {
-  border-top: 1px solid #e6e6e6;
-}
-
-/*=========== 캘린더 이벤트 효과 스타일 ==============*/
-.rbc-event {
-  background-color: #d1e7dd;
-  border: 1px solid #0f5132;
-  color: #0f5132;
-  border-radius: 4px;
-  padding: 2px 5px;
-  font-size: 0.85rem;
-}
-
-.rbc-event-content {
-  text-align: center;
-}
-
-@keyframes fadeIn {
-  from {
-    right: -100%;
-  }
-
-  to {
-    right: 0;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    right: 0;
-  }
-
-  to {
-    right: -100%;
-  }
 }
 
 /*=========== DatePicker(날짜선택) 스타일 ==============*/
@@ -318,4 +250,129 @@ button {
   position: absolute;
   right: 10px;
   cursor: pointer;
+}
+
+/*=========== Color Picker 스타일 ==============*/
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.color-picker-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.color-picker-input {
+  display: block;
+}
+
+.selected-color {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/*=========== 캘린더 헤더 스타일 ==============*/
+.custom-calendar-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+}
+
+.custom-calendar-header .right-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.custom-calendar-header .left-controls {
+  display: flex;
+  align-items: center;
+}
+
+.custom-calendar-header .view-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-calendar-header .view-button.active {
+  background-color: #2E8B57;
+}
+
+.custom-calendar-header .nav-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.custom-calendar-header .today-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 0.8em;
+  margin-right: 10px;
+}
+
+.custom-calendar-header .label {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.custom-calendar-header .nav-button:hover {
+  background-color: #45a049;
+}
+
+.custom-calendar-header .today-button:hover {
+  background-color: #0056b3;
+}
+
+.custom-calendar-header .view-button:hover {
+  background-color: #45a049;
+}
+
+@keyframes fadeIn {
+  from {
+    right: -100%;
+  }
+
+  to {
+    right: 0;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    right: 0;
+  }
+
+  to {
+    right: -100%;
+  }
 }
