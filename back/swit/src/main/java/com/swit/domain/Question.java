@@ -1,5 +1,7 @@
 package com.swit.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -20,6 +22,7 @@ public class Question {
 
     @OneToOne
     @MapsId
+    @JsonBackReference
     @JoinColumn(name = "study_no", nullable = false)
     private Study study;
 }

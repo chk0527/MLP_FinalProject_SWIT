@@ -41,13 +41,9 @@ public class StudyController {
     private final CustomFileUtil fileUtil;
 
     @GetMapping("/all")
-    public List<Study> getAllStudies() {
+    public List<Study> getAllStudies(String studyTitle, String studySubject, String studyAddr, Boolean studyOnline) {
         String userId = (String) session.getAttribute("userId");
-        log.info("Logged in user: " + userId);
-
-        List<Study> studyList = service.getAllStudies(); // StudyService에 새로운 메서드 추가 필요
-
-        log.info("Study List: " + studyList);
+        List<Study> studyList = service.getAllStudies(studyTitle, studySubject, studyAddr, studyOnline); // StudyService에                                                                           // 필요
         return studyList;
     }
 
@@ -67,7 +63,7 @@ public class StudyController {
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         studyDTO.setUploadFileNames(uploadFileNames);
         log.info(uploadFileNames);
-    
+
         Integer studyNo = service.register(studyDTO, questions);
         // 현재 로그인된 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

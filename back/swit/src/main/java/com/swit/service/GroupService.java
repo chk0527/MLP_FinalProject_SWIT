@@ -36,13 +36,14 @@ public class GroupService {
 
   public Integer register(GroupDTO groupDTO) { //그룹 가입
     Group group = modelMapper.map(groupDTO, Group.class);
-
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication.getPrincipal() instanceof CustomUserDetails) {
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String userId = userDetails.getUsername();
-      log.info(userDetails.getUserNick() + "$$$$$$");
-      group.setUserId(userId);
+      
+      Optional<User> user = userRepository.findByUserId(userId);
+      group.setUser(user.get());
+      
     } else {
       throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
     }
