@@ -14,5 +14,4 @@ public class GroupRequestDTO {
     private Integer studyNo;
     private Integer groupLeader;
     private Integer groupJoin;
-    private String groupSelfintro;
 }
