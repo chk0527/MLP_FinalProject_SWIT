@@ -113,8 +113,10 @@ const LoginContextProvider = ({ children }) => {
                 
                 // 로그인 체크 ( /users/{userId} <--- userData)
                 loginCheck()
+                
+                // window.location.href = '/';
 
-                alert('로그인 성공')
+                // alert('로그인 성공')
 
                 // 메이 페이지로 이동
                 // navigate("/")
