@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { getStudy, getStudyWithQuestion,putOne, deleteOne } from "../../api/StudyApi"
+import { getStudy, getStudyWithQuestion, putOne, deleteOne } from "../../api/StudyApi"
 import useCustomMove from "../../hooks/useCustomMove";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
@@ -25,7 +25,7 @@ const questionInit = {
 
 const StudyModifyComponent = ({ studyNo }) => {
     const [study, setStudy] = useState({ ...initState })
-    const [studyQuestion, setStudyQuestion] = useState({...questionInit})
+    const [studyQuestion, setStudyQuestion] = useState({ ...questionInit })
     const [result, setResult] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
@@ -35,11 +35,11 @@ const StudyModifyComponent = ({ studyNo }) => {
 
     useEffect(() => {
         getStudyWithQuestion(studyNo).then((data) => {
-            const {study, question} = data;
+            const { study, question } = data;
             const questionsArray = ['q1', 'q2', 'q3', 'q4', 'q5'];
             const nonNullQuestions = questionsArray.filter(q => question[q] !== null && question[q] !== undefined);
             const questionCount = nonNullQuestions.length;
-            setStudy({...study})
+            setStudy({ ...study })
             setStudyQuestion({
                 questionCount,
                 questions: question ? Array.from({ length: questionCount }, (_, i) => question[`q${i + 1}`] || '') : [""]
@@ -86,11 +86,11 @@ const StudyModifyComponent = ({ studyNo }) => {
         for (let i = 0; i < files.length; i++) {
             formData.append("files", files[i]);
         }
-        
+
         console.log(files[1])
 
         const formatDate = (date) => date.toISOString().split('T')[0];
-        
+
         formData.append("studyTitle", study.studyTitle);
         formData.append("studyContent", study.studyContent);
         formData.append("studyType", study.studyType);
@@ -124,7 +124,7 @@ const StudyModifyComponent = ({ studyNo }) => {
         if (result == 'Deleted')
             moveToList()
         else
-        moveToRead(studyNo)
+            moveToRead(studyNo)
     }
 
     const handleQuestionCountChange = (e) => {
@@ -241,32 +241,14 @@ const StudyModifyComponent = ({ studyNo }) => {
                         <label htmlFor="last-name" className="block text-sm font-semibold leading-6 mt-10 text-gray-900">시작날짜</label>
                         <div className="mt-2.5">
                             <DatePicker
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                name="studyStartDate"
-                                minDate={new Date()}
                                 selected={startDate}
                                 onChange={(date) => setStartDate(date)}
-                                selectsStart
-                                startDate={startDate}
-                                endDate={endDate}
+                                dateFormat="yyyy-MM-dd"
+                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
-                    <div>
-                        <label htmlFor="last-name" className="block text-sm font-semibold leading-6 mt-10 text-gray-900">종료날짜</label>
-                        <div className="mt-2.5">
-                            <DatePicker
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                name="studyEndDate"
-                                selected={endDate}
-                                onChange={(date) => setEndDate(date)}
-                                selectsEnd
-                                startDate={startDate}
-                                endDate={endDate}
-                                minDate={startDate}
-                            />
-                        </div>
-                    </div>
+
 
                     {/* 원본
                     <div className="sm:col-span-2">
@@ -328,7 +310,7 @@ const StudyModifyComponent = ({ studyNo }) => {
                             </select>
 
                         </div>
-                        <input type="tel" name="phone-number" id="phone-number" autoComplete="tel"/>
+                        <input type="tel" name="phone-number" id="phone-number" autoComplete="tel" />
                     </div>
                 </div>
 
