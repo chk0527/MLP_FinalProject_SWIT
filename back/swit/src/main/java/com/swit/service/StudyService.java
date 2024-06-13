@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
+import com.swit.dto.QuestionDTO;
 import com.swit.dto.CustomUserDetails;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
 
@@ -36,12 +38,12 @@ public class StudyService {
     public List<Study> getAllStudies() {
       return studyRepository.findAll();
   }
-  
 
+    // 스터디별 질문
     public Integer register(StudyDTO studyDTO, List<String> questions) {
         log.info("-----------------------------");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-         if (authentication.getPrincipal() instanceof CustomUserDetails) {
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUsername();
             studyDTO.setUserId(userId);
@@ -52,10 +54,11 @@ public class StudyService {
         studyDTO.setStudyUuid(studyUuid);
 
         // Study study = modelMapper.map(studyDTO, Study.class);
-        
+
         Study study = dtoToEntity(studyDTO);
 
         Study saveStudy = studyRepository.save(study);
+
         Question question = new Question();
         question.setStudy(saveStudy);
         question.setQ1(questions.size() > 0 ? questions.get(0) : null);
@@ -63,7 +66,6 @@ public class StudyService {
         question.setQ3(questions.size() > 2 ? questions.get(2) : null);
         question.setQ4(questions.size() > 3 ? questions.get(3) : null);
         question.setQ5(questions.size() > 4 ? questions.get(4) : null);
-
         questionRepository.save(question);
 
         return saveStudy.getStudyNo();
@@ -77,7 +79,16 @@ public class StudyService {
         return studyDTO;
     }
 
-    public void modify(StudyDTO studyDTO) {
+    public StudyWithQuestionDTO getStudyWithQuestionDTO(Integer studyNo) {
+        Study study = studyRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
+        StudyDTO studyDTO = entityToDTO(study);
+        QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
+        // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
+        return new StudyWithQuestionDTO(studyDTO, questionDTO);
+    }
+
+    public void modify(StudyDTO studyDTO, List<String> questions) {
         Optional<Study> result = studyRepository.findById(studyDTO.getStudyNo());
         Study study = result.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
 
@@ -85,76 +96,80 @@ public class StudyService {
         study.setStudyContent(studyDTO.getStudyContent());
         study.setStudyType(studyDTO.getStudyType());
         study.setStudyStartDate(studyDTO.getStudyStartDate());
-        study.setStudyEndDate(studyDTO.getStudyEndDate());
         study.setStudyHeadcount(studyDTO.getStudyHeadcount());
         study.setStudyOnline(studyDTO.getStudyOnline());
         study.setStudySubject(studyDTO.getStudySubject());
-        study.setStudyComm(studyDTO.getStudyComm());
-        study.setStudyLink(studyDTO.getStudyLink());
+        study.setStudyAddr(studyDTO.getStudyAddr());
         study.setStudyUuid(studyDTO.getStudyUuid());
 
         // Update image list
         study.getImageList().clear();
         studyDTO.getUploadFileNames().forEach(study::addImageString);
 
-        studyRepository.save(study);
+        Study saveStudy = studyRepository.save(study);
+
+        Optional<Question> questionResult = questionRepository.findById(studyDTO.getStudyNo());
+        Question question  = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        question.setStudy(saveStudy);
+        question.setQ1(questions.size() > 0 ? questions.get(0) : null);
+        question.setQ2(questions.size() > 1 ? questions.get(1) : null);
+        question.setQ3(questions.size() > 2 ? questions.get(2) : null);
+        question.setQ4(questions.size() > 3 ? questions.get(3) : null);
+        question.setQ5(questions.size() > 4 ? questions.get(4) : null);
+        questionRepository.save(question);
     }
 
     public void remove(Integer studyNo) {
         studyRepository.deleteById(studyNo);
     }
 
-     private String generateStudyUuid() {
+    private String generateStudyUuid() {
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
     }
 
     private StudyDTO entityToDTO(Study study) {
-    StudyDTO studyDTO = StudyDTO.builder()
-        .studyNo(study.getStudyNo())
-        .userId(study.getUser_id())
-        .studyTitle(study.getStudyTitle())
-        .studyContent(study.getStudyContent())
-        .studyType(study.getStudyType())
-        .studyStartDate(study.getStudyStartDate())
-        .studyEndDate(study.getStudyEndDate())
-        .studyHeadcount(study.getStudyHeadcount())
-        .studyOnline(study.getStudyOnline())
-        .studySubject(study.getStudySubject())
-        .studyComm(study.getStudyComm())
-        .studyLink(study.getStudyLink())
-        .studyUuid(study.getStudyUuid())
-        .build();
+        StudyDTO studyDTO = StudyDTO.builder()
+                .studyNo(study.getStudyNo())
+                .userId(study.getUserId())
+                .studyTitle(study.getStudyTitle())
+                .studyContent(study.getStudyContent())
+                .studyType(study.getStudyType())
+                .studyStartDate(study.getStudyStartDate())
+                .studyHeadcount(study.getStudyHeadcount())
+                .studyOnline(study.getStudyOnline())
+                .studySubject(study.getStudySubject())
+                .studyAddr(study.getStudyAddr())
+                .studyUuid(study.getStudyUuid())
+                .build();
 
-    List<StudyImage> imageList = study.getImageList();
-    if (imageList == null || imageList.isEmpty()) {
+        List<StudyImage> imageList = study.getImageList();
+        if (imageList == null || imageList.isEmpty()) {
+            return studyDTO;
+        }
+
+        List<String> fileNameList = imageList.stream()
+                .map(StudyImage::getFileName)
+                .collect(Collectors.toList());
+        studyDTO.setUploadFileNames(fileNameList);
+
         return studyDTO;
     }
 
-    List<String> fileNameList = imageList.stream()
-        .map(StudyImage::getFileName)
-        .collect(Collectors.toList());
-    studyDTO.setUploadFileNames(fileNameList);
-
-    return studyDTO;
-}
-
     private Study dtoToEntity(StudyDTO studyDTO) {
         Study study = Study.builder()
-            .studyNo(studyDTO.getStudyNo())
-            .user_id(studyDTO.getUserId())
-            .studyTitle(studyDTO.getStudyTitle())
-            .studyContent(studyDTO.getStudyContent())
-            .studyType(studyDTO.getStudyType())
-            .studyStartDate(studyDTO.getStudyStartDate())
-            .studyEndDate(studyDTO.getStudyEndDate())
-            .studyHeadcount(studyDTO.getStudyHeadcount())
-            .studyOnline(studyDTO.getStudyOnline())
-            .studySubject(studyDTO.getStudySubject())
-            .studyComm(studyDTO.getStudyComm())
-            .studyLink(studyDTO.getStudyLink())
-            .studyUuid(studyDTO.getStudyUuid())
-            .build();
-    
+                .studyNo(studyDTO.getStudyNo())
+                .userId(studyDTO.getUserId())
+                .studyTitle(studyDTO.getStudyTitle())
+                .studyContent(studyDTO.getStudyContent())
+                .studyType(studyDTO.getStudyType())
+                .studyStartDate(studyDTO.getStudyStartDate())
+                .studyHeadcount(studyDTO.getStudyHeadcount())
+                .studyOnline(studyDTO.getStudyOnline())
+                .studySubject(studyDTO.getStudySubject())
+                .studyAddr(studyDTO.getStudyAddr())
+                .studyUuid(studyDTO.getStudyUuid())
+                .build();
+
         // 업로드 처리가 끝난 파일들의 이름
         List<String> uploadFileNames = studyDTO.getUploadFileNames();
         if (uploadFileNames == null) {
@@ -163,7 +178,7 @@ public class StudyService {
         uploadFileNames.forEach(uploadName -> {
             study.addImageString(uploadName);
         });
-    
+
         return study;
     }
 }

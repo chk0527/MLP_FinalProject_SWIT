@@ -33,8 +33,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<User> userData = userRepository.findByUserId(userName);
         User user = userData.orElseThrow();
 
+        System.out.println("loadUserByUsername user " + user);
+        
         if (user != null) {
-						log.info(" 사용자 인증 정보 CustomUserDetails로 반환 성공");
+			log.info(" 사용자 인증 정보 CustomUserDetails로 반환 성공");
 			//UserDetails에 담아서 return하면 AutneticationManager가 검증 함
             return new CustomUserDetails(user);
         }

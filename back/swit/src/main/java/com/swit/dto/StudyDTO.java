@@ -22,17 +22,16 @@ public class StudyDTO {
     private String userId;
     private String studyTitle;
     private String studyContent;
+    private String studyAddr;
     private String studyType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate studyStartDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate studyEndDate;
     private Integer studyHeadcount;
     private Boolean studyOnline;
     private String studySubject;
-    private String studyComm;
-    private String studyLink;
     private String studyUuid;
+    private String fileName;
+    
     @Builder.Default
     private List<MultipartFile> files = new ArrayList<>(); //서버에 저장되는 실제 파일 데이터
     @Builder.Default

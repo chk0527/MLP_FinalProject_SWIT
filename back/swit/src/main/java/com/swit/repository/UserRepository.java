@@ -31,9 +31,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // 네이버 로그인 체크
     Optional<User> findByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
-    // @Query("SELECT u FROM User u WHERE u.userName = :userName AND u.userEmail = :userEmail")
-    // Optional<User> findByUserNameAndUserEmail(@Param("userName") String userName, @Param("userEmail") String userEmail);
-    // 카카오 로그인 체크
-    // Optional<User> findByUserNicKANDUserSnsConnect(String userNick, String userSnsConnect);
+    Boolean existsByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
+    // 카카오 로그인 체크    
+    Optional<User> findByUserNickAndUserEmailAndUserSnsConnect(String userNick, String userEmail, String userSnsConnect);
+    Boolean existsByUserNickAndUserEmailAndUserSnsConnect(String userNick, String userEmail, String userSnsConnect);
 
 }
