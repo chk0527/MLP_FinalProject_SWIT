@@ -24,6 +24,8 @@ const useCustomMove = () => {
         if(pageParam){
             const pageNum = getNum(pageParam.page,1)
             const sizeNum = getNum(pageParam.size,5)
+            const location ={};
+            location.state = 1;
             queryStr = createSearchParams({page:pageNum, size:sizeNum}).toString()
         }else{
             queryStr = queryDefault
@@ -37,7 +39,7 @@ const useCustomMove = () => {
         if(pageParam){
             const pageNum = getNum(pageParam.page,1)
             const sizeNum = getNum(pageParam.size,5)
-            const location ="";
+            const location ={};
             location.state = 1;
             queryStr = createSearchParams({page:pageNum, size:sizeNum}).toString()
         }else{

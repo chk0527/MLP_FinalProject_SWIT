@@ -4,23 +4,36 @@ export const API_SERVER_HOST = 'http://localhost:8181'
 const prefix = `${API_SERVER_HOST}/api/examjob`
 
 export const getExamList = async (pageParam) => {
-    const { page, size } = pageParam
-    const res = await axios.get(`${prefix}/examlist`, { params: { page: page, size: size } })
+    const { page, size, searchKeyword } = pageParam;
+
+    const params = {page: page, size: size}
+    if(searchKeyword){
+        params.searchKeyword = searchKeyword;
+    }
+    const res = await axios.get(`${prefix}/examlist`, { params })
     return res.data
 }
 
 //목록&검색
 export const getJobList = async (pageParam) => {
-    const { page, size, searchKeyword } = pageParam;
+    const { page, size, searchKeyword, jobField, sort } = pageParam;
 
     const params = { page: page, size: size };
     if (searchKeyword) {
         params.searchKeyword = searchKeyword;
     }
+    if (jobField) {
+        params.jobField = jobField;
+    }
+    if (sort) {
+        params.sort = sort;
+    }
 
     const res = await axios.get(`${prefix}/joblist`, { params });
     return res.data;
 }
+
+
 
 export const getExamRead = async (examNo) => {
     const res = await axios.get(`${prefix}/exam/${examNo}`)
@@ -34,5 +47,5 @@ export const getJobRead = async (jobNo) => {
 
 export const getExamAll = async() => {
     const res = await axios.get(`${prefix}/examAll`)
-    return res;
+    return res.data;
 }
