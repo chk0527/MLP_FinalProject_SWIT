@@ -36,13 +36,14 @@ public class GroupService {
 
   public Integer register(GroupDTO groupDTO) { //그룹 가입
     Group group = modelMapper.map(groupDTO, Group.class);
-
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication.getPrincipal() instanceof CustomUserDetails) {
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String userId = userDetails.getUsername();
-      log.info(userDetails.getUserNick() + "$$$$$$");
-      group.setUserId(userId);
+      
+      Optional<User> user = userRepository.findByUserId(userId);
+      group.setUser(user.get());
+      
     } else {
       throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
     }
@@ -51,14 +52,14 @@ public class GroupService {
   }
 
   public Integer isMember(String userId, Integer studyNo) { //그룹 가입 승인 여부 판별
-    Optional<Group> group = groupRepository.findByUserIdAndStudyNo(userId, studyNo);
+    Optional<Group> group = groupRepository.findByUserUserIdAndStudyStudyNo(userId, studyNo);
     log.info(userId + "@@@@@@@" + studyNo);
     log.info(group + "!!!!!!!!!!");
     return group.map(Group::getGroupJoin).orElse(-1); // -1을 사용하여 그룹에 가입하지 않은 상태를 표시
   }
 
   public boolean isLeader(String userId, Integer studyNo) {
-    Optional<Group> group = groupRepository.findByUserIdAndStudyNoAndGroupLeader(userId, studyNo, 1);
+    Optional<Group> group = groupRepository.findByUserUserIdAndStudyStudyNoAndGroupLeader(userId, studyNo, 1);
     log.info(group.isPresent()+"!!!");
     return group.isPresent();
   }
@@ -76,16 +77,16 @@ public class GroupService {
   }
 
   public List<GroupRequestDTO> getPendingGroupRequestsByStudyNo(Integer studyNo) { //그룹 가입 요청 목록 조회
-    List<Group> groups = groupRepository.findByStudyNoAndGroupJoin(studyNo, 0);
+    List<Group> groups = groupRepository.findByStudyStudyNoAndGroupJoin(studyNo, 0);
     return groups.stream() //닉네임 반환을 위한 테이블 조인
         .map(group -> {
-          Optional<User> userOpt = userRepository.findByUserId(group.getUserId());
+          Optional<User> userOpt = userRepository.findByUserId(group.getUser().getUserId());
           String userNick = userOpt.map(User::getUserNick).orElse("Unknown");
           return new GroupRequestDTO(
               group.getGroupNo(),
-              group.getUserId(),
+              group.getUser().getUserId(),
               userNick,
-              group.getStudyNo(),
+              group.getStudy().getStudyNo(),
               group.getGroupLeader(),
               group.getGroupJoin(),
               group.getGroupSelfintro());

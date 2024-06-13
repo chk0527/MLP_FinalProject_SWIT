@@ -1,40 +1,84 @@
 .dots_custom {
-    display: inline-block;
-    vertical-align: middle;
-    margin: auto 0;
-    padding: 0;
-  }
-  
-  .dots_custom li {
-    list-style: none;
-    cursor: pointer;
-    display: inline-block;
-    margin: 0 15px;
-    padding: 0;
-  }
-  
-  .dots_custom li button {
-    border: none;
-    background: #d1d1d1;
-    color: transparent;
-    cursor: pointer;
-    display: block;
-    height: 10px;
-    width: 10px;
-    border-radius: 100%;
-    padding: 0;
-  }
-  
-  .dots_custom li.slick-active button {
-    background-color: rgb(254 249 195);
-  }
+  display: inline-block;
+  vertical-align: middle;
+  margin: auto 0;
+  padding: 0;
+}
 
-  
+.dots_custom li {
+  list-style: none;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 15px;
+  padding: 0;
+}
+
+.dots_custom li button {
+  border: none;
+  background: #d1d1d1;
+  color: transparent;
+  cursor: pointer;
+  display: block;
+  height: 10px;
+  width: 10px;
+  border-radius: 100%;
+  padding: 0;
+}
+
+.dots_custom li.slick-active button {
+  background-color: rgb(254 249 195);
+}
+
 .slick-arrow {
   background: #000;
 }
-.slick-slide { padding:0 100px;}
+.slick-slide {
+  padding: 0 100px;
+}
 
 :root {
   --ti-cursor-color: transparent;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap");
+
+
+svg text {
+  font-family: "Staatliches", cursive;
+  font-size: 6em;
+  fill: transparent;
+  stroke-dasharray: 326px;
+  animation: stroke 1s linear;
+  animation-fill-mode: forwards;
+}
+svg text:nth-child(1) {
+  animation-delay: 0s;
+}
+svg text:nth-child(2) {
+  animation-delay: 0.5s;
+}
+svg text:nth-child(3) {
+  animation-delay: 1s;
+}
+svg text:nth-child(4) {
+  animation-delay: 1.5s;
+}
+@keyframes stroke {
+  0% {
+    stroke: #f1c164;
+    stroke-width: 3px;
+    stroke-dashoffset: 326px;
+  }
+  70% {
+    fill: transparent;
+  }
+  98% {
+    stroke: #f1c164;
+    stroke-width: 3px;
+  }
+  100% {
+    fill: #f1c164;
+    stroke-dashoffset: 0px;
+  }
 }

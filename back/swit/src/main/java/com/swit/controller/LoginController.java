@@ -41,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import com.swit.dto.UserDTO;
+// import com.mysql.cj.xdevapi.JsonParser;
+// import com.fasterxml.jackson.core.JsonParser;
 import com.swit.domain.User;
 import com.swit.service.UserService;
 import com.swit.jwt.JWTUtil;
@@ -52,11 +54,18 @@ import io.jsonwebtoken.security.Keys;  // 추가: 새로운 방식으로 SecretK
 
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.boot.json.JsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+
 
 @RestController
 @RequiredArgsConstructor
@@ -82,7 +91,7 @@ public class LoginController {
 
 
     @GetMapping("/snslogin")
-	public Map<String, String> get(HttpSession session) {
+	public Map<String, String> snsLogin(HttpSession session) {
 		log.info("snslogin --------- start");
 
 		String naverURL = naverLogin(session);  
@@ -150,6 +159,7 @@ public class LoginController {
 		String userNo = parsedToken.getPayload().get("userNo").toString();
 		int no = (userNo == null ? 0 : Integer.parseInt(userNo));
 		String userId = parsedToken.getPayload().get("userId").toString();
+		// 카카오에서 닉네임이 필수가 아니라서 없을 수도 있음
 		String userNick = parsedToken.getPayload().get("userNick").toString();
 		String userRole = parsedToken.getPayload().get("userRole").toString();
 
@@ -221,6 +231,7 @@ public class LoginController {
         UserDTO user = new UserDTO();
 		String access_token = "";
 		String password = "";
+
 	    try {
 		    String clientId = naverClientKey;
 			String url_2 = naverRedirectUrl;
@@ -409,123 +420,201 @@ public class LoginController {
 	// }
 
 
-    // @GetMapping("/snslogin/kakao_callback")
-	// //public ModelAndView callback(@RequestParam ("code") String code,
-	// public String callbackKaKao(@RequestParam ("code") String code,
-	// 					   		@RequestParam ("state_kakao") String state,
-	// 					   		RedirectAttributes rttr,
-	// 					   		HttpServletRequest request) {
-	// 	Map<String, String> profile = null;
-    //     UserDTO user = new UserDTO();
-	//     try {
-	// 	    String clientId = kakaoClientKey;
-	// 		String url_2 = kakaoRedirectUrl;
-	// 	    //String clientSecret = naverClientSecret;
-	// 	    String redirectURI = URLEncoder.encode(url_2, "UTF-8");
-	// 	    String apiURL;
-	// 	    apiURL = "https://kauth.kakao.com/oauth/token?grant_type=authorization_code&";
-	// 	    apiURL += "client_id=" + clientId;
-	// 	    //apiURL += "&client_secret=" + clientSecret;
-	// 	    apiURL += "&redirect_uri=" + redirectURI;
-	// 	    apiURL += "&code=" + code;
-	// 	    //apiURL += "&state=" + state;
-	// 	    String access_token = "";
-    //         // String refresh_token = "";
-	// 	    // System.out.println("apiURL="+apiURL);
+    @GetMapping("/snslogin/kakao_callback")
+	public RedirectView callbackKaKao(@RequestParam ("code") String code,
+						   		// @RequestParam ("state_kakao") String state,
+						   		RedirectAttributes rttr,
+						   		HttpServletRequest request) {
+		Map<String, String> profile = null;
+        UserDTO user = new UserDTO();
+		String access_token = "";
+		String password = "";
+	    try {
+		    String clientId = kakaoClientKey;
+			String url_2 = kakaoRedirectUrl;
+		    //String clientSecret = naverClientSecret;
+		    String redirectURI = URLEncoder.encode(url_2, "UTF-8");
+		    String apiURL;
+		    apiURL = "https://kauth.kakao.com/oauth/token?grant_type=authorization_code&";
+		    apiURL += "client_id=" + clientId;
+		    //apiURL += "&client_secret=" + clientSecret;
+		    apiURL += "&redirect_uri=" + redirectURI;
+		    apiURL += "&code=" + code;
+		    //apiURL += "&state=" + state;
+		    access_token = "";
+            // String refresh_token = "";
+		    // System.out.println("apiURL="+apiURL);
 
-    //         URL url = new URL(apiURL);
-	//         HttpURLConnection con = (HttpURLConnection)url.openConnection();
-	//         //con.setRequestMethod("GET");
-	// 		con.setDoOutput(true);     // Post 방식 처리
-	// 		con.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+            URL url = new URL(apiURL);
+	        HttpURLConnection con = (HttpURLConnection)url.openConnection();
+	        //con.setRequestMethod("GET");
+			con.setDoOutput(true);     // Post 방식 처리
+			con.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 			
-	//         int responseCode = con.getResponseCode();
-	//         BufferedReader br;
-	//         // System.out.print("responseCode="+responseCode);
-	//         if(responseCode==200) { // 정상 호출
-	//             br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-	//         } else {  // 에러 발생
-	//             br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-	//         }
-	//         String inputLine;
-	//         StringBuffer res = new StringBuffer();
-	//         while ((inputLine = br.readLine()) != null) {
-	//             res.append(inputLine);
-	//         }
+	        int responseCode = con.getResponseCode();
+	        BufferedReader br;
+	        // System.out.print("responseCode="+responseCode);
+	        if(responseCode==200) { // 정상 호출
+	            br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	        } else {  // 에러 발생
+	            br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+	        }
+	        String inputLine;
+	        StringBuffer res = new StringBuffer();
+	        while ((inputLine = br.readLine()) != null) {
+	            res.append(inputLine);
+	        }
             
-	//         JSONObject obj = new   JSONObject(res.toString());
-	// 	    access_token = obj.getString("access_token");
-	// 	    //System.out.print("access_token="+access_token);
+	        JSONObject obj = new   JSONObject(res.toString());
+		    access_token = obj.getString("access_token");
+		    //System.out.print("access_token="+access_token);
 		  
-    //         profile = getProfileKakao(access_token);
-		  
-    //         user = userService.userCheck((String)profile.get("name"), (String)profile.get("email"));
-	      
-    //         br.close();
-	//         if(responseCode==200) {
-    // 	        System.out.println("responseCode == 200" + res.toString());
-	//         }
-	//     } catch (Exception e) {
-	//       System.out.println(e);
-	//     }
-	      
-	//     rttr.addFlashAttribute("user", user);
-	//     // rttr.addFlashAttribute("msg", "naver계정으로 회원 가입 성공!!!");
-    //     rttr.addFlashAttribute("msg", "naver계정으로 로그인 성공!!!");
-	// 	// return new ModelAndView("/api/login/success");
-	// 	return "redirect:/success";
+            profile = getProfileKakao(access_token);
 
+			System.out.println("userNick="+profile.get("userNick") + profile.get("userEmail") + profile.get("userSnsConnect"));
+		
+			user = userService.userCheck2((String)profile.get("userNick")
+			                            , (String)profile.get("userEmail")
+									    , (String)profile.get("userSnsConnect")); 
+			
+			password = access_token.substring(12, 29);
+
+			System.out.println("user1111="+user);
+			// Optional<UserDTO> optionalUser = Optional.ofNullable(user);				// UserId 숫자형일때
+			// if (optionalUser.map(UserDTO::getUserId).orElse(0L) == 0) {  			
+			// if (user.getUserId().equals(null) || user.getUserId().length() == 0) {  	// 에러 발생
+			// if (StringUtils.isEmpty(user.getUserId())) {								// 문자일때 방법 1
+			// if (user.getUserId() == null || user.getUserId().isEmpty()) {      		// 문자일때 방법 2
+			Optional<String> optionalUserId = Optional.ofNullable(user.getUserId());	// 문자일때 방법 3
+			if (optionalUserId.map(String::isEmpty).orElse(true)) {
+
+				System.out.println("user2222="+user);
+				user.setUserNick((String)profile.get("userNick"));
+				user.setUserEmail((String)profile.get("userEmail"));
+				user.setUserSnsConnect((String)profile.get("userSnsConnect"));  // "KAKAO"
+
+				user.setUserPassword(password);
+				// 저장
+				System.out.println("user3333="+user);
+				userService.join(user);
+				System.out.println("user4444="+user);
+				// 저장 후 다시 조회
+				user = userService.userCheck2((String)profile.get("userNick")
+										    , (String)profile.get("userEmail")
+										    , (String)profile.get("userSnsConnect")); 
+				System.out.println("user5555="+user);						   
+				// userId 를 update 한다.
+				user.setUserId(user.getUserNo().toString());
+				// password가 암호화 있으므로 다시 set 해서 동일한 비번으로 처리한다.
+				user.setUserPassword(password);
+				System.out.println("user6666="+user);	
+				userService.join(user);
+			} else {
+				user.setUserPassword(password);
+				userService.join(user);
+
+			}
+			System.out.println("user7777="+user);
+			System.out.println("tok="+password);
+            br.close();
+	        if(responseCode==200) {
+    	        System.out.println("responseCode == 200" + res.toString());
+	        }
+	    } catch (Exception e) {
+	      System.out.println(e);
+	    }
+	    String userId = user.getUserId();
+	    rttr.addFlashAttribute("tok", password);
+        rttr.addFlashAttribute("name", userId);
+		// log.info("Transferred data: user={}, msg={}", user, "naver계정으로 로그인 성공!!!");
+
+		return new RedirectView("http://localhost:3000/callback?tok=" + access_token + "&name=" + userId);
+		// return new RedirectView("http://localhost:3000/callback");
+
+	}
+
+		  
+        //     br.close();
+	    //     if(responseCode==200) {
+    	//         System.out.println("responseCode == 200" + res.toString());
+	    //     }
+	    // } catch (Exception e) {
+	    //   System.out.println(e);
+	    // }
+	      
+	    // // rttr.addFlashAttribute("user", user);
+        // // rttr.addFlashAttribute("msg", "naver계정으로 로그인 성공!!!");
+
+		// // return new RedirectView("http://localhost:3000/callback?tok=" + access_token + "&name=" + userId);
+		// return new RedirectView("http://localhost:3000/callback");
 	// }
 
-	// private Map<String, String> getProfileKakao(String token){
+	private Map<String, String> getProfileKakao(String token){
 
-	// 	HashMap<String, Object> userInfo = new HashMap<>();
-	// 	String reqUrl = "https://kapi.kakao.com/v2/user/me";
-    // try{
-    //     URL url = new URL(reqUrl);
-    //     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    //     conn.setRequestMethod("POST");
-    //     conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-    //     conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		HashMap<String, String> userInfo = new HashMap<>();
+		String reqUrl = "https://kapi.kakao.com/v2/user/me";
+    try{
+        URL url = new URL(reqUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Authorization", "Bearer " + token);
+        // conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-    //     int responseCode = conn.getResponseCode();
-    //     log.info("[KakaoApi.getUserInfo] responseCode : {}",  responseCode);
+        int responseCode = conn.getResponseCode();
+        log.info("[KakaoApi.getUserInfo] responseCode : {}",  responseCode);
 
-    //     BufferedReader br;
-    //     if (responseCode >= 200 && responseCode <= 300) {
-    //         br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    //     } else {
-    //         br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-    //     }
+        BufferedReader br;
+        if (responseCode == 200) {
+			br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+        } else {
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "utf-8"));
+        }
 
-    //     String line = "";
-    //     StringBuilder responseSb = new StringBuilder();
-    //     while((line = br.readLine()) != null){
-    //         responseSb.append(line);
-    //     }
-    //     String result = responseSb.toString();
-    //     log.info("responseBody = {}", result);
 
-    //     JsonParser parser = new JsonParser();
-    //     JsonElement element = parser.parse(result);
+        String line = "";
+        StringBuilder responseSb = new StringBuilder();
+        while((line = br.readLine()) != null){
+            responseSb.append(line);
+        }
+        String result = responseSb.toString();
+        log.info("responseBody = {}", result);
 
-    //     JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
-    //     JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+        JsonParser parser = new JsonParser();
+        JsonElement element = parser.parse(result);
 
-    //     String nickname = properties.getAsJsonObject().get("nickname").getAsString();
-    //     String email = kakaoAccount.getAsJsonObject().get("email").getAsString();
+        JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
+        JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+		System.out.println("getProfileKakao properties= "+ properties);
+        String userEmail = kakaoAccount.getAsJsonObject().get("email").getAsString();
+		// // String nick = properties.getAsJsonObject().get("nickname").getAsString();
+		// String nick = null;
+		// if (properties.getAsJsonObject().has("nickname")) {
+    	// 	nick = properties.getAsJsonObject().get("nickname").getAsString();
+		// 	// 한글이 깨짐
+		// 	System.out.println("getProfileKakao nick= "+nick);
+		// 	nick = new String(nick.getBytes("UTF-8"), "UTF-8");
+		// 	System.out.println("getProfileKakao nick= "+nick);
+		// }
+		// String userNick = nick == null ? "noName" : nick;
 
-    //     userInfo.put("nickname", nickname);
-    //     userInfo.put("email", email);
+		String nick = properties.getAsJsonObject().get("nickname").getAsString();
+		String userNick = nick == null ? "noName" : nick;
 
-    //     br.close();
+		System.out.println("getProfileKakao userNick= "+userNick);
+		System.out.println("getProfileKakao userEmail= "+userEmail);
 
-    // }catch (Exception e){
-    //     e.printStackTrace();
-    // }
-    // return userInfo;
+        userInfo.put("userNick", userNick);
+        userInfo.put("userEmail", userEmail);
+		userInfo.put("userSnsConnect", "KAKAO");
+		
+        br.close();
+
+    }catch (Exception e){
+        e.printStackTrace();
+    }
+    return userInfo;
     
-	// }
+	}
 
     
 

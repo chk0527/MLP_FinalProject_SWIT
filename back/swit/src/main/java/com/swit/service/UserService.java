@@ -110,6 +110,15 @@ public class UserService {
     return userDTO;
   }
 
+  // 로그인 확인 처리(카카오 소셜 로그인)
+  public UserDTO userCheck2(String userNick, String userEmail, String userSnsConnect) {
+    // Optional<User> result = userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName, userEmail, userSnsConnect);
+    Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail, userSnsConnect);
+    User user = result.orElse(new User());
+    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+    return userDTO;
+  }
+
   // 회원 가입
   public void join(UserDTO userDTO) {
 
@@ -119,16 +128,16 @@ public class UserService {
     String password = userDTO.getUserPassword();
     String userNick = userDTO.getUserNick();
 
-    String email = userDTO.getUserEmail();
+    String userEmail = userDTO.getUserEmail();
     String snsConnect = userDTO.getUserSnsConnect();
 
     Boolean isExist = true;
     if (snsConnect.isEmpty()) {
       isExist = userRepository.existsByUserId(userId);
     } else if (snsConnect.equals("NAVER")) {
-      isExist = userRepository.existsByUserNameAndUserEmailAndUserSnsConnect(userName, email, snsConnect);
+      isExist = userRepository.existsByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail, snsConnect);
     } else if (snsConnect.equals("KAKAO")) {
-
+      isExist = userRepository.existsByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail, snsConnect);
     }
 
     User data = new User();
