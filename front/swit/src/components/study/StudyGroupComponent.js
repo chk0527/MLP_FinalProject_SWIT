@@ -35,6 +35,7 @@ const StudyGroupComponent = ({ studyNo }) => {
   const [modalEvent, setModalEvent] = useState(null);       // 모달창 이벤트 설정
   const [modalClass, setModalClass] = useState('modal');    // 모달창 css 클래스값 설정
   const [holidays, setHolidays] = useState([]);             // 공휴일 처리
+  const [currentMonth, setCurrentMonth] = useState(moment().startOf('month'));
 
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
   useEffect(() => {
@@ -93,45 +94,62 @@ const StudyGroupComponent = ({ studyNo }) => {
 
   // 한국 공휴일 데이터 API 호출
   const fetchHolidays = async () => {
+    const years = [2023, 2024, 2025, 2026] // 필요한 연도 목록
+    const requests = years.map(year => axios.get(`https://date.nager.at/api/v2/PublicHolidays/${year}/KR`))
+  
+
     try {
-      const response = await axios.get('https://date.nager.at/api/v2/PublicHolidays/2024/KR'); // 적절한 연도와 국가 코드 사용
-      return response.data.map(holiday => ({
+      const responses = await Promise.all(requests);
+      return responses.flatMap(response => response.data.map(holiday => ({
         date: holiday.date,
-        localName: holiday.localName
-      }));
+        localName: holiday.localName,
+      })))
     } catch (error) {
-      console.error('공휴일 데이터를 가져오는 중 오류 발생:', error);
-      return [];
+      console.error('공휴일 데이터를 가져오는 중 오류 발생:', error)
+      return []
     }
-  }
-
-  // 날짜 셀 스타일 적용 함수
-  const dayPropGetter = (date) => {
-    const dateStr = moment(date).format('YYYY-MM-DD')
-    const holiday = holidays.find(holiday => holiday.date === dateStr)
-    const isWeekend = moment(date).day() === 0 || moment(date).day() === 6
-
-    if (holiday || isWeekend) {
-      return {
-        style: {
-          color: 'red',
-        },
-        className: holiday ? 'holiday' : isWeekend ? 'weekend' : '',
-      }
-    }
-    return {}
   }
 
   // 캘린더 - 일정 스타일 적용
   const eventStyleGetter = (event) => {
     const backgroundColor = event.color;
-    return { className: 'rbc-event', style: { backgroundColor } };
+    return { className: 'rbc-event', style: { backgroundColor } }
   }
 
+  const handleNavigate = (date) => {
+    setCurrentMonth(moment(date).startOf('month'))
+  }
 
+  // 커스텀 날짜 셀 렌더링 함수
+  const customDateCellWrapper = ({ children, value }) => {
+    const dateStr = moment(value).format('YYYY-MM-DD')
+    const holiday = holidays.find(holiday => holiday.date === dateStr)
+    const day = moment(value).day()
+    const isCurrentMonth = moment(value).isSame(currentMonth, 'month')
+    const isToday = moment(value).isSame(moment(), 'day')
+
+    const cellClassNames = [
+      'rbc-day-bg',
+      !isCurrentMonth && 'rbc-off-range-bg',
+      isToday && 'rbc-today',
+      holiday && 'holiday',
+      day === 0 && 'sunday',
+      day === 6 && 'saturday',
+    ].filter(Boolean).join(' ')
+
+    return (
+      <div className={cellClassNames}>
+        {children}
+        {holiday && (
+          <div className="holiday-text">{holiday.localName}</div>
+        )}
+      </div>
+    )
+  }
 
   // ======================= 기능 핸들러 관리 ===========================
   // ===================================================================
+
 
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
@@ -296,7 +314,7 @@ const StudyGroupComponent = ({ studyNo }) => {
 
   return (
     <div className="p-4 flex flex-col items-center">
-      {/*스터디 정보란*/}
+      {/* 스터디 정보란 */}
       <div className="h-1 bg-gray-300 my-4 w-full"></div>
       <div className="flex justify-center my-3 w-full">
         <span
@@ -321,7 +339,6 @@ const StudyGroupComponent = ({ studyNo }) => {
         </span>
       </div>
 
-      {/* 뷰 - 캘린더 항목 */}
       {view === 'calendar' && (
         <div className="flex w-full">
           <div className="w-8/12">
@@ -336,7 +353,7 @@ const StudyGroupComponent = ({ studyNo }) => {
                 titleAccessor="title"
                 style={{ height: 800 }}
                 eventPropGetter={eventStyleGetter}
-                dayPropGetter={dayPropGetter} // 날짜 셀 스타일 적용
+                //dayPropGetter={dayPropGetter} // 날짜 셀 스타일 적용
                 messages={{
                   month: '월',
                   week: '주',
@@ -351,15 +368,17 @@ const StudyGroupComponent = ({ studyNo }) => {
                   showMore: (total) => `+${total} 더 보기`,
                 }}
                 components={{
-                  toolbar: renderHeader
+                  toolbar: renderHeader,
+                  dateCellWrapper: customDateCellWrapper, // 공휴일,주말 이벤트 적용
                 }}
                 formats={formatsKorean}
-                onSelectSlot={handleCreateEvent} // 캘린더의 빈 슬롯 클릭 이벤트
+                onSelectSlot={handleCreateEvent} // 드래그 시작하자마자 이벤트 처리
                 onSelectEvent={handleSelectEvent}
                 onEventDrop={handleDragEvent}
                 onEventResize={handleResizeEvent}
                 view={calendarView} // 현재 뷰 설정
                 onView={(newView) => setcalendarView(newView)} // 뷰 변경 핸들러
+                onNavigate={handleNavigate}
               />
             </div>
           </div>
@@ -462,11 +481,19 @@ const StudyGroupComponent = ({ studyNo }) => {
             </div>
             <label>색깔:</label>
             <div className="color-picker-container">
+              <button
+                type="button"
+                className="color-picker-button"
+                onClick={() => document.querySelector('.color-picker-input').click()}
+              >
+                <FaPalette />
+              </button>
               <input
                 type="color"
                 value={modalEvent.color || "#000000"}
                 onChange={(e) => setModalEvent({ ...modalEvent, color: e.target.value })}
                 className="color-picker-input"
+                style={{ display: 'none' }}
               />
               <div className="selected-color" style={{ backgroundColor: modalEvent.color || "#000000" }}></div>
             </div>

@@ -25,22 +25,58 @@
   background-color: #d9edf7;
 }
 
+.rbc-header {
+  color: inherit;
+}
+
 .rbc-header:first-child {
   color: red;
+}
+
+.rbc-header:nth-child(7n) {
+  color: blue;
 }
 
 .rbc-day-slot .rbc-time-slot {
   border-top: 1px solid #e6e6e6;
 }
 
-/*=========== 공휴일 스타일 ==============*/
-.holiday-text {
+/*=========== 공휴일 및 주말 텍스트 스타일 ==============*/
+.sunday .rbc-date-cell,
+.sunday .rbc-button-link,
+.holiday .rbc-date-cell,
+.holiday .rbc-button-link {
+  color: red;
+}
+
+.saturday .rbc-date-cell,
+.saturday .rbc-button-link {
+  color: blue;
+}
+
+.holiday .holiday-text {
   color: red;
   font-weight: bold;
   font-size: 0.8em;
   text-align: center;
   display: block;
-  margin-top: 5px; /* 공휴일 텍스트 위치 조정 */
+  margin-top: 50%; /* 공휴일 텍스트 위치 조정 */
+}
+
+.rbc-date-cell-content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rbc-date-cell {
+  text-align: center;
+}
+
+.rbc-off-range-bg {
+  background-color: #f0f0f0;
 }
 
 /*=========== 이벤트 스타일 ==============*/
@@ -159,8 +195,8 @@ button {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  position: absolute;
-  bottom: 30px;
+  position: relative;
+  bottom: -150px;
   left: 0;
   padding: 0 20px;
 }
@@ -339,38 +375,4 @@ button {
   to {
     right: -100%;
   }
-}
-
-
-/*=========== DatePicker(날짜선택) 스타일 ==============*/
-.date-picker-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.date-picker-item {
-  flex: 1;
-  margin-right: 10px;
-}
-
-.date-picker-item:last-child {
-  margin-right: 0;
-}
-
-.input-date-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.hidden-datepicker {
-  width: 100%;
-  padding-right: 30px; /* 아이콘 공간 확보 */
-}
-
-.calendar-icon {
-  position: absolute;
-  right: 10px;
-  cursor: pointer;
 }
