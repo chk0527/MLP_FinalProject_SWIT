@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class CommentDTO {
     private Integer commentNo;
-    private String content;
+    private String commentContent;
     private Integer boardNo;
     private Integer userNo;
 }

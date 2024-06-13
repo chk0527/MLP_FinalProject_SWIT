@@ -3,7 +3,7 @@ import { Outlet, useNavigate, Link } from "react-router-dom";
 import BasicLayout from "../../layouts/BasicLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { API_SERVER_HOST, getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
-import { isMember } from "../../api/GroupApi"; // isMember 함수를 가져옴
+import { isMember, isLeader } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { getUserIdFromToken } from "../../util/jwtDecode";
 
 //아이콘

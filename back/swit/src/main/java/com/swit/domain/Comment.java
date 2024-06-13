@@ -22,13 +22,13 @@ import jakarta.persistence.Table;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer commentNo;
     @Column(nullable = false)
-    private String content;
+    private String commentContent;
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime commentCreatedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userNo", nullable = false)

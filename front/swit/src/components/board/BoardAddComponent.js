@@ -7,12 +7,10 @@ import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
 
 const initState = {
-    studyNo: 0,
-    studyTitle: '추가',
-    studyContent: '콘텐츠',
-    studyType: "스터디",
-    studyStartDate: '',
-    studyEndDate: '',
+    boardNo: 0,
+    boardTitle: '추가',
+    boardContent: '콘텐츠',
+    boardCategory: "스터디",
     studyHeadcount: 1,
     studyOnline: true,
     studySubject: "개발",

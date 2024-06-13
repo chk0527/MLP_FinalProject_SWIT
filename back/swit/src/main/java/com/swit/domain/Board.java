@@ -35,20 +35,20 @@ public class Board {
     private Integer boardNo;
 
     @Column(nullable = false)
-    private String title;
+    private String boardTitle;
 
     @Column(nullable = false)
-    private String content;
+    private String boardContent;
 
     @Column(nullable = false)
-    private String category;
+    private String boardCategory;
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime boardCreatedDate;
 
     @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private LocalDateTime boardModifiedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userNo", nullable = false)
