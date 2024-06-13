@@ -36,6 +36,5 @@ public class ExamjobServiceTest {
     public void testListAll(){
         examjobService.examAll();
     }
-
    
 }
