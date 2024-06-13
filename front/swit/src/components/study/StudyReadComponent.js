@@ -1,10 +1,11 @@
-// StudyReadComponent.js
 import React, { useState, useEffect } from "react";
 import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { memberCount } from "../../api/GroupApi";
 import { useNavigate } from "react-router-dom";
 import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInfoComponent from "./StudyInfoComponent";
 import GroupJoinComponent from "../group/GroupJoinComponent";
+import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 
 const initState = {
   studyNo: 0,
@@ -37,15 +38,31 @@ const StudyReadComponent = ({ studyNo }) => {
     });
   }, [studyNo]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openModal = async () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인 후 이용해주세요");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const currentMemberCount = await memberCount(studyNo);
+      if (currentMemberCount >= study.studyHeadcount) {
+        alert("인원이 가득 찼습니다");
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error checking member count:", error);
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const ApplyButton = ({ studyUuid }) => (
+  const ApplyButton = ({ }) => (
     <button onClick={openModal} className="bg-green-500 text-white px-4 py-2 rounded mt-4 hover:bg-green-600">
       신청
     </button>
@@ -69,7 +86,7 @@ const StudyReadComponent = ({ studyNo }) => {
       </div>  
     
       <div className="flex justify-start">
-      <StudyListBtnComponent />
+        <StudyListBtnComponent />
       </div>
 
       <GroupJoinComponent isModalOpen={isModalOpen} closeModal={closeModal} studyNo={studyNo} />

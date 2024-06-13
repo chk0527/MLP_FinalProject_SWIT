@@ -8,7 +8,7 @@ const initState = {
     password:''
 }
 
-const initStateNaver = { 
+const initStateSnsUrl = { 
     naverURL:'',
     kakaoURL:''
 }
@@ -16,7 +16,7 @@ const initStateNaver = {
 const LoginComponent =() => {
 
     const [user, setUser] = useState({...initState})
-    const [naver, setNaver] = useState({...initStateNaver})
+    const [snsUrl, setSnsUrl] = useState({...initStateSnsUrl})
 
     const { login } = useContext(LoginContext)
 
@@ -26,7 +26,7 @@ const LoginComponent =() => {
         // (index.js 파일에서 StrictMode 지우면 1회 실행)
         
         // 완성 되기 전까지 snslogin 잠시 주석 처리
-        // getOne().then(data => setNaver(data))
+        getOne().then(data => setSnsUrl(data))
     },[])
 
     const handleChangeUser = (e) => {
@@ -58,14 +58,14 @@ const LoginComponent =() => {
                     <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={() => onLogin()}>로그인</button>
                 </div>
                 <div className="mb-4 flex flex-wrap">
-                    <a href={naver.naverURL}>
+                    <a href={snsUrl.naverURL}>
                         <img
                             src={`${process.env.PUBLIC_URL}/naver.svg`}
                             className='Naver'
                             alt='React'
                         />
                     </a>
-                    <a href="https://github.com/wnsgur1855">
+                    <a href={snsUrl.kakaoURL}>
                         <img
                             
                             src={`${process.env.PUBLIC_URL}/free-icon-kakao-talk-3669973.png`}

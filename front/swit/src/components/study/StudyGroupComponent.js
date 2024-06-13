@@ -5,10 +5,16 @@ import moment from 'moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import DatePicker from "react-datepicker";
 import { FaChevronLeft, FaChevronRight, FaCalendarAlt, FaPalette } from 'react-icons/fa';
+import GroupJoinConfirmComponent from '../group/GroupJoinConfirmComponent';
+import ReactQuill from 'react-quill';
+import ko from "date-fns/locale/ko";
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/StudyGroupComponent.css";
+import 'react-quill/dist/quill.snow.css';
+
 
 // Momonet로 로컬 시간대 설정
 const localizer = momentLocalizer(moment);
@@ -16,14 +22,15 @@ const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 const StudyGroupComponent = ({ studyNo }) => {
-  const [events, setEvents] = useState([]);               // 캘린더 - 일정 관리
-  const [tasks, setTasks] = useState([]);                 // 캘린더 - 할 일 저장
-  const [taskInput, setTaskInput] = useState('');         // 캘린더 - 할 일 입력
-  const [chatMessages, setChatMessages] = useState([]);   // 신청 - 채팅 화면
-  const [chatInput, setChatInput] = useState('');         // 신청 - 채팅 입력창
-  const [view, setView] = useState('calendar');           // 뷰 설정(캘린더|신청)
-  const [modalEvent, setModalEvent] = useState(null);     // 모달창 이벤트 설정
-  const [modalClass, setModalClass] = useState('modal');  // 모달창 css 클래스값 설정
+  const [events, setEvents] = useState([]);                 // 캘린더 - 일정 관리
+  const [tasks, setTasks] = useState([]);                   // 캘린더 - 할 일 저장
+  const [taskInput, setTaskInput] = useState('');           // 캘린더 - 할 일 입력
+  const [chatMessages, setChatMessages] = useState([]);     // 신청 - 채팅 화면
+  const [chatInput, setChatInput] = useState('');           // 신청 - 채팅 입력창
+  const [view, setView] = useState('calendar');             // 뷰 설정(캘린더|신청)
+  const [calendarView, setcalendarView] = useState('month');// 월,주,일(캘린더 화면)
+  const [modalEvent, setModalEvent] = useState(null);       // 모달창 이벤트 설정
+  const [modalClass, setModalClass] = useState('modal');    // 모달창 css 클래스값 설정
   const [colorPickerVisible, setColorPickerVisible] = useState(false);  // 색깔 선택창 가시성 설정
 
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
@@ -48,16 +55,29 @@ const StudyGroupComponent = ({ studyNo }) => {
   // =================================================================
 
   // 이전,오늘,다음 화살표 디자인
-  const renderHeader = ({ label, onNavigate }) => {
+  const renderHeader = ({ label, onNavigate, view }) => {
     return (
       <div className="custom-calendar-header">
-        <button onClick={() => onNavigate('PREV')} className="nav-button"><FaChevronLeft /></button>
-        <span className="label">{label}</span>
-        <button onClick={() => onNavigate('TODAY')} className="nav-button">오늘</button>
-        <button onClick={() => onNavigate('NEXT')} className="nav-button"><FaChevronRight /></button>
+        <div className="left-controls">
+          <button onClick={() => onNavigate('PREV')} className="nav-button"><FaChevronLeft /></button>
+          <span className="label">{label}</span>
+          <button onClick={() => onNavigate('NEXT')} className="nav-button"><FaChevronRight /></button>
+        </div>
+        <button onClick={() => onNavigate('TODAY')} className="today-button">오늘</button>
+        <div className="right-controls">
+        <button onClick={() => onNavigate('month')} className="view-button">월</button>
+        <button onClick={() => onNavigate('week')} className="view-button">주</button>
+        <button onClick={() => onNavigate('day')} className="view-button">일</button>
+        </div>
       </div>
     );
   }
+
+  // 월,주,일 화면 전환
+  const handleCalendarView = (calendarView) => {
+    setcalendarView(calendarView)
+  }
+
 
   // 캘린더 포맷을 한국어로 번역
   const formatsKorean = {
@@ -209,6 +229,10 @@ const StudyGroupComponent = ({ studyNo }) => {
     };
   }
 
+  const handleColorPickerClick = () => {
+    setColorPickerVisible(!colorPickerVisible);
+  }
+
   // ======================= 캘린더 - 할 일 관리 =========================
   // ====================================================================
 
@@ -267,6 +291,13 @@ const StudyGroupComponent = ({ studyNo }) => {
           className={`mx-2 px-4 py-2 cursor-pointer ${view === 'chat' ? 'font-bold text-red-500' : 'text-gray-500'}`}
         >
           신청
+        </span>
+        <span className="mx-5">|</span>
+        <span
+          onClick={() => setView('join')}
+          className={`mx-2 px-4 py-2 cursor-pointer ${view === 'join' ? 'font-bold text-red-500' : 'text-gray-500'}`}
+        >
+          신청 내역
         </span>
       </div>
 
@@ -376,52 +407,52 @@ const StudyGroupComponent = ({ studyNo }) => {
               onChange={(e) => setModalEvent({ ...modalEvent, title: e.target.value })}
               className="input-title"
             />
-            <label>시작:</label>
-            <div className="input-date-container">
-              <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-start').focus()} />
-              <DatePicker
-                selected={modalEvent.start}
-                onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
-                showTimeSelect
-                dateFormat="Pp"
-                className="hidden-datepicker hidden-datepicker-start"
-              />
+            <div className="date-picker-container">
+              <div className="date-picker-item">
+                <label>시작:</label>
+                <div className="input-date-container">
+                  <DatePicker
+                    selected={modalEvent.start}
+                    onChange={(date) => setModalEvent({ ...modalEvent, start: date })}
+                    showTimeSelect
+                    dateFormat="Pp"
+                    locale={ko}
+                    className="hidden-datepicker hidden-datepicker-start"
+                  />
+                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-start').focus()} />
+                </div>
+              </div>
+              <div className="date-picker-item">
+                <label>종료:</label>
+                <div className="input-date-container">
+                  <DatePicker
+                    selected={modalEvent.end}
+                    onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
+                    showTimeSelect
+                    dateFormat="Pp"
+                    locale={ko}
+                    className="hidden-datepicker hidden-datepicker-end"
+                  />
+                  <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-end').focus()} />
+                </div>
+              </div>
             </div>
-            <label>종료:</label>
-            <div className="input-date-container">
-              <FaCalendarAlt className="calendar-icon" onClick={() => document.querySelector('.hidden-datepicker-end').focus()} />
-              <DatePicker
-                selected={modalEvent.end}
-                onChange={(date) => setModalEvent({ ...modalEvent, end: date })}
-                showTimeSelect
-                dateFormat="Pp"
-                className="hidden-datepicker hidden-datepicker-end"
-              />
-            </div>
-            <label>내용:</label>
-            <textarea
-              value={modalEvent.content}
-              onChange={(e) => setModalEvent({ ...modalEvent, content: e.target.value })}
-              className="input-content expanded"
-            />
             <label>색깔:</label>
             <div className="color-picker-container">
-              <button
-                className="color-picker-button"
-                onClick={() => setColorPickerVisible(!colorPickerVisible)}
-              >
-                <FaPalette />
-              </button>
-              {colorPickerVisible && (
-                <input
-                  type="color"
-                  value={modalEvent.color || "#000000"}
-                  onChange={(e) => setModalEvent({ ...modalEvent, color: e.target.value })}
-                  className="color-picker-input"
-                />
-              )}
+              <input
+                type="color"
+                value={modalEvent.color || "#000000"}
+                onChange={(e) => setModalEvent({ ...modalEvent, color: e.target.value })}
+                className="color-picker-input"
+              />
               <div className="selected-color" style={{ backgroundColor: modalEvent.color || "#000000" }}></div>
             </div>
+            <label>내용:</label>
+            <ReactQuill
+              value={modalEvent.content}
+              onChange={(value) => setModalEvent({ ...modalEvent, content: value })}
+              className="input-content expanded"
+            />
             <div className="modal-buttons">
               <button onClick={() => handleRemoveEvent(modalEvent.calendarNo)} className="button-delete">삭제</button>
               <button onClick={handleUpdateEvent} className="button-save">저장</button>
@@ -450,6 +481,12 @@ const StudyGroupComponent = ({ studyNo }) => {
             />
             <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">입력</button>
           </form>
+        </div>
+      )}
+
+      {view === 'join' && (
+        <div>
+          <GroupJoinConfirmComponent/>
         </div>
       )}
     </div>

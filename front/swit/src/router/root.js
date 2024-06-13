@@ -1,5 +1,5 @@
 import myPageRouter from "./myPageRouter";
-import loginRouter from "./loginRouter";
+// import loginRouter from "./loginRouter";
 import studyRouter from "./studyRouter";
 import adminRouter from "./adminRouter";
 import examRouter from "./examRouter";
@@ -64,7 +64,12 @@ const root = createBrowserRouter([
     {
       path: "study",
       children: studyRouter()
-    }
+    },
+    {
+        path:"/callback",
+        element:<Suspense fallback={Loading}><Callback /></Suspense>,
+        // children: loginRouter()
+    },
 ])
 
 export default root;

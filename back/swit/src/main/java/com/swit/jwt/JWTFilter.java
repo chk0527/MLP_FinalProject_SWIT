@@ -61,17 +61,13 @@ public class JWTFilter extends OncePerRequestFilter {
         System.out.println("doFilterInternal exec2");
 		//토큰에서 no, username, role, nick 획득
         String userNo = jwtUtil.getNo(token);
-        System.out.println("doFilterInternal userNo : " + userNo);
-
         int no = (userNo == null ? 0 : Integer.parseInt(userNo));
         String userId = jwtUtil.getUserId(token);
-
-        System.out.println("doFilterInternal userId : " + userId);
         String userNick = jwtUtil.getNick(token);
         String userRole = jwtUtil.getRole(token);
 
-        
-        
+        System.out.println("doFilterInternal userNo : " + userNo);        
+        System.out.println("doFilterInternal userId : " + userId);        
         System.out.println("doFilterInternal userNick : " + userNick);
         System.out.println("doFilterInternal userRole : " + userRole);
 				

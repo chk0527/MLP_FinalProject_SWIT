@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { getStudy, putOne, deleteOne } from "../../api/StudyApi"
+import { getStudy, getStudyWithQuestion,putOne, deleteOne } from "../../api/StudyApi"
 import useCustomMove from "../../hooks/useCustomMove";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
@@ -16,29 +16,52 @@ const initState = {
     studyOnline: true,
     studySubject: "개발",
     studyComm: "오픈채팅",
-    studyLink: "kakao.com",
+    studyLink: "kakao.com"
+}
+const questionInit = {
     questionCount: 1,
-    questions: []
+    questions: [""]
 }
 
 const StudyModifyComponent = ({ studyNo }) => {
     const [study, setStudy] = useState({ ...initState })
+    const [studyQuestion, setStudyQuestion] = useState({...questionInit})
     const [result, setResult] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const uploadRef = useRef()
 
-    const { moveToRead } = useCustomMove();
+    const { moveToRead, moveToList } = useCustomMove();
 
     useEffect(() => {
-        getStudy(studyNo).then((data) => {
-            // study 데이터에 questions 필드가 없다면 빈 배열로 초기화
-            if (!data.questions) {
-                data.questions = [];
-            }
+        getStudyWithQuestion(studyNo).then((data) => {
+            const {study, question} = data;
+            const questionsArray = ['q1', 'q2', 'q3', 'q4', 'q5'];
+            const nonNullQuestions = questionsArray.filter(q => question[q] !== null && question[q] !== undefined);
+            const questionCount = nonNullQuestions.length;
+            setStudy({...study})
+            setStudyQuestion({
+                questionCount,
+                questions: question ? Array.from({ length: questionCount }, (_, i) => question[`q${i + 1}`] || '') : [""]
+            })
+            console.log(question['q1']);
+            console.log(question['q2']);
+            console.log(question['q3']);
+            console.log(question['q4']);
+            console.log(question['q5']);
             console.log(data);
-            setStudy(data);
-        });
+            console.log(questionCount)
+            setStartDate(new Date(study.studyStartDate));
+            setEndDate(new Date(study.studyEndDate));
+        })
+        // getStudy(studyNo).then((data) => {
+        //     // study 데이터에 questions 필드가 없다면 빈 배열로 초기화
+        //     if (!data.questions) {
+        //         data.questions = [];
+        //     }
+        //     console.log(data);
+        //     setStudy(data);
+        // });
     }, [studyNo]);
 
     const handleChangeStudy = (e) => {
@@ -68,12 +91,9 @@ const StudyModifyComponent = ({ studyNo }) => {
 
         const formatDate = (date) => date.toISOString().split('T')[0];
         
-        // formData.append("studyTitle", studyNo);
         formData.append("studyTitle", study.studyTitle);
         formData.append("studyContent", study.studyContent);
         formData.append("studyType", study.studyType);
-        // formData.append("studyStartDate", study.studyStartDate);
-        // formData.append("studyEndDate", study.studyEndDate);
         formData.append("studyStartDate", formatDate(startDate));
         formData.append("studyEndDate", formatDate(endDate));
         formData.append("studyHeadcount", study.studyHeadcount);
@@ -83,6 +103,9 @@ const StudyModifyComponent = ({ studyNo }) => {
         formData.append("studyLink", study.studyLink);
         formData.append("country", study.country);
 
+        studyQuestion.questions.forEach((question, index) => {
+            formData.append("questions", question);
+        });
 
         putOne(studyNo, formData).then(result => {
             console.log("modify result : " + result)
@@ -98,15 +121,15 @@ const StudyModifyComponent = ({ studyNo }) => {
     }
 
     const closeModal = () => {
-        // if (result == 'Deleted')
-        //     moveToList()
-        // else
+        if (result == 'Deleted')
+            moveToList()
+        else
         moveToRead(studyNo)
     }
 
     const handleQuestionCountChange = (e) => {
         const questionCount = parseInt(e.target.value);
-        setStudy(prevState => ({
+        setStudyQuestion(prevState => ({
             ...prevState,
             questionCount,
             questions: Array(questionCount).fill('')
@@ -114,8 +137,8 @@ const StudyModifyComponent = ({ studyNo }) => {
     };
 
     const handleQuestionChange = (index, value) => {
-        const updatedQuestions = study.questions.map((q, i) => (i === index ? value : q));
-        setStudy(prevState => ({
+        const updatedQuestions = studyQuestion.questions.map((q, i) => (i === index ? value : q));
+        setStudyQuestion(prevState => ({
             ...prevState,
             questions: updatedQuestions
         }));
@@ -296,7 +319,7 @@ const StudyModifyComponent = ({ studyNo }) => {
                     <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">질문 개수</label>
                     <div className="relative mt-2.5">
                         <div className="absolute inset-y-0 left-0 flex items-center">
-                            <select name="questionCount" className="block rounded-md border-0 px-0 py-2 pl-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={study.questionCount} onChange={handleQuestionCountChange}>
+                            <select name="questionCount" className="block rounded-md border-0 px-0 py-2 pl-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={studyQuestion.questionCount} onChange={handleQuestionCountChange}>
                                 <option value="1">1개</option>
                                 <option value="2">2개</option>
                                 <option value="3">3개</option>
@@ -309,17 +332,20 @@ const StudyModifyComponent = ({ studyNo }) => {
                     </div>
                 </div>
 
-                {study.questions.map((question, index) => (
+                {studyQuestion.questions.map((question, index) => (
                     <div key={index} className="sm:col-span-2 mt-5">
                         <label htmlFor={`question-${index}`} className="block text-sm font-semibold leading-6 text-gray-900">질문 {index + 1}</label>
                         <div className="mt-2.5">
-                            <textarea name={`question-${index}`} id={`question-${index}`} rows="2" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={question} onChange={(e) => handleQuestionChange(index, e.target.value)}></textarea>
+                            <textarea name={`question-${index}`} id={`question-${index}`} rows="2" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={studyQuestion.questions[index]} onChange={(e) => handleQuestionChange(index, e.target.value)}></textarea>
                         </div>
                     </div>
                 ))}
 
                 <div className="mt-10">
                     <button className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleClickModify}>작성 완료</button>
+                </div>
+                <div className="mt-10">
+                    <button className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleClickDelete}>삭제(연관된 테이블 삭제 미구현으로 미동작)</button>
                 </div>
             </div>
         </div>

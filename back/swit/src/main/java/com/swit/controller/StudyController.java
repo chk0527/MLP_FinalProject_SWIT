@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.swit.domain.Study;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.findList;
 import com.swit.service.GroupService;
 import com.swit.service.StudyService;
@@ -55,6 +56,11 @@ public class StudyController {
         return service.get(studyNo);
     }
 
+    @GetMapping("question/{studyNo}")
+    public StudyWithQuestionDTO getStudyWithQuestion(@PathVariable(name = "studyNo") Integer studyNo) {
+        return service.getStudyWithQuestionDTO(studyNo);
+    }
+
     @PostMapping("/")
     public Map<String, Integer> register(StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
         List<MultipartFile> files = studyDTO.getFiles();
@@ -71,15 +77,15 @@ public class StudyController {
         GroupDTO groupDTO = new GroupDTO();
         groupDTO.setUserId(userId);
         groupDTO.setStudyNo(studyNo);
-        groupDTO.setGroupSelfintro("방장");
         groupDTO.setGroupLeader(1);
+        groupDTO.setGroupJoin(1);
         groupService.register(groupDTO);
 
         return Map.of("studyNo", studyNo);
     }
 
     @PutMapping("/{studyNo}")
-    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, StudyDTO studyDTO) {
+    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
         StudyDTO currentStudyDTO = service.get(studyNo); // 기존 파일 정보를 가져옴
         List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
         List<MultipartFile> newFiles = studyDTO.getFiles();
@@ -87,7 +93,7 @@ public class StudyController {
         studyDTO.setUploadFileNames(uploadFileNames);
         studyDTO.setStudyNo(studyNo);
         log.info("Modify:" + studyDTO);
-        service.modify(studyDTO);
+        service.modify(studyDTO, questions);
         return Map.of("RESULT", "SUCCESS");
     }
 

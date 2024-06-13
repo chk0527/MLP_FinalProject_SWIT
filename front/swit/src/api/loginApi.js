@@ -26,8 +26,8 @@ export const login = async (username, password) => {
       // // 'Bearer ' 문자 제거
       // token = token.substring(7);      
       // 로컬 스토리지에 토큰 저장
-      localStorage.setItem('accessToken', token);
-      console.log('localStorage에 저장된 토큰 값:', localStorage.getItem('accessToken'));
+      sessionStorage.setItem('accessToken', token);
+      console.log('sessionStorage 저장된 토큰 값:', sessionStorage.getItem('accessToken'));
     }
 
     return response;
@@ -38,6 +38,6 @@ export const login = async (username, password) => {
 };
 
 
-export const info   = () => api.get(`/login_user`)
+export const info   = () => api.get(`/api/login_user`)
 export const join   = (user) => api.post(`/api/join`, user)
 export const remove = (userId) => api.delete(`/user/${userId}`)
