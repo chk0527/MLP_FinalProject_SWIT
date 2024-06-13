@@ -1,6 +1,7 @@
 // StudyReadComponent.js
 import React, { useState, useEffect } from "react";
-import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { API_SERVER_HOST, getStudy} from "../../api/StudyApi";
+import {memberCount} from "../../api/GroupApi";
 import { useNavigate } from "react-router-dom";
 import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInfoComponent from "./StudyInfoComponent";
@@ -37,15 +38,24 @@ const StudyReadComponent = ({ studyNo }) => {
     });
   }, [studyNo]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openModal = async () => {
+    try {
+      const currentMemberCount = await memberCount(studyNo);
+      if (currentMemberCount >= study.studyHeadcount) {
+        alert("인원이 가득 찼습니다");
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error checking member count:", error);
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const ApplyButton = ({ studyUuid }) => (
+  const ApplyButton = ({ }) => (
     <button onClick={openModal} className="bg-green-500 text-white px-4 py-2 rounded mt-4 hover:bg-green-600">
       신청
     </button>

@@ -1,6 +1,5 @@
 package com.swit.domain;
 
-
 import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.Column;
@@ -8,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,10 @@ public class Group {
   
   private Integer studyNo;
   
+  @ManyToOne
+  @JoinColumn(name = "studyNo", insertable = false, updatable = false)
+  private Study study;
+
   @ColumnDefault("0")
   @Column(nullable = false)
   private Integer groupLeader; //0: 스터디원 1: 스터디장
@@ -37,8 +42,6 @@ public class Group {
   @ColumnDefault("0")
   @Column(nullable = false)
   private Integer groupJoin; //0: 보류 1: 승인 2: 거절
-
-  private String groupSelfintro; //자기소개 같은 거
 
   @PrePersist
   protected void onCreate() {
@@ -50,4 +53,3 @@ public class Group {
       }
   }
 }
-

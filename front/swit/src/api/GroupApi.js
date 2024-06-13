@@ -4,18 +4,35 @@ import { getUserIdFromToken } from "../util/jwtDecode";
 export const API_SERVER_HOST = 'http://localhost:8181';
 const prefix = `${API_SERVER_HOST}/api/group`;
 
-export const addGroup = async (studyObj) => {
+// export const addGroup = async (studyObj) => {
+//   const token = sessionStorage.getItem('accessToken');
+//   if (!token) {
+//     throw new Error('No access token found');
+//   }
+
+//   const res = await axios.post(`${prefix}/add`, studyObj, {
+//     headers: {
+//       Authorization: `${token}`,
+//     }
+//   });
+
+//   return res.data;
+// };
+export const addGroup = async (groupData, answerData) => {
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
-    throw new Error('No access token found');
+      throw new Error('No access token found');
   }
 
-  const res = await axios.post(`${prefix}/add`, studyObj, {
-    headers: {
-      Authorization: `${token}`,
-    }
-  });
-
+  const res = await axios.post(`${API_SERVER_HOST}/api/group/join`, 
+      { group: groupData, answer: answerData },
+      {
+          headers: {
+              'Authorization': `${token}`,
+              'Content-Type': 'application/json'
+          }
+      }
+  );
   return res.data;
 };
 
@@ -56,3 +73,21 @@ export const confirmGroupJoin = async (groupNo, approve) => {
       }
   });
 };
+
+export const memberCount = async (studyNo) => { //인원 수 체크
+  const res = await axios.get(`/api/group/memberCount`, {
+    params: {studyNo }
+  });
+  return res.data;
+};
+
+
+export const getUserAnswers = async (userId, studyNo) => {
+  const res = await axios.get(`/api/answers`, {
+    params: { userId, studyNo }
+  });
+  return res.data;
+};
+
+
+

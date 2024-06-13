@@ -77,7 +77,6 @@ public class StudyController {
         GroupDTO groupDTO = new GroupDTO();
         groupDTO.setUserId(userId);
         groupDTO.setStudyNo(studyNo);
-        groupDTO.setGroupSelfintro("방장");
         groupDTO.setGroupLeader(1);
         groupDTO.setGroupJoin(1);
         groupService.register(groupDTO);

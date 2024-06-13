@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import BasicLayout from "../../layouts/BasicLayout";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
-import { isMember, isLeader } from "../../api/GroupApi"; // isMember 함수를 가져옴
+import { API_SERVER_HOST, getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
+import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { getUserIdFromToken } from "../../util/jwtDecode";
 
 //아이콘
 import searchIcon from "../../img/search-icon.png";
 import banner1 from "../../img/banner1.jpg";
+
+const host = API_SERVER_HOST;
 
 const StudyListPage = () => {
   // 스터디 목록을 저장할 상태
@@ -20,7 +22,23 @@ const StudyListPage = () => {
     const fetchStudyList = async () => {
       try {
         const studyListData = await getAllStudies();
-        setStudyList(studyListData);
+        
+        // 각 스터디에 대한 상태 정보 추가
+        const userId = getUserIdFromToken();
+        const studyListWithStatus = await Promise.all(
+          studyListData.map(async (study) => {
+            let leaderStatus = false;
+            let memberStatus = userId ? -1 : -2; // -1: 가입신청을 하지 않은경우, -2: 비회원(로그인 안 한 상태)
+            let currentMemberCount = 0;
+            if (userId) {
+              leaderStatus = await isLeader(study.studyNo);
+              memberStatus = await isMember(userId, study.studyNo);
+            }
+            currentMemberCount = await memberCount(study.studyNo); // 현재 가입된 인원 수 가져오기
+            return { ...study, isLeader: leaderStatus, isMemberStatus: memberStatus, currentMemberCount };
+          })
+        );
+        setStudyList(studyListWithStatus);
       } catch (error) {
         console.error("Error fetching study list:", error);
       }
@@ -31,7 +49,7 @@ const StudyListPage = () => {
 
   const handleReadStudy = async (studyNo) => {
     try {
-      // 현재 로그인된 사용자 ID를 가져옵니다 (예: 로컬 스토리지에서 가져옴)
+      // 현재 로그인된 사용자 ID를 가져옴 (sessionStorage)
       const userId = getUserIdFromToken();
       if (!userId) {
         alert("테스트: 비로그인");
@@ -48,7 +66,6 @@ const StudyListPage = () => {
       }
       // 사용자가 해당 스터디에 참여하고 있는지 확인
       const isMemberStatus = await isMember(userId, studyNo);
-      console.log(isMemberStatus+"!!");
       if (isMemberStatus === 1) {
         alert("승인 완료");
         navigate(`/study/group/${studyNo}`, { state: 0 });
@@ -78,6 +95,24 @@ const StudyListPage = () => {
       setHovered(true);
     }
   }, [currentItem]);
+
+  const getStatusText = (study) => {
+    if (!study.isLeader && study.isMemberStatus === -2) return "비회원";
+    if (study.isLeader) return "방장";
+    if (study.isMemberStatus === 1) return "참가중";
+    if (study.isMemberStatus === 2) return "거절";
+    if (study.isMemberStatus === 0) return "승인 대기중";
+    return "미가입";
+  };
+
+  const getStatusClass = (study) => {
+    if (!study.isLeader && study.isMemberStatus === -2) return "bg-gray-500";
+    if (study.isLeader) return "bg-blue-500";
+    if (study.isMemberStatus === 1) return "bg-green-500";
+    if (study.isMemberStatus === 2) return "bg-red-500";
+    if (study.isMemberStatus === 0) return "bg-yellow-500";
+    return "bg-gray-500";
+  };
 
   return (
     <BasicLayout>
@@ -115,10 +150,14 @@ const StudyListPage = () => {
                 onMouseEnter={() => setCurrentItem(study.studyNo)}
                 onMouseLeave={() => setCurrentItem(null)}
                 onClick={() => handleReadStudy(study.studyNo)}
-                className="relative w-72 h-72 mb-8"
+                className="relative w-72 h-72 mb-8 rounded-2xl"
               >
-                <img src={banner1} className="w-72 h-72 bg-cover "></img>
-                <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer">
+                <img 
+                  src={study.imageList.length > 0 ? `${host}/api/study/display/${study.imageList[0].fileName}` : banner1} 
+                  className="w-72 h-72 bg-cover rounded-2xl"
+                  alt={study.studyTitle}
+                ></img>
+                <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded-2xl">
                   <motion.div
                     initial={{ opacity: 1 }}
                     animate={{
@@ -130,15 +169,18 @@ const StudyListPage = () => {
                       <p className="px-4 py-1 rounded-xl bg-gray-500/50">
                         {study.studySubject}
                       </p>
-                      <p cl>1명/{study.studyHeadcount}명</p>
+                      <p>{study.currentMemberCount}/{study.studyHeadcount}명</p>
                     </div>
-                    <div className="absolute  bottom-0 p-8 ">
+                    <div className="absolute bottom-0 p-8">
                       <p className="text-xl py-2">
                         #서울 #{study.studyTitle ? "비대면" : "대면"}
                       </p>
                       <p className="w-60 truncate text-2xl">
                         {study.studyTitle}
                       </p>
+                    </div>
+                    <div className={`absolute bottom-2 right-2 text-sm font-bold px-2 py-1 rounded ${getStatusClass(study)}`}>
+                      {getStatusText(study)}
                     </div>
                   </motion.div>
                 </div>
@@ -151,7 +193,7 @@ const StudyListPage = () => {
                     border: "4px solid rgb(253 230 138)",
                     scale: 0.8,
                   }}
-                  className="absolute w-72 h-72  bottom-0 p-10 cursor-pointer"
+                  className="absolute w-72 h-72 bottom-0 p-10 cursor-pointer"
                 >
                   <div className="line-clamp-8 text-center text-white">
                     {study.studyContent}
