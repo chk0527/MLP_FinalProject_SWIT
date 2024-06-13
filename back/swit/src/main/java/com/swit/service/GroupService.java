@@ -1,6 +1,7 @@
 package com.swit.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -8,9 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.swit.domain.Group;
+import com.swit.domain.User;
 import com.swit.dto.CustomUserDetails;
 import com.swit.dto.GroupDTO;
 import com.swit.repository.GroupRepository;
+import com.swit.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 public class GroupService {
   private final ModelMapper modelMapper;
   private final GroupRepository groupRepository;
+  private final UserRepository userRepository;
 
   public List<Group> getAllGroups() {
     return groupRepository.findAll();
@@ -30,12 +34,14 @@ public class GroupService {
 
   public Integer register(GroupDTO groupDTO) {
     Group group = modelMapper.map(groupDTO, Group.class);
-
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication.getPrincipal() instanceof CustomUserDetails) {
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String userId = userDetails.getUsername();
-      group.setUserId(userId);
+      
+      Optional<User> user = userRepository.findByUserId(userId);
+      group.setUser(user.get());
+      
     } else {
       throw new IllegalStateException("Authentication principal is not an instance of CustomUserDetails");
     }
@@ -44,6 +50,6 @@ public class GroupService {
   }
 
   public boolean isMember(String userId, Integer studyNo) {
-    return groupRepository.existsByUserIdAndStudyNo(userId, studyNo);
+    return groupRepository.existsByUserUserIdAndStudyStudyNo(userId, studyNo);
   }
 }

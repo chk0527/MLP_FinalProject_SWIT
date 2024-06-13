@@ -2,32 +2,49 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import BasicLayout from "../../layouts/BasicLayout";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
+import { API_SERVER_HOST, getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
 import { isMember } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { getUserIdFromToken } from "../../util/jwtDecode";
 
 //아이콘
 import searchIcon from "../../img/search-icon.png";
-import banner1 from "../../img/banner1.jpg";
+import defaultImg from "../../img/defaultImage.png";
+
+
 
 const StudyListPage = () => {
+  const host = API_SERVER_HOST;
+
   // 스터디 목록을 저장할 상태
   const [studyList, setStudyList] = useState([]);
+  const [studyTitle, setStudyTitle] = useState("");
+  const [studySubject, setStudySubject] = useState("");
+  const [studyAddr, setStudyAddr] = useState("");
+  const [studyOnline, setStudyOnline] = useState(1);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // 모든 스터디 목록을 가져오는 API 호출
-    const fetchStudyList = async () => {
-      try {
-        const studyListData = await getAllStudies();
-        setStudyList(studyListData);
-      } catch (error) {
-        console.error("Error fetching study list:", error);
-      }
-    };
+  // useEffect(() => {
+  //   // 모든 스터디 목록을 가져오는 API 호출
+  //   const fetchStudyList = async () => {
+  //     try {
+  //       const studyListData = await getAllStudies();
+  //       setStudyList(studyListData);
+  //     } catch (error) {
+  //       console.error("Error fetching study list:", error);
+  //     }
+  //   };
 
-    fetchStudyList(); // 함수 실행
-  }, []); // 빈 배열을 두번째 인자로 넘겨 한 번만 실행되도록 설정
+  //   fetchStudyList(); // 함수 실행
+  // }, []); // 빈 배열을 두번째 인자로 넘겨 한 번만 실행되도록 설정
+
+  useEffect(() => {
+    getAllStudies(studyTitle, studySubject, studyAddr, studyOnline).then(
+      (data) => {
+        console.log(data);
+        setStudyList(data);
+      }
+    );
+  }, [studyTitle, studySubject, studyAddr, studyOnline]);
 
   const handleReadStudy = async (studyNo) => {
     try {
@@ -39,14 +56,14 @@ const StudyListPage = () => {
         navigate(`/study/read/${studyNo}`, { state: 0 });
         return;
       }
-    //   alert("추후 삭제 될 알림: 로그인");
-    //   // 사용자가 해당 스터디에 참여하고 있는지 확인
-    //   const member = await isMember(studyNo);
-    //   if (member) {
-    //     navigate(`/study/group/${studyNo}`, { state: 0 });
-    //   } else {
-    //     navigate(`/study/read/${studyNo}`, { state: 0 });
-    //   }
+      //   alert("추후 삭제 될 알림: 로그인");
+      //   // 사용자가 해당 스터디에 참여하고 있는지 확인
+      //   const member = await isMember(studyNo);
+      //   if (member) {
+      //     navigate(`/study/group/${studyNo}`, { state: 0 });
+      //   } else {
+      //     navigate(`/study/read/${studyNo}`, { state: 0 });
+      //   }
     } catch (error) {
       console.error("Error checking membership:", error);
     }
@@ -63,6 +80,11 @@ const StudyListPage = () => {
       setHovered(true);
     }
   }, [currentItem]);
+
+  //이미지 디폴트값
+  const defaultImage = (e) => {
+    e.target.src = `${defaultImg}`;
+  };
 
   return (
     <BasicLayout>
@@ -102,8 +124,13 @@ const StudyListPage = () => {
                 onClick={() => handleReadStudy(study.studyNo)}
                 className="relative w-72 h-72 mb-8"
               >
-                <img src={banner1} className="w-72 h-72 bg-cover "></img>
-                <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer">
+                <img
+                  onError={defaultImage}
+                  className="w-72 h-72 bg-cover "
+                  src={`${host}/api/study/display/${study.uploadFileNames}`}
+                />
+
+                <div className="absolute w-72 h-72 top-0 bg-black/60 text-white cursor-pointer">
                   <motion.div
                     initial={{ opacity: 1 }}
                     animate={{
@@ -112,7 +139,7 @@ const StudyListPage = () => {
                     }}
                   >
                     <div className="flex justify-between p-8">
-                      <p className="px-4 py-1 rounded-xl bg-gray-500/50">
+                      <p className="px-4 py-1 rounded-xl bg-yellow-200/80 text-black">
                         {study.studySubject}
                       </p>
                       <p cl>1명/{study.studyHeadcount}명</p>
@@ -148,8 +175,8 @@ const StudyListPage = () => {
         </div>
         <div className="grid place-items-end">
           <Link to={{ pathname: `/study/add` }} state={0}>
-            <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4">
-              Go to StudyAddPage
+            <button className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4">
+              스터디 만들기
             </button>
           </Link>
         </div>

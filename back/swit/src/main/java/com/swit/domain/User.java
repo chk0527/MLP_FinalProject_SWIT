@@ -1,7 +1,6 @@
 package com.swit.domain;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -28,6 +27,7 @@ import lombok.NoArgsConstructor;
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키
+  @Column(name = "user_no")
   private Integer userNo;
 
   @Column(unique = true, nullable = true)
