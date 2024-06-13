@@ -11,7 +11,6 @@ const initState = {
     studyContent: '콘텐츠',
     studyType: "스터디",
     studyStartDate: '',
-    studyEndDate: '',
     studyHeadcount: 1,
     studyOnline: true,
     studySubject: "개발",
@@ -28,7 +27,6 @@ const StudyModifyComponent = ({ studyNo }) => {
     const [studyQuestion, setStudyQuestion] = useState({ ...questionInit })
     const [result, setResult] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
     const uploadRef = useRef()
 
     const { moveToRead, moveToList } = useCustomMove();
@@ -52,7 +50,6 @@ const StudyModifyComponent = ({ studyNo }) => {
             console.log(data);
             console.log(questionCount)
             setStartDate(new Date(study.studyStartDate));
-            setEndDate(new Date(study.studyEndDate));
         })
         // getStudy(studyNo).then((data) => {
         //     // study 데이터에 questions 필드가 없다면 빈 배열로 초기화
@@ -78,7 +75,6 @@ const StudyModifyComponent = ({ studyNo }) => {
 
     const handleClickModify = () => {
         study['studyStartDate'] = startDate
-        study['studyEndDate'] = endDate
 
         const files = uploadRef.current.files;
         const formData = new FormData();
@@ -95,7 +91,6 @@ const StudyModifyComponent = ({ studyNo }) => {
         formData.append("studyContent", study.studyContent);
         formData.append("studyType", study.studyType);
         formData.append("studyStartDate", formatDate(startDate));
-        formData.append("studyEndDate", formatDate(endDate));
         formData.append("studyHeadcount", study.studyHeadcount);
         formData.append("studyOnline", study.studyOnline);
         formData.append("studySubject", study.studySubject);
