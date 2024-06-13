@@ -21,7 +21,6 @@ const useCustomMove = () => {
 
     const moveToExamList = (pageParam) => {
         let queryStr = ""
-<<<<<<< HEAD
         if(pageParam){
             const pageNum = getNum(pageParam.page,1)
             const sizeNum = getNum(pageParam.size,5)
@@ -29,13 +28,6 @@ const useCustomMove = () => {
             location.state = 1;
             queryStr = createSearchParams({page:pageNum, size:sizeNum}).toString()
         }else{
-=======
-        if (pageParam) {
-            const pageNum = getNum(pageParam.page, 1)
-            const sizeNum = getNum(pageParam.size, 5)
-            queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
-        } else {
->>>>>>> develop
             queryStr = queryDefault
         }
         navigate({ pathname: `../list`, search: queryStr })
@@ -44,17 +36,10 @@ const useCustomMove = () => {
 
     const moveToJobList = (pageParam) => {
         let queryStr = ""
-<<<<<<< HEAD
         if(pageParam){
             const pageNum = getNum(pageParam.page,1)
             const sizeNum = getNum(pageParam.size,5)
             const location ={};
-=======
-        if (pageParam) {
-            const pageNum = getNum(pageParam.page, 1)
-            const sizeNum = getNum(pageParam.size, 5)
-            const location = "";
->>>>>>> develop
             location.state = 1;
             queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
         } else {
