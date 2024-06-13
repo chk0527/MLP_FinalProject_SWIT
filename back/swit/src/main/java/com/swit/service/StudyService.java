@@ -35,10 +35,9 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    // 페이지 전체목록
-    public List<Study> getAllStudies(String studyTitle, String studySubject, String studyAddr, Boolean studyOnline) {
-        return studyRepository.studyList(studyTitle,studySubject,studyAddr,studyOnline);
-    }
+    public List<Study> getAllStudies() {
+      return studyRepository.findAll();
+  }
 
     // 스터디별 질문
     public Integer register(StudyDTO studyDTO, List<String> questions) {

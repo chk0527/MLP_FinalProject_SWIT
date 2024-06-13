@@ -48,4 +48,13 @@ public class User {
   private LocalDateTime userDeleteDate;
 
   private String userRole;
+
+    // 추가된 메서드들
+    public String getUserId() {
+      return userId;
+  }
+
+  public void setUserId(String userId) {
+      this.userId = userId;
+  }
 }

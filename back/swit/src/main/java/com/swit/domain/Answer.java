@@ -22,7 +22,7 @@ public class Answer {
     private Study study;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "userId", referencedColumnName = "userId", nullable = false) // userId 컬럼과 매핑
     private User user;
 
     private String a1;
@@ -30,4 +30,5 @@ public class Answer {
     private String a3;
     private String a4;
     private String a5;
+    private String Selfintro; // 자기소개(한마디)
 }

@@ -51,6 +51,11 @@ public class Study {
     private String studySubject;
     private String studyUuid;
 
+
+    // 생성자 추가
+    public Study(Integer studyNo) {
+      this.studyNo = studyNo;
+    }
     @ElementCollection
     @Builder.Default
     private List<StudyImage> imageList = new ArrayList<>();
@@ -60,7 +65,7 @@ public class Study {
     private Question question;
 
     @ManyToMany
-    @JoinTable(name = "group1", joinColumns = @JoinColumn(name = "study_no"), inverseJoinColumns = @JoinColumn(name = "user_no"))
+    @JoinTable(name = "group1", joinColumns = @JoinColumn(name = "study_no"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users; 
 
     // Methods for managing images
@@ -77,6 +82,9 @@ public class Study {
     public void clearList() {
         this.imageList.clear();
     }
+    public Integer getStudyNo() {
+      return studyNo;
+  }
 }
 // package com.swit.domain;
 

@@ -45,8 +45,6 @@ public class Group {
     @Column(nullable = false)
     private Integer groupJoin; // 0: 보류 1: 승인 2: 거절
 
-    private String groupSelfintro; // 자기소개 같은 거
-
     @PrePersist
     protected void onCreate() {
         if (this.groupLeader == null) {
@@ -56,4 +54,12 @@ public class Group {
             this.groupJoin = 0;
         }
     }
+
+    public String getUserId() {
+      return user.getUserId();
+    }
+
+  public Integer getStudyNo() {
+      return study.getStudyNo();
+  }
 }
