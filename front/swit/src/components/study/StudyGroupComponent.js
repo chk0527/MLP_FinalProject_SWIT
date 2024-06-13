@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { getCalendar, addEvent, deleteEvent, updateEvent } from "../../api/CalendarApi";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import DatePicker from "react-datepicker";
 import { FaChevronLeft, FaChevronRight, FaCalendarAlt, FaPalette } from 'react-icons/fa';
 import GroupJoinConfirmComponent from '../group/GroupJoinConfirmComponent';
 import ReactQuill from 'react-quill';
 import ko from "date-fns/locale/ko";
+import moment from 'moment';
+import 'moment/locale/ko';
+import axios from 'axios';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -15,7 +17,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../../css/StudyGroupComponent.css";
 import 'react-quill/dist/quill.snow.css';
 
-
+// 한국어 로케일 적용
+moment.locale('ko');
 // Momonet로 로컬 시간대 설정
 const localizer = momentLocalizer(moment);
 // 드래그앤드롭 기능이 추가된 Calendar
@@ -31,31 +34,33 @@ const StudyGroupComponent = ({ studyNo }) => {
   const [calendarView, setcalendarView] = useState('month');// 월,주,일(캘린더 화면)
   const [modalEvent, setModalEvent] = useState(null);       // 모달창 이벤트 설정
   const [modalClass, setModalClass] = useState('modal');    // 모달창 css 클래스값 설정
-  const [colorPickerVisible, setColorPickerVisible] = useState(false);  // 색깔 선택창 가시성 설정
+  const [holidays, setHolidays] = useState([]);             // 공휴일 처리
 
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await getCalendar(studyNo);
+        const data = await getCalendar(studyNo)
+        const holidayData = await fetchHolidays() // 공휴일 데이터 가져오기
         setEvents(data.map(event => ({
           ...event,
           start: moment(event.startDate).local().toDate(),
           end: moment(event.endDate).local().toDate(),
         })))
+        setHolidays(holidayData)
       } catch (error) {
-        console.error('일정 데이터를 가져오는 중 오류 발생:', error);
-        setEvents([]);  // 해당 스터디의 일정이 하나도 없으면, [] 반환
+        console.error('일정 데이터를 가져오는 중 오류 발생:', error)
+        setEvents([]) // 해당 스터디의 일정이 하나도 없으면, [] 반환
       }
-    };
-    fetchEvents();
-  }, [studyNo]);
+    }
+    fetchEvents()
+  }, [studyNo])
 
   // ======================= 포맷 설정 ================================
   // =================================================================
 
-  // 이전,오늘,다음 화살표 디자인
-  const renderHeader = ({ label, onNavigate, view }) => {
+  // 이전,오늘,다음 + 월,주,일 버튼
+  const renderHeader = ({ label, onNavigate, onView }) => {
     return (
       <div className="custom-calendar-header">
         <div className="left-controls">
@@ -65,30 +70,65 @@ const StudyGroupComponent = ({ studyNo }) => {
         </div>
         <button onClick={() => onNavigate('TODAY')} className="today-button">오늘</button>
         <div className="right-controls">
-        <button onClick={() => onNavigate('month')} className="view-button">월</button>
-        <button onClick={() => onNavigate('week')} className="view-button">주</button>
-        <button onClick={() => onNavigate('day')} className="view-button">일</button>
+          <button onClick={() => onView('month')} className="view-button">월</button>
+          <button onClick={() => onView('week')} className="view-button">주</button>
+          <button onClick={() => onView('day')} className="view-button">일</button>
         </div>
       </div>
-    );
+    )
   }
 
-  // 월,주,일 화면 전환
-  const handleCalendarView = (calendarView) => {
-    setcalendarView(calendarView)
-  }
-
-
-  // 캘린더 포맷을 한국어로 번역
+  // 캘린더 포맷 한국어로 번역
   const formatsKorean = {
     dateFormat: 'D',
     dayFormat: (date, culture, localizer) =>
       localizer.format(date, 'dd', culture),
     dayRangeHeaderFormat: ({ start, end }, culture, localizer) =>
-      `${localizer.format(start, { month: 'long', day: 'numeric' }, culture)} - ${localizer.format(end, { month: 'long', day: 'numeric' }, culture)}`,
+      `${localizer.format(start, 'M월 D일(ddd)', culture)} ~ ${localizer.format(end, 'M월 D일(ddd)', culture)}`,
+    dayHeaderFormat: (date, culture, localizer) =>
+      localizer.format(date, 'M월 D일(ddd)', culture),
     monthHeaderFormat: (date, culture, localizer) =>
       localizer.format(date, 'YYYY년 MM월', culture),
   }
+
+  // 한국 공휴일 데이터 API 호출
+  const fetchHolidays = async () => {
+    try {
+      const response = await axios.get('https://date.nager.at/api/v2/PublicHolidays/2024/KR'); // 적절한 연도와 국가 코드 사용
+      return response.data.map(holiday => ({
+        date: holiday.date,
+        localName: holiday.localName
+      }));
+    } catch (error) {
+      console.error('공휴일 데이터를 가져오는 중 오류 발생:', error);
+      return [];
+    }
+  }
+
+  // 날짜 셀 스타일 적용 함수
+  const dayPropGetter = (date) => {
+    const dateStr = moment(date).format('YYYY-MM-DD')
+    const holiday = holidays.find(holiday => holiday.date === dateStr)
+    const isWeekend = moment(date).day() === 0 || moment(date).day() === 6
+
+    if (holiday || isWeekend) {
+      return {
+        style: {
+          color: 'red',
+        },
+        className: holiday ? 'holiday' : isWeekend ? 'weekend' : '',
+      }
+    }
+    return {}
+  }
+
+  // 캘린더 - 일정 스타일 적용
+  const eventStyleGetter = (event) => {
+    const backgroundColor = event.color;
+    return { className: 'rbc-event', style: { backgroundColor } };
+  }
+
+
 
   // ======================= 기능 핸들러 관리 ===========================
   // ===================================================================
@@ -213,26 +253,6 @@ const StudyGroupComponent = ({ studyNo }) => {
     }
   }
 
-  // 캘린더 - 일정 스타일 적용
-  const eventStyleGetter = (event) => {
-    const backgroundColor = event.color;
-    const style = {
-      backgroundColor,
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0px',
-      display: 'block'
-    };
-    return {
-      style
-    };
-  }
-
-  const handleColorPickerClick = () => {
-    setColorPickerVisible(!colorPickerVisible);
-  }
-
   // ======================= 캘린더 - 할 일 관리 =========================
   // ====================================================================
 
@@ -316,6 +336,7 @@ const StudyGroupComponent = ({ studyNo }) => {
                 titleAccessor="title"
                 style={{ height: 800 }}
                 eventPropGetter={eventStyleGetter}
+                dayPropGetter={dayPropGetter} // 날짜 셀 스타일 적용
                 messages={{
                   month: '월',
                   week: '주',
@@ -330,13 +351,15 @@ const StudyGroupComponent = ({ studyNo }) => {
                   showMore: (total) => `+${total} 더 보기`,
                 }}
                 components={{
-                  toolbar: renderHeader,
+                  toolbar: renderHeader
                 }}
                 formats={formatsKorean}
                 onSelectSlot={handleCreateEvent} // 캘린더의 빈 슬롯 클릭 이벤트
                 onSelectEvent={handleSelectEvent}
                 onEventDrop={handleDragEvent}
                 onEventResize={handleResizeEvent}
+                view={calendarView} // 현재 뷰 설정
+                onView={(newView) => setcalendarView(newView)} // 뷰 변경 핸들러
               />
             </div>
           </div>
@@ -486,7 +509,7 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {view === 'join' && (
         <div>
-          <GroupJoinConfirmComponent/>
+          <GroupJoinConfirmComponent />
         </div>
       )}
     </div>
