@@ -22,7 +22,7 @@ export const postAdd = async (study) => {
   const header = {
     headers: {
       "Content-Type": "multipart/form-data",
-      Authorization: `${token}`,
+      "Authorization": `Bearer ${token}`,
     },
   };
   const res = await axios.post(`${prefix}/`, study, header);
@@ -42,5 +42,45 @@ export const deleteOne = async (studyNo) => {
 export const putOne = async (studyNo, study) => {
   const header = { headers: { "Content-Type": "multipart/form-data" } };
   const res = await axios.put(`${prefix}/${studyNo}`, study, header);
+  return res.data;
+};
+
+export const fetchInquiries = async (studyNo) => { //스터디 문의 목록 가져오기
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    throw new Error('No access token found');
+  }
+  const res = await axios.get(`${prefix}/${studyNo}/inquiries`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return res.data;
+};
+
+export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등록
+  console.log(inquiryContent+"!!!!");
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    throw new Error('No access token found');
+  }
+  const res = await axios.post(`${prefix}/${studyNo}/inquiries`, { inquiryContent }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return res.data;
+};
+
+export const responseSubmit = async (inquiryNo, responseContent) => { //답변 등록
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    throw new Error('No access token found');
+  }
+  const res = await axios.post(`${prefix}/inquiries/${inquiryNo}/responses`, { responseContent }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   return res.data;
 };

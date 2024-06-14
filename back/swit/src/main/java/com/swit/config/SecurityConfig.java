@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 
 import com.swit.jwt.LoginFilter;
 
+import java.util.Arrays;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.swit.jwt.JWTFilter;
@@ -65,10 +66,9 @@ public class SecurityConfig {
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "RefreshToken"));
                         configuration.setMaxAge(3600L);
-
-			configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+			                  configuration.setExposedHeaders(Arrays.asList("Authorization", "Refreshtoken")); // Refreshtoken 추가
 
                         return configuration;
                     }
@@ -86,10 +86,21 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**"
-                        , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/isLeader/","/api/group/**","/snslogin/**", "/login/info","ws/**","/chat/**","/api/questions/","/api/answers").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()    // GET 호출 인증 제외
+                        , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/isLeader/","/api/group/**","/snslogin/**", "/login/info","ws/**","/chat/**","/api/questions/","/api/answers","/api/refresh").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/**","/api/*").permitAll()    // GET 호출 인증 제외
                         .requestMatchers("/api/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
+
+// //시큐리티 사용방법 추후 수정 공개 엔드포인트
+// .requestMatchers("/").permitAll()
+//  // GET 요청 공개
+// .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+// // 인증된 사용자만 접근 가능한 엔드포인트
+// .requestMatchers("/api/private/**").authenticated()
+// // ADMIN 권한이 필요한 엔드포인트
+// .requestMatchers("/api/admin/**").hasRole("ADMIN")
+// // 나머지 모든 요청은 인증 필요
+// .anyRequest().authenticated());
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);

@@ -78,11 +78,26 @@ public class JWTUtil {
         .claim("userNick", userNick)
         .claim("userRole", userRole)
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis() + expiredMs))
+        .expiration(new Date(System.currentTimeMillis() + expiredMs)) //1시간
         .signWith(secretKey)
         .compact();
 
         System.out.println("createJwt userRole : " + temp);
         return temp;
     }
+
+    public String createRefreshToken(String userNo, String userId, Long expiredMs) {
+      System.out.println("createRefreshToken start ");
+      
+      String temp = Jwts.builder()
+          .claim("userNo", userNo)
+          .claim("userId", userId)
+          .issuedAt(new Date(System.currentTimeMillis()))
+          .expiration(new Date(System.currentTimeMillis() + expiredMs)) //7일
+          .signWith(secretKey)
+          .compact();
+  
+      System.out.println("createRefreshToken : " + temp);
+      return temp;
+  }
 }
