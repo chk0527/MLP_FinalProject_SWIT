@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.net.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -69,26 +71,51 @@ public class ExamjobService {
         return responseDTO;
     }
 
-    public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO) {
+    // jobactive 설정 -> 날짜지나면 jobactive 0으로
+    @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
+    public void updateJobStatus() {
+        LocalDate currentDate = LocalDate.now();
+        List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
+        jobsToUpdate.forEach(job -> job.setJobActive(0));
+        jobRepository.saveAll(jobsToUpdate);
+    }
+
+
+    public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO, String searchKeyword, String jobField, String sort) {
+        Sort sorting;
+        if ("deadline".equals(sort)) {
+            sorting = Sort.by("jobDeadline").ascending(); // 마감 임박순
+        } else {
+            sorting = Sort.by("jobNo").descending(); // 기본 정렬
+        }
+        
         Pageable pageable = PageRequest.of(
                 pageRequestDTO.getPage() - 1, // 1페이지가 0
                 pageRequestDTO.getSize(),
-                Sort.by("jobDeadline").descending());
-        System.out.println("====================");
-        System.out.println(pageable);
+                sorting);
 
-        Page<Job> result = jobRepository.findAll(pageable);
+        Page<Job> result;
+        if (searchKeyword != null && !searchKeyword.isEmpty() && jobField != null && !jobField.isEmpty()) { // 직무선택, 검색어 입력한경우
+            result = jobRepository.findByJobFieldContainingAndJobTitleContainingAndJobActive(jobField, searchKeyword, 1, pageable);
+        } else if (searchKeyword != null && !searchKeyword.isEmpty()) { // 검색어만 입력한경우
+            result = jobRepository.findByJobTitleContainingAndJobActive(searchKeyword, 1, pageable);
+        } else if (jobField != null && !jobField.isEmpty()) { // 직무만 선택한경우
+            result = jobRepository.findByJobFieldContainingAndJobTitleContainingAndJobActive(jobField, "", 1, pageable);
+        } else { // 기본
+            result = jobRepository.findByJobActive(1, pageable);
+        }
+
         List<JobDTO> dtoList = result.getContent().stream()
                 .map(job -> modelMapper.map(job, JobDTO.class))
                 .collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();
-        PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
+
+        return PageResponseDTO.<JobDTO>withAll()
                 .dtoList(dtoList)
                 .pageRequestDTO(pageRequestDTO)
                 .totalCount(totalCount)
                 .build();
-        return responseDTO;
     }
 
     public ExamDTO examRead(Integer examNo) {
@@ -106,32 +133,65 @@ public class ExamjobService {
     }
 
     //시험 전체 불러오기
-    public List<Exam> examAll(){
-        return examRepository.findAll();
+    public List<ExamDTO> examAll() {
+        List<Exam> exams = examRepository.findAll();
+        return exams.stream()
+                    .map(exam -> modelMapper.map(exam, ExamDTO.class))
+                    .collect(Collectors.toList());
     }
 
-    // 검색
-    public PageResponseDTO<JobDTO> jobSearch(PageRequestDTO pageRequestDTO, String searchKeyword) {
+    //시험 검색 -> 전체 불러오기
+    public List<ExamDTO> examSearchAll(String searchKeyword) {
+        List<Exam> exams = examRepository.findByExamTitleContaining(searchKeyword);
+        return exams.stream()
+        .map(exam -> modelMapper.map(exam, ExamDTO.class))
+        .collect(Collectors.toList());
+    }
+
+
+    // 채용 검색
+    // public PageResponseDTO<JobDTO> jobSearch(PageRequestDTO pageRequestDTO, String searchKeyword) {
+    //     Pageable pageable = PageRequest.of(
+    //             pageRequestDTO.getPage() - 1, // 1페이지가 0
+    //             pageRequestDTO.getSize(),
+    //             Sort.by("jobDeadline").descending());
+    //     System.out.println("====================");
+    //     System.out.println(pageable);
+
+    //     Page<Job> result = jobRepository.findByJobTitleContaining(searchKeyword, pageable);
+    //     List<JobDTO> dtoList = result.getContent().stream()
+    //             .map(job -> modelMapper.map(job, JobDTO.class))
+    //             .collect(Collectors.toList());
+
+    //     long totalCount = result.getTotalElements();
+    //     PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
+    //             .dtoList(dtoList)
+    //             .pageRequestDTO(pageRequestDTO)
+    //             .totalCount(totalCount)
+    //             .build();
+    //     return responseDTO;
+
+    // }
+
+    // 시험 검색
+    public PageResponseDTO<ExamDTO> examSearch(PageRequestDTO pageRequestDTO, String searchKeyword) {
         Pageable pageable = PageRequest.of(
                 pageRequestDTO.getPage() - 1, // 1페이지가 0
                 pageRequestDTO.getSize(),
-                Sort.by("jobDeadline").descending());
-        System.out.println("====================");
-        System.out.println(pageable);
+                Sort.by("examPracRegEnd").descending());
 
-        Page<Job> result = jobRepository.findByJobTitleContaining(searchKeyword, pageable);
-        List<JobDTO> dtoList = result.getContent().stream()
-                .map(job -> modelMapper.map(job, JobDTO.class))
+        Page<Exam> result = examRepository.findByExamTitleContaining(searchKeyword, pageable);
+        List<ExamDTO> dtoList = result.getContent().stream()
+                .map(exam -> modelMapper.map(exam, ExamDTO.class))
                 .collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();
-        PageResponseDTO<JobDTO> responseDTO = PageResponseDTO.<JobDTO>withAll()
+        PageResponseDTO<ExamDTO> responseDTO = PageResponseDTO.<ExamDTO>withAll()
                 .dtoList(dtoList)
                 .pageRequestDTO(pageRequestDTO)
                 .totalCount(totalCount)
                 .build();
         return responseDTO;
-
     }
 
 }

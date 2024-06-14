@@ -5,6 +5,7 @@ import adminRouter from "./adminRouter";
 import examRouter from "./examRouter";
 import jobRouter from "./jobRouter";
 import placeRouter from "./placeRouter";
+import boardRouter from "./boardRouter";
 
 
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
@@ -65,6 +66,10 @@ const root = createBrowserRouter([
       path: "study",
       children: studyRouter()
     },
+    {
+        path: "board",
+        children: boardRouter()
+      },
     {
         path:"/callback",
         element:<Suspense fallback={Loading}><Callback /></Suspense>,

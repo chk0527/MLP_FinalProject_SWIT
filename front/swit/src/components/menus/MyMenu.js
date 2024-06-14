@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import profile from "../../img/profileEx.jpg";
 import { LoginContext } from "../../contexts/LoginContextProvider";
+import Cookies from 'js-cookie';
 
 const MyMenu = ({ callbackFn }) => {
   const [studyList, setStudyList] = useState(false); //모달창
@@ -11,15 +12,6 @@ const MyMenu = ({ callbackFn }) => {
   const myStudy = () => {
     setStudyList(!studyList);
   };
-
-  const onlogout = () => {
-    sessionStorage.removeItem('accessToken');
-    console.log("로그아웃 완료-세션스토리지 저장값확인: " + sessionStorage.getItem("accessToken"));   
-    logout();
-    window.location.href = '/';
-    
-};
-
 
   return (
     <AnimatePresence>
@@ -83,7 +75,7 @@ const MyMenu = ({ callbackFn }) => {
           </div>
         </div>
         <div className="absolute bottom-0 pb-24">
-          <button onClick={onlogout}>로그아웃</button>
+          <button onClick={logout}>로그아웃</button>
         </div>
       </motion.div>
     </AnimatePresence>

@@ -31,17 +31,27 @@ public class ExamjobController {
     private final ExamjobService service;
 
     @GetMapping("/examlist")
-    public PageResponseDTO<ExamDTO> ExamList(PageRequestDTO pageRequestDTO){
-        
+    public PageResponseDTO<ExamDTO> ExamList(PageRequestDTO pageRequestDTO, @RequestParam(value="searchKeyword", required = false) String searchKeyword){
+        if(searchKeyword != null){ // 검색어가 있을 경우
+            return service.examSearch(pageRequestDTO, searchKeyword);
+        }
         return service.examList(pageRequestDTO);
     }
 
+    // @GetMapping("/joblist")
+    // public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO, @RequestParam(value="searchKeyword", required = false) String searchKeyword){
+    //     if(searchKeyword != null){ // 검색어가 있을 경우
+    //         return service.jobSearch(pageRequestDTO, searchKeyword);
+    //     }
+    //     return service.jobList(pageRequestDTO);
+    // }
+
     @GetMapping("/joblist")
-    public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO, @RequestParam(value="searchKeyword", required = false) String searchKeyword){
-        if(searchKeyword != null){ // 검색어가 있을 경우
-            return service.jobSearch(pageRequestDTO, searchKeyword);
-        }
-        return service.jobList(pageRequestDTO);
+    public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO,
+                                           @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                           @RequestParam(value = "jobField", required = false) String jobField,
+                                           @RequestParam(value = "sort", required = false, defaultValue = "jobNo") String sort) {
+        return service.jobList(pageRequestDTO, searchKeyword, jobField, sort);
     }
 
     @GetMapping("/exam/{examNo}")
@@ -54,9 +64,12 @@ public class ExamjobController {
         return service.jobRead(jobNo);
     }
 
-    @GetMapping("/examAll")
-    public List<Exam> examAll() {
-        return service.examAll();
+    @GetMapping("/examAll") // 모든정보 들고오는거 -> 달력
+    public List<ExamDTO> examAll(@RequestParam(value="searchKeyword", required = false) String searchKeyword) {
+       if(searchKeyword != null){ // 검색어 있을때
+        return service.examSearchAll(searchKeyword);
+       }
+       return service.examAll();
     }
       
 
