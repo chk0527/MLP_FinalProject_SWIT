@@ -54,31 +54,31 @@ const StudyListPage = () => {
       // 현재 로그인된 사용자 ID를 가져옴 (sessionStorage)
       const userId = getUserIdFromToken();
       if (!userId) {
-        alert("테스트: 비로그인");
+        // alert("테스트: 비로그인");
         navigate(`/study/read/${studyNo}`, { state: 0 });
         return;
       }
-      alert("테스트: 로그인");
+      // alert("테스트: 로그인");
       //방장인지 확인
       const isLeaderStatus = await isLeader(studyNo);
       if (isLeaderStatus) {
-        alert("테스트: 방장입니다.");
+        // alert("테스트: 방장입니다.");
         navigate(`/study/group/${studyNo}`, { state: 0 });
         return;
       }
       // 사용자가 해당 스터디에 참여하고 있는지 확인
       const isMemberStatus = await isMember(userId, studyNo);
       if (isMemberStatus === 1) {
-        alert("승인 완료");
+        // alert("승인 완료");
         navigate(`/study/group/${studyNo}`, { state: 0 });
       } else if (isMemberStatus === 0) {
-        alert("승인 대기중");
+        // alert("승인 대기중");
         navigate(`/study/read/${studyNo}`, { state: 0 });
       } else if (isMemberStatus === 2) {
-        alert("거절되었습니다.");
+        // alert("거절되었습니다.");
         navigate(`/study/read/${studyNo}`, { state: 0 });
       } else {
-        alert("로그인 상태지만 미가입");
+        // alert("로그인 상태지만 미가입");
         navigate(`/study/read/${studyNo}`, { state: 0 });
       }
     } catch (error) {

@@ -28,7 +28,7 @@ export const addGroup = async (groupData, answerData) => {
       { group: groupData, answer: answerData },
       {
           headers: {
-              'Authorization': `${token}`,
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
           }
       }
@@ -51,7 +51,7 @@ export const isLeader = async (studyNo) => {
   const userId = getUserIdFromToken();
   const res = await axios.get(`${prefix}/isLeader`, {
     headers: {
-      Authorization: `${token}`
+      Authorization:  `Bearer ${token}`
     },
     params: { userId, studyNo },
   });

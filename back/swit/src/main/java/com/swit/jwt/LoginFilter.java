@@ -45,32 +45,33 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-        System.out.println("successfulAuthentication success");
-        
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    System.out.println("successfulAuthentication success");
+    
+    CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String userNo = customUserDetails.getUser().getUserNo().toString();
-        String userId = customUserDetails.getUsername();
-        //String  userName = customUserDetails.getUser().getUserName();
-        String  userNick = customUserDetails.getUser().getUserNick();
+    String userNo = customUserDetails.getUser().getUserNo().toString();
+    String userId = customUserDetails.getUsername();
+    String userNick = customUserDetails.getUser().getUserNick();
+    
+    Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+    Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+    GrantedAuthority auth = iterator.next();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
+    String userRole = auth.getAuthority();
+    System.out.println("successfulAuthentication userNo : " + userNo.toString());
+    System.out.println("successfulAuthentication userId : " + userId);
+    System.out.println("successfulAuthentication userNick : " + userNick);
+    System.out.println("successfulAuthentication userRole : " + userRole);
 
-        String userRole = auth.getAuthority();
-        System.out.println("successfulAuthentication userNo : " + userNo.toString());
-        System.out.println("successfulAuthentication userId : " + userId);
-        //System.out.println("successfulAuthentication userName : " + userName);
-        System.out.println("successfulAuthentication userNick : " + userNick);
-        System.out.println("successfulAuthentication userRole : " + userRole);
+    String token = jwtUtil.createJwt(userNo, userId, userNick, userRole, 60 * 60 * 1000L); // 1시간 유효
+    String refreshToken = jwtUtil.createRefreshToken(userNo, userId, 7 * 24 * 60 * 60 * 1000L); // 7일 유효
+    System.out.println("successfulAuthentication token : " + token);
+    System.out.println("successfulAuthentication refreshToken : " + refreshToken);
 
-        String token = jwtUtil.createJwt(userNo, userId, userNick, userRole, 60*60*1000L);
-        System.out.println("successfulAuthentication token : " + token);
-
-        response.addHeader("Authorization", "Bearer " + token);
-    }
+    response.addHeader("Authorization", "Bearer " + token);
+    response.addHeader("refreshtoken", refreshToken);
+}
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
