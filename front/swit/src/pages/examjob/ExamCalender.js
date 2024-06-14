@@ -3,9 +3,9 @@ import BasicLayout from "../../layouts/BasicLayout";
 
 const ExamCalender = () => {
     return (
-    // <BasicLayout>
+     <BasicLayout>
             <ExamCalenderComponent/>
-       //</BasicLayout>
+    </BasicLayout>
     )
 }
 export default ExamCalender;

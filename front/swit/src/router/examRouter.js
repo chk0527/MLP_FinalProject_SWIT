@@ -15,7 +15,7 @@ const examRouter = () => {
         },
         {
             path: "",
-            element: <Navigate replace to="list"></Navigate>
+            element: <Navigate replace to="list/calendar"></Navigate>
         },
         {
             path: "read/:examNo",
