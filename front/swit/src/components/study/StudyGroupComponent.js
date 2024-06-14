@@ -14,6 +14,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/StudyGroupComponent.css";
 import 'react-quill/dist/quill.snow.css';
+import StudyInquiryComponent from './StudyInquiryComponent';
 
 
 // Momonet로 로컬 시간대 설정
@@ -463,25 +464,7 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 신청 항목 */}
       {view === 'chat' && (
-        <div className="my-4 w-full flex">
-          <h2 className="text-xl font-bold">채팅</h2>
-          <div className="border border-gray-300 rounded-lg p-4 mb-4 max-h-500px overflow-y-auto">
-            {chatMessages.map((msg, index) => (
-              <div key={index} className="my-2">
-                {msg}
-              </div>
-            ))}
-          </div>
-          <form onSubmit={handleSendMessage} className="flex">
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}  //채팅 입력 필드값 업데이트
-              className="flex-grow p-2 border border-gray-300 rounded-l-lg"
-            />
-            <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">입력</button>
-          </form>
-        </div>
+        <StudyInquiryComponent/>
       )}
 
       {view === 'join' && (

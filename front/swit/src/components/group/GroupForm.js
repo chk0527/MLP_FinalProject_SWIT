@@ -36,7 +36,7 @@ const GroupForm = ({ studyNo, closeModal }) => {
         try {
             const response = await addGroup(groupData, answerData);
             console.log('Group added successfully:', response);
-            alert('Group added successfully');
+            alert('신청이 완료 되었습니다.');
             closeModal(); // Close modal after successful submission
         } catch (error) {
             console.error('Error adding group:', error);

@@ -30,28 +30,49 @@ const LoginContextProvider = ({ children }) => {
 
         api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-        let response;
-        let data;
-
         try {
-            response = await auth.info();
+            const response = await auth.info();
+            const data = response.data;
+
+            console.log(`data : ${data}`);
+
+            if (data === 'UNAUTHORIZED' || response.status === 401) {
+                console.error(`accessToken(jwt) 이 만료되었거나 인증에 실패하였습니다.`);
+                refreshAccessToken();
+                return;
+            }
+
+            console.log(`accessToken(jwt) 토큰으로 사용자 인증 정보 요청 성공!`);
+            loginSetting(data, accessToken);
         } catch (error) {
             console.log(`error : ${error}`);
-            console.log(`status : ${response.status}`);
+            refreshAccessToken();
+        }
+    };
+
+    const refreshAccessToken = async () => {
+        const refreshToken = Cookies.get("refreshToken");
+        if (!refreshToken) {
+            logoutSetting();
             return;
         }
 
-        data = response.data;
-        console.log(`data : ${data}`);
+        try {
+            const response = await api.post('/api/refresh', null, {
+                headers: {
+                    'RefreshToken': refreshToken
+                }
+            });
 
-        if (data === 'UNAUTHRIZED' || response.status === 401) {
-            console.error(`accessToken(jwt) 이 만료되었거나 인증에 실패하였습니다.`);
-            return;
+            const newAccessToken = response.headers['authorization'].replace("Bearer ", "");
+            sessionStorage.setItem('accessToken', newAccessToken);
+            Cookies.set("accessToken", newAccessToken);
+            loginCheck();
+        } catch (error) {
+            console.log('Error refreshing access token:', error);
+            logoutSetting();
         }
-
-        console.log(`accessToken(jwt) 토큰으로 사용자 인정정보 요청 성공!`);
-        loginSetting(data, accessToken);
-    }
+    };
 
     const login = async (username, password) => {
         console.log(`username : ${username}`);
@@ -64,6 +85,7 @@ const LoginContextProvider = ({ children }) => {
             const headers = response.headers;
             const authorization = headers.authorization;
             const accessToken = authorization.replace("Bearer ", "");
+            const refreshToken = headers['refreshtoken'];
 
             console.log(`login data : ${data}`);
             console.log(`login status : ${status}`);
@@ -72,6 +94,9 @@ const LoginContextProvider = ({ children }) => {
 
             if (status === 200) {
                 Cookies.set("accessToken", accessToken);
+                Cookies.set("refreshToken", refreshToken);
+                sessionStorage.setItem("accessToken", accessToken);
+                sessionStorage.setItem("refreshToken", refreshToken);
                 loginCheck();
                 alert('로그인 성공');
             }
@@ -79,7 +104,7 @@ const LoginContextProvider = ({ children }) => {
         } catch (error) {
             alert('로그인 실패!');
         }
-    }
+    };
 
     const logout = () => {
         const check = window.confirm('로그아웃하시겠습니까?');
@@ -114,14 +139,32 @@ const LoginContextProvider = ({ children }) => {
     const logoutSetting = () => {
         api.defaults.headers.common.Authorization = undefined;
         Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        sessionStorage.removeItem("accessToken");
+        sessionStorage.removeItem("refreshToken");
         setLogin(false);
         sessionStorage.removeItem("isLogin");
         setUserInfo(null);
         setRoles(null);
+        window.location.href = '/'; //메인페이지로 이동
     };
 
     useEffect(() => {
-        loginCheck();
+        const interval = setInterval(() => {
+            const accessToken = Cookies.get("accessToken");
+            if (accessToken) {
+                const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                const exp = payload.exp * 1000;
+                const now = Date.now();
+                const timeLeft = exp - now;
+
+                if (timeLeft < 5 * 1000 && timeLeft > 0) { // Less than 5 seconds left but still valid
+                    refreshAccessToken();
+                }
+            }
+        }, 1000); // Check every second
+
+        return () => clearInterval(interval);
     }, []);
 
     return (
