@@ -1,5 +1,5 @@
 import axios from "axios"
-import api from "./api"
+import api from "./Api"
 
 export const API_SERVER_HOST = 'http://localhost:8181'
 const prefix = `${API_SERVER_HOST}/snslogin`

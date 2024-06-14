@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState  } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { LoginContext } from "../../contexts/LoginContextProvider";
 //import { useEffect, useState } from "react";
-import { getOne } from "../../api/loginApi"
+import { getOne } from "../../api/LoginApi"
+import { Link } from 'react-router-dom';
 
 const initState = { 
     username:'', 
@@ -17,6 +18,7 @@ const LoginComponent =() => {
 
     const [user, setUser] = useState({...initState})
     const [snsUrl, setSnsUrl] = useState({...initStateSnsUrl})
+    // const navigate = useNavigate()
 
     const { login } = useContext(LoginContext)
 
@@ -33,6 +35,14 @@ const LoginComponent =() => {
         user[e.target.name] = e.target.value
         setUser({...user})
     }
+
+    // const handleClickIdSearch = useCallback(() => {
+    //     navigate({ pathname: '../../searchId' });
+    // }, [navigate]);
+    
+    // const handleClickPasswordSearch = useCallback(() => {
+    //     navigate({ pathname: '../../searchPw' });
+    // }, [navigate]);
 
     const onLogin = (e) => {
 
@@ -73,6 +83,14 @@ const LoginComponent =() => {
                             alt='React'
                         />
                     </a>
+                </div>
+                <div>
+                    <Link to={ "/login/searchId"}>
+                        <p className="font-bold my-2">아이디 찾기</p>
+                    </Link>
+                    <Link to={"/login/searchPw"}>
+                        <p className="font-bold my-2">비밀번호 찾기</p>
+                    </Link>
                 </div>
             </div>
         </>

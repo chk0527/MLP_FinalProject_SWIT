@@ -1,5 +1,5 @@
 import myPageRouter from "./myPageRouter";
-// import loginRouter from "./loginRouter";
+import loginRouter from "./loginRouter";
 import studyRouter from "./studyRouter";
 import adminRouter from "./adminRouter";
 import examRouter from "./examRouter";
@@ -23,6 +23,7 @@ const Login = lazy(() => import("../pages/login/Login"))
 const Callback = lazy(() => import("../pages/login/Callback"))
 const PlaceList = lazy(() => import("../pages/place/PlaceListPage"))
 const Join = lazy(() => import("../pages/join/Join"))
+const SearchId = lazy(() => import("../pages/login/SearchId"))
 
 
 
@@ -55,8 +56,7 @@ const root = createBrowserRouter([
     },
     {
         path:"/login",
-        element:<Suspense fallback={Loading}><Login /></Suspense>,
-        // children: loginRouter()
+        children: loginRouter()
     },
     {
         path:"/join",
@@ -73,6 +73,11 @@ const root = createBrowserRouter([
     {
         path:"/callback",
         element:<Suspense fallback={Loading}><Callback /></Suspense>,
+        // children: loginRouter()
+    },
+    {
+        path:"/searchId",
+        element:<Suspense fallback={Loading}><SearchId /></Suspense>,
         // children: loginRouter()
     },
 ])
