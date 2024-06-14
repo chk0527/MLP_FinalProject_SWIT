@@ -45,7 +45,7 @@ export const putOne = async (studyNo, study) => {
   return res.data;
 };
 
-export const fetchInquiries = async (studyNo) => { //스터디 문의 등록
+export const fetchInquiries = async (studyNo) => { //스터디 문의 목록 가져오기
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
     throw new Error('No access token found');
@@ -58,7 +58,8 @@ export const fetchInquiries = async (studyNo) => { //스터디 문의 등록
   return res.data;
 };
 
-export const inquirySubmit = async (studyNo, inquiryContent) => {
+export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등록
+  console.log(inquiryContent+"!!!!");
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
     throw new Error('No access token found');
@@ -71,7 +72,7 @@ export const inquirySubmit = async (studyNo, inquiryContent) => {
   return res.data;
 };
 
-export const responseSubmit = async (inquiryNo, responseContent) => {
+export const responseSubmit = async (inquiryNo, responseContent) => { //답변 등록
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
     throw new Error('No access token found');

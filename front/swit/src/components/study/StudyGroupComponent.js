@@ -329,7 +329,7 @@ const StudyGroupComponent = ({ studyNo }) => {
           onClick={() => setView('chat')}
           className={`mx-2 px-4 py-2 cursor-pointer ${view === 'chat' ? 'font-bold text-red-500' : 'text-gray-500'}`}
         >
-          신청
+          문의
         </span>
         <span className="mx-5">|</span>
         <span
@@ -512,9 +512,11 @@ const StudyGroupComponent = ({ studyNo }) => {
         </div>
       )}
 
-      {/* 뷰 - 신청 항목 */}
+      {/* 뷰 - 문의 항목 */}
       {view === 'chat' && (
-        <StudyInquiryComponent/>
+        <div className='w-3/4'>
+        <StudyInquiryComponent studyNo={studyNo}/>
+        </div>
       )}
 
       {view === 'join' && (

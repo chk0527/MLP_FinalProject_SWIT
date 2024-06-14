@@ -12,6 +12,9 @@ import com.swit.repository.InquiryRepository;
 import com.swit.repository.StudyRepository;
 import com.swit.repository.UserRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class InquiryService {
 
@@ -31,7 +34,6 @@ public class InquiryService {
               .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
       Study study = studyRepository.findById(studyNo)
               .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + studyNo));
-
       Inquiry inquiry = new Inquiry();
       inquiry.setUser(user);
       inquiry.setStudy(study);
