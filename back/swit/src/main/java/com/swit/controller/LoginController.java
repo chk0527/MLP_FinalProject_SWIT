@@ -159,7 +159,6 @@ public class LoginController {
 		String userNo = parsedToken.getPayload().get("userNo").toString();
 		int no = (userNo == null ? 0 : Integer.parseInt(userNo));
 		String userId = parsedToken.getPayload().get("userId").toString();
-		// 카카오에서 닉네임이 필수가 아니라서 없을 수도 있음
 		String userNick = parsedToken.getPayload().get("userNick").toString();
 		String userRole = parsedToken.getPayload().get("userRole").toString();
 
