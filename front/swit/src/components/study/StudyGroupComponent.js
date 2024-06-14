@@ -16,7 +16,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/StudyGroupComponent.css";
 import 'react-quill/dist/quill.snow.css';
-import StudyInquiryComponent from './StudyInquiryComponent';
+import StudyInquiryListComponent from './StudyInquiryListComponent';
 
 // 한국어 로케일 적용
 moment.locale('ko');
@@ -515,7 +515,7 @@ const StudyGroupComponent = ({ studyNo }) => {
       {/* 뷰 - 문의 항목 */}
       {view === 'chat' && (
         <div className='w-3/4'>
-        <StudyInquiryComponent studyNo={studyNo}/>
+        <StudyInquiryListComponent studyNo={studyNo}/>
         </div>
       )}
 
