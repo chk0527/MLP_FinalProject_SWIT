@@ -1,10 +1,12 @@
+import GroupJoinConfirmComponent from '../group/GroupJoinConfirmComponent';
+import GroupTimerComponent from '../group/GroupTimerComponent';
+
 import { useState, useEffect } from 'react';
 import { getCalendar, addEvent, deleteEvent, updateEvent } from "../../api/CalendarApi";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import DatePicker from "react-datepicker";
 import { FaChevronLeft, FaChevronRight, FaCalendarAlt, FaPalette } from 'react-icons/fa';
-import GroupJoinConfirmComponent from '../group/GroupJoinConfirmComponent';
 import ReactQuill from 'react-quill';
 import ko from "date-fns/locale/ko";
 import moment from 'moment';
@@ -283,7 +285,7 @@ const StudyGroupComponent = ({ studyNo }) => {
       setTasks([...tasks, { text: taskInput, completed: false }]);
       setTaskInput(''); // 입력 필드 초기화
     }
-  };
+  }
 
   // 캘린더 - 할 일의 완료 상태 토글
   const handleToggleTask = (index) => {
@@ -291,27 +293,13 @@ const StudyGroupComponent = ({ studyNo }) => {
       i === index ? { ...task, completed: !task.completed } : task
     );
     setTasks(newTasks);
-  };
+  }
 
   // 캘린더 - 할 일 제거
   const handleRemoveTask = (index) => {
     const newTasks = tasks.filter((_, i) => i !== index);
     setTasks(newTasks);
-  };
-
-
-  // ======================= 신청 view 관리(채팅) ===========================
-  // =======================================================================
-
-  // 신청 - 채팅 메시지 전송
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (chatInput.trim()) {
-      // 새로운 채팅 메시지를 state에 추가
-      setChatMessages([...chatMessages, chatInput]);
-      setChatInput('');
-    }
-  };
+  }
 
   return (
     <div className="p-4 flex flex-col items-center">
@@ -323,6 +311,13 @@ const StudyGroupComponent = ({ studyNo }) => {
           className={`mx-2 px-4 py-2 cursor-pointer ${view === 'calendar' ? 'font-bold text-red-500' : 'text-gray-500'}`}
         >
           캘린더
+        </span>
+        <span className="mx-5">|</span>
+        <span
+          onClick={() => setView('timer')}
+          className={`mx-2 px-4 py-2 cursor-pointer ${view === 'timer' ? 'font-bold text-red-500' : 'text-gray-500'}`}
+        >
+          타이머
         </span>
         <span className="mx-5">|</span>
         <span
@@ -513,12 +508,20 @@ const StudyGroupComponent = ({ studyNo }) => {
       )}
 
       {/* 뷰 - 문의 항목 */}
+      {view === 'timer' && (
+        <div className='w-3/4'>
+          <GroupTimerComponent studyNo={studyNo} />
+        </div>
+      )}
+
+      {/* 뷰 - 문의 항목 */}
       {view === 'chat' && (
         <div className='w-3/4'>
         <StudyInquiryComponent studyNo={studyNo}/>
         </div>
       )}
 
+      {/* 뷰 - 신청내역 항목 */}
       {view === 'join' && (
         <div>
           <GroupJoinConfirmComponent />
