@@ -8,7 +8,7 @@ import { getUserIdFromToken } from "../../util/jwtDecode";
 
 //아이콘
 import searchIcon from "../../img/search-icon.png";
-import banner1 from "../../img/banner1.jpg";
+import defaultImg from "../../img/defaultImage.png";
 
 const host = API_SERVER_HOST;
 
@@ -23,7 +23,7 @@ const StudyListPage = () => {
       try {
         const studyListData = await getAllStudies();
         console.log("Fetched study list:", studyListData); // API 결과 로그
-        
+
         // 각 스터디에 대한 상태 정보 추가
         const userId = getUserIdFromToken();
         const studyListWithStatus = await Promise.all(
@@ -36,7 +36,12 @@ const StudyListPage = () => {
               memberStatus = await isMember(userId, study.studyNo);
             }
             currentMemberCount = await memberCount(study.studyNo); // 현재 가입된 인원 수 가져오기
-            return { ...study, isLeader: leaderStatus, isMemberStatus: memberStatus, currentMemberCount };
+            return {
+              ...study,
+              isLeader: leaderStatus,
+              isMemberStatus: memberStatus,
+              currentMemberCount,
+            };
           })
         );
         console.log("Study list with status:", studyListWithStatus); // 상태가 추가된 리스트 로그
@@ -84,6 +89,16 @@ const StudyListPage = () => {
     } catch (error) {
       console.error("Error checking membership or leader status:", error);
     }
+  };
+
+  const handleAddStudy = () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    navigate("/study/add");
   };
 
   //리스트 목록 애니메이션
@@ -154,8 +169,12 @@ const StudyListPage = () => {
                 onClick={() => handleReadStudy(study.studyNo)}
                 className="relative w-72 h-72 mb-8 rounded-2xl"
               >
-                <img 
-                  src={study.imageList.length > 0 ? `${host}/api/study/display/${study.imageList[0].fileName}` : banner1} 
+                <img
+                  src={
+                    study.imageList.length > 0
+                      ? `${host}/api/study/display/${study.imageList[0].fileName}`
+                      : defaultImg
+                  }
                   className="w-72 h-72 bg-cover rounded-2xl"
                   alt={study.studyTitle}
                 ></img>
@@ -168,10 +187,21 @@ const StudyListPage = () => {
                     }}
                   >
                     <div className="flex justify-between p-8">
-                      <p className="px-4 py-1 rounded-xl bg-gray-500/50">
-                        {study.studySubject}
+                      <div className="flex gap-4">
+                        <p
+                          className={`px-2 rounded pt-1 ${getStatusClass(
+                            study
+                          )}`}
+                        >
+                          {getStatusText(study)}
+                        </p>
+                        <p className="px-2 pt-1 rounded bg-gray-500/50">
+                          {study.studySubject}
+                        </p>
+                      </div>
+                      <p>
+                        {study.currentMemberCount}/{study.studyHeadcount}명
                       </p>
-                      <p>{study.currentMemberCount}/{study.studyHeadcount}명</p>
                     </div>
                     <div className="absolute bottom-0 p-8">
                       <p className="text-xl py-2">
@@ -180,9 +210,6 @@ const StudyListPage = () => {
                       <p className="w-60 truncate text-2xl">
                         {study.studyTitle}
                       </p>
-                    </div>
-                    <div className={`absolute bottom-2 right-2 text-sm font-bold px-2 py-1 rounded ${getStatusClass(study)}`}>
-                      {getStatusText(study)}
                     </div>
                   </motion.div>
                 </div>
@@ -206,11 +233,12 @@ const StudyListPage = () => {
           </AnimatePresence>
         </div>
         <div className="grid place-items-end">
-          <Link to={{ pathname: `/study/add` }} state={0}>
-            <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4">
-              Go to StudyAddPage
-            </button>
-          </Link>
+          <button 
+            onClick={handleAddStudy}
+            className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
+          >
+            스터디 만들기
+          </button>
         </div>
       </div>
     </BasicLayout>

@@ -6,7 +6,8 @@ import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInfoComponent from "./StudyInfoComponent";
 import GroupJoinComponent from "../group/GroupJoinComponent";
 import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
-import StudyInquiryComponent from "./StudyInquiryComponent";
+import StudyInquiryListComponent from "./StudyInquiryListComponent";
+import StudyInquiryFormComponent from "./StudyInquiryFormComponent";
 
 const initState = {
   studyNo: 0,
@@ -30,7 +31,9 @@ const host = API_SERVER_HOST;
 const StudyReadComponent = ({ studyNo }) => {
   const [study, setStudy] = useState(initState);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showInquiryComponent, setShowInquiryComponent] = useState(false);
+  const [showInquiryForm, setShowInquiryForm] = useState(false);
+  const [showInquiries, setShowInquiries] = useState(false);
+  const [inquiries, setInquiries] = useState([]);
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
   useEffect(() => {
@@ -71,10 +74,14 @@ const StudyReadComponent = ({ studyNo }) => {
       navigate("/login");
       return;
     }
-    setShowInquiryComponent(true);
+    setShowInquiryForm(true);
   };
 
-  const ApplyButton = ({ }) => (
+  const handleViewInquiriesClick = () => {
+    setShowInquiries(prevState => !prevState);
+  };
+
+  const ApplyButton = () => (
     <button onClick={openModal} className="bg-green-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-green-600 transition duration-300">
       신청
     </button>
@@ -95,18 +102,25 @@ const StudyReadComponent = ({ studyNo }) => {
 
       <div className="flex justify-between mb-6">
         <StudyInfoComponent studyNo={studyNo} ActionComponent={ApplyButton} />
-      </div>  
+      </div>
+      
       <div className="mb-6">
         <button
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300"
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 mr-4"
           onClick={handleInquiryButtonClick}
         >
           문의 작성
         </button>
-        <div className="w-3/4">
-        {showInquiryComponent && <StudyInquiryComponent studyNo={studyNo} />}
-        </div>
+        <button
+          className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300"
+          onClick={handleViewInquiriesClick}
+        >
+          문의 보기
+        </button>
+        {showInquiryForm && <StudyInquiryFormComponent studyNo={studyNo} setInquiries={setInquiries} />}
+        {showInquiries && <StudyInquiryListComponent studyNo={studyNo} />}
       </div>
+      
       <div className="flex justify-start">
         <StudyListBtnComponent />
       </div>
