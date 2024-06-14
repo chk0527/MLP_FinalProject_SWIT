@@ -158,7 +158,7 @@ const LoginContextProvider = ({ children }) => {
                 const now = Date.now();
                 const timeLeft = exp - now;
 
-                if (timeLeft < 5 * 1000 && timeLeft > 0) { // Less than 5 seconds left but still valid
+                if (timeLeft < 60 * 1000 && timeLeft > 0) { // Less than 5 seconds left but still valid
                     refreshAccessToken();
                 }
             }
