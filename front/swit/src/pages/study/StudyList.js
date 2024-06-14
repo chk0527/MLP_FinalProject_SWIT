@@ -237,7 +237,7 @@ const StudyListPage = () => {
             onClick={handleAddStudy}
             className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
           >
-            Go to StudyAddPage
+            스터디 만들기
           </button>
         </div>
       </div>
