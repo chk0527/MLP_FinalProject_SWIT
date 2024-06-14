@@ -6,6 +6,8 @@ import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInfoComponent from "./StudyInfoComponent";
 import GroupJoinComponent from "../group/GroupJoinComponent";
 import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
+import StudyInquiryListComponent from "./StudyInquiryListComponent";
+import StudyInquiryFormComponent from "./StudyInquiryFormComponent";
 
 const initState = {
   studyNo: 0,
@@ -29,6 +31,9 @@ const host = API_SERVER_HOST;
 const StudyReadComponent = ({ studyNo }) => {
   const [study, setStudy] = useState(initState);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showInquiryForm, setShowInquiryForm] = useState(false);
+  const [showInquiries, setShowInquiries] = useState(false);
+  const [inquiries, setInquiries] = useState([]);
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
   useEffect(() => {
@@ -62,29 +67,60 @@ const StudyReadComponent = ({ studyNo }) => {
     setIsModalOpen(false);
   };
 
-  const ApplyButton = ({ }) => (
-    <button onClick={openModal} className="bg-green-500 text-white px-4 py-2 rounded mt-4 hover:bg-green-600">
+  const handleInquiryButtonClick = () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인 후 이용해주세요");
+      navigate("/login");
+      return;
+    }
+    setShowInquiryForm(true);
+  };
+
+  const handleViewInquiriesClick = () => {
+    setShowInquiries(prevState => !prevState);
+  };
+
+  const ApplyButton = () => (
+    <button onClick={openModal} className="bg-green-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-green-600 transition duration-300">
       신청
     </button>
   );
 
   return (
-    <div className="border-2 border-none mt-10 m-2 p-4">
-      <div className="w-full justify-center flex flex-col m-auto items-center">
+    <div className="border-2 border-gray-200 mt-10 mx-4 p-6 bg-white rounded-lg shadow-lg">
+      <div className="w-full flex justify-center flex-col items-center mb-6">
         {study.uploadFileNames.map((imgFile, i) => (
           <img
             alt="StudyImage"
             key={i}
-            className="p-4 w-1/2"
+            className="p-4 w-1/2 rounded-lg shadow-md"
             src={`${host}/api/study/display/${imgFile}`}
           />
         ))}
       </div>
 
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mb-6">
         <StudyInfoComponent studyNo={studyNo} ActionComponent={ApplyButton} />
-      </div>  
-    
+      </div>
+      
+      <div className="mb-6">
+        <button
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 mr-4"
+          onClick={handleInquiryButtonClick}
+        >
+          문의 작성
+        </button>
+        <button
+          className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300"
+          onClick={handleViewInquiriesClick}
+        >
+          문의 보기
+        </button>
+        {showInquiryForm && <StudyInquiryFormComponent studyNo={studyNo} setInquiries={setInquiries} />}
+        {showInquiries && <StudyInquiryListComponent studyNo={studyNo} />}
+      </div>
+      
       <div className="flex justify-start">
         <StudyListBtnComponent />
       </div>

@@ -16,6 +16,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/StudyGroupComponent.css";
 import 'react-quill/dist/quill.snow.css';
+import StudyInquiryListComponent from './StudyInquiryListComponent';
 
 // 한국어 로케일 적용
 moment.locale('ko');
@@ -328,7 +329,7 @@ const StudyGroupComponent = ({ studyNo }) => {
           onClick={() => setView('chat')}
           className={`mx-2 px-4 py-2 cursor-pointer ${view === 'chat' ? 'font-bold text-red-500' : 'text-gray-500'}`}
         >
-          신청
+          문의
         </span>
         <span className="mx-5">|</span>
         <span
@@ -511,26 +512,10 @@ const StudyGroupComponent = ({ studyNo }) => {
         </div>
       )}
 
-      {/* 뷰 - 신청 항목 */}
+      {/* 뷰 - 문의 항목 */}
       {view === 'chat' && (
-        <div className="my-4 w-full flex">
-          <h2 className="text-xl font-bold">채팅</h2>
-          <div className="border border-gray-300 rounded-lg p-4 mb-4 max-h-500px overflow-y-auto">
-            {chatMessages.map((msg, index) => (
-              <div key={index} className="my-2">
-                {msg}
-              </div>
-            ))}
-          </div>
-          <form onSubmit={handleSendMessage} className="flex">
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}  //채팅 입력 필드값 업데이트
-              className="flex-grow p-2 border border-gray-300 rounded-l-lg"
-            />
-            <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">입력</button>
-          </form>
+        <div className='w-3/4'>
+        <StudyInquiryListComponent studyNo={studyNo}/>
         </div>
       )}
 

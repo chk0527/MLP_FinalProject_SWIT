@@ -28,7 +28,7 @@ export const addGroup = async (groupData, answerData) => {
       { group: groupData, answer: answerData },
       {
           headers: {
-              'Authorization': `${token}`,
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
           }
       }
@@ -46,12 +46,12 @@ export const isMember = async (userId, studyNo) => {
 export const isLeader = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
-    throw new Error('No access token found');
+    return false;  // 로그인하지 않은 경우 false 반환
   }
   const userId = getUserIdFromToken();
   const res = await axios.get(`${prefix}/isLeader`, {
     headers: {
-      Authorization: `${token}`
+      Authorization:  `Bearer ${token}`
     },
     params: { userId, studyNo },
   });
