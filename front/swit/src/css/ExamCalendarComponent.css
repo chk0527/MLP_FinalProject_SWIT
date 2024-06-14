@@ -1,0 +1,25 @@
+
+/* 주말 색상변경 -> 할지말지? */
+.fc-day-sun a {
+    color: rgb(224, 0, 0);
+}
+.fc-day-sat a {
+    color: rgb(0, 0, 221);
+}
+
+/* 일정사이 간격  */
+.fc-event {
+    margin-bottom: 3px;
+  }
+
+/* 일정에 마우스 올렸을때 */
+#tooltip {
+    position: absolute;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+    pointer-events: none;
+  }

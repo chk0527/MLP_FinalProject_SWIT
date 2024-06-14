@@ -8,6 +8,7 @@ import searchIcon from "../../img/search-icon.png";
 import { CiCalendarDate, CiBoxList } from "react-icons/ci";
 import "../../css/ExamListComponent.css"
 import { Link, useNavigate } from "react-router-dom";
+import "../../css/ExamCalendarComponent.css"
 
 const ExamCalendarComponent = () => {
   const [events, setEvents] = useState([]);
@@ -77,6 +78,32 @@ const ExamCalendarComponent = () => {
     navigate({ pathname: '../../job' });
   }, [navigate]);
 
+  //마우스 올렸을때 설정
+  useEffect(() => {
+    // 툴팁 요소 생성
+    const tooltip = document.createElement('div');
+    tooltip.id = 'tooltip';
+    document.body.appendChild(tooltip);
+
+    return () => {
+      // 컴포넌트 언마운트 시 툴팁 요소 제거
+      document.body.removeChild(tooltip);
+    };
+  }, []);
+
+  const handleMouseEnter = (info) => {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.innerHTML = info.event.title;
+    tooltip.style.display = 'block';
+    tooltip.style.left = `${info.jsEvent.pageX + 10}px`;
+    tooltip.style.top = `${info.jsEvent.pageY + 10}px`;
+  };
+
+  const handleMouseLeave = () => {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'none';
+  };
+
 
   return (
     <div className=''>
@@ -119,10 +146,16 @@ const ExamCalendarComponent = () => {
       </div>
       <div className="flex-wrap w-1300 font-GSans">
       <FullCalendar
-        height={1500}
+        height={1600}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
+        locale={'ko'}
+        dayCellContent={(arg) => {
+          return arg.dayNumberText.replace('일', ''); // 1일 => 1
+        }}
+        eventMouseEnter={handleMouseEnter}
+      eventMouseLeave={handleMouseLeave}
       />
     </div>
     </div>
