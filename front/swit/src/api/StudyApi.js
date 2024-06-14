@@ -45,16 +45,11 @@ export const putOne = async (studyNo, study) => {
   return res.data;
 };
 
-export const fetchInquiries = async (studyNo) => { //스터디 문의 목록 가져오기
+export const fetchInquiries = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
-  if (!token) {
-    throw new Error('No access token found');
-  }
-  const res = await axios.get(`${prefix}/${studyNo}/inquiries`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  
+  const res = await axios.get(`${prefix}/${studyNo}/inquiries`, { headers });
   return res.data;
 };
 

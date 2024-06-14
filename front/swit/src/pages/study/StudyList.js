@@ -86,6 +86,16 @@ const StudyListPage = () => {
     }
   };
 
+  const handleAddStudy = () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    navigate("/study/add");
+  };
+
   //리스트 목록 애니메이션
   const [isHovered, setHovered] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
@@ -206,11 +216,12 @@ const StudyListPage = () => {
           </AnimatePresence>
         </div>
         <div className="grid place-items-end">
-          <Link to={{ pathname: `/study/add` }} state={0}>
-            <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4">
-              Go to StudyAddPage
-            </button>
-          </Link>
+          <button 
+            onClick={handleAddStudy}
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
+          >
+            Go to StudyAddPage
+          </button>
         </div>
       </div>
     </BasicLayout>
