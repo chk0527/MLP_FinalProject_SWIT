@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { LoginContext } from "../../contexts/LoginContextProvider";
-import { join } from '../../api/loginApi';
-
+import { join } from '../../api/LoginApi';
+import { useNavigate } from 'react-router-dom';
 
 const initState = { 
     userNo:'',
@@ -21,6 +21,8 @@ const initState = {
 
 const JoinComponent =() => {
     const [user, setUser] = useState({...initState})
+    
+    const navigate = useNavigate()
 
 
     const handleChangeUser = (e) => {
@@ -35,6 +37,7 @@ const JoinComponent =() => {
         console.log(user)
         join(user).then(result => {
             console.log(result)
+            navigate({pathname:'../../login'})
 
         }).catch(e=>{
             console.error(e)

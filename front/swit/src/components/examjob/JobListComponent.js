@@ -212,7 +212,7 @@ const ListComponent = () => {
 
       <div className="flex justify-between items-center border-b-2 pb-4 mb-4">
         <div className="flex space-x-8">
-          <h1 className="text-2xl font-bold hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickJobList}>채용</h1>
+          ㅋ<h1 className="text-2xl font-bold hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickJobList}>채용</h1>
           <h2 className="text-xl text-gray-500 hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickExamList}>시험</h2>
         </div>
         <div className="text-xl">
