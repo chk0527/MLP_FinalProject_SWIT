@@ -172,6 +172,22 @@ public class LoginController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
+    @PostMapping("/api/refresh")
+    public ResponseEntity<?> refresh(@RequestHeader("Refreshtoken") String refreshToken) {
+      log.info("!!!!!!!!!!!!!!!!!!!!refresh실행");
+        try {
+            String userNo = JWTUtil.getNo(refreshToken);
+            String userId = JWTUtil.getUserId(refreshToken);
+            String userNick = JWTUtil.getNick(refreshToken);
+            String userRole = JWTUtil.getRole(refreshToken);
+            String newAccessToken = JWTUtil.createJwt(userNo, userId, userNick, userRole, 60 * 60 * 1000L); // 10초 유효
+
+            return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken).body("New token generated");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+    }
+
     public  String naverLogin(HttpSession session) {
 		log.info("naver --------- start");
 		String naverURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";

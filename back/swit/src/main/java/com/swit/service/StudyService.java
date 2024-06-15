@@ -43,6 +43,8 @@ public class StudyService {
     public Integer register(StudyDTO studyDTO, List<String> questions) {
         log.info("-----------------------------");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info(authentication+"@@");
+        log.info(authentication.getClass().getName()+"!!");
         if (authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUsername();

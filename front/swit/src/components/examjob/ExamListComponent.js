@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCallback } from "react";
 
 
+
 const initState = {
   dtoList: [],
   pageNumsList: [],
@@ -24,12 +25,22 @@ const initState = {
 const ListComponent = () => {
   const { page, size, moveToExamList, moveToExamRead } = useCustomMove()
   const [serverData, setServerData] = useState(initState)
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  // 검색
+  const fetchExam = async () => {
+    const examList = await getExamList({ page, size, searchKeyword: searchKeyword })
+    setServerData(examList);
+  };
+
   useEffect(() => {
-    getExamList({page, size}).then(data => {
-      console.log(data)
-      setServerData(data)
-    })
-  }, [page, size])
+    fetchExam();
+  }, [page, size]);
+
+  const handleSearch = () => {
+    fetchExam();
+  };
+
 
   
   //채용,시험 클릭시 이동
@@ -56,8 +67,8 @@ const ListComponent = () => {
           </div>
 
           {/* 검색 */}
-          {/* <div className="text-xl">
-              <input
+           <div className="text-xl">
+             <input
                 className="focus:outline-none"
                 type="text"
                 placeholder="검색"
@@ -67,7 +78,7 @@ const ListComponent = () => {
               <button type="button" onClick={handleSearch}>
                 <img className="size-6" src={searchIcon}></img>
               </button>
-            </div> */}
+            </div> 
         </div>
          {/* 채용/시험/검색  끝*/}
 
