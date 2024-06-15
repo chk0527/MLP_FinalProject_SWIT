@@ -56,5 +56,4 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
-
 }
