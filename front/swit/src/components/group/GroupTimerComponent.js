@@ -282,7 +282,7 @@ const GroupTimerComponent = ({ studyNo }) => {
 
     return (
         <div className="flex flex-col md:flex-row justify-between w-full space-y-4 md:space-y-0 md:space-x-4">
-            <div className="bg-gray-200 p-4 w-full md:w-1/3 flex flex-col items-center rounded-lg h-full">
+            <div className="bg-yellow-200 p-4 w-full md:w-1/3 flex flex-col items-center rounded-lg h-full">
                 <FaStopwatch className="text-4xl mb-2" />
                 <h2 className="text-2xl font-semibold mb-4">스톱워치</h2>
                 {!currentStopwatch ? (
@@ -354,7 +354,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                 )}
             </div>
 
-            <div className="bg-gray-200 p-4 w-full md:w-1/3 flex flex-col items-center rounded-lg h-full">
+            <div className="bg-green-200 p-4 w-full md:w-1/3 flex flex-col items-center rounded-lg h-full">
                 <FaClock className="text-4xl mb-2" />
                 <h2 className="text-2xl font-semibold mb-4">타이머</h2>
                 {!currentTimer ? (

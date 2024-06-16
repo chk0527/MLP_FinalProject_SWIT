@@ -31,6 +31,8 @@ const MyProfileComponent = ({ userId }) => {
                 const imageUrl = await getUserImage(userId);
                 setUserImage(imageUrl);
 
+                console.log(userId + '님의 상태는 ' + userData.userSnsConnect);
+
                 // 소셜 로그인 여부 확인
                 if (userData && (userData.userSnsConnect === 'NAVER' || userData.userSnsConnect === 'KAKAO')) {
                     console.log(userId + '님은 소셜 로그인 유저입니다.');
