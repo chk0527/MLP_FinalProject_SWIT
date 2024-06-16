@@ -36,7 +36,6 @@ export const deleteTimer = async (studyNo, timerNo) => {
 }
 
 // 타이머 데이터 수정
-// 타이머가 일시정지될 때마다 데이터 갱신
 export const updateTimer = async (studyNo, timerNo, updatedTimer) => {
     try {
         const res = await axios.patch(`${prefix}/${studyNo}/${timerNo}`, updatedTimer);

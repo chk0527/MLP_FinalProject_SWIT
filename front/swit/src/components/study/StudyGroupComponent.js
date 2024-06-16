@@ -40,6 +40,7 @@ const StudyGroupComponent = ({ studyNo }) => {
   const [holidays, setHolidays] = useState([]);             // 공휴일 처리
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month'));
 
+
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
   useEffect(() => {
     const fetchEvents = async () => {

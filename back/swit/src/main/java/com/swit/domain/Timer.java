@@ -1,7 +1,6 @@
 package com.swit.domain;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -40,17 +39,16 @@ public class Timer {
     @Column(length = 3000)
     private String content;
 
-    @Column(nullable = false)
     private int time; // 타이머의 경우 설정된 시간(초), 스톱워치의 경우 경과 시간(밀리초)
-
     private boolean running;
 
-    @CreationTimestamp
+    
+    @CreationTimestamp  // 해당 필드를 현재 시각으로 "자동 설정"
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @Column(nullable = false, updatable = false)   
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @UpdateTimestamp  // db에서 업데이트될 때마다, 해당 필드를 현재 시각으로 "자동 갱신" 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime updatedAt;
 

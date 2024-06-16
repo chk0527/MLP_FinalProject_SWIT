@@ -45,8 +45,7 @@ public class TimerService {
     public TimerDTO addTimer(TimerDTO timerDTO) {
         Timer timer = modelMapper.map(timerDTO, Timer.class);
         Study study = studyRepository.findById(timerDTO.getStudyNo())
-                .orElseThrow(() -> new NoSuchElementException("Study not found"));
-        
+                .orElseThrow(() -> new NoSuchElementException("Study not found"));    
         timer.setStudy(study);
         timer = timerRepository.save(timer);
         TimerDTO dto = modelMapper.map(timer, TimerDTO.class);
@@ -75,6 +74,7 @@ public class TimerService {
             timer.setType((String) updates.get("type"));
         }
 
+        //timer.setUpdatedAt(LocalDateTime.now()); // updatedAt 필드를 수동으로 설정
         Timer updatedTimer = timerRepository.save(timer);
         return modelMapper.map(updatedTimer, TimerDTO.class);
     }
