@@ -152,6 +152,7 @@ const GroupTimerComponent = ({ studyNo }) => {
 
     // ================== "스톱워치" 기능 핸들러 =========================
 
+    // 스톱워치 시작
     const handleStartStopwatch = async (timer) => {
         try {
             if (intervalStopWatchId.current) {
@@ -177,6 +178,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
+    // 스톱워치 일시정지
     const handlePauseStopwatch = async (timer) => {
         try {
             clearInterval(intervalStopWatchId.current)
@@ -192,6 +194,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
+    // 스톱워치 중지(초기화)
     const handleStopStopwatch = async (timer) => {
         try {
             clearInterval(intervalStopWatchId.current)
@@ -210,6 +213,7 @@ const GroupTimerComponent = ({ studyNo }) => {
 
     // ================== "타이머" 기능 핸들러 =========================
 
+    // 타이머 시작
     const handleStartTimer = async (timer) => {
         try {
             if (intervalTimerId.current) {
@@ -243,6 +247,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
+    // 타이머 일시정지
     const handlePauseTimer = async (timer) => {
         try {
             clearInterval(intervalTimerId.current)
@@ -258,6 +263,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
+    // 타이머 정지(초기화)
     const handleStopTimer = async (timer) => {
         try {
             clearInterval(intervalTimerId.current)
