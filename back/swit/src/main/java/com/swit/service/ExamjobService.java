@@ -18,12 +18,15 @@ import org.springframework.stereotype.Service;
 
 import com.swit.domain.Exam;
 import com.swit.domain.Job;
+import com.swit.domain.User;
 import com.swit.dto.ExamDTO;
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
 import com.swit.repository.ExamRepository;
+
 import com.swit.repository.JobRepository;
+import com.swit.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ public class ExamjobService {
     private final ModelMapper modelMapper;
     private final ExamRepository examRepository;
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
 
     public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
@@ -61,13 +65,13 @@ public class ExamjobService {
     }
 
     // jobactive 설정 -> 날짜지나면 jobactive 0으로
-    @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
-    public void updateJobStatus() {
-        LocalDate currentDate = LocalDate.now();
-        List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
-        jobsToUpdate.forEach(job -> job.setJobActive(0));
-        jobRepository.saveAll(jobsToUpdate);
-    }
+    // @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
+    // public void updateJobStatus() {
+    //     LocalDate currentDate = LocalDate.now();
+    //     List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
+    //     jobsToUpdate.forEach(job -> job.setJobActive(0));
+    //     jobRepository.saveAll(jobsToUpdate);
+    // }
 
 
     public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO, String searchKeyword, String jobField, String sort) {
@@ -182,5 +186,9 @@ public class ExamjobService {
                 .build();
         return responseDTO;
     }
+
+
+   
+
 
 }

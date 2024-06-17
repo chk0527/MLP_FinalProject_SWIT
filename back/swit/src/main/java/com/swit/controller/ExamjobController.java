@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swit.domain.Exam;
 import com.swit.dto.ExamDTO;
+
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
@@ -17,8 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -63,6 +70,9 @@ public class ExamjobController {
        }
        return service.examAll();
     }
+
+ 
+    
       
 
 
