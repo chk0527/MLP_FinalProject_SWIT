@@ -12,7 +12,7 @@ const myPageRouter = () => {
             element: <Suspense fallback={Loading}><MyPage /></Suspense>
         },
         {
-            path: ":user_id",
+            path: ":userId",
             element: <Suspense fallback={Loading}><MyPage /></Suspense>
         },
     ]

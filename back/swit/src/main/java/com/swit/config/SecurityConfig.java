@@ -85,7 +85,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**"
+                        .requestMatchers("/", "/api/join/**","/api/calendar/**", "/api/examjob/**", "/api/timer/**"
                         , "/api/place/**", "/api/user/**", "/api/study/**","/api/group/isLeader/","/api/group/**","/snslogin/**", "/login/info","ws/**","/chat/**","/api/questions/","/api/answers","/api/refresh").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/**","/api/*").permitAll()    // GET 호출 인증 제외
                         .requestMatchers("/api/admin").hasRole("ADMIN")
