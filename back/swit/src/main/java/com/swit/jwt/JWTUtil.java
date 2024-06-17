@@ -86,12 +86,14 @@ public class JWTUtil {
         return temp;
     }
 
-    public String createRefreshToken(String userNo, String userId, Long expiredMs) {
+    public String createRefreshToken(String userNo, String userId, String userNick, String userRole, Long expiredMs) {
       System.out.println("createRefreshToken start ");
       
       String temp = Jwts.builder()
           .claim("userNo", userNo)
           .claim("userId", userId)
+          .claim("userNick", userNick)
+          .claim("userRole", userRole)
           .issuedAt(new Date(System.currentTimeMillis()))
           .expiration(new Date(System.currentTimeMillis() + expiredMs)) //7일
           .signWith(secretKey)

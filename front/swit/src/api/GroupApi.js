@@ -46,7 +46,7 @@ export const isMember = async (userId, studyNo) => {
 export const isLeader = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
-    throw new Error('No access token found');
+    return false;  // 로그인하지 않은 경우 false 반환
   }
   const userId = getUserIdFromToken();
   const res = await axios.get(`${prefix}/isLeader`, {
