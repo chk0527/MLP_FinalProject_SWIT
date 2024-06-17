@@ -38,14 +38,6 @@ public class ExamjobController {
         return service.examList(pageRequestDTO);
     }
 
-    // @GetMapping("/joblist")
-    // public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO, @RequestParam(value="searchKeyword", required = false) String searchKeyword){
-    //     if(searchKeyword != null){ // 검색어가 있을 경우
-    //         return service.jobSearch(pageRequestDTO, searchKeyword);
-    //     }
-    //     return service.jobList(pageRequestDTO);
-    // }
-
     @GetMapping("/joblist")
     public PageResponseDTO<JobDTO> JobList(PageRequestDTO pageRequestDTO,
                                            @RequestParam(value = "searchKeyword", required = false) String searchKeyword,

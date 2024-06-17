@@ -1,29 +1,20 @@
 package com.swit.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.*;
+
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collector;
+
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
 
 import com.swit.domain.Exam;
 import com.swit.domain.Job;
@@ -35,8 +26,6 @@ import com.swit.repository.ExamRepository;
 import com.swit.repository.JobRepository;
 
 import jakarta.transaction.Transactional;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 

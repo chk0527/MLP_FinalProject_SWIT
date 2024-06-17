@@ -1,20 +1,14 @@
 package com.swit.repository;
 
-import static org.mockito.ArgumentMatchers.isNull;
-
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.*;
 import com.swit.domain.Exam;
 import com.swit.domain.Job;
-import com.swit.dto.ExamDTO;
-import com.swit.dto.PageRequestDTO;
-import com.swit.dto.PageResponseDTO;
-import com.swit.service.ExamjobService;
+
 
 import lombok.extern.log4j.Log4j2;
 
