@@ -6,13 +6,13 @@ import MyPostComponent from "../components/myPage/MyPostComponent";
 import { useParams } from "react-router-dom";
 
 const MyPage = () => {
-    const { user_id } = useParams();
+    const { userId } = useParams();
     return (
         <BasicLayout>
             <div className="text-3xl">
                 <div>마이페이지</div>
             </div>
-            <MyProfileComponent user_id={user_id} />
+            <MyProfileComponent userId={userId} />
             <MyStudyComponent/>
             <MyFavoritesComponent/>
             <MyPostComponent/>
