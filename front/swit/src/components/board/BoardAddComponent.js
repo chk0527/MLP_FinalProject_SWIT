@@ -1,6 +1,8 @@
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import { postAdd } from "../../api/BoardApi"
 
+import { useNavigate } from "react-router-dom";
+import { getUserIdFromToken } from "../../util/jwtDecode";
 import "react-datepicker/dist/react-datepicker.css";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
@@ -15,6 +17,15 @@ const initState = {
 }
 
 const BoardAddComponent = () => {
+    const navigate = useNavigate();
+    useEffect(() => {
+        const userId = getUserIdFromToken();
+        if (!userId) {
+          alert("로그인이 필요합니다.");
+          navigate("/login");
+        }
+      }, [navigate]);
+      
     //유저정보중 userNo를 가져와서 게시글 작성시 유저와 연결
     const { userInfo } = useContext(LoginContext)
     const [board, setBoard] = useState({ ...initState })

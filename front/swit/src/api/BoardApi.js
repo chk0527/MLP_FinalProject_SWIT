@@ -11,7 +11,7 @@ export const postAdd = async (board) => {
     const header = {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     };
     const res = await axios.post(`${prefix}/`, board, header);
