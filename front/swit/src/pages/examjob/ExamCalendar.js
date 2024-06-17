@@ -1,10 +1,10 @@
-import ExamCalenderComponent from "../../components/examjob/ExamCalenderComponent";
+import ExamCalendarComponent from "../../components/examjob/ExamCalendarComponent";
 import BasicLayout from "../../layouts/BasicLayout";
 
 const ExamCalender = () => {
     return (
      <BasicLayout>
-            <ExamCalenderComponent/>
+            <ExamCalendarComponent/>
     </BasicLayout>
     )
 }

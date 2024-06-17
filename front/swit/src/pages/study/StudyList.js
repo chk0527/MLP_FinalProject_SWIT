@@ -121,7 +121,7 @@ const StudyListPage = () => {
       {/* 검색창 */}
       <div className="flex w-full justify-between px-8">
         <div className="text-5xl pb-16 font-blackHans">
-          <div>스터디 그룹 시험</div>
+          <div>스터디 그룹</div>
         </div>
         <div className="text-right">
           <div className="text-xl">

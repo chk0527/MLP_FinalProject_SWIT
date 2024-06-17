@@ -1,10 +1,10 @@
 
-/* 주말 색상변경 -> 할지말지? */
+/* 주말 색상변경 ->? */
 .fc-day-sun a {
-    color: rgb(224, 0, 0);
+    color: rgb(189, 1, 1);
 }
 .fc-day-sat a {
-    color: rgb(0, 0, 221);
+    color: rgb(0, 0, 200);
 }
 
 /* 일정사이 간격  */
@@ -16,7 +16,7 @@
 #tooltip {
     position: absolute;
     z-index: 1000;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 1);
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 5px;

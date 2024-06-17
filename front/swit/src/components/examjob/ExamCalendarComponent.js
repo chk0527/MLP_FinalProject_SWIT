@@ -6,13 +6,14 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { getExamAll } from '../../api/ExamJobApi'; 
 import searchIcon from "../../img/search-icon.png";
 import { CiCalendarDate, CiBoxList } from "react-icons/ci";
-import "../../css/ExamListComponent.css"
+import "./ExamListComponent.css"
 import { Link, useNavigate } from "react-router-dom";
-import "../../css/ExamCalendarComponent.css"
+import "./ExamCalendarComponent.css"
 
 const ExamCalendarComponent = () => {
   const [events, setEvents] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const navigate = useNavigate();
 
   const fetchExamData = async (keyword = '') => {
     try {
@@ -25,30 +26,54 @@ const ExamCalendarComponent = () => {
           {
             title: `${exam.examTitle} 필기접수`,
             start: exam.examDocRegStart,
-            end: exam.examDocRegEnd
+            end: exam.examDocRegEnd,
+            backgroundColor: 'rgb(248, 232, 238)',
+            borderColor: 'rgb(248, 232, 238)',
+            textColor: 'black',
+            id: `${exam.examNo}-1` // id: 고유해야해서 뒤에 번호 안붙이면 오류
           },
           {
             title: `${exam.examTitle} 필기시험`,
             start: exam.examDocStart,
-            end: exam.examDocEnd
+            end: exam.examDocEnd,
+            backgroundColor: 'rgb(227, 244, 244)',
+            borderColor: 'rgb(227, 244, 244)',
+            textColor: 'black',
+            id: `${exam.examNo}-2`
           },
           {
             title: `${exam.examTitle} 실기접수`,
             start: exam.examPracRegStart,
-            end: exam.examPracRegEnd
+            end: exam.examPracRegEnd,
+            backgroundColor: 'rgb(253, 206, 223)',
+            borderColor: 'rgb(253, 206, 223)',
+            textColor: 'black',
+            id: `${exam.examNo}-3` 
           },
           {
             title: `${exam.examTitle} 실기시험`,
             start: exam.examPracStart,
-            end: exam.examPracEnd
+            end: exam.examPracEnd,
+            backgroundColor: 'rgb(210, 233, 233)',
+            borderColor: 'rgb(210, 233, 233)',
+            textColor: 'black',
+            id: `${exam.examNo}-4`
           },
           {
             title: `${exam.examTitle} 필기합격발표일`,
-            start: exam.examDocPass
+            start: exam.examDocPass,
+            backgroundColor: 'rgb(255, 246, 189)',
+            borderColor: 'rgb(255, 246, 189)',
+            textColor: 'black',
+            id: `${exam.examNo}-5`
           },
           {
             title: `${exam.examTitle} 실기합격발표일`,
-            start: exam.examPracPass
+            start: exam.examPracPass,
+            backgroundColor: 'rgb(255, 246, 189)',
+            borderColor: 'rgb(255, 246, 189)',
+            textColor: 'black',
+            id: `${exam.examNo}-6` 
           }
         ];
         return eventsList;
@@ -68,8 +93,6 @@ const ExamCalendarComponent = () => {
   };
 
   // 채용, 시험 클릭 시 이동
-  const navigate = useNavigate();
-
   const handleClickExamList = useCallback(() => {
     navigate({ pathname: '../../exam' });
   }, [navigate]);
@@ -80,13 +103,11 @@ const ExamCalendarComponent = () => {
 
   //마우스 올렸을때 설정
   useEffect(() => {
-    // 툴팁 요소 생성
     const tooltip = document.createElement('div');
     tooltip.id = 'tooltip';
     document.body.appendChild(tooltip);
 
     return () => {
-      // 컴포넌트 언마운트 시 툴팁 요소 제거
       document.body.removeChild(tooltip);
     };
   }, []);
@@ -104,13 +125,17 @@ const ExamCalendarComponent = () => {
     tooltip.style.display = 'none';
   };
 
+  //일정클릭 -> 상세페이지 이동
+  const handleEventClick = (info) => {
+    navigate(`/exam/read/${info.event.id.split('-')[0]}`);
+  };
 
   return (
     <div className=''>
       <div className=''>
 
-{/* 채용/시험/검색 */}
-<div className="flex-col space-y-2">
+        {/* 채용/시험/검색 */}
+        <div className="flex-col space-y-2">
           <div className="flex w-full justify-between items-center">
             <div className="flex space-x-12">
               <h1 className="text-5xl font-blackHans hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickExamList}>시험</h1>
@@ -155,7 +180,18 @@ const ExamCalendarComponent = () => {
           return arg.dayNumberText.replace('일', ''); // 1일 => 1
         }}
         eventMouseEnter={handleMouseEnter}
-      eventMouseLeave={handleMouseLeave}
+        eventMouseLeave={handleMouseLeave}
+        eventClick={handleEventClick}
+
+        customButtons={{
+          today: {
+            text: '오늘', //today-> 오늘
+            click: function () {
+              const calendarApi = this.getApi();
+              calendarApi.today();
+            }
+          }
+        }}
       />
     </div>
     </div>

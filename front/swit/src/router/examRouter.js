@@ -1,7 +1,7 @@
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
-import ExamCalender from "../pages/examjob/ExamCalender";
+import ExamCalender from "../pages/examjob/ExamCalendar";
 
 const Loading = <div>Loading...</div>
 const ExamList = lazy(() => import("../pages/examjob/ExamList"))
