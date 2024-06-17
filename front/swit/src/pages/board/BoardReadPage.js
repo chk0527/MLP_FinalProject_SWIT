@@ -1,3 +1,4 @@
+import BoardReadComponent from "../../components/board/BoardReadComponent";
 import BasicLayout from "../../layouts/BasicLayout";
 import { useParams } from "react-router-dom";
 
@@ -11,7 +12,7 @@ const BoardReadPage = () => {
             </div>
             <div className="flex">
                 <div className="w-full pr-2">
-                    {/* <StudyReadComponent studyNo={studyNo} /> */}
+                    <BoardReadComponent boardNo={boardNo}/>
                 </div>
             </div>
         </BasicLayout>       

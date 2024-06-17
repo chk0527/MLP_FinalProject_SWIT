@@ -31,6 +31,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Board {
     @Id

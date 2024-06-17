@@ -2,6 +2,11 @@ import axios from "axios";
 export const API_SERVER_HOST = 'http://localhost:8181'
 const prefix = `${API_SERVER_HOST}/api/board`
 
+export const getBoard = async (boardNo) => {
+  const res = await axios.get(`${prefix}/${boardNo}`);
+  return res.data;
+}
+
 export const postAdd = async (board) => {
     const token = sessionStorage.getItem("accessToken");
     console.log("react sessionStorage Token값:" + token);
