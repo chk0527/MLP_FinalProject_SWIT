@@ -61,6 +61,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.7'
 	// coolsms 연동
 	implementation 'net.nurigo:sdk:4.2.7'
+	implementation 'mysql:mysql-connector-java'
 
 
   implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -69,4 +70,4 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
+}    

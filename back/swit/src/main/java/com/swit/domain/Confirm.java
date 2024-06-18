@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class) // Auditing 기능을 포함 - CreatedDate
+// @EntityListeners(AuditingEntityListener.class) // Auditing 기능을 포함 - CreatedDate
 public class Confirm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키
@@ -35,8 +35,5 @@ public class Confirm {
     private String confirmTarget;                       // "1" 아이디 "2" 패스워드
     private String confirmPath;                         // "1" 이메일 "2" 핸드폰
     private String confirmNum;                          // 난수 발생 6자리 숫자
-    // @LastModifiedDate
-    // @Column(nullable = false)
-    @CreatedDate 
     private LocalDateTime confirmLimitDate;             
 }

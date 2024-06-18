@@ -26,6 +26,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 // import lombok.extern.log4j.Log4j2;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+
 @Service
 @Transactional
 // @Log4j2
@@ -74,7 +79,8 @@ public class ConfirmService {
 
 
   // 아이디/비밀번호 찾기 처리
-  public void confirmIns(ConfirmDTO confirmDTO) {
+  @Transactional
+  public Integer confirmIns(ConfirmDTO confirmDTO) {
 
     Confirm confirm = new Confirm();
 
@@ -99,6 +105,7 @@ public class ConfirmService {
     }
 
     confirm.setConfirmNum(confirmDTO.getConfirmNum());
-    confirmRepository.save(confirm);
+    
+    return confirmRepository.persist(confirm);
   }
 }

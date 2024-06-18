@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { searchId, send_sms } from "../../api/LoginApi"
 
-const requestData = {
-  certifyType: "",
-  id: "",
-  name: "",
-  email: "",
-  phone: "",
-};
+const initState = { 
+  userNo:'',
+  userId:'',
+  userName:'',
+  userEmail:'',
+  userPhone:'',
+  userCreateDate:''
+}
+
+
 
 function SearcIdComponent() {
   const [certifyType, setCertifyType] = useState('1');
@@ -21,7 +24,11 @@ function SearcIdComponent() {
   const [mobilePrefix, setMobilePrefix] = useState('010');
   const [mobile1, setMobile1] = useState('');
   const [mobile2, setMobile2] = useState('');
-  const [requestData, setRequestData] = useState('');
+  const [userPhone, setUserPhone] = useState('');
+
+  const [confirmNum, setConfirmNum] = useState('');
+
+  const [confirm, setConfirm] = useState({...initState})
 
   const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(300); // 5분 (300초)
@@ -59,43 +66,50 @@ function SearcIdComponent() {
     setMobile2(e.target.value);
   };
 
+  const handleConfirmNumChange = (e) => {
+    setConfirmNum(e.target.value);
+  };
+
   const handleSendVerificationCode = (e) => {
     // 실제 인증 코드 전송 로직 작성
     console.log('인증 코드 전송 timeRemaining' + timeRemaining);
     // setTimeRemaining(300); // 남은 시간 5분으로 초기화
     
     // 이름 필수 입력 체크
-    if (!name.trim()) {
-      alert('이름을 입력해 주세요.');
+    // if (!name.trim()) {
+    //   alert('이름을 입력해 주세요.');
+    //   return;
+    // }
+    // // 휴대폰 번호 필수 입력 체크
+    // if (!mobile1.trim() || !mobile2.trim()) {
+    //   alert('휴대폰 번호를 입력해 주세요.');
+    //   return;
+    // }
+
+    // setUserEmail(`${emailHead}@${emailDomain}`);
+    searchId(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+    .then((response) => {
+      
+      console.log("sms 발송 nework에서 확인" + response.data);
+      // 임시 처리
+      setConfirm(response.data);
+
+      // 고객정보 확인, 인증번호 얻기, sms 발송
+      // send_sms(response.data)
+      // .then((result) => {
+      //     console.log("인증번호 발송이 성공하였습니다.");
+      //     setConfirm(result.data);
+      // })
+      // .catch((error) => {
+      //     console.log("인증번호 발송이 실패하였습니다.");
+      //     return;
+      // });
+
+    })
+    .catch((error) => {
+      console.log("회원명, 핸드폰번호를 확인해 주세요.");
       return;
-    }
-    // 휴대폰 번호 필수 입력 체크
-    if (!mobile1.trim() || !mobile2.trim()) {
-      alert('휴대폰 번호를 입력해 주세요.');
-      return;
-    }
-
-    // 이메일 주소 
-    if (emailDomain === "") {
-      setUserEmail(`${emailHead}@${emailDetail}`);
-    } else {
-      setUserEmail(`${emailHead}@${emailDomain}`);
-    }
-
-    setRequestData(certifyType, "", name, userEmail, mobilePrefix+mobile1.trim()+mobile2.trim())
-    // 구분(1: 이메일, 2: 핸드폰), 고객명, 이메일 핸드폰 검수
-    searchId(requestData)
-            .then((data) => {
-              // 고객정보 확인, 인증번호 얻기, sms 발송
-              send_sms(data);
-              console.log("sms 발송");
-            })
-            .catch((error) => {
-              console.log("회원명, 핸드폰번호 확인하시기 바랍니다.");
-
-              return;
-            });
-    
+    });
 
     clearVerificationTimer();             // 초기화
     setIsVerificationCodeSent(true);      // 활성화
@@ -119,6 +133,17 @@ function SearcIdComponent() {
   const handleVerifyCode = () => {
     // 실제 인증 코드 확인 로직 작성
     console.log('인증 코드 확인');
+    
+    searchId2(`${confirmNum}`)
+    .then((response) => {
+      console.log("인증번호 정상 입니다.");
+      
+    })
+    .catch((error) => {
+      console.log("인증번호 틀렸습니다. 다시 입력해 주세요");
+      return;
+    });
+    
     // 인증 성공 시
     setTimeRemaining(300); // 남은 시간 5분으로 초기화
     clearVerificationTimer();
@@ -128,23 +153,42 @@ function SearcIdComponent() {
   };
 
   const clearVerificationTimer = () => {
-    console.log('verificationTimeout' + verificationTimeout);
     clearInterval(verificationTimeout);   // 타이머 중단  5분, 4분59초,~~~ 중단
-    console.log('verificationTimeout' + verificationTimeout);
     setIsVerificationCodeSent(false);     // false 화면 인증코드 입력, 타이머 안보이기
     setTimeRemaining(300);                // 화면에 보이는 시간 clear
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     // 여기서 form 데이터를 서버로 전송하는 로직 작성
+    // "1" 이메일 검증, "2" 핸드폰 검증
     if (certifyType == '1') {
-        console.log("aaaa")
+        console.log("이메일 검증")
+        searchId(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+        .then((response) => {
+          // 고객정보 확인, 이메일 발송
+          console.log("이메일 검증 nework에서 확인" + response.data);
+          send_email(response.data)
+        })
+        .catch((error) => {
+          console.log("회원명, 이메일을 확인해 주세요.");
+          return;
+        });
     } else {
-
+      console.log("핸드폰 인증번호 검증")
+      searchId2(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+      .then((response) => {
+        // 고객정보 확인, 이메일 발송
+        console.log("이메일 검증 nework에서 확인" + response.data);
+        send_email(response.data)
+      })
+      .catch((error) => {
+        console.log("회원명, 이메일을 확인해 주세요.");
+        return;
+      });
 
     }
-
 
     console.log({
       certifyType,
@@ -153,6 +197,8 @@ function SearcIdComponent() {
       mobile: `${mobilePrefix}-${mobile1}-${mobile2}`,
     });
   };
+
+
 
   // return (
   //   <div id="wrap">
@@ -342,10 +388,10 @@ function SearcIdComponent() {
       <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
         <form name="pageForm" method="post" onSubmit={handleSubmit}>
-          {/* <input type="hidden" id="userName" name="userName" />
-          <input type="hidden" id="userEmail" name="userEmail" />
-          <input type="hidden" id="userPhone" name="userPhone" /> */}
           <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
+          <input type="hidden" id="ResultType" name="ResultType" value="1" />
+        {ResultType === '1' && (  
+        <>
           <div className="space-y-6">
             <div>
               <label className="block font-medium mb-2">
@@ -479,16 +525,26 @@ function SearcIdComponent() {
                 </div>
                 <div>
                           
-                           <input type="text" className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2" placeholder="인증 코드 입력" />
-                           <button type="button"
-                              className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
-                              onClick={handleVerifyCode}>확인</button>
-                           {isVerificationCodeSent && (
-                             <>
-                                 남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
-                             </>
-                           )}
-                         </div>
+                  <input
+                    type="text"
+                    name="lb_confirmNum"
+                    id="lb_confirmNum"
+                    maxLength={6}
+                    className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+                    placeholder="인증 코드 입력"
+                    value={confirmNum}
+                    onChange={handleConfirmNumChange}
+                  />
+                  {/* <input type="text" className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2" placeholder="인증 코드 입력" /> */}
+                  <button type="button"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                    onClick={handleVerifyCode}>확인</button>
+                    {isVerificationCodeSent && (
+                      <>
+                          남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+                      </>
+                    )}
+                </div>
               </div>
               </>
             )}
@@ -504,6 +560,20 @@ function SearcIdComponent() {
                    </button>
                  </span>
           </p>
+        </>
+        )}
+        {ResultType === '2' && ( 
+        <> 
+          <div>
+            <label htmlFor="lb_mobile" className="block font-medium mb-2">
+                  회원님의 아이디는 
+                  <p>
+                    {userId} 
+                  </p> 입니다.
+            </label>
+          </div> 
+        </>
+        )}
         </form>
       </div>
     </div>
