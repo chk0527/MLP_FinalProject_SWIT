@@ -22,7 +22,7 @@ public class CalendarController {
 
     // 해당 스터디의 모든 일정 데이터 조회
     @GetMapping("/{studyNo}")
-    public ResponseEntity<List<CalendarDTO>> getCalendar(@PathVariable Integer studyNo) {
+    public ResponseEntity<List<CalendarDTO>> getCalendar(@PathVariable(name="studyNo") Integer studyNo) {
         List<CalendarDTO> events = calendarService.getAllEvents(studyNo);
         return ResponseEntity.ok(events);
     }
@@ -30,7 +30,7 @@ public class CalendarController {
     // 해당 스터디에서 일정 새로 생성
     @PostMapping("/{studyNo}")
     public ResponseEntity<CalendarDTO> addEvent(
-            @PathVariable Integer studyNo,
+            @PathVariable(name="studyNo") Integer studyNo,
             @RequestBody CalendarDTO calendarDTO) {
         calendarDTO.setStudyNo(studyNo);
         CalendarDTO newEvent = calendarService.addEvent(calendarDTO);
@@ -40,16 +40,16 @@ public class CalendarController {
     // 해당 스터디에서 일정 하나 삭제
     @DeleteMapping("/{studyNo}/{eventId}")
     public void deleteEvent(
-            @PathVariable Integer studyNo,
-            @PathVariable Integer eventId) {
+            @PathVariable(name="studyNo") Integer studyNo,
+            @PathVariable(name="eventId") Integer eventId) {
         calendarService.deleteEvent(eventId);
     }
 
     // 해당 스터디에서 일정 하나 수정
     @PatchMapping("/{studyNo}/{eventId}")
     public ResponseEntity<CalendarDTO> updateEvent(
-            @PathVariable Integer studyNo,
-            @PathVariable Integer eventId,
+            @PathVariable(name="studyNo") Integer studyNo,
+            @PathVariable(name="eventId") Integer eventId,
             @RequestBody Map<String, Object> updates) {
         CalendarDTO updatedEvent = calendarService.updateEvent(eventId, updates);
         return new ResponseEntity<>(updatedEvent, HttpStatus.OK);

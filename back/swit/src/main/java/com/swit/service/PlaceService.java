@@ -56,6 +56,11 @@ public class PlaceService {
                 return responseDTO;
         }
 
+        //스터디 맵에 쓸 전체 리스트
+        public List<Place> getPlaceAllList() {
+                return placeRepository.findAll();
+        }
+
         // 이름or지역 검색
         public PlacePageResponseDTO<PlaceDTO> getPlaceSearch(String placeName,
                         String placeAddr, PlacePageRequestDTO pageRequestDTO) {
