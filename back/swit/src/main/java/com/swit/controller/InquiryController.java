@@ -33,7 +33,7 @@ public class InquiryController {
     }
 
     @PostMapping("/{studyNo}/inquiries")
-    public ResponseEntity<?> createInquiry(@PathVariable Integer studyNo, @RequestBody InquiryDTO inquiryDTO, @AuthenticationPrincipal UserDetails principal) {
+    public ResponseEntity<?> createInquiry(@PathVariable(name="studyNo") Integer studyNo, @RequestBody InquiryDTO inquiryDTO, @AuthenticationPrincipal UserDetails principal) {
         String userId = principal.getUsername();
         String inquiryContent = inquiryDTO.getInquiryContent();
         inquiryService.createInquiry(userId, inquiryContent, studyNo);
@@ -41,14 +41,14 @@ public class InquiryController {
     }
 
     @PostMapping("/inquiries/{inquiryNo}/responses")
-    public ResponseEntity<?> createResponse(@PathVariable Integer inquiryNo, @RequestBody ResponseDTO responseDTO) {
+    public ResponseEntity<?> createResponse(@PathVariable(name="inquiryNo") Integer inquiryNo, @RequestBody ResponseDTO responseDTO) {
         String responseContent = responseDTO.getResponseContent();
         inquiryService.createResponse(inquiryNo, responseContent);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{studyNo}/inquiries")
-    public List<Inquiry> getInquiries(@PathVariable Integer studyNo) {
+    public List<Inquiry> getInquiries(@PathVariable(name="studyNo") Integer studyNo) {
         return inquiryService.getInquiries(studyNo);
     }
 }
