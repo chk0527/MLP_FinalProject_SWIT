@@ -41,3 +41,7 @@ export const login = async (username, password) => {
 export const info   = () => api.get(`/api/login_user`)
 export const join   = (user) => api.post(`/api/join`, user)
 export const remove = (userId) => api.delete(`/user/${userId}`)
+
+
+export const searchId   = (confirReqDTO) => axios.post(`/api/confirm/userCheck`, confirReqDTO)
+export const send_sms   = (confirmDTO) => axios.post(`/api/confirm/send`, confirmDTO)

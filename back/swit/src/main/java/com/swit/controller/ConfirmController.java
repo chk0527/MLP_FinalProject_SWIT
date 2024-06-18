@@ -13,10 +13,26 @@ import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+// import org.w3c.dom.UserDataHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.swit.dto.ConfirmDTO;
+import com.swit.dto.ConfirmReqDTO;
+import com.swit.dto.UserDTO;
+import com.swit.service.UserService;
+import com.swit.service.ConfirmService;
+
+import jakarta.persistence.Column;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,20 +42,105 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
+import java.security.SecureRandom;
 
+@ResponseBody
 @RestController
-public class SmsController {
+@RequestMapping("/api/confirm")
+public class ConfirmController {
 
     final DefaultMessageService messageService;
+    final UserService userService;
+    final ConfirmService confirmService;
+    final String sendPhone;
 
-    public SmsController(
+    public ConfirmController(
         @Value("${api.sms.clientKey}") String smsClientKey,
-        @Value("${api.sms.secretKey}") String snsClientSecret) {
+        @Value("${api.sms.secretKey}") String snsClientSecret,
+        @Value("${api.sms.sendPhone}") String sendPhone,
+        // UserService userService) {
+        UserService userService,
+        ConfirmService confirmService) {
+            
         this.messageService = NurigoApp.INSTANCE.initialize(smsClientKey, snsClientSecret, "https://api.coolsms.co.kr");
+        this.userService = userService;
+        this.confirmService = confirmService;
+        this.sendPhone = sendPhone;
     }
     
+    @PostMapping("userCheck")
+    // public ResponseEntity<?> userCheck(@RequestBody ConfirmReqDTO confirmReqDTO) {
+    public ResponseEntity<?> userCheck(@RequestBody ConfirmReqDTO confirmReqDTO) {
+        System.out.println("userCheck start");
 
-    // /**
+        ConfirmDTO confirmDTO = new ConfirmDTO();
+        UserDTO userDTO = new UserDTO();
+        
+        if (confirmReqDTO.getCertifyType() == "1") {  // 이메일로 회원 확인
+            userDTO = confirmService.userCheck3(confirmReqDTO.getId()
+                                           ,confirmReqDTO.getName()
+                                           ,confirmReqDTO.getEmail()
+                                           ,"LOCAL");
+        } else if (confirmReqDTO.getCertifyType() == "2") {  // 핸드폰 번호로 회원 확인
+            userDTO = confirmService.userCheck4(confirmReqDTO.getId()
+                                           ,confirmReqDTO.getName()
+                                           ,confirmReqDTO.getPhone()
+                                           ,"LOCAL");
+        } else {
+            return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+        }
+
+        if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
+            return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+        }
+
+        confirmDTO.setUserId(userDTO.getUserId());
+        confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
+        confirmDTO.setConfirmPath(confirmReqDTO.getCertifyType());         // "1" 이메일, "2", 핸드폰번호
+
+        String randomString = generateRandomSixDigitString();
+        System.out.println("Generated random string: " + randomString);
+
+        confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
+
+        confirmService.confirmIns(confirmDTO);
+        
+        return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
+    }
+
+    public static String generateRandomSixDigitString() {
+        SecureRandom random = new SecureRandom();
+        int randomNumber = random.nextInt(1000000);
+        return String.format("%06d", randomNumber);
+    }
+
+    /**
+     * 단일 메시지 발송 예제
+     */
+    @PostMapping("/confirm/send")
+    public SingleMessageSentResponse sendOne(@RequestBody ConfirmDTO confirmDTO) {
+    // public void sendOne(ConfirmDTO confirmDTO) {
+        System.out.println("SingleMessageSentResponse start");
+
+        UserDTO userDTO = userService.get(confirmDTO.getUserId());
+        
+        Message message = new Message();
+        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
+ 
+        message.setFrom(sendPhone);
+        // message.setFrom("01026957284");
+        message.setTo(userDTO.getUserPhone());
+        message.setText("[Swit] 인증번호 " + confirmDTO.getConfirmNum()  + " 타인 유출로 인한 피해 주의");
+        System.out.println("message " + message);
+
+        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        System.out.println("response " + message);
+        return response;
+        
+    }
+
+        // /**
     //  * 메시지 조회 예제
     //  */
     // @GetMapping("/get-message-list")
@@ -94,29 +195,7 @@ public class SmsController {
     //     return response;
     // }
 
-    /**
-     * 단일 메시지 발송 예제
-     */
-    @PostMapping("/send_one")
-    public SingleMessageSentResponse sendOne() {
-        System.out.println("SingleMessageSentResponse start");
-        
-        Message message = new Message();
-        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
-        
-        String userPhone = "01012341234";
-        String secretNo = "111111";
-
-        message.setFrom("01012341234");
-        message.setTo(userPhone);
-        message.setText("[Swit] 인증번호 " + secretNo  + " 타인 유출로 인한 피해 주의");
-
-        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
-        System.out.println(response);
-
-        return response;
-    }
-
+    
     // /**
     //  * MMS 발송 예제
     //  * 단일 발송, 여러 건 발송 상관없이 이용 가능
