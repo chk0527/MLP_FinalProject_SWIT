@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getTimers, addTimer, deleteTimer, updateTimer } from '../../api/TimerApi';
+import { getTimers, getUserTimers, addTimer, deleteTimer, updateTimer } from '../../api/TimerApi';
 import { FaStopwatch, FaClock, FaBell, FaChevronDown, FaRedo } from 'react-icons/fa';
 
 const GroupTimerComponent = ({ studyNo }) => {
@@ -100,7 +100,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
-    // 타이머 시간을 포맷팅하는 함수
+    // 타이머 시간 계산
     const formatTimerTime = (time) => {
         const hours = String(Math.floor(time / 3600)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, '0')
@@ -108,7 +108,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}:${minutes}:${seconds}`
     }
 
-    // 스톱워치 시간을 포맷팅하는 함수
+    // 스톱워치 시간 계산
     const formatStopWatchTime = (time) => {
         const hours = String(Math.floor(time / 3600000)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600000) / 60000)).padStart(2, '0')
@@ -117,7 +117,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}:${minutes}:${seconds}:${milliseconds}`
     }
 
-    // 오늘의 공부 시간 포맷팅 함수
+    // 오늘의 공부 시간 계산
     const formatStudyTime = (time) => {
         const hours = String(Math.floor(time / 3600)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, '0')
@@ -125,7 +125,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}시간 ${minutes}분 ${seconds}초`
     }
 
-    // 누적 공부 시간 포맷팅 함수
+    // 누적 공부 시간 계산
     const formatTotalStudyTime = (time) => {
         const days = Math.floor(time / 86400)
         const months = Math.floor(days / 30)

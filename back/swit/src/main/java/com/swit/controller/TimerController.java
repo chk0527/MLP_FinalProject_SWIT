@@ -35,12 +35,21 @@ public class TimerController {
         return ResponseEntity.ok(timers);
     }
 
+    // 해당 스터디의 그룹원의 타이머만 조회
+    @GetMapping("/{studyNo}/{userNo}")
+    public ResponseEntity<List<TimerDTO>> getTimers(@PathVariable Integer studyNo, @PathVariable Integer userNo) {
+        List<TimerDTO> timers = timerService.getUserTimers(studyNo, userNo);
+        return ResponseEntity.ok(timers);
+    }
+
     // 해당 스터디에서 타이머 새로 생성
     @PostMapping("/{studyNo}")
     public ResponseEntity<TimerDTO> addTimer(
             @PathVariable Integer studyNo,
+            @PathVariable Integer userNo,
             @RequestBody TimerDTO timerDTO) {
         timerDTO.setStudyNo(studyNo);
+        timerDTO.setUserNo(userNo);
         TimerDTO newTimer = timerService.addTimer(timerDTO);
         return new ResponseEntity<>(newTimer, HttpStatus.CREATED);
     }

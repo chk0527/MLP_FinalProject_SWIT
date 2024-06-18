@@ -11,4 +11,7 @@ import com.swit.domain.Timer;
 public interface TimerRepository extends JpaRepository<Timer, Integer> {
     @Query("SELECT t FROM Timer t WHERE t.study.studyNo = :studyNo")
     List<Timer> findByStudyNo(@Param("studyNo") Integer studyNo);
+
+    @Query("SELECT t FROM Timer t WHERE t.study.studyNo = :studyNo AND t.user.userNo = :userNo")
+    List<Timer> findByStudyUserNo(@Param("studyNo") Integer studyNo, @Param("userNo") Integer userNo);
 }

@@ -13,6 +13,17 @@ export const getTimers = async (studyNo) => {
     }
 }
 
+// 그룹원의 타이머 불러오기
+export const getUserTimers = async (studyNo, userNo) => {
+    try {
+        const res = await axios.get(`${prefix}/${studyNo}/${userNo}`);
+        return res.data;
+    } catch (error) {
+        console.error('해당 스터디에는 타이머 기록이 하나도 없습니다.');
+        return []; // 스터디에 타이머 기록이 아예 없으면 [] 반환
+    }
+}
+
 // 타이머 새로 추가
 export const addTimer = async (studyNo, timer) => {
     try {

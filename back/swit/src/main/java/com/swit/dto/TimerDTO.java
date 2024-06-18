@@ -1,9 +1,5 @@
 package com.swit.dto;
 
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TimerDTO {
     private Integer timerNo;
+    private Integer userNo;
     private Integer studyNo;
     private String content;
     private int time;

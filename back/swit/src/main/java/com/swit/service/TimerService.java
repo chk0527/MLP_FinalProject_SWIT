@@ -1,6 +1,5 @@
 package com.swit.service;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swit.domain.Study;
+import com.swit.domain.User;
 import com.swit.domain.Timer;
 import com.swit.dto.TimerDTO;
 import com.swit.repository.StudyRepository;
 import com.swit.repository.TimerRepository;
+import com.swit.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +29,7 @@ public class TimerService {
     private final ModelMapper modelMapper;
     private final TimerRepository timerRepository;
     private final StudyRepository studyRepository;
+    private final UserRepository userRepository;
 
     // 해당 스터디의 모든 타이머 정보 가져오기
     public List<TimerDTO> getAllTimers(Integer studyNo) {
@@ -41,12 +43,27 @@ public class TimerService {
                 .collect(Collectors.toList());
     }
 
+    // 해당 스터디의 그룹원의 타이머 정보 가져오기
+    public List<TimerDTO> getUserTimers(Integer studyNo, Integer userNo) {
+        List<Timer> timers = timerRepository.findByStudyUserNo(studyNo, userNo);
+        if (timers.isEmpty()) {
+            log.warn("No timers found for studyNo: " + studyNo);
+            return Collections.emptyList();
+        }
+        return timers.stream()
+                .map(event -> modelMapper.map(event, TimerDTO.class))
+                .collect(Collectors.toList());
+    }
+
     // 해당 스터디에서 타이머 새로 추가
     public TimerDTO addTimer(TimerDTO timerDTO) {
         Timer timer = modelMapper.map(timerDTO, Timer.class);
         Study study = studyRepository.findById(timerDTO.getStudyNo())
-                .orElseThrow(() -> new NoSuchElementException("Study not found"));    
+                .orElseThrow(() -> new NoSuchElementException("Study not found"));
+        User user = userRepository.findById(timerDTO.getUserNo())
+                .orElseThrow(() -> new NoSuchElementException("User not found"));   
         timer.setStudy(study);
+        timer.setUser(user);
         timer = timerRepository.save(timer);
         TimerDTO dto = modelMapper.map(timer, TimerDTO.class);
         return dto;
