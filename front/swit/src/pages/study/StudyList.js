@@ -98,7 +98,7 @@ const StudyListPage = () => {
       navigate("/login");
       return;
     }
-    navigate("/study/add");
+    navigate("/study/add", { state: 0 });
   };
 
   //리스트 목록 애니메이션
@@ -167,7 +167,7 @@ const StudyListPage = () => {
                 onMouseEnter={() => setCurrentItem(study.studyNo)}
                 onMouseLeave={() => setCurrentItem(null)}
                 onClick={() => handleReadStudy(study.studyNo)}
-                className="relative w-72 h-72 mb-8 rounded-2xl"
+                className="relative w-72 h-72 mb-8 rounded"
               >
                 <img
                   src={
@@ -175,10 +175,10 @@ const StudyListPage = () => {
                       ? `${host}/api/study/display/${study.imageList[0].fileName}`
                       : defaultImg
                   }
-                  className="w-72 h-72 bg-cover rounded-2xl"
+                  className="w-72 h-72 bg-cover rounded"
                   alt={study.studyTitle}
                 ></img>
-                <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded-2xl">
+                <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded">
                   <motion.div
                     initial={{ opacity: 1 }}
                     animate={{
