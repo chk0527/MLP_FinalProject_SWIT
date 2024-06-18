@@ -14,8 +14,8 @@ export const getPlaceList = async (placeName,placeAddr,pageParam) => {
     return res.data;
 }
 
-// export const getPlaceSearch = async (placeName,placeAddr,pageParam) => {
-//     const {PlacePage,PlaceSize} = pageParam
-//     const res = await axios.get(`${prefix}/search/`,{params:{placeName:placeName,placeAddr:placeAddr,PlacePage:PlacePage,PlaceSize:PlaceSize}});
-//     return res.data;
-// }
+//스터디 장소 전체 (맵에 띄울 용)
+export const getPlaceAllList = async () => {
+    const res = await axios.get(`${prefix}/all`);
+    return res.data;
+}

@@ -2,12 +2,11 @@ import { Link,useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import searchIcon from "../../img/search-icon.png";
 import {
-  getPlaceDetail,
   getPlaceList,
-  getPlaceSearch,
 } from "../../api/PlaceApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PlacePageComponent from "./PlacePageComponent ";
+
 
 const initState = {
   dtoList: [],
@@ -22,7 +21,7 @@ const initState = {
   current: 0,
 };
 
-const PlaceListComponent = () => {
+const PlaceListComponent = (filteredPlaceList) => {
   //page정보를 가지고 page 이동
   const { PlacePage, PlaceSize, moveToPlaceList } = useCustomMove();
   const [serverData, setServerData] = useState(initState);
@@ -57,39 +56,7 @@ const PlaceListComponent = () => {
 
   return (
     <div className="relative w-full">
-      {/* 검색창 */}
-      <div className="flex w-full justify-between px-8">
-        <div className="text-5xl pb-16 font-blackHans">
-          <div>스터디 장소</div>
-        </div>
-        <div className="text-right">
-          <div className="text-xl">
-            <input
-              className="focus:outline-none"
-              type="text"
-              placeholder="이름검색"
-              onChange={handleInput}
-            />
-            <button type="button" onClick={handleButton} value={placeName}>
-              <img className="size-6" src={searchIcon}></img>
-            </button>
-          </div>
-          <div className="text-2xl">
-            <select
-              onChange={handleSelect}
-              value={placeAddr}
-              className="focus:outline-none p-2"
-            >
-              <option value="">전체</option>
-              {selectList.map((item) => (
-                <option value={item} key={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+
       {/* 목록 */}
       <div className="flex-wrap w-1300 font-GSans">
         <div className="md:grid place-items-center md:grid-cols-3 ">
