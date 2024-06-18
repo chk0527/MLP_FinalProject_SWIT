@@ -30,7 +30,7 @@ public class TimerController {
 
     // 해당 스터디의 모든 타이머 조회
     @GetMapping("/{studyNo}")
-    public ResponseEntity<List<TimerDTO>> getTimers(@PathVariable Integer studyNo) {
+    public ResponseEntity<List<TimerDTO>> getTimers(@PathVariable(name="studyNo") Integer studyNo) {
         List<TimerDTO> timers = timerService.getAllTimers(studyNo);
         return ResponseEntity.ok(timers);
     }
@@ -38,7 +38,7 @@ public class TimerController {
     // 해당 스터디에서 타이머 새로 생성
     @PostMapping("/{studyNo}")
     public ResponseEntity<TimerDTO> addTimer(
-            @PathVariable Integer studyNo,
+            @PathVariable(name="studyNo") Integer studyNo,
             @RequestBody TimerDTO timerDTO) {
         timerDTO.setStudyNo(studyNo);
         TimerDTO newTimer = timerService.addTimer(timerDTO);
@@ -48,16 +48,16 @@ public class TimerController {
     // 해당 스터디에서 타이머 하나 삭제
     @DeleteMapping("/{studyNo}/{timerNo}")
     public void deleteTimer(
-            @PathVariable Integer studyNo,
-            @PathVariable Integer timerNo) {
+            @PathVariable(name="studyNo") Integer studyNo,
+            @PathVariable(name="timerNo") Integer timerNo) {
                 timerService.deleteTimer(timerNo);
     }
 
     // 해당 스터디에서 타이머 하나 수정
     @PatchMapping("/{studyNo}/{timerNo}")
     public ResponseEntity<TimerDTO> updateTimer(
-            @PathVariable Integer studyNo,
-            @PathVariable Integer timerNo,
+            @PathVariable(name="studyNo") Integer studyNo,
+            @PathVariable(name="timerNo") Integer timerNo,
             @RequestBody Map<String, Object> updates) {
         TimerDTO updatedTimer = timerService.updateTimer(timerNo, updates);
         return new ResponseEntity<>(updatedTimer, HttpStatus.OK);
