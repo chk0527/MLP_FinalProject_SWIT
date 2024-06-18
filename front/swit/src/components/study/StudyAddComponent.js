@@ -6,6 +6,7 @@ import { getUserIdFromToken } from "../../util/jwtDecode";
 import "react-datepicker/dist/react-datepicker.css";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "./ResultStudyModal";
+import roundGradient from "../../img/roundGradient.png";
 
 const initState = {
   studyNo: 0,
@@ -212,8 +213,10 @@ const StudyAddComponent = () => {
     <div className="flex justify-center font-GSans w-1300">
       {result && <ResultModal callbackFn={closeModal} />}
       <div className="w-2/3">
-        <div className=" font-bold text-3xl mb-16 pb-4 border-soild border-gray-400 border-b-4">
-          스터디 만들기
+        <div className="text-3xl mb-16 pb-4 border-soild border-gray-200 border-b-2">
+          <div className="w-64 py-7">
+            <span className="shadow-highlight">스터디 만들기</span>
+          </div>
         </div>
 
         {/* 제목 */}
@@ -373,7 +376,7 @@ const StudyAddComponent = () => {
         <div>
           <div className="my-20 flex justify-center">
             <button
-              className=" rounded bg-yellow-500 px-28 py-4 text-center font-semibold text-white shadow-sm hover:bg-yellow-600"
+              className=" rounded bg-yellow-200 px-28 py-4 text-center font-semibold shadow-sm hover:bg-yellow-400"
               onClick={handleClickAdd}
             >
               작성 완료

@@ -22,7 +22,7 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @GetMapping
-    public List<Answer> getAnswers(@RequestParam String userId, @RequestParam Integer studyNo) {
+    public List<Answer> getAnswers(@RequestParam("userId") String userId, @RequestParam("studyNo") Integer studyNo) {
         return answerService.getAnswers(userId, studyNo);
     }
 }

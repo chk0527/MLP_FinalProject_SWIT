@@ -98,7 +98,7 @@ public class StudyController {
     }
 
     @GetMapping("/display/{fileName}")
-    public ResponseEntity<Resource> displayFileGet(@PathVariable String fileName) {
+    public ResponseEntity<Resource> displayFileGet(@PathVariable(name="fileName") String fileName) {
         return fileUtil.getFile(fileName);
     }
 
