@@ -79,24 +79,27 @@ function StudyChatComponent({ studyNo }) {
     };
 
     return (
-        <div className="flex flex-col h-full bg-yellow-50">
+        <div className="flex flex-col bg-gray-400 w-96 h-650 rounded">
             {/* 채팅 메시지 컨테이너 */}
-            <div className="flex-grow overflow-auto px-4 py-2 bg-orange-100 h-12 custom-scrollbar" ref={chatContainerRef}>
-                <div className="flex flex-col space-y-2">
+            <div className="flex-grow overflow-auto px-4 py-2 h-12 custom-scrollbar" ref={chatContainerRef}>
+                <div className="flex flex-col">
+                    <div>
+
+                    </div>
                     {messages.map((item, index) => (
                         <div 
                             key={index} 
                             className={`mb-2 flex ${item.userNick === getUserNickFromToken() ? 'justify-end' : 'justify-start'}`}
                         >
                             <div className="flex flex-col items-end max-w-md">
-                                <div className={`text-sm text-gray-500 mb-1 w-full ${item.userNick === getUserNickFromToken() ? 'text-right' : 'text-left'}`}>
-                                    {item.userNick}
+                                <div className={`text-sm text-white text-gray-500 mb-1 w-full ${item.userNick === getUserNickFromToken() ? 'text-right' : 'text-left'}`}>
+                                    {item.userNick === getUserNickFromToken() ? "" : item.userNick+"님"}
                                 </div>
                                 <div className={`flex items-center ${item.userNick === getUserNickFromToken() ? 'flex-row-reverse' : 'flex-row'}`}>
-                                    <div className={`p-2 rounded-lg shadow-sm ${item.userNick === getUserNickFromToken() ? 'bg-gray-200' : 'bg-white'}`}>
+                                    <div className={`p-2 rounded shadow ${item.userNick === getUserNickFromToken() ? 'bg-yellow-200' : 'bg-white'}`}>
                                         {item.message}
                                     </div>
-                                    <div className="text-xs text-gray-500 ml-2 mr-2">{new Date(item.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                    <div className="text-xs text-white text-gray-500 ml-2 mr-2">{new Date(item.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                                 </div>
                             </div>
                         </div>
@@ -109,12 +112,12 @@ function StudyChatComponent({ studyNo }) {
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
-                    className="flex-grow border border-gray-300 rounded-full py-2 px-4 ml-2 mr-2 focus:outline-none"
+                    className="flex-grow border border-gray-300 rounded py-2 px-4 ml-2 mr-2 focus:outline-none"
                     placeholder="메시지를 입력하세요..."
                 />
                 <button 
                     onClick={sendMessage} 
-                    className="bg-yellow-400 text-black text-sm rounded-lg hover:bg-yellow-500 focus:outline-none flex items-center justify-center w-1/5"
+                    className="bg-yellow-300 text-black text-sm rounded-lg hover:bg-yellow-400 focus:outline-none flex items-center justify-center w-1/5"
                     style={{ height: '2.5rem', padding: 0, marginLeft: 0}}
                 >
                     입력
