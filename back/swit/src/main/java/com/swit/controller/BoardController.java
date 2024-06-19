@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swit.dto.BoardDTO;
+import com.swit.dto.PageRequestDTO;
+import com.swit.dto.PageResponseDTO;
 import com.swit.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,5 +34,11 @@ public class BoardController {
     public Map<String, Integer> postMethodName(BoardDTO boardDTO) {
         Integer boardNo = boardService.register(boardDTO);
         return Map.of("boardNo", boardNo);
+    }
+
+    @GetMapping("/list")
+    public PageResponseDTO<BoardDTO>List(PageRequestDTO pageRequestDTO){
+        log.info(pageRequestDTO);
+        return boardService.list(pageRequestDTO);
     }
 }
