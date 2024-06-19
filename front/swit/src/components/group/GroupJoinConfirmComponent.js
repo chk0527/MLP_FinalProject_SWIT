@@ -112,7 +112,7 @@ const GroupJoinConfirmComponent = () => {
       <hr className="border-4 border-gray-500 mb-4 w-1/6" />
       <div className="border border-gray-200 rounded overflow-auto custom-scrollbar h-80">
         {groupRequests.length === 0 ? (
-          <p className="text-center mt-20">신청 내역이 없습니다.</p>
+          <p className="text-center mt-36">신청 내역이 없습니다.</p>
         ) : (
           <ul className=" bg-white py-1 px-4">
             {groupRequests.map((request) => (

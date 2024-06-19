@@ -58,7 +58,7 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
             <p className="text-center my-44">문의 내역이 없습니다</p>
           ) : (
             inquiries.map((inquiry) => (
-              <div key={inquiry.inquiryNo} className="border-b py-8">
+              <div key={inquiry.inquiryNo} className="border-t py-8">
                 <div>
                   <p className="break-words text-sm text-gray-400 mx-6 mt-4">
                     {inquiry.user.userId} 님
