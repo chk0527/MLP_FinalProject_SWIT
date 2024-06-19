@@ -2,9 +2,9 @@ package com.swit.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swit.domain.Exam;
-import com.swit.dto.ExamDTO;
 
+import com.swit.dto.ExamDTO;
+import com.swit.dto.FavoritesExamDTO;
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
@@ -13,7 +13,6 @@ import com.swit.service.ExamjobService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -71,6 +70,47 @@ public class ExamjobController {
        return service.examAll();
     }
 
+    //시험즐겨찾기기능
+    @PostMapping("/exam/favorites")
+    public ResponseEntity<?> addExamFavorite(@RequestBody FavoritesExamDTO favoritesExamDTO) {
+
+        
+
+        try {
+            boolean success = service.addFavorite(favoritesExamDTO.getUserId(), favoritesExamDTO.getExamNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기 추가됨");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 존재함");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("addExamFavorite 에러" + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/exam/favorites")
+    public ResponseEntity<?> removeExamFavorite(@RequestBody FavoritesExamDTO favoritesExamDTO) {
+        try {
+            boolean success = service.removeFavorite(favoritesExamDTO.getUserId(), favoritesExamDTO.getExamNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기에서 삭제");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 없음");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("removeFavorite에러" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/exam/favorites")
+    public ResponseEntity<?> isExamFavorite(@RequestParam(value = "userId") String userId, @RequestParam(value = "examNo") Integer examNo) {
+        try {
+            boolean isFavorite = service.isFavorite(userId, examNo);
+            return ResponseEntity.ok(isFavorite);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isFavorite에러" + e.getMessage());
+        }
+    }
  
     
       

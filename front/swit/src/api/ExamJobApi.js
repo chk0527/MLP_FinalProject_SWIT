@@ -49,3 +49,27 @@ export const getExamAll = async() => {
     const res = await axios.get(`${prefix}/examAll`)
     return res.data;
 }
+
+
+//시험즐겨찾기
+
+//추가
+export const addExamFavorite = async (userId, examNo) => {
+    const res = await axios.post(`${prefix}/exam/favorites`, { userId, examNo });
+    return res.data;
+};
+
+//삭제
+export const removeExamFavorite = async (userId, examNo) => {
+    const res = await axios.delete(`${prefix}/exam/favorites`, { data: { userId, examNo } });
+    return res.data;
+};
+
+//확인
+export const isExamFavorite = async (userId, examNo) => {
+    const res = await axios.get(`${prefix}/exam/favorites`, { params: { userId, examNo } });
+    return res.data;
+};
+
+
+

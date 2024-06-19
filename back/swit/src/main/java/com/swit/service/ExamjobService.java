@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.swit.domain.Exam;
+import com.swit.domain.FavoritesExam;
 import com.swit.domain.Job;
 import com.swit.domain.User;
 import com.swit.dto.ExamDTO;
@@ -27,6 +28,7 @@ import com.swit.repository.ExamRepository;
 
 import com.swit.repository.JobRepository;
 import com.swit.repository.UserRepository;
+import com.swit.repository.FavoritesExamRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class ExamjobService {
     private final ExamRepository examRepository;
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
+    private final FavoritesExamRepository favoritesExamRepository;
 
     public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
@@ -187,6 +190,52 @@ public class ExamjobService {
         return responseDTO;
     }
 
+
+
+    //시험 즐겨찾기
+    @Transactional
+    public boolean addFavorite(String userId, Integer examNo) {
+        
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으"));
+            Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음"));
+
+            if (!favoritesExamRepository.existsByUserAndExam(user, exam)) {
+                FavoritesExam favoritesExam = new FavoritesExam();
+                favoritesExam.setUser(user);
+                favoritesExam.setExam(exam);
+                favoritesExamRepository.save(favoritesExam);
+                return true;
+            }
+            return false;
+      
+    }
+
+    @Transactional
+    public boolean removeFavorite(String userId, Integer examNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으2"));
+            Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음2"));
+
+            if (favoritesExamRepository.existsByUserAndExam(user, exam)) {
+                favoritesExamRepository.deleteByUserAndExam(user, exam);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new Exception("즐겨찾기삭제에러", e);
+        }
+    }
+
+    @Transactional
+    public boolean isFavorite(String userId, Integer examNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으3"));
+            Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음3"));
+            return favoritesExamRepository.existsByUserAndExam(user, exam);
+        } catch (Exception e) {
+            throw new Exception("ifFavorite에러", e);
+        }
+    }
 
    
 
