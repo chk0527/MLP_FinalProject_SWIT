@@ -30,26 +30,26 @@ public class TimerController {
 
     // 해당 스터디의 모든 타이머 조회
     @GetMapping("/{studyNo}")
-    public ResponseEntity<List<TimerDTO>> getTimers(@PathVariable(name="studyNo") Integer studyNo) {
+    public ResponseEntity<List<TimerDTO>> getAllTimers(@PathVariable(name="studyNo") Integer studyNo) {
         List<TimerDTO> timers = timerService.getAllTimers(studyNo);
         return ResponseEntity.ok(timers);
     }
 
     // 해당 스터디의 그룹원의 타이머만 조회
-    @GetMapping("/{studyNo}/{userNo}")
-    public ResponseEntity<List<TimerDTO>> getTimers(@PathVariable Integer studyNo, @PathVariable Integer userNo) {
-        List<TimerDTO> timers = timerService.getUserTimers(studyNo, userNo);
+    @GetMapping("/{studyNo}/{userId}")
+    public ResponseEntity<List<TimerDTO>> getUserTimers(@PathVariable Integer studyNo, @PathVariable String userId) {
+        List<TimerDTO> timers = timerService.getUserTimers(studyNo, userId);
         return ResponseEntity.ok(timers);
     }
 
     // 해당 스터디에서 타이머 새로 생성
-    @PostMapping("/{studyNo}")
+    @PostMapping("/{studyNo}/{userId}")
     public ResponseEntity<TimerDTO> addTimer(
             @PathVariable(name="studyNo") Integer studyNo,
-            @PathVariable Integer userNo,
+            @PathVariable(name="userId") String userId,
             @RequestBody TimerDTO timerDTO) {
         timerDTO.setStudyNo(studyNo);
-        timerDTO.setUserNo(userNo);
+        timerDTO.setUserId(userId);
         TimerDTO newTimer = timerService.addTimer(timerDTO);
         return new ResponseEntity<>(newTimer, HttpStatus.CREATED);
     }

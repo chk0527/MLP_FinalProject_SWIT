@@ -44,8 +44,8 @@ public class TimerService {
     }
 
     // 해당 스터디의 그룹원의 타이머 정보 가져오기
-    public List<TimerDTO> getUserTimers(Integer studyNo, Integer userNo) {
-        List<Timer> timers = timerRepository.findByStudyUserNo(studyNo, userNo);
+    public List<TimerDTO> getUserTimers(Integer studyNo, String userId) {
+        List<Timer> timers = timerRepository.findByStudyUserId(studyNo, userId);
         if (timers.isEmpty()) {
             log.warn("No timers found for studyNo: " + studyNo);
             return Collections.emptyList();
@@ -60,8 +60,8 @@ public class TimerService {
         Timer timer = modelMapper.map(timerDTO, Timer.class);
         Study study = studyRepository.findById(timerDTO.getStudyNo())
                 .orElseThrow(() -> new NoSuchElementException("Study not found"));
-        User user = userRepository.findById(timerDTO.getUserNo())
-                .orElseThrow(() -> new NoSuchElementException("User not found"));   
+        User user = userRepository.findByUserId(timerDTO.getUserId())
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
         timer.setStudy(study);
         timer.setUser(user);
         timer = timerRepository.save(timer);
@@ -75,20 +75,14 @@ public class TimerService {
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 타이머입니다."));
 
         // 수정된 필드만 업데이트하도록 모든 요소에 if문 설정
-        if (updates.containsKey("title")) {
-            timer.setTitle((String) updates.get("title"));
-        }
-        if (updates.containsKey("content")) {
-            timer.setContent((String) updates.get("content"));
-        }
-        if (updates.containsKey("time")) {
-            timer.setTime((Integer) updates.get("time"));
+        if (updates.containsKey("name")) {
+            timer.setName((String) updates.get("name"));
         }
         if (updates.containsKey("running")) {
             timer.setRunning((Boolean) updates.get("running"));
         }
-        if (updates.containsKey("type")) {
-            timer.setType((String) updates.get("type"));
+        if (updates.containsKey("elapsedTime")) {
+            timer.setElapsedTime((Integer) updates.get("elapsedTime"));
         }
 
         //timer.setUpdatedAt(LocalDateTime.now()); // updatedAt 필드를 수동으로 설정

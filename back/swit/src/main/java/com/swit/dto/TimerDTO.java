@@ -1,5 +1,14 @@
 package com.swit.dto;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.DurationDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,13 +20,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TimerDTO {
     private Integer timerNo;
-    private Integer userNo;
+    private String userId;
     private Integer studyNo;
-    private String content;
-    private int time;
     private boolean running;
-    private String title;
+    private String name;
+    private String time;
     private String type;
+    private Integer elapsedTime;
 
     // @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     // private LocalDateTime createdAt;

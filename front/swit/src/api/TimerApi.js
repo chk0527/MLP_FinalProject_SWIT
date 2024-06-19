@@ -3,7 +3,7 @@ export const API_SERVER_HOST = 'http://localhost:8181'
 const prefix = `${API_SERVER_HOST}/api/timer`
 
 // 스터디의 타이머 불러오기
-export const getTimers = async (studyNo) => {
+export const getAllTimers = async (studyNo) => {
     try {
         const res = await axios.get(`${prefix}/${studyNo}`);
         return res.data;
@@ -14,9 +14,9 @@ export const getTimers = async (studyNo) => {
 }
 
 // 그룹원의 타이머 불러오기
-export const getUserTimers = async (studyNo, userNo) => {
+export const getUserTimers = async (studyNo, userId) => {
     try {
-        const res = await axios.get(`${prefix}/${studyNo}/${userNo}`);
+        const res = await axios.get(`${prefix}/${studyNo}/${userId}`);
         return res.data;
     } catch (error) {
         console.error('해당 스터디에는 타이머 기록이 하나도 없습니다.');
@@ -25,9 +25,9 @@ export const getUserTimers = async (studyNo, userNo) => {
 }
 
 // 타이머 새로 추가
-export const addTimer = async (studyNo, timer) => {
+export const addTimer = async (studyNo, userId, timer) => {
     try {
-        const res = await axios.post(`${prefix}/${studyNo}`, { ...timer, studyNo });
+        const res = await axios.post(`${prefix}/${studyNo}/${userId}`, { ...timer, studyNo, userId });
         return res.data;
     } catch (error) {
         console.error('타이머를 추가하는데 실패했습니다:', error);

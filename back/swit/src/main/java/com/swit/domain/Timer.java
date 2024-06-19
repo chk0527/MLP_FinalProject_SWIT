@@ -1,11 +1,13 @@
 package com.swit.domain;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,31 +34,31 @@ public class Timer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer timerNo;
 
-    // User 테이블에서 userNo 외래키 조인
-    @ManyToOne
-    @JoinColumn(name = "userNo", nullable = false)
-    private User user;
-
-    //Study 테이블에서 studyNo 외래키 조인
+    // Study 테이블에서 studyNo 외래키 조인
     @ManyToOne
     @JoinColumn(name = "studyNo", nullable = false)
     private Study study;
 
-    @Column(length = 3000)
-    private String content;
+    // User 테이블에서 userNo 외래키 조인
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 
-    private int time; // 타이머의 경우 설정된 시간(초), 스톱워치의 경우 경과 시간(밀리초)
-    private boolean running;
-    
-    @CreationTimestamp  // 해당 필드를 현재 시각으로 "자동 설정"
+    @CreationTimestamp // 해당 필드를 현재 시각으로 "자동 설정"
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp  // db에서 업데이트될 때마다, 해당 필드를 현재 시각으로 "자동 갱신" 
+    @UpdateTimestamp // db에서 업데이트될 때마다, 해당 필드를 현재 시각으로 "자동 갱신"
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    private String title;
+
+    private Integer elapsedTime;
+    private String time;
+    private String name;
     private String type;
+    private boolean running;
 }
