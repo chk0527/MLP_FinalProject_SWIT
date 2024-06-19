@@ -1,65 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { fetchInquiries, responseSubmit } from '../../api/StudyApi';
-import { isLeader } from '../../api/GroupApi';
+import React, { useState, useEffect } from "react";
+import { fetchInquiries, responseSubmit } from "../../api/StudyApi";
+import { isLeader } from "../../api/GroupApi";
+import reply from "../../img/reply.png";
 
 const StudyInquiryListComponent = ({ studyNo }) => {
-    const [inquiries, setInquiries] = useState([]);
-    const [responseContent, setResponseContent] = useState({});
-    const [isLeaderStatus, setIsLeaderStatus] = useState(false);
+  const [inquiries, setInquiries] = useState([]);
+  const [responseContent, setResponseContent] = useState({});
+  const [isResponseOpen, setIsResponseOpen] = useState({});
+  const [isLeaderStatus, setIsLeaderStatus] = useState(false);
 
-    useEffect(() => {
-        const initializeData = async () => {
-            const inquiriesData = await fetchInquiries(studyNo);
-            setInquiries(inquiriesData);
+  useEffect(() => {
+    const initializeData = async () => {
+      const inquiriesData = await fetchInquiries(studyNo);
+      setInquiries(inquiriesData);
 
-            const leaderStatus = await isLeader(studyNo);
-            setIsLeaderStatus(leaderStatus);
-        };
+      const leaderStatus = await isLeader(studyNo);
+      setIsLeaderStatus(leaderStatus);
 
-        initializeData();
-    }, [studyNo]);
-
-    const handleResponseSubmit = async (inquiryNo) => {
-        await responseSubmit(inquiryNo, responseContent[inquiryNo]);
-        setResponseContent(prev => ({ ...prev, [inquiryNo]: '' }));
-        const inquiriesData = await fetchInquiries(studyNo);
-        setInquiries(inquiriesData);
     };
 
-    return (
-        <div className="p-4 bg-white rounded-lg shadow-md">
-            {inquiries.map((inquiry) => (
-                <div key={inquiry.inquiryNo} className="mb-6">
-                    <div className="flex flex-col">
-                        <div className="bg-gray-100 p-4 rounded-lg shadow-md text-left max-w-fit">
-                            <p className="font-semibold break-words">{inquiry.user.userId}: {inquiry.inquiryContent}</p>
-                        </div>
-                        {inquiry.responseContent && (
-                            <div className="bg-green-100 p-4 rounded-lg shadow-md text-right max-w-fit self-end mt-2">
-                                <p className="font-semibold break-words">{inquiry.study.userId}: {inquiry.responseContent}</p>
-                            </div>
-                        )}
-                        {isLeaderStatus && inquiry.inquiryType === "0" && !inquiry.responseContent && (
-                            <div className="mt-2 ml-8">
-                                <textarea
-                                    className="w-full p-4 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    value={responseContent[inquiry.inquiryNo] || ''}
-                                    onChange={(e) => setResponseContent(prev => ({ ...prev, [inquiry.inquiryNo]: e.target.value }))}
-                                    placeholder="답변을 입력하세요..."
-                                />
-                                <button
-                                    className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-300"
-                                    onClick={() => handleResponseSubmit(inquiry.inquiryNo)}
-                                >
-                                    답변 등록
-                                </button>
-                            </div>
-                        )}
-                    </div>
+    initializeData();
+  }, [studyNo]);
+
+  const handleResponseSubmit = async (inquiryNo) => {
+    await responseSubmit(inquiryNo, responseContent[inquiryNo]);
+    setResponseContent((prev) => ({ ...prev, [inquiryNo]: "" }));
+    const inquiriesData = await fetchInquiries(studyNo);
+    setInquiries(inquiriesData);
+    setIsResponseOpen((prev) => ({ ...prev, [inquiryNo]: false }));
+  };
+
+  const openResponse = (inquiryNo) => {
+    setIsResponseOpen((prev) => ({ ...prev, [inquiryNo]: true }));
+  };
+
+  const closeResponse = (inquiryNo) => {
+    setIsResponseOpen((prev) => ({ ...prev, [inquiryNo]: false }));
+  };
+
+  return (
+    <div>
+      <p className="text-xl font-semibold mt-8 p-2 text-gray-900"> 가입 문의</p>
+      <hr className="border-4 border-gray-500 mb-4 w-1/6" />
+
+      <div className="flex justify-center">
+        <div className="p-4 w-1000 h-650 bg-white rounded border border-gray-200 overflow-auto custom-scrollbar">
+          {inquiries.map((inquiry) => (
+            <div key={inquiry.inquiryNo} className="">
+              <div className="flex flex-col py-2">
+                <div className="flex my-4">
+                  <div>
+                    <p className="break-words py-2 px-4 ">
+                      {inquiry.user.userId}님
+                    </p>
+                  </div>
+                  <div className="border border-gray-200 rounded max-w-750">
+                    <p className="break-words py-2 px-4">
+                      {inquiry.inquiryContent}
+                    </p>
+                  </div>
                 </div>
-            ))}
+                {inquiry.responseContent && (
+                  <div className="flex justify-end my-4">
+                    <div className="border ml-4 border-gray-200 rounded bg-yellow-200 text-black max-w-750">
+                      <p className="break-words py-2 px-4">
+                        {inquiry.responseContent}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="break-words py-2 px-4 ">방장</p>
+                    </div>
+                  </div>
+                )}
+                {isLeaderStatus &&
+                  inquiry.inquiryType === "0" &&
+                  !inquiry.responseContent && (
+                    <div>
+                      {!isResponseOpen[inquiry.inquiryNo] ? (
+                        <button value={inquiry.inquiryNo}
+                          onClick={() => openResponse(inquiry.inquiryNo)}
+                        >
+                          답변하기
+                        </button>
+                      ) : (
+                        <div>
+                          <div>
+                            <button onClick={() => closeResponse(inquiry.inquiryNo)}>
+                              닫기
+                            </button>
+                          </div>
+                          <div className="flex bg-gray-100 justify-center items-center py-4 ">
+                            <input
+                              type="text"
+                              className="w-750 px-6 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                              value={responseContent[inquiry.inquiryNo] || ""}
+                              onChange={(e) =>
+                                setResponseContent((prev) => ({
+                                  ...prev,
+                                  [inquiry.inquiryNo]: e.target.value,
+                                }))
+                              }
+                              placeholder="답변을 입력하세요..."
+                            />
+                            <button
+                              className="text-gray-500 border-2 border-solid border-gray-400 bg-white px-6 rounded hover:border-black hover:text-black transition duration-300"
+                              onClick={() =>
+                                handleResponseSubmit(inquiry.inquiryNo)
+                              }
+                            >
+                              등록
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+              </div>
+            </div>
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default StudyInquiryListComponent;
