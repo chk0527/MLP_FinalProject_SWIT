@@ -42,11 +42,11 @@ const StudyGroupPage = () => {
             <div className="text-3xl mb-4">
                 <div>스터디 그룹 페이지</div>
             </div>
-            <div className="flex">
+            <div className="flex font-GSans">
                 <div className="w-3/4">
                     <StudyInfoComponent studyNo={studyNo} ActionComponent={GroupMeetingComponent} />
                 </div>
-                <div className="w-1/4 pl-2">
+                <div className="w-1/4 pl-2 font-GSans">
                     <StudyChatPage />
                 </div>
             </div>

@@ -8,11 +8,8 @@ const StudyReadPage = () => {
 
     return (      
         <BasicLayout>
-            <div className="text-3xl">
-                <div>스터디 상세 페이지</div>
-            </div>
             <div className="flex">
-                <div className="w-full pr-2">
+                <div className="w-full pr-2 font-GSans">
                     <StudyReadComponent studyNo={studyNo} />
                 </div>
                 {/* <div className="w-1/4 pl-2 ">
