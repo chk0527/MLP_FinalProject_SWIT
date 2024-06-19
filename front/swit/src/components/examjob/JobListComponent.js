@@ -181,12 +181,9 @@ const ListComponent = () => {
 
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="">
-                    <button onClick={() => handleFavorite(job.jobNo)}>
+                    <button onClick={() => handleFavorite(job.jobNo)} className='mb-5'>
                           {favoriteStatus[job.jobNo] ? <FaStar size={30} color="#FFF06B" /> : <FaRegStar size={30} color="#FFF06B" />}
                         </button>
-
-                      {/* <FaStar size={30} color="#FFF06B" /> */}
-                      {/* faRegStar : 빈별 faStar: 채워진 별 */}
                     </dt>
                     <dd></dd>
                   </div>

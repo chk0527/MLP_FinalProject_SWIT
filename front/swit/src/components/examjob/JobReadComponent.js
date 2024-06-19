@@ -63,7 +63,7 @@ const JobReadComponent = ({ jobNo }) => {
             <div className="p-6 rounded-lg w-full max-w-6xl">
                 <div className="flex justify-center border-soild border-gray-400 border-b-4">
                     <h1 className="text-3xl font-bold mb-5">{job.jobTitle}</h1>
-                    <button onClick={handleFavorite} className="ml-3">
+                    <button onClick={handleFavorite} className="m-0 ml-3 p-0 mb-6">
                         {isFavorite ? <FaStar size={35} color="#FFF06B" /> : <FaRegStar size={35} color="#FFF06B" />}
                     </button>
                 </div>
@@ -96,24 +96,6 @@ const JobReadComponent = ({ jobNo }) => {
                     </tbody>
                 </table>
                 </div>
-                {/* <table className="flex-wrap w-1300 font-GSans text-center border-collapse border border-gray-100 rounded-lg">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border border-gray-200 p-5">경력조건</th>
-                            <th className="border border-gray-200 p-2">고용형태</th>
-                            <th className="border border-gray-200 p-2">모집직종</th>
-                            <th className="border border-gray-200 p-2">근무예정지</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td className="border border-gray-200 p-2 py-10 ">{job.jobExperience}</td>
-                            <td className="border border-gray-200 p-2">{job.jobType}</td>
-                            <td className="border border-gray-200 p-2">{job.jobField}</td>
-                            <td className="border border-gray-200 p-2">{job.jobLoc}</td>
-                        </tr>
-                    </tbody>
-                </table> */}
                 <div className="flex justify-center">
                 <button
           type="button"

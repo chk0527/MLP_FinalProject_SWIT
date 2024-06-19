@@ -65,7 +65,7 @@ const ExamReadComponent = ({ examNo }) => {
             <div className="p-6 rounded-lg w-full max-w-6xl">
                 <div className="flex justify-center border-gray-400 border-b-4">
                     <h1 className="text-3xl font-bold mb-5">{exam.examTitle}</h1>
-                    <button onClick={handleFavorite} className="ml-3">
+                    <button onClick={handleFavorite} className="m-0 ml-3 p-0 mb-6">
                         {isFavorite ? <FaStar size={35} color="#FFF06B" /> : <FaRegStar size={35} color="#FFF06B" />}
                     </button>
                 </div>
