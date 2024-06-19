@@ -1,6 +1,7 @@
 package com.swit.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.swit.domain.Board;
+import com.swit.domain.Todo;
 import com.swit.dto.BoardDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
@@ -53,5 +55,18 @@ public class BoardService {
                 .totalCount(totalCount)
                 .build();
         return responseDTO;
+    }
+
+    public void modify(BoardDTO boardDTO){
+        Optional<Board> result = boardRepository.findById(boardDTO.getBoardNo());
+        Board board = result.orElseThrow();
+        board.setBoardTitle(boardDTO.getBoardTitle());
+        board.setBoardCategory(boardDTO.getBoardCategory());
+        board.setBoardContent(boardDTO.getBoardContent());
+        boardRepository.save(board);
+    }
+
+    public void remove(Integer boardNo){
+        boardRepository.deleteById(boardNo);
     }
 }
