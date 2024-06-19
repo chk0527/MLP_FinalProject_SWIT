@@ -50,6 +50,7 @@ const StudyGroupPage = () => {
                     <StudyChatPage />
                 </div>
             </div>
+            
             <StudyGroupComponent studyNo={studyNo} />
         </BasicLayout>
     );
