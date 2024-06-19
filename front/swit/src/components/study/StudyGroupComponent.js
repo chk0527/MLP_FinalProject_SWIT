@@ -2,11 +2,21 @@ import GroupCalendarComponent from "../group/GroupCalendarComponent";
 import GroupTimerComponent from "../group/GroupTimerComponent";
 import GroupJoinConfirmComponent from "../group/GroupJoinConfirmComponent";
 import StudyListBtnComponent from "./StudyListBtnComponent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StudyInquiryListComponent from "./StudyInquiryListComponent";
+import { fetchInquiries, getStudy } from "../../api/StudyApi";
 
 const StudyGroupComponent = ({ studyNo }) => {
   const [view, setView] = useState("calendar"); // 뷰 설정(캘린더|신청)
+  const [inquiries, setInquiries] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const inquiriesData = await fetchInquiries(studyNo);
+      setInquiries(inquiriesData);
+    };
+
+    fetchData();
+  }, [studyNo]);
 
   return (
     <div className="p-4 flex flex-col items-center font-GSans">
@@ -41,7 +51,9 @@ const StudyGroupComponent = ({ studyNo }) => {
       {/* 뷰 - 문의 및 신청내역 항목 */}
       {view === "chat" && (
         <div className="">
-          <StudyInquiryListComponent studyNo={studyNo} />
+          <StudyInquiryListComponent studyNo={studyNo}
+          inquiries={inquiries}
+          setInquiries={setInquiries} />
           <GroupJoinConfirmComponent />
         </div>
       )}
