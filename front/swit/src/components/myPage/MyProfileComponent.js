@@ -122,35 +122,37 @@ const MyProfileComponent = ({ userId }) => {
             {/* 프로필 정보 디자인 */}
             <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
                 <div className="flex items-center">
-                    <div className="w-32 h-32 rounded-lg mr-6 bg-gray-500 border border-gray-800 flex items-center justify-center">
-                        <img
-                            // front/swit/public 폴더에 접근하는 절대경로
-                            src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
-                            alt="Profile"
-                            className="w-32 h-32 rounded-lg object-cover"
+                    <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
+                        <div className="w-32 h-32 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center">
+                            <img
+                                // front/swit/public 폴더에 접근하는 절대경로
+                                src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
+                                alt="Profile"
+                                className="w-32 h-32 rounded-lg object-cover"
+                            />
+                        </div>
+                        <input
+                            id="fileInput"
+                            type="file"
+                            className="hidden"
+                            onChange={handleImageUpload}
                         />
-                    </div>
-                    <input
-                        id="fileInput"
-                        type="file"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                    />
-                    <div className="flex-grow">
+                    </label>
+                    <div className="flex-grow ml-5">
                         <div className="mb-2">
-                            <span className="text-gray-500">이름: </span>
+                            <span className="text-gray-700">이름: </span>
                             <span className="font-bold text-black">{user.userName}</span>
                         </div>
                         <div className="mb-2">
-                            <span className="text-gray-500">닉네임: </span>
+                            <span className="text-gray-700">닉네임: </span>
                             <span className="font-bold text-black">{user.userNick}</span>
                         </div>
                         <div className="mb-2">
-                            <span className="text-gray-500">전화번호: </span>
+                            <span className="text-gray-700">전화번호: </span>
                             <span className="font-bold text-black">{user.userPhone}</span>
                         </div>
                         <div className="mb-2">
-                            <span className="text-gray-500">이메일: </span>
+                            <span className="text-gray-700">이메일: </span>
                             <span className="font-bold text-black">{user.userEmail}</span>
                         </div>
                     </div>
