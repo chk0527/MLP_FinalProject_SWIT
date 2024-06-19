@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { API_SERVER_HOST, getStudy, fetchInquiries } from "../../api/StudyApi";
 import { memberCount } from "../../api/GroupApi";
 import { useNavigate } from "react-router-dom";
 import StudyListBtnComponent from "./StudyListBtnComponent";
@@ -37,10 +37,15 @@ const StudyReadComponent = ({ studyNo }) => {
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
   useEffect(() => {
-    getStudy(studyNo).then((data) => {
-      console.log(data);
-      setStudy(data);
-    });
+    const fetchData = async () => {
+      const studyData = await getStudy(studyNo);
+      setStudy(studyData);
+
+      const inquiriesData = await fetchInquiries(studyNo);
+      setInquiries(inquiriesData);
+    };
+
+    fetchData();
   }, [studyNo]);
 
   const openModal = async () => {
@@ -100,7 +105,11 @@ const StudyReadComponent = ({ studyNo }) => {
       {/* 문의 */}
       <div>
         <p className="text-center p-4 text-3xl">문의</p>
-        <StudyInquiryListComponent studyNo={studyNo} />
+        <StudyInquiryListComponent
+          studyNo={studyNo}
+          inquiries={inquiries}
+          setInquiries={setInquiries}
+        />
         <StudyInquiryFormComponent
           studyNo={studyNo}
           setInquiries={setInquiries}
