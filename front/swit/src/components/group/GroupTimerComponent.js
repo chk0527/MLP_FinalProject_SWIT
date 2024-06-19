@@ -1,23 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
-import { getTimers, addTimer, deleteTimer, updateTimer } from '../../api/TimerApi';
+import { getAllTimers, getUserTimers, addTimer, deleteTimer, updateTimer } from '../../api/TimerApi';
 import { FaStopwatch, FaClock, FaBell, FaChevronDown, FaRedo } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
+import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 
 const GroupTimerComponent = ({ studyNo }) => {
-    // 타이머 및 스톱워치 상태 관리
-    const [timers, setTimers] = useState([]);                       // 타이머 객체 관리
-    const [stopwatches, setStopwatches] = useState([]);             // 스톱워치 객체 관리
-    const [currentTimer, setCurrentTimer] = useState(null);         // 현재 타이머 값 관리
+    const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
+    const [timers, setTimers] = useState([]); // 타이머 객체 관리
+    const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
+    const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
     const [currentStopwatch, setCurrentStopwatch] = useState(null); // 현재 스톱워치 값 관리
-    const [studyTimeToday, setStudyTimeToday] = useState(0);        // 오늘의 공부 시간
-    const [totalStudyTime, setTotalStudyTime] = useState(0);        // 누적 공부 시간
-    const intervalTimerIds = useRef({});                            // 각 타이머의 인터벌 ID 관리
-    const intervalStopWatchIds = useRef({});                        // 각 스톱워치의 인터벌 ID 관리
+    const [studyTimeToday, setStudyTimeToday] = useState(0); // 오늘의 공부 시간
+    const [totalStudyTime, setTotalStudyTime] = useState(0); // 누적 공부 시간
+    const [userStudyTimes, setUserStudyTimes] = useState({}) // 유저별 공부 시간
+    const intervalTimerIds = useRef({}); // 각 타이머의 인터벌 ID 관리
+    const intervalStopWatchIds = useRef({}); // 각 스톱워치의 인터벌 ID 관리
 
     // studyNo에 따른 타이머/스톱워치 불러오기
     useEffect(() => {
         const fetchTimers = async () => {
             try {
-                const response = await getTimers(studyNo)
+                const response = await getAllTimers(studyNo)
                 setTimers(response.filter(timer => timer.type === 'timer'))
                 setStopwatches(response.filter(timer => timer.type === 'stopwatch'))
 
@@ -84,6 +87,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         };
     }, [currentTimer, currentStopwatch])
 
+    //
     const handleBeforeUnload = async () => {
         if (currentStopwatch && currentStopwatch.running) {
             const updatedTimer = { ...currentStopwatch, running: false }
@@ -100,7 +104,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
-    // 타이머 시간을 포맷팅하는 함수
+    // 타이머 시간 계산
     const formatTimerTime = (time) => {
         const hours = String(Math.floor(time / 3600)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, '0')
@@ -108,7 +112,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}:${minutes}:${seconds}`
     }
 
-    // 스톱워치 시간을 포맷팅하는 함수
+    // 스톱워치 시간 계산
     const formatStopWatchTime = (time) => {
         const hours = String(Math.floor(time / 3600000)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600000) / 60000)).padStart(2, '0')
@@ -117,7 +121,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}:${minutes}:${seconds}:${milliseconds}`
     }
 
-    // 오늘의 공부 시간 포맷팅 함수
+    // 오늘의 공부 시간 계산
     const formatStudyTime = (time) => {
         const hours = String(Math.floor(time / 3600)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, '0')
@@ -125,7 +129,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}시간 ${minutes}분 ${seconds}초`
     }
 
-    // 누적 공부 시간 포맷팅 함수
+    // 누적 공부 시간 계산
     const formatTotalStudyTime = (time) => {
         const days = Math.floor(time / 86400)
         const months = Math.floor(days / 30)
@@ -139,16 +143,21 @@ const GroupTimerComponent = ({ studyNo }) => {
 
     // 새로운 타이머(스톱워치) 생성
     const handleCreateTimer = async (type) => {
+        const userId = getUserIdFromToken();
+        if (!userId) {
+            alert("로그인 후 이용해주세요");
+            navigate("/login");
+            return;
+        }
         const newTimer = {
-            studyNo,
             type,
-            title: '',
-            content: '',
+            name: '',
             time: type === 'timer' ? 1800 : 0,
             running: false,
+            elapsedTime: 0
         }
         try {
-            const res = await addTimer(studyNo, newTimer)
+            const res = await addTimer(studyNo, userId, newTimer)
             // 각 타이머나 스톱워치가 추가될 때 다른 컴포넌트가 영향을 받지 않도록 함
             if (type === 'stopwatch') setStopwatches([...stopwatches, res])
             if (type === 'timer') setTimers([...timers, res])
@@ -221,9 +230,15 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
-            // 여기서 현재 스톱워치 시간을 오늘의 공부 시간과 누적 공부 시간에 추가
-            setStudyTimeToday(prev => prev + elapsedTime)
-            setTotalStudyTime(prev => prev + elapsedTime)
+            // 유저별 공부 시간 업데이트
+            const userId = timer.userId
+            setUserStudyTimes(prev => ({
+                ...prev,
+                [userId]: {
+                    today: (prev[userId]?.today || 0) + elapsedTime,
+                    total: (prev[userId]?.total || 0) + elapsedTime
+                }
+            }))
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('스톱워치 일시정지 실패 : ', error)
@@ -299,9 +314,15 @@ const GroupTimerComponent = ({ studyNo }) => {
             };
             setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentTimer(updatedTimer)
-            // 여기서 현재 타이머 시간을 오늘의 공부 시간과 누적 공부 시간에 추가
-            setStudyTimeToday(prev => prev + elapsedTime)
-            setTotalStudyTime(prev => prev + elapsedTime)
+            // 유저별 공부 시간 업데이트
+            const userId = timer.userId
+            setUserStudyTimes(prev => ({
+                ...prev,
+                [userId]: {
+                    today: (prev[userId]?.today || 0) + elapsedTime,
+                    total: (prev[userId]?.total || 0) + elapsedTime
+                }
+            }))
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('타이머 일시정지 실패 : ', error)
@@ -346,18 +367,16 @@ const GroupTimerComponent = ({ studyNo }) => {
         <div className="w-full space-y-4">
             {/* 오늘의 공부 시간 | 누적 공부 시간 */}
             <div className="text-center my-4">
-                {studyTimeToday > 0 && (
-                    <div className="mb-4">
-                        <h3 className="text-4xl font-semibold">오늘 공부한 시간: {formatStudyTime(studyTimeToday)}</h3>
-                        <FaRedo className="text-2xl cursor-pointer mt-2" onClick={resetStudyTimeToday} />
+                {Object.entries(userStudyTimes).map(([userId, times]) => (
+                    <div key={userId} className="mb-4">
+                        <h3 className="text-2xl font-semibold">
+                            {getUserNickFromToken(userId)}님의 오늘 공부한 시간: {formatStudyTime(times.today)}
+                        </h3>
+                        <h3 className="text-2xl font-semibold">
+                            {getUserNickFromToken(userId)}님의 누적 공부 시간: {formatTotalStudyTime(times.total)}
+                        </h3>
                     </div>
-                )}
-                {totalStudyTime > 0 && (
-                    <div>
-                        <h3 className="text-4xl font-semibold">누적 공부 시간: {formatTotalStudyTime(totalStudyTime)}</h3>
-                        <FaRedo className="text-2xl cursor-pointer mt-2" onClick={resetTotalStudyTime} />
-                    </div>
-                )}
+                ))}
             </div>
 
             <div className="flex flex-col md:flex-row justify-between w-full space-y-4 md:space-y-0 md:space-x-4 items-stretch">
@@ -378,21 +397,13 @@ const GroupTimerComponent = ({ studyNo }) => {
                     {stopwatches.map((stopwatch) => (
                         <div key={stopwatch.timerNo} className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg mb-4">
                             <FaStopwatch className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">스톱워치</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{stopwatch.userId}님의 스톱워치</h2>
                             <div className="space-y-4 w-full">
                                 <input
                                     type="text"
                                     placeholder="제목"
-                                    value={stopwatch.title}
-                                    onChange={(e) => setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === stopwatch.timerNo ? { ...t, title: e.target.value } : t))}
-                                    disabled={stopwatch.running}
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="상세내용"
-                                    value={stopwatch.content}
-                                    onChange={(e) => setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === stopwatch.timerNo ? { ...t, content: e.target.value } : t))}
+                                    value={stopwatch.name}
+                                    onChange={(e) => setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === stopwatch.timerNo ? { ...t, name: e.target.value } : t))}
                                     disabled={stopwatch.running}
                                     className="w-full p-2 border border-gray-300 rounded"
                                 />
@@ -401,8 +412,8 @@ const GroupTimerComponent = ({ studyNo }) => {
                                     {!stopwatch.running ? (
                                         <button
                                             onClick={() => {
-                                                if (!stopwatch.title || !stopwatch.content) {
-                                                    alert("제목과 상세내용을 입력하세요.")
+                                                if (!stopwatch.name) {
+                                                    alert("제목을 입력하세요.")
                                                 } else {
                                                     handleStartStopwatch(stopwatch)
                                                 }
@@ -466,21 +477,13 @@ const GroupTimerComponent = ({ studyNo }) => {
                     {timers.map((timer) => (
                         <div key={timer.timerNo} className="bg-green-200 p-4 flex flex-col items-center rounded-lg mb-4">
                             <FaClock className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">타이머</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{timer.userId}님의 타이머</h2>
                             <div className="space-y-4 w-full">
                                 <input
                                     type="text"
                                     placeholder="제목"
-                                    value={timer.title}
-                                    onChange={(e) => setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? { ...t, title: e.target.value } : t))}
-                                    disabled={timer.running}
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="상세내용"
-                                    value={timer.content}
-                                    onChange={(e) => setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? { ...t, content: e.target.value } : t))}
+                                    value={timer.name}
+                                    onChange={(e) => setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? { ...t, name: e.target.value } : t))}
                                     disabled={timer.running}
                                     className="w-full p-2 border border-gray-300 rounded"
                                 />
@@ -536,7 +539,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                                     {!timer.running ? (
                                         <button
                                             onClick={() => {
-                                                if (!timer.title || !timer.content || timer.time < 1) {
+                                                if (!timer.name || timer.time < 1) {
                                                     alert("제목과 상세내용을 입력하고 시간은 1초 이상이어야 합니다.")
                                                 } else {
                                                     handleStartTimer(timer)
