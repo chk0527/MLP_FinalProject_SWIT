@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { Stomp } from "@stomp/stompjs";
 import '../../css/CustomScroll.css';  // 커스텀 스크롤바 스타일을 위한 CSS 파일 임포트
+import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코드 유틸리티
 
 function StudyChatComponent({ studyNo }) {
     const stompClient = useRef(null);  // WebSocket 클라이언트를 참조하는 ref
@@ -28,6 +29,7 @@ function StudyChatComponent({ studyNo }) {
             // 연결이 성공적으로 이루어지면 특정 채팅룸을 구독
             stompClient.current.subscribe(`/sub/chatroom/${studyNo}`, (message) => {
                 const newMessage = JSON.parse(message.body);  // 수신된 메시지를 JSON으로 파싱
+                console.log("Received message:", newMessage);  // 메시지를 콘솔에 출력
                 // 새로운 메시지를 기존 메시지 배열의 끝에 추가
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
             });
@@ -65,9 +67,10 @@ function StudyChatComponent({ studyNo }) {
     // 메시지를 전송하는 함수
     const sendMessage = () => {
         if (stompClient.current && inputValue) {
+            const userId = getUserIdFromToken();
             const body = {
                 studyNo: studyNo,
-                name: "테스트1",  // 전송자 이름 (예시)
+                userId: userId,  // 전송자 ID
                 message: inputValue  // 입력된 메시지
             };
             stompClient.current.send(`/pub/message`, {}, JSON.stringify(body));  // STOMP 클라이언트를 통해 메시지 전송
@@ -81,8 +84,21 @@ function StudyChatComponent({ studyNo }) {
             <div className="flex-grow overflow-auto px-4 py-2 bg-orange-100 h-12 custom-scrollbar" ref={chatContainerRef}>
                 <div className="flex flex-col space-y-2">
                     {messages.map((item, index) => (
-                        <div key={index} className="mb-2">
-                            <div className="bg-white p-2 rounded-lg shadow-sm">{item.message}</div>
+                        <div 
+                            key={index} 
+                            className={`mb-2 flex ${item.userNick === getUserNickFromToken() ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div className="flex flex-col items-end max-w-md">
+                                <div className={`text-sm text-gray-500 mb-1 w-full ${item.userNick === getUserNickFromToken() ? 'text-right' : 'text-left'}`}>
+                                    {item.userNick}
+                                </div>
+                                <div className={`flex items-center ${item.userNick === getUserNickFromToken() ? 'flex-row-reverse' : 'flex-row'}`}>
+                                    <div className={`p-2 rounded-lg shadow-sm ${item.userNick === getUserNickFromToken() ? 'bg-gray-200' : 'bg-white'}`}>
+                                        {item.message}
+                                    </div>
+                                    <div className="text-xs text-gray-500 ml-2 mr-2">{new Date(item.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>

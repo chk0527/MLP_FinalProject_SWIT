@@ -26,26 +26,29 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long studyNo;
+    @ManyToOne
+    @JoinColumn(name = "study_no", referencedColumnName = "studyNo", nullable = false)
+    private Study study;
 
     @Column(nullable = false)
-    private String name;
+    private String userNick;
 
     @Column(nullable = false)
     private String message;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName="userId")
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
     private User user;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    public ChatMessage(Long studyNo, String name, String message) {
-        this.studyNo = studyNo;
-        this.name = name;
+    public ChatMessage(Study study, String userNick, String message, User user) {
+        this.study = study;
+        this.userNick = userNick;
         this.message = message;
+        this.user = user;
+        this.createdDate = LocalDateTime.now();  // createdDate를 현재 시간으로 설정
     }
 }
