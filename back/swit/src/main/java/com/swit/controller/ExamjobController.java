@@ -2,8 +2,10 @@ package com.swit.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swit.domain.Exam;
+
 import com.swit.dto.ExamDTO;
+import com.swit.dto.FavoritesExamDTO;
+import com.swit.dto.FavoritesJobDTO;
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
@@ -12,13 +14,18 @@ import com.swit.service.ExamjobService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -63,6 +70,95 @@ public class ExamjobController {
        }
        return service.examAll();
     }
+
+    //시험즐겨찾기기능
+    @PostMapping("/exam/favorites")
+    public ResponseEntity<?> addExamFavorite(@RequestBody FavoritesExamDTO favoritesExamDTO) {
+
+        
+
+        try {
+            boolean success = service.addFavorite(favoritesExamDTO.getUserId(), favoritesExamDTO.getExamNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기 추가됨");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 존재함");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("addExamFavorite 에러" + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/exam/favorites")
+    public ResponseEntity<?> removeExamFavorite(@RequestBody FavoritesExamDTO favoritesExamDTO) {
+        try {
+            boolean success = service.removeFavorite(favoritesExamDTO.getUserId(), favoritesExamDTO.getExamNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기에서 삭제");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 없음");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("removeFavorite에러" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/exam/favorites")
+    public ResponseEntity<?> isExamFavorite(@RequestParam(value = "userId") String userId, @RequestParam(value = "examNo") Integer examNo) {
+        try {
+            boolean isFavorite = service.isFavorite(userId, examNo);
+            return ResponseEntity.ok(isFavorite);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isFavorite에러" + e.getMessage());
+        }
+    }
+
+
+
+
+    //채용즐겨찾기기능
+    @PostMapping("/job/favorites")
+    public ResponseEntity<?> addJobFavorite(@RequestBody FavoritesJobDTO favoritesJobDTO) {
+
+        
+
+        try {
+            boolean success = service.addJobFavorite(favoritesJobDTO.getUserId(), favoritesJobDTO.getJobNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기 추가됨");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 존재함");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("addjobFavorite 에러" + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/job/favorites")
+    public ResponseEntity<?> removeJobFavorite(@RequestBody FavoritesJobDTO favoritesJobDTO) {
+        try {
+            boolean success = service.removeJobFavorite(favoritesJobDTO.getUserId(), favoritesJobDTO.getJobNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기에서 삭제");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 없음");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("removejobFavorite에러" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/job/favorites")
+    public ResponseEntity<?> isJobFavorite(@RequestParam(value = "userId") String userId, @RequestParam(value = "jobNo") Integer jobNo) {
+        try {
+            boolean isFavorite = service.isJobFavorite(userId, jobNo);
+            return ResponseEntity.ok(isFavorite);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isJObFavorite에러" + e.getMessage());
+        }
+    }
+ 
+    
       
 
 

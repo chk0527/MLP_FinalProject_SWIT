@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getExamList } from "../../api/ExamJobApi";
+import { getExamList, isExamFavorite, addExamFavorite, removeExamFavorite } from "../../api/ExamJobApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PageComponent from "../common/PageComponent";
 import searchIcon from "../../img/search-icon.png";
 import { FaStar, FaRegStar } from 'react-icons/fa';
 import { CiCalendarDate, CiBoxList } from "react-icons/ci";
 import "./ExamListComponent.css";
+import { getUserIdFromToken } from "../../util/jwtDecode";
+
 const initState = {
   dtoList: [],
   pageNumsList: [],
@@ -18,17 +20,29 @@ const initState = {
   nextPage: 0,
   totalPage: 0,
   current: 0
-}
+};
 
 const ListComponent = () => {
   const { page, size, moveToExamList, moveToExamRead } = useCustomMove();
   const [serverData, setServerData] = useState(initState);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [favoriteStatus, setFavoriteStatus] = useState({});
+  const navigate = useNavigate();
 
   // 검색
   const fetchExam = async () => {
     const examList = await getExamList({ page, size, searchKeyword });
     setServerData(examList);
+
+    const userId = getUserIdFromToken();
+    if (userId) {
+      const status = {};
+      for (const exam of examList.dtoList) {
+        const isFavorite = await isExamFavorite(userId, exam.examNo);
+        status[exam.examNo] = isFavorite;
+      }
+      setFavoriteStatus(status);
+    }
   };
 
   useEffect(() => {
@@ -39,9 +53,34 @@ const ListComponent = () => {
     fetchExam();
   };
 
-  // 채용, 시험 클릭 시 이동
-  const navigate = useNavigate();
+  //즐겨찾기 기능
+  const handleFavorite = async (examNo) => {
 
+    //로그인x
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      if (window.confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+        navigate('/login');
+      }
+      return;
+    }
+
+    //로그인o
+    const isFavorite = favoriteStatus[examNo];
+    const request = isFavorite ? removeExamFavorite : addExamFavorite;
+    try {
+      await request(userId, examNo);
+      setFavoriteStatus({
+        ...favoriteStatus,
+        [examNo]: !isFavorite
+      });
+      alert(isFavorite ? '즐겨찾기에서 삭제되었습니다.' : '즐겨찾기에 추가되었습니다.');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //시험채용이동
   const handleClickExamList = useCallback(() => {
     navigate({ pathname: '../../exam' });
   }, [navigate]);
@@ -53,7 +92,6 @@ const ListComponent = () => {
   return (
     <div>
       <div className="relative w-full">
-        
         {/* 채용/시험/검색 */}
         <div className="flex-col space-y-2">
           <div className="flex w-full justify-between items-center">
@@ -76,7 +114,6 @@ const ListComponent = () => {
                   <img className="size-6" src={searchIcon} alt="검색" />
                 </button>
               </div>
-
             </div>
           </div>
           <div className="flex justify-end items-end space-x-4 border-b-2 pb-5 mb-4 font-GSans">
@@ -95,13 +132,15 @@ const ListComponent = () => {
                   <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
                     <div className="absolute top-0 right-0 flex items-center space-x-1">
                       <dt className="">
-                        <FaRegStar size={30} color="#FFF06B" />
+                        <button onClick={() => handleFavorite(exam.examNo)}>
+                          {favoriteStatus[exam.examNo] ? <FaStar size={30} color="#FFF06B" /> : <FaRegStar size={30} color="#FFF06B" />}
+                        </button>
                       </dt>
                       <dd></dd>
                     </div>
                     <div className="ml-2">
                       <dt className="sr-only">회사/필기시험</dt>
-                      <dd>{exam.examDocEnd?`필기시험 : `:""}{exam.examDocStart?`${exam.examDocStart} ~ `:""}{exam.examDocEnd}</dd>
+                      <dd>{exam.examDocEnd ? `필기시험 : ` : ""}{exam.examDocStart ? `${exam.examDocStart} ~ ` : ""}{exam.examDocEnd}</dd>
                     </div>
                     <div>
                       <dt className="sr-only">직무/실기시험</dt>
