@@ -13,7 +13,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping("/api/questions")
-    public Question getQuestions(@RequestParam Integer studyNo) {
+    public Question getQuestions(@RequestParam("studyNo") Integer studyNo) {
         return questionService.getQuestionsByStudyNo(studyNo);
     }
 }
