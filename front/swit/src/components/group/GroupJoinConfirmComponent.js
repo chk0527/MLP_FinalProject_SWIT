@@ -110,11 +110,11 @@ const GroupJoinConfirmComponent = () => {
         가입 신청 내역
       </p>
       <hr className="border-4 border-gray-500 mb-4 w-1/6" />
-      {groupRequests.length === 0 ? (
-        <p className="text-center my-32">신청 내역이 없습니다.</p>
-      ) : (
-        <div className="border border-gray-200 rounded overflow-auto custom-scrollbar h-96">
-          <ul className=" bg-white p-2">
+      <div className="border border-gray-200 rounded overflow-auto custom-scrollbar h-80">
+        {groupRequests.length === 0 ? (
+          <p className="text-center mt-20">신청 내역이 없습니다.</p>
+        ) : (
+          <ul className=" bg-white py-1 px-4">
             {groupRequests.map((request) => (
               <li key={request.groupNo} className="rounded px-4 my-8">
                 <div className="flex justify-between items-center">
@@ -122,23 +122,25 @@ const GroupJoinConfirmComponent = () => {
                     <span className="font-semibold text-xl text-gray-800">
                       · {request.userNick}
                     </span>
-                    <span>님이 가입을 희망합니다.</span>
+                    <span> 님이 가입을 희망합니다.</span>
+                    
                     <button
-                      className="bg-white shadow text-gray-500 px-4 py-2 mx-8 rounded hover:bg-gray-500 hover:text-white transition duration-300"
+                      className="bg-white shadow text-gray-500 px-4 py-2 ml-8 rounded hover:bg-gray-700 hover:text-white transition duration-300"
                       onClick={() => handleUserClick(request.userId)}
                     >
                       가입 신청서
                     </button>
                   </div>
+                  <span>-----------------------------------------------</span>
                   <div>
                     <button
-                      className="bg-white shadow text-gray-500 px-4 py-2 rounded hover:bg-green-500 hover:text-white transition duration-300"
+                      className="bg-white shadow text-gray-500 px-4 py-2 rounded hover:bg-green-700 hover:text-white transition duration-300"
                       onClick={() => handleConfirm(request.groupNo, true)}
                     >
                       승인
                     </button>
                     <button
-                      className="bg-white shadow text-gray-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition duration-300"
+                      className="bg-white shadow text-gray-500 px-4 py-2 rounded hover:bg-red-700 hover:text-white transition duration-300"
                       onClick={() => handleConfirm(request.groupNo, false)}
                     >
                       거절
@@ -148,8 +150,8 @@ const GroupJoinConfirmComponent = () => {
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </div>
       <AnswerModal
         isOpen={isModalOpen}
         onClose={closeModal}

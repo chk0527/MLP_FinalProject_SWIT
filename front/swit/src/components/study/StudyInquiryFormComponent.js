@@ -21,14 +21,27 @@ const StudyInquiryFormComponent = ({ studyNo, setInquiries }) => {
     setInquiries(inquiriesData);
   };
 
+  //엔터키이벤트
+  const pressEnter = (e) => {
+    if (e.nativeEvent.isComposing) {
+      // isComposing 이 true 이면 조합 중이므로 동작을 막는다.
+      return;
+    }
+    if (e.key === "Enter" && e.shiftKey) {
+      return;
+    } else if (e.key === "Enter") {
+      handleInquirySubmit();
+    }
+  };
+
   return (
     <div className="flex border border-gray-200 justify-center items-center py-4 gap-8">
-      <input
-        type="text"
-        className="w-750 px-6 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+      <textarea
+        className="resize-none  w-750 h-10 py-1.5 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
         value={inquiryContent}
+        onKeyDown={(e) => pressEnter(e)}
         onChange={(e) => setInquiryContent(e.target.value)}
-        placeholder="질문을 입력하세요..."
+        placeholder="질문을 입력하세요."
       />
       <button
         className="text-gray-500 border-2 border-solid border-gray-400 bg-white px-6 py-2 rounded hover:border-black hover:text-black transition duration-300"

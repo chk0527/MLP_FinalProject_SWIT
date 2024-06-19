@@ -96,7 +96,7 @@ const StudyReadComponent = ({ studyNo }) => {
   );
 
   return (
-    <div className="border-2 border-gray-200 mt-10 mx-4 p-6 bg-white rounded-lg shadow-lg">
+    <div>
       {/* 스터디정보 */}
       <div className="flex justify-between ">
         <StudyInfoComponent studyNo={studyNo} ActionComponent={ApplyButton} />
@@ -104,7 +104,6 @@ const StudyReadComponent = ({ studyNo }) => {
 
       {/* 문의 */}
       <div>
-        <p className="text-center p-4 text-3xl">문의</p>
         <StudyInquiryListComponent
           studyNo={studyNo}
           inquiries={inquiries}
