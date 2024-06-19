@@ -15,23 +15,23 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "favorites_exam")
+@Table(name = "favorites_job")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FavoritesExam {
+public class FavoritesJob {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "favorites_exam_no")
-    private Long favoritesExamNo;
+    @Column(name = "favorites_job_no")
+    private Long favoritesJobNo;
 
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName="userId", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "exam_no",referencedColumnName="examNo", nullable = false)
-    private Exam exam;
+    @JoinColumn(name = "job_no",referencedColumnName="jobNo", nullable = false)
+    private Job job;
 
 }

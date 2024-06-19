@@ -72,4 +72,25 @@ export const isExamFavorite = async (userId, examNo) => {
 };
 
 
+//채용즐겨찾기
+
+//추가
+export const addJobFavorite = async (userId, jobNo) => {
+    const res = await axios.post(`${prefix}/job/favorites`, { userId, jobNo });
+    return res.data;
+};
+
+//삭제
+export const removeJobFavorite = async (userId, jobNo) => {
+    const res = await axios.delete(`${prefix}/job/favorites`, { data: { userId, jobNo } });
+    return res.data;
+};
+
+//확인
+export const isJobFavorite = async (userId, jobNo) => {
+    const res = await axios.get(`${prefix}/job/favorites`, { params: { userId, jobNo } });
+    return res.data;
+};
+
+
 

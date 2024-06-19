@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.swit.domain.Exam;
 import com.swit.domain.FavoritesExam;
+import com.swit.domain.FavoritesJob;
 import com.swit.domain.Job;
 import com.swit.domain.User;
 import com.swit.dto.ExamDTO;
@@ -29,6 +30,7 @@ import com.swit.repository.ExamRepository;
 import com.swit.repository.JobRepository;
 import com.swit.repository.UserRepository;
 import com.swit.repository.FavoritesExamRepository;
+import com.swit.repository.FavoritesJobRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +46,7 @@ public class ExamjobService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
     private final FavoritesExamRepository favoritesExamRepository;
+    private final FavoritesJobRepository favoritesJobRepository;
 
     public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
@@ -232,6 +235,53 @@ public class ExamjobService {
             User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으3"));
             Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음3"));
             return favoritesExamRepository.existsByUserAndExam(user, exam);
+        } catch (Exception e) {
+            throw new Exception("ifFavorite에러", e);
+        }
+    }
+
+    
+
+    //채용 즐겨찾기
+    @Transactional
+    public boolean addJobFavorite(String userId, Integer jobNo) {
+        
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으"));
+            Job job = jobRepository.findById(jobNo).orElseThrow(() -> new RuntimeException("job못찾음"));
+
+            if (!favoritesJobRepository.existsByUserAndJob(user, job)) {
+                FavoritesJob favoritesJob = new FavoritesJob();
+                favoritesJob.setUser(user);
+                favoritesJob.setJob(job);
+                favoritesJobRepository.save(favoritesJob);
+                return true;
+            }
+            return false;
+      
+    }
+
+    @Transactional
+    public boolean removeJobFavorite(String userId, Integer jobNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으2"));
+            Job job = jobRepository.findById(jobNo).orElseThrow(() -> new RuntimeException("job못찾음2"));
+
+            if (favoritesJobRepository.existsByUserAndJob(user, job)) {
+                favoritesJobRepository.deleteByUserAndJob(user, job);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new Exception("즐겨찾기삭제에러", e);
+        }
+    }
+
+    @Transactional
+    public boolean isJobFavorite(String userId, Integer jobNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으3"));
+            Job job = jobRepository.findById(jobNo).orElseThrow(() -> new RuntimeException("job못찾음3"));
+            return favoritesJobRepository.existsByUserAndJob(user, job);
         } catch (Exception e) {
             throw new Exception("ifFavorite에러", e);
         }

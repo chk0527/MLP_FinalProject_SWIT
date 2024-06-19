@@ -41,5 +41,10 @@ public class ExamjobServiceTest {
     public void addFavoriteTest(){
         examjobService.addFavorite("aaa", 1);
     }
+
+    @Test
+    public void addJobFavoriteTest(){
+        examjobService.addJobFavorite("aaa", 1);
+    }
    
 }

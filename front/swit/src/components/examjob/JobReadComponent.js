@@ -1,8 +1,8 @@
-import { useState } from "react"
-import { useEffect } from "react"
-import { getJobRead } from "../../api/ExamJobApi"
-import useCustomMove from "../../hooks/useCustomMove"
+import React, { useState, useEffect } from "react"
 import { FaStar, FaRegStar } from 'react-icons/fa';
+import { getUserIdFromToken } from "../../util/jwtDecode"; //userId 받아옴
+import { useNavigate } from 'react-router-dom';
+import { getJobRead, isJobFavorite, addJobFavorite, removeJobFavorite } from '../../api/ExamJobApi';
 
 const initState = {
     jobNo: 0,
@@ -17,15 +17,45 @@ const initState = {
     jobUrl: "",
 }
 
-const ExamReadComponent = ({ jobNo }) => {
+const JobReadComponent = ({ jobNo }) => {
     const [job, setJob] = useState(initState)
+    const [isFavorite, setIsFavorite] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getJobRead(jobNo).then(data => {
             console.log(data)
             setJob(data)
-        })
+        });
+
+        const userId = getUserIdFromToken();
+        if (userId) {
+            isJobFavorite(userId, jobNo)
+                .then(data => setIsFavorite(data))
+                .catch(error => console.error(error));
+        }
     }, [jobNo])
+
+    const handleFavorite = () => {
+
+        // 로그인안한상태 -> alert 확인누르면 로그인창으로이동
+        const userId = getUserIdFromToken();
+        if (!userId) {
+            if (window.confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                navigate('/login');
+            }
+            return;
+        }
+
+        //로그인상태
+        const request = isFavorite ? removeJobFavorite : addJobFavorite; //즐겨찾기 되어있는지 안되어있는지 구분
+        request(userId, jobNo)
+            .then(() => {
+                setIsFavorite(!isFavorite);
+                alert(isFavorite ? '즐겨찾기에서 삭제되었습니다.' : '즐겨찾기에 추가되었습니다.');
+            })
+            .catch(error => console.error(error));
+    };
 
 
     return (
@@ -33,7 +63,9 @@ const ExamReadComponent = ({ jobNo }) => {
             <div className="p-6 rounded-lg w-full max-w-6xl">
                 <div className="flex justify-center border-soild border-gray-400 border-b-4">
                     <h1 className="text-3xl font-bold mb-5">{job.jobTitle}</h1>
-                    <FaRegStar size={35} color="#FFF06B" className="ml-3" />
+                    <button onClick={handleFavorite} className="ml-3">
+                        {isFavorite ? <FaStar size={35} color="#FFF06B" /> : <FaRegStar size={35} color="#FFF06B" />}
+                    </button>
                 </div>
 
                 <div className="flex-wrap w-1000 font-GSans bg-white p-6 border border-white rounded-lg mb-5">
@@ -97,5 +129,5 @@ const ExamReadComponent = ({ jobNo }) => {
     )
 }
 
-export default ExamReadComponent;
+export default JobReadComponent;
 

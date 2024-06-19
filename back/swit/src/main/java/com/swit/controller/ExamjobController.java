@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swit.dto.ExamDTO;
 import com.swit.dto.FavoritesExamDTO;
+import com.swit.dto.FavoritesJobDTO;
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
@@ -109,6 +110,51 @@ public class ExamjobController {
             return ResponseEntity.ok(isFavorite);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isFavorite에러" + e.getMessage());
+        }
+    }
+
+
+
+
+    //채용즐겨찾기기능
+    @PostMapping("/job/favorites")
+    public ResponseEntity<?> addJobFavorite(@RequestBody FavoritesJobDTO favoritesJobDTO) {
+
+        
+
+        try {
+            boolean success = service.addJobFavorite(favoritesJobDTO.getUserId(), favoritesJobDTO.getJobNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기 추가됨");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 존재함");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("addjobFavorite 에러" + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/job/favorites")
+    public ResponseEntity<?> removeJobFavorite(@RequestBody FavoritesJobDTO favoritesJobDTO) {
+        try {
+            boolean success = service.removeJobFavorite(favoritesJobDTO.getUserId(), favoritesJobDTO.getJobNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기에서 삭제");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 없음");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("removejobFavorite에러" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/job/favorites")
+    public ResponseEntity<?> isJobFavorite(@RequestParam(value = "userId") String userId, @RequestParam(value = "jobNo") Integer jobNo) {
+        try {
+            boolean isFavorite = service.isJobFavorite(userId, jobNo);
+            return ResponseEntity.ok(isFavorite);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isJObFavorite에러" + e.getMessage());
         }
     }
  
