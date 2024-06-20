@@ -17,11 +17,39 @@ const StudyListPage = () => {
   const [studyList, setStudyList] = useState([]);
   const navigate = useNavigate();
 
+  //검색 내용 저장할 상태
+  const [studyTitle, setStudyTitle] = useState("");
+  const [studySubject, setStudySubject] = useState("");
+  const [studyAddr, setStudyAddr] = useState("");
+  const [studyOnline, setStudyOnline] = useState("");
+
+  //주제 검색
+  const subjectList = [
+    { value: "수능" },
+    { value: "공무원" },
+    { value: "임용" },
+    { value: "자격증" },
+    { value: "어학" },
+    { value: "취업" },
+    { value: "학교" },
+    { value: "개발" },
+    { value: "기타" },
+  ];
+  const subjectStyle = "ml-4";
+
+  //주소 검색
+  const addrList = [{ value: "서울" }, { value: "경기도" }];
+
   useEffect(() => {
     // 모든 스터디 목록을 가져오는 API 호출
     const fetchStudyList = async () => {
       try {
-        const studyListData = await getAllStudies();
+        const studyListData = await getAllStudies(
+          studyTitle,
+          studySubject,
+          studyAddr,
+          studyOnline
+        );
         console.log("Fetched study list:", studyListData); // API 결과 로그
 
         // 각 스터디에 대한 상태 정보 추가
@@ -52,7 +80,7 @@ const StudyListPage = () => {
     };
 
     fetchStudyList(); // 함수 실행
-  }, []); // 빈 배열을 두번째 인자로 넘겨 한 번만 실행되도록 설정
+  }, [studyTitle, studySubject, studyAddr, studyOnline]); // 빈 배열을 두번째 인자로 넘겨 한 번만 실행되도록 설정
 
   const handleReadStudy = async (studyNo) => {
     try {
@@ -140,19 +168,38 @@ const StudyListPage = () => {
         </div>
         <div className="text-right">
           <div className="text-xl">
+            {/* 지역검색 */}
+            <select
+              className="focus:outline-none p-2"
+              onChange={(e) => setStudyAddr(e.target.value)}
+            >
+              {addrList.map((addr) => (
+                <option value={addr.value}>{addr.value}</option>
+              ))}
+            </select>
+            {/* 제목검색 */}
             <input
               className="focus:outline-none"
               type="text"
-              placeholder="이름검색"
+              placeholder="제목 검색"
             />
             <button type="button">
               <img className="size-6" src={searchIcon}></img>
             </button>
           </div>
-          <div className="text-2xl">
-            <select className="focus:outline-none p-2">
-              <option value="">전체</option>
-            </select>
+          {/* 주제검색 */}
+          <div className="text-xl">
+            {subjectList.map((subject) => (
+              <label>
+                <input
+                  className={subjectStyle}
+                  type="radio"
+                  name="subject"
+                  value={subject.value}
+                />
+                {subject.value}
+              </label>
+            ))}
           </div>
         </div>
       </div>
@@ -205,7 +252,7 @@ const StudyListPage = () => {
                     </div>
                     <div className="absolute bottom-0 p-8">
                       <p className="text-xl py-2">
-                        #서울 #{study.studyTitle ? "비대면" : "대면"}
+                        #{study.studyAddr.substring(0, 3)} #{study.studyTitle ? "비대면" : "대면"}
                       </p>
                       <p className="w-60 truncate text-2xl">
                         {study.studyTitle}
@@ -233,7 +280,7 @@ const StudyListPage = () => {
           </AnimatePresence>
         </div>
         <div className="grid place-items-end">
-          <button 
+          <button
             onClick={handleAddStudy}
             className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
           >
