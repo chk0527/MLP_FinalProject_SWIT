@@ -78,15 +78,15 @@ function SearcIdComponent() {
     // setTimeRemaining(300); // 남은 시간 5분으로 초기화
     
     // 이름 필수 입력 체크
-    // if (!name.trim()) {
-    //   alert('이름을 입력해 주세요.');
-    //   return;
-    // }
-    // // 휴대폰 번호 필수 입력 체크
-    // if (!mobile1.trim() || !mobile2.trim()) {
-    //   alert('휴대폰 번호를 입력해 주세요.');
-    //   return;
-    // }
+    if (!name.trim()) {
+      alert('이름을 입력해 주세요.');
+      return;
+    }
+    // 휴대폰 번호 필수 입력 체크
+    if (!mobile1.trim() || !mobile2.trim()) {
+      alert('휴대폰 번호를 입력해 주세요.');
+      return;
+    }
 
     // setUserEmail(`${emailHead}@${emailDomain}`);
     searchId(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
@@ -102,19 +102,19 @@ function SearcIdComponent() {
       console.log(`setConfirm ${confirm.confirmPath}`);
       console.log(`setConfirm ${confirm.confirmLimitDate}`);
       // 고객정보 확인, 인증번호 얻기, sms 발송
-      // send_sms(response.data)
-      // .then((result) => {
-      //     console.log("인증번호 발송이 성공하였습니다.");
-      //     setConfirm(result.data);
+      send_sms(response.data)
+      .then((result) => {
+          console.log("인증번호 발송이 성공하였습니다.");
+          setConfirm(result.data);
 
-            clearVerificationTimer();             // 초기화
-            setIsVerificationCodeSent(true);      // 활성화
-            startVerificationTimer();             // 타이머 카운트 시작
-      // })
-      // .catch((error) => {
-      //     console.log("인증번호 발송이 실패하였습니다.");
-      //     return;
-      // });
+          clearVerificationTimer();             // 초기화
+          setIsVerificationCodeSent(true);      // 활성화
+          startVerificationTimer();             // 타이머 카운트 시작
+      })
+      .catch((error) => {
+          console.log("인증번호 발송이 실패하였습니다.");
+          return;
+      });
 
     })
     .catch((error) => {
