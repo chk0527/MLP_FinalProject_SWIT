@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { getPlaceAllList } from "../../api/PlaceApi";
 import searchIcon from "../../img/search-icon.png";
 
@@ -18,7 +19,7 @@ const MapListComponent = () => {
   // 주소 검색 관련 상태 및 이벤트 핸들러
   const [inputText, setInputText] = useState("");
   const [searchText, setSearchText] = useState(""); //검색주소
-  const [currentState,setCurrentState] = useState(""); //현재위치주소
+  const [currentState, setCurrentState] = useState(""); //현재위치주소
 
   const handleInput = (e) => {
     setInputText(e.target.value);
@@ -55,8 +56,6 @@ const MapListComponent = () => {
     }
   }, []);
 
-
-  
   useEffect(() => {
     if (!currentState) return;
 
@@ -85,7 +84,7 @@ const MapListComponent = () => {
 
         geocoder.addressSearch(searchText, function (result, status) {
           if (status === window.kakao.maps.services.Status.OK) {
-            const moveLatLon  = new window.kakao.maps.LatLng(
+            const moveLatLon = new window.kakao.maps.LatLng(
               result[0].y,
               result[0].x
             );
@@ -102,30 +101,40 @@ const MapListComponent = () => {
             promises.push(
               new Promise((resolve) => {
                 setTimeout(() => {
-                  geocoder.addressSearch(place.placeAddr, function (result, status) {
-                    if (status === window.kakao.maps.services.Status.OK) {
-                      const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-                      if (bounds.contain(coords)) {
-                        const marker = new window.kakao.maps.Marker({
-                          map: map,
-                          position: coords,
-                        });
+                  geocoder.addressSearch(
+                    place.placeAddr,
+                    function (result, status) {
+                      if (status === window.kakao.maps.services.Status.OK) {
+                        const coords = new window.kakao.maps.LatLng(
+                          result[0].y,
+                          result[0].x
+                        );
+                        if (bounds.contain(coords)) {
+                          const marker = new window.kakao.maps.Marker({
+                            map: map,
+                            position: coords,
+                          });
 
-                        window.kakao.maps.event.addListener(marker, "click", () => {
-                          infowindow.setContent(
-                            `<div style="text-align:center;padding:6px 0;">${place.placeName}</div>`
+                          window.kakao.maps.event.addListener(
+                            marker,
+                            "click",
+                            () => {
+                              infowindow.setContent(
+                                `<div style="text-align:center;padding:6px 0;">${place.placeName}</div>`
+                              );
+                              infowindow.open(map, marker);
+                            }
                           );
-                          infowindow.open(map, marker);
-                        });
 
-                        resolve(place); // 해당 장소를 promise resolve에 전달
+                          resolve(place); // 해당 장소를 promise resolve에 전달
+                        } else {
+                          resolve(null); // 경계 내에 없는 경우 null을 resolve
+                        }
                       } else {
-                        resolve(null); // 경계 내에 없는 경우 null을 resolve
+                        resolve(null); // 검색 결과가 없는 경우 null을 resolve
                       }
-                    } else {
-                      resolve(null); // 검색 결과가 없는 경우 null을 resolve
                     }
-                  });
+                  );
                 }, index * 10); // 일정 시간 간격 (10ms)으로 요청을 보냅니다.
               })
             );
@@ -203,10 +212,10 @@ const MapListComponent = () => {
         </div>
       </div>
       {/* 맵 */}
-      <div id="map" className="w-1300 h-650 mb-16"></div>
+      <div id="map" className="w-full h-650 border-2 border-black mb-16"></div>
       {/* 목록 */}
-      <div className="flex-wrap w-1300 font-GSans">
-        <div className="md:grid place-items-center md:grid-cols-3 ">
+      <div className="flex-wrap w-1300 font-GSans mb-20">
+        <div className="md:grid place-items-center gap-16 md:grid-cols-3 ">
           {currentPlaces.map((place, index) => {
             if (currentPlaces.length === index + 1) {
               return (
@@ -222,7 +231,7 @@ const MapListComponent = () => {
                       alt={place.placeName}
                     ></img>
                   </div>
-                  <div className="pt-2 text-start">
+                  <div className="pt-4 text-start">
                     <p className="font-bold my-2">
                       {place.placeAddr.substring(0, 6)}
                     </p>
@@ -232,20 +241,27 @@ const MapListComponent = () => {
               );
             } else {
               return (
-                <div key={place.placeNo} className="w-350 h-350 text-center mb-8">
-                  <div className="overflow-hidden">
-                    <img
-                      className="w-400 h-96 object-cover"
-                      src={place.placeImg}
-                      alt={place.placeName}
-                    ></img>
-                  </div>
-                  <div className="pt-2 text-start">
-                    <p className="font-bold my-2">
-                      {place.placeAddr.substring(0, 6)}
-                    </p>
-                    <p className="text-2xl">{place.placeName}</p>
-                  </div>
+                <div
+                  key={place.placeNo}
+                  className="w-350 h-350 text-center mb-8"
+                >
+                  <Link
+                    to={{ pathname: `/place/read/${place.placeNo}` }}
+                    state={1}
+                  >
+                    <div className="overflow-hidden ">
+                      <img
+                        className="w-400 h-96 object-cover"
+                        src={place.placeImg}
+                      ></img>
+                    </div>
+                    <div className="pt-2 text-start">
+                      <p className="font-bold my-2">
+                        {place.placeAddr.substring(0, 6)}
+                      </p>
+                      <p className="text-2xl">{place.placeName}</p>
+                    </div>
+                  </Link>
                 </div>
               );
             }
