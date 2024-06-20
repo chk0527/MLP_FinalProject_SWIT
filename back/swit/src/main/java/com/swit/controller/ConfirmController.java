@@ -197,14 +197,13 @@ public class ConfirmController {
         // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
  
         message.setFrom(sendPhone);
-        // message.setFrom("01026957284");
         message.setTo(userDTO.getUserPhone());
         message.setText("[Swit] 인증번호 " + confirmDTO.getConfirmNum()  + " 타인 유출로 인한 피해 주의");
         System.out.println("message " + message);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("response " + response);
-        
+
         return response;
     }
 

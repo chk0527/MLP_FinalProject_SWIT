@@ -166,6 +166,7 @@ function SearcIdComponent() {
         // 인증 성공 시
         // setTimeRemaining(300); // 남은 시간 5분으로 초기화
         // clearVerificationTimer();
+        setResultType("2")
 
       })
       .catch((error) => {
@@ -625,7 +626,7 @@ function SearcIdComponent() {
             <label htmlFor="lb_mobile" className="block font-medium mb-2">
                   회원님의 아이디는 
                   <p>
-
+                    {confirm.userId}
                   </p> 입니다.
             </label>
           </div> 
