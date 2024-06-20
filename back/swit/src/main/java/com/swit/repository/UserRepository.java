@@ -30,10 +30,18 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserId(String userId);
 
     // 네이버 로그인 체크
+    // 아이디/비밀번호 찾기 확인 처리(이메일, 핸드폰번호)
     Optional<User> findByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
+    Optional<User> findByUserNameAndUserPhoneAndUserSnsConnect(String userName, String userPhone, String userSnsConnect);
+    Optional<User> findByUserIdAndUserNameAndUserEmailAndUserSnsConnect(String userId, String userName, String userEmail, String userSnsConnect);
+    Optional<User> findByUserIdAndUserNameAndUserPhoneAndUserSnsConnect(String userId, String userName, String userPhone, String userSnsConnect);
     Boolean existsByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
+
     // 카카오 로그인 체크    
     Optional<User> findByUserNickAndUserEmailAndUserSnsConnect(String userNick, String userEmail, String userSnsConnect);
     Boolean existsByUserNickAndUserEmailAndUserSnsConnect(String userNick, String userEmail, String userSnsConnect);
+
+
+
 
 }
