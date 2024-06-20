@@ -27,7 +27,7 @@ import lombok.extern.log4j.Log4j2;
 public class GroupController {
   private final GroupService service;
 
-  @PostMapping("/add") //그룹 가입
+  @PostMapping("/add") //그룹 생성 - 방장
   public Map<String, Integer> register(@RequestBody GroupDTO groupDTO) {
     Integer groupNo = service.register(groupDTO);
     // List<MultipartFile> files = productDTO.getFiles();
@@ -51,28 +51,28 @@ public class GroupController {
   //   }
   
   @GetMapping("/isMember") //그룹 가입 승인 여부 판별
-  public Integer isMember(@RequestParam String userId, @RequestParam Integer studyNo) {
+  public Integer isMember(@RequestParam("userId") String userId, @RequestParam("studyNo") Integer studyNo) {
     return service.isMember(userId, studyNo);
   }
 
   @GetMapping("/isLeader") //그룹장 여부 판별
-  public boolean isLeader(@RequestParam String userId, @RequestParam Integer studyNo) {    
+  public boolean isLeader(@RequestParam("userId") String userId, @RequestParam("studyNo") Integer studyNo) {    
     return service.isLeader(userId, studyNo);
   }
 
   @PutMapping("/confirm") //그룹 가입 승인, 거절(방장)
-    public boolean confirmGroupJoin(@RequestParam Integer groupNo, @RequestParam boolean approve) {
+    public boolean confirmGroupJoin(@RequestParam("groupNo") Integer groupNo, @RequestParam("approve") boolean approve) {
         return service.confirmGroupJoin(groupNo, approve);
     }
 
     @GetMapping("/requests") //그룹 가입 요청 목록 조회
-    public List<GroupRequestDTO> getGroupJoinRequests(@RequestParam Integer studyNo) {
+    public List<GroupRequestDTO> getGroupJoinRequests(@RequestParam("studyNo") Integer studyNo) {
       log.info("!");
         return service.getPendingGroupRequestsByStudyNo(studyNo);
     }
 
     @GetMapping("/memberCount") //가입 인원 수 가져오기
-    public int getCurrentMemberCount(@RequestParam Integer studyNo) {
+    public int getCurrentMemberCount(@RequestParam("studyNo") Integer studyNo) {
       return service.getCurrentMemberCount(studyNo);
     }
 

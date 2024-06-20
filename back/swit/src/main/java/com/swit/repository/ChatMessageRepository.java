@@ -8,5 +8,5 @@ import com.swit.domain.ChatMessage;
 
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-    List<ChatMessage> findByStudyNo(Long studyNo);
+  List<ChatMessage> findByStudyStudyNo(Integer studyNo);
 }

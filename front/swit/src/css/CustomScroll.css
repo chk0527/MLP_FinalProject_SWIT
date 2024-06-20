@@ -16,7 +16,7 @@
 /* Firefox의 스크롤바 스타일 */
 .custom-scrollbar {
   scrollbar-width: thin; /* 스크롤바 너비를 얇게 설정 */
-  scrollbar-color: #fff rgb(255,237,213); /* 스크롤바 이동 가능한 부분 색상과 트랙 색상 */
+  scrollbar-color: #e1e1e1 #fff; /* 스크롤바 이동 가능한 부분 색상과 트랙 색상 */
 }
 
 /* Edge와 IE의 스크롤바 스타일 */

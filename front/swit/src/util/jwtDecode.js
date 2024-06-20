@@ -13,3 +13,17 @@ export const getUserIdFromToken = () => {
     return null;
   }
 };
+
+export const getUserNickFromToken = () => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    return null;
+  }
+  try {
+    const decoded = jwtDecode(token);
+    return decoded.userNick; // JWT 토큰에서 userId 필드 추출
+  } catch (error) {
+    console.error('Error decoding JWT token[jwtDecode]:', error);
+    return null;
+  }
+};

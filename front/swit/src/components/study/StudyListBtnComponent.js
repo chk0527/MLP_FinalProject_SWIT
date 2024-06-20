@@ -6,13 +6,12 @@ const StudyCard = ({ study, handleReadStudy }) => {
     navigate("/study");
   };
     return (
-      <div className="grid place-items-center">
+      <div className="flex justify-center m-32">
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white rounded"
-          style={{ width: "200px", height: "40px" }}
+          className="bg-yellow-500 w-52 h-12 text-white text-center"
           onClick={goToStudyListPage}
         >
-          Study List로 돌아가기
+          목록
         </button>
         </div>
     );

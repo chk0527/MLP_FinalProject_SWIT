@@ -1,42 +1,38 @@
 package com.swit.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.*;
+
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collector;
+
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
 
 import com.swit.domain.Exam;
+import com.swit.domain.FavoritesExam;
+import com.swit.domain.FavoritesJob;
 import com.swit.domain.Job;
+import com.swit.domain.User;
 import com.swit.dto.ExamDTO;
 import com.swit.dto.JobDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
 import com.swit.repository.ExamRepository;
+
 import com.swit.repository.JobRepository;
+import com.swit.repository.UserRepository;
+import com.swit.repository.FavoritesExamRepository;
+import com.swit.repository.FavoritesJobRepository;
 
 import jakarta.transaction.Transactional;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -48,6 +44,9 @@ public class ExamjobService {
     private final ModelMapper modelMapper;
     private final ExamRepository examRepository;
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
+    private final FavoritesExamRepository favoritesExamRepository;
+    private final FavoritesJobRepository favoritesJobRepository;
 
     public PageResponseDTO<ExamDTO> examList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
@@ -72,13 +71,13 @@ public class ExamjobService {
     }
 
     // jobactive 설정 -> 날짜지나면 jobactive 0으로
-    @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
-    public void updateJobStatus() {
-        LocalDate currentDate = LocalDate.now();
-        List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
-        jobsToUpdate.forEach(job -> job.setJobActive(0));
-        jobRepository.saveAll(jobsToUpdate);
-    }
+    // @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
+    // public void updateJobStatus() {
+    //     LocalDate currentDate = LocalDate.now();
+    //     List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
+    //     jobsToUpdate.forEach(job -> job.setJobActive(0));
+    //     jobRepository.saveAll(jobsToUpdate);
+    // }
 
 
     public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO, String searchKeyword, String jobField, String sort) {
@@ -193,5 +192,102 @@ public class ExamjobService {
                 .build();
         return responseDTO;
     }
+
+
+
+    //시험 즐겨찾기
+    @Transactional
+    public boolean addFavorite(String userId, Integer examNo) {
+        
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으"));
+            Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음"));
+
+            if (!favoritesExamRepository.existsByUserAndExam(user, exam)) {
+                FavoritesExam favoritesExam = new FavoritesExam();
+                favoritesExam.setUser(user);
+                favoritesExam.setExam(exam);
+                favoritesExamRepository.save(favoritesExam);
+                return true;
+            }
+            return false;
+      
+    }
+
+    @Transactional
+    public boolean removeFavorite(String userId, Integer examNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으2"));
+            Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음2"));
+
+            if (favoritesExamRepository.existsByUserAndExam(user, exam)) {
+                favoritesExamRepository.deleteByUserAndExam(user, exam);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new Exception("즐겨찾기삭제에러", e);
+        }
+    }
+
+    @Transactional
+    public boolean isFavorite(String userId, Integer examNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으3"));
+            Exam exam = examRepository.findById(examNo).orElseThrow(() -> new RuntimeException("Exam못찾음3"));
+            return favoritesExamRepository.existsByUserAndExam(user, exam);
+        } catch (Exception e) {
+            throw new Exception("ifFavorite에러", e);
+        }
+    }
+
+    
+
+    //채용 즐겨찾기
+    @Transactional
+    public boolean addJobFavorite(String userId, Integer jobNo) {
+        
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으"));
+            Job job = jobRepository.findById(jobNo).orElseThrow(() -> new RuntimeException("job못찾음"));
+
+            if (!favoritesJobRepository.existsByUserAndJob(user, job)) {
+                FavoritesJob favoritesJob = new FavoritesJob();
+                favoritesJob.setUser(user);
+                favoritesJob.setJob(job);
+                favoritesJobRepository.save(favoritesJob);
+                return true;
+            }
+            return false;
+      
+    }
+
+    @Transactional
+    public boolean removeJobFavorite(String userId, Integer jobNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으2"));
+            Job job = jobRepository.findById(jobNo).orElseThrow(() -> new RuntimeException("job못찾음2"));
+
+            if (favoritesJobRepository.existsByUserAndJob(user, job)) {
+                favoritesJobRepository.deleteByUserAndJob(user, job);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new Exception("즐겨찾기삭제에러", e);
+        }
+    }
+
+    @Transactional
+    public boolean isJobFavorite(String userId, Integer jobNo) throws Exception {
+        try {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으3"));
+            Job job = jobRepository.findById(jobNo).orElseThrow(() -> new RuntimeException("job못찾음3"));
+            return favoritesJobRepository.existsByUserAndJob(user, job);
+        } catch (Exception e) {
+            throw new Exception("ifFavorite에러", e);
+        }
+    }
+
+   
+
 
 }

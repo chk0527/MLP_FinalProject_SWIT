@@ -82,10 +82,22 @@ const useCustomMove = () => {
         navigate({ pathname: `../study` })
     }
 
+    const moveToBoardList = (pageParam) => {
+        let queryStr = ""
+        if (pageParam) {
+            const pageNum = getNum(pageParam.page, 1)
+            const sizeNum = getNum(pageParam.size, 10)
+            queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
+        }
+        else {
+            queryStr = queryDefault
+        }
+        navigate({ pathname: `../list`, search: queryStr })
+
+    }
 
 
-
-    return { moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList, moveToPlaceList, moveToExamRead, moveToJobRead, moveToGroup, moveToList }
+    return { moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList, moveToPlaceList, moveToExamRead, moveToJobRead, moveToGroup, moveToList, moveToBoardList }
 }
 
 export default useCustomMove;

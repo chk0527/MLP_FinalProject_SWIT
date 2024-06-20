@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { API_SERVER_HOST, getStudy, fetchInquiries } from "../../api/StudyApi";
 import { memberCount } from "../../api/GroupApi";
 import { useNavigate } from "react-router-dom";
 import StudyListBtnComponent from "./StudyListBtnComponent";
@@ -23,7 +23,7 @@ const initState = {
   studyComm: "오픈채팅",
   studyLink: "kakao.com",
   studyUuid: "전용 링크",
-  uploadFileNames: []
+  uploadFileNames: [],
 };
 
 const host = API_SERVER_HOST;
@@ -37,10 +37,15 @@ const StudyReadComponent = ({ studyNo }) => {
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
   useEffect(() => {
-    getStudy(studyNo).then((data) => {
-      console.log(data);
-      setStudy(data);
-    });
+    const fetchData = async () => {
+      const studyData = await getStudy(studyNo);
+      setStudy(studyData);
+
+      const inquiriesData = await fetchInquiries(studyNo);
+      setInquiries(inquiriesData);
+    };
+
+    fetchData();
   }, [studyNo]);
 
   const openModal = async () => {
@@ -78,54 +83,46 @@ const StudyReadComponent = ({ studyNo }) => {
   };
 
   const handleViewInquiriesClick = () => {
-    setShowInquiries(prevState => !prevState);
+    setShowInquiries((prevState) => !prevState);
   };
 
   const ApplyButton = () => (
-    <button onClick={openModal} className="bg-green-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-green-600 transition duration-300">
+    <button
+      onClick={openModal}
+      className="bg-green-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-green-600 transition duration-300"
+    >
       신청
     </button>
   );
 
   return (
-    <div className="border-2 border-gray-200 mt-10 mx-4 p-6 bg-white rounded-lg shadow-lg">
-      <div className="w-full flex justify-center flex-col items-center mb-6">
-        {study.uploadFileNames.map((imgFile, i) => (
-          <img
-            alt="StudyImage"
-            key={i}
-            className="p-4 w-1/2 rounded-lg shadow-md"
-            src={`${host}/api/study/display/${imgFile}`}
-          />
-        ))}
-      </div>
-
-      <div className="flex justify-between mb-6">
+    <div>
+      {/* 스터디정보 */}
+      <div className="flex justify-between ">
         <StudyInfoComponent studyNo={studyNo} ActionComponent={ApplyButton} />
       </div>
-      
-      <div className="mb-6">
-        <button
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 mr-4"
-          onClick={handleInquiryButtonClick}
-        >
-          문의 작성
-        </button>
-        <button
-          className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300"
-          onClick={handleViewInquiriesClick}
-        >
-          문의 보기
-        </button>
-        {showInquiryForm && <StudyInquiryFormComponent studyNo={studyNo} setInquiries={setInquiries} />}
-        {showInquiries && <StudyInquiryListComponent studyNo={studyNo} />}
-      </div>
-      
-      <div className="flex justify-start">
-        <StudyListBtnComponent />
+
+      {/* 문의 */}
+      <div>
+        <StudyInquiryListComponent
+          studyNo={studyNo}
+          inquiries={inquiries}
+          setInquiries={setInquiries}
+        />
+        <StudyInquiryFormComponent
+          studyNo={studyNo}
+          setInquiries={setInquiries}
+        />
       </div>
 
-      <GroupJoinComponent isModalOpen={isModalOpen} closeModal={closeModal} studyNo={studyNo} />
+      {/* 목록으로 돌아가기 */}
+      <StudyListBtnComponent />
+
+      <GroupJoinComponent
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+        studyNo={studyNo}
+      />
     </div>
   );
 };

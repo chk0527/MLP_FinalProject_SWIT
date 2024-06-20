@@ -1,10 +1,19 @@
 package com.swit.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.swit.domain.Board;
 import com.swit.dto.BoardDTO;
+import com.swit.dto.PageRequestDTO;
+import com.swit.dto.PageResponseDTO;
 import com.swit.repository.BoardRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,5 +34,24 @@ public class BoardService {
         BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
         return boardDTO;
     }
-    
+
+    public PageResponseDTO<BoardDTO> list(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPage() - 1, // 1페이지가 0
+                pageRequestDTO.getSize(),
+                Sort.by("boardNo").descending());
+
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<BoardDTO> dtoList = result.getContent().stream()
+                .map(todo -> modelMapper.map(todo, BoardDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<BoardDTO> responseDTO = PageResponseDTO.<BoardDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+    }
 }
