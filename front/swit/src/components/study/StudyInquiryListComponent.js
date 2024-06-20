@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { responseSubmit, fetchInquiries } from "../../api/StudyApi";
+import { responseSubmit, fetchInquiries, deleteInquiry } from "../../api/StudyApi";
 import { isLeader } from "../../api/GroupApi";
 import reply from "../../img/reply.png";
 
@@ -24,6 +24,16 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
     const inquiriesData = await fetchInquiries(studyNo);
     setInquiries(inquiriesData);
     setIsResponseOpen((prev) => ({ ...prev, [inquiryNo]: false }));
+  };
+
+  const handleDeleteInquiry = async (inquiryNo) => {
+    const confirmed = window.confirm("문의를 삭제하시겠습니까?");
+    if (confirmed) {
+      await deleteInquiry(inquiryNo);
+      const inquiriesData = await fetchInquiries(studyNo);
+      setInquiries(inquiriesData);
+      alert("삭제 되었습니다.");
+    }
   };
 
   const openResponse = (inquiryNo) => {
@@ -53,7 +63,7 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
       <hr className="border-4 border-gray-500 mb-4 w-1/6" />
 
       <div className="flex justify-center">
-        <div className="px-4 w-1000 h-450 bg-white rounded border border-gray-200 overflow-auto custom-scrollbar">
+        <div className="px-4 w-1000 h-fit max-h-450 bg-white rounded border border-gray-200 overflow-auto custom-scrollbar">
           {inquiries == "" ? (
             <p className="text-center my-44">문의 내역이 없습니다</p>
           ) : (
@@ -63,7 +73,7 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
                   <p className="break-words text-sm text-gray-400 mx-6 mt-4">
                     {inquiry.user.userId} 님
                   </p>
-                  <div className="flex mt-4 mb-16">
+                  <div className="flex mt-4 mb-10">
                     <div className="border mx-4 border-gray-200 rounded bg-gray-500 text-white h-fit">
                       <p className="break-words py-2 px-4 ">질문</p>
                     </div>
@@ -84,6 +94,16 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
                           {inquiry.responseContent}
                         </p>
                       </div>
+                    </div>
+                  )}
+                  {isLeaderStatus && (
+                    <div className="flex justify-end">
+                      <button
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => handleDeleteInquiry(inquiry.inquiryNo)}
+                      >
+                        삭제
+                      </button>
                     </div>
                   )}
                   {isLeaderStatus &&

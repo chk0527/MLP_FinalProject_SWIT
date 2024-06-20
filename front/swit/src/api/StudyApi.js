@@ -67,6 +67,19 @@ export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등�
   return res.data;
 };
 
+export const deleteInquiry = async (inquiryNo) => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+      throw new Error('No access token found');
+  }
+  const res = await axios.delete(`${API_SERVER_HOST}/api/study/inquiries/${inquiryNo}`, {
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
+  });
+  return res.data;
+};
+
 export const responseSubmit = async (inquiryNo, responseContent) => { //답변 등록
   const token = sessionStorage.getItem('accessToken');
   if (!token) {

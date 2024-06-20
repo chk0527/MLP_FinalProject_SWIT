@@ -18,7 +18,7 @@ const items2 = [
   { name: "스터디 그룹", path: "/study", no: 0 },
   { name: "스터디 장소", path: "/place/list", no: 1 },
   { name: "시험 및 채용", path: "/job/list", no: 2 },
-  { name: "Q & A", path: "/", no: 3 },
+  { name: "Q & A", path: "/board", no: 3 },
 ];
 
 const Header = () => {
