@@ -6,15 +6,15 @@ import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode";
 
 const GroupTimerComponent = ({ studyNo }) => {
     const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
-    const [timers, setTimers] = useState([]); // 타이머 객체 관리
+    const [timers, setTimers] = useState([]);   // 타이머 객체 관리
     const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
     const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
     const [currentStopwatch, setCurrentStopwatch] = useState(null); // 현재 스톱워치 값 관리
-    const [studyTimeToday, setStudyTimeToday] = useState(0); // 오늘의 공부 시간
-    const [totalStudyTime, setTotalStudyTime] = useState(0); // 누적 공부 시간
-    const [userStudyTimes, setUserStudyTimes] = useState({}) // 유저별 공부 시간
-    const intervalTimerIds = useRef({}); // 각 타이머의 인터벌 ID 관리
-    const intervalStopWatchIds = useRef({}); // 각 스톱워치의 인터벌 ID 관리
+    const [studyTimeToday, setStudyTimeToday] = useState(0);    // 오늘의 공부 시간
+    const [totalStudyTime, setTotalStudyTime] = useState(0);    // 누적 공부 시간
+    const [userStudyTimes, setUserStudyTimes] = useState({})    // 유저별 공부 시간
+    const intervalTimerIds = useRef({});    // 각 타이머의 인터벌 ID 관리
+    const intervalStopWatchIds = useRef({});    // 각 스톱워치의 인터벌 ID 관리
 
     // studyNo에 따른 타이머/스톱워치 불러오기
     useEffect(() => {
@@ -32,9 +32,10 @@ const GroupTimerComponent = ({ studyNo }) => {
                 if (savedStopwatch) {
                     const fetchedStopwatch = response.find(timer => timer.timerNo === savedStopwatch.timerNo)
                     if (fetchedStopwatch) {
-                        setCurrentStopwatch(fetchedStopwatch)
+                        setCurrentStopwatch({ ...fetchedStopwatch, time: savedStopwatch.time })
+                        setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === fetchedStopwatch.timerNo ? { ...fetchedStopwatch, time: savedStopwatch.time } : t))
                         if (fetchedStopwatch.running) {
-                            handleStartStopwatch(fetchedStopwatch)
+                            handleStartStopwatch({ ...fetchedStopwatch, time: savedStopwatch.time })
                         }
                     } else {
                         localStorage.removeItem(`currentStopwatch_${studyNo}`)
@@ -45,9 +46,10 @@ const GroupTimerComponent = ({ studyNo }) => {
                 if (savedTimer) {
                     const fetchedTimer = response.find(timer => timer.timerNo === savedTimer.timerNo)
                     if (fetchedTimer) {
-                        setCurrentTimer(fetchedTimer)
+                        setCurrentTimer({ ...fetchedTimer, time: savedTimer.time })
+                        setTimers(timers => timers.map(t => t.timerNo === fetchedTimer.timerNo ? { ...fetchedTimer, time: savedTimer.time } : t))
                         if (fetchedTimer.running) {
-                            handleStartTimer(fetchedTimer)
+                            handleStartTimer({ ...fetchedTimer, time: savedTimer.time })
                         }
                     } else {
                         localStorage.removeItem(`currentTimer_${studyNo}`)
@@ -71,11 +73,6 @@ const GroupTimerComponent = ({ studyNo }) => {
             if (currentStopwatch) {
                 localStorage.setItem(`currentStopwatch_${studyNo}`, JSON.stringify(currentStopwatch))
             }
-        }
-
-        window.addEventListener('beforeunload', saveState)
-        return () => {
-            window.removeEventListener('beforeunload', saveState)
         }
     }, [timers, stopwatches, currentTimer, currentStopwatch, studyNo])
 
@@ -140,6 +137,20 @@ const GroupTimerComponent = ({ studyNo }) => {
         const seconds = String(time % 60).padStart(2, '0')
         return `${hours}시간 ${minutes}분 ${seconds}초 (${months}달 ${weeks}주 ${remainingDays}일)`
     }
+
+    // 공부 시간 복원
+    useEffect(() => {
+        const savedUserStudyTimes = JSON.parse(localStorage.getItem(`userStudyTimes_${studyNo}`))
+        if (savedUserStudyTimes) {
+            setUserStudyTimes(savedUserStudyTimes)
+        }
+    }, [studyNo])
+
+    // 공부 시간 업데이트
+    useEffect(() => {
+        localStorage.setItem(`userStudyTimes_${studyNo}`, JSON.stringify(userStudyTimes))
+    }, [userStudyTimes, studyNo])
+
 
     // 새로운 타이머(스톱워치) 생성
     const handleCreateTimer = async (type) => {
@@ -217,6 +228,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
+
     // 스톱워치 일시정지
     const handlePauseStopwatch = async (timer) => {
         try {
@@ -230,15 +242,18 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
+            localStorage.setItem(`currentStopwatch_${studyNo}`, JSON.stringify(updatedTimer)) // 로컬 스토리지에 상태 저장
             // 유저별 공부 시간 업데이트
             const userId = timer.userId
-            setUserStudyTimes(prev => ({
-                ...prev,
+            const updatedUserStudyTimes = {
+                ...userStudyTimes,
                 [userId]: {
-                    today: (prev[userId]?.today || 0) + elapsedTime,
-                    total: (prev[userId]?.total || 0) + elapsedTime
+                    today: (userStudyTimes[userId]?.today || 0) + elapsedTime,
+                    total: (userStudyTimes[userId]?.total || 0) + elapsedTime
                 }
-            }))
+            }
+            setUserStudyTimes(updatedUserStudyTimes)
+            localStorage.setItem(`userStudyTimes_${studyNo}`, JSON.stringify(updatedUserStudyTimes))
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('스톱워치 일시정지 실패 : ', error)
@@ -304,6 +319,7 @@ const GroupTimerComponent = ({ studyNo }) => {
     // 타이머 일시정지
     const handlePauseTimer = async (timer) => {
         try {
+            const userId = getUserIdFromToken()
             clearInterval(intervalTimerIds.current[timer.timerNo])
             const elapsedTime = Math.floor((Date.now() - timer.startTime) / 1000) // 작동한 시간 계산
             const updatedTimer = {
@@ -314,15 +330,17 @@ const GroupTimerComponent = ({ studyNo }) => {
             };
             setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentTimer(updatedTimer)
+            localStorage.setItem(`currentTimer_${studyNo}`, JSON.stringify(updatedTimer)) // 로컬 스토리지에 상태 저장
             // 유저별 공부 시간 업데이트
-            const userId = timer.userId
-            setUserStudyTimes(prev => ({
-                ...prev,
+            const updatedUserStudyTimes = {
+                ...userStudyTimes,
                 [userId]: {
-                    today: (prev[userId]?.today || 0) + elapsedTime,
-                    total: (prev[userId]?.total || 0) + elapsedTime
+                    today: (userStudyTimes[userId]?.today || 0) + elapsedTime,
+                    total: (userStudyTimes[userId]?.total || 0) + elapsedTime
                 }
-            }))
+            }
+            setUserStudyTimes(updatedUserStudyTimes)
+            localStorage.setItem(`userStudyTimes_${studyNo}`, JSON.stringify(updatedUserStudyTimes))
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('타이머 일시정지 실패 : ', error)
@@ -397,7 +415,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                     {stopwatches.map((stopwatch) => (
                         <div key={stopwatch.timerNo} className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg mb-4">
                             <FaStopwatch className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">{stopwatch.userId}님의 스톱워치</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{getUserNickFromToken(stopwatch.userId)}님의 스톱워치</h2>
                             <div className="space-y-4 w-full">
                                 <input
                                     type="text"
@@ -477,7 +495,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                     {timers.map((timer) => (
                         <div key={timer.timerNo} className="bg-green-200 p-4 flex flex-col items-center rounded-lg mb-4">
                             <FaClock className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">{timer.userId}님의 타이머</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{getUserNickFromToken(timer.userId)}님의 타이머</h2>
                             <div className="space-y-4 w-full">
                                 <input
                                     type="text"
