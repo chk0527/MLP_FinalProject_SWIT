@@ -97,15 +97,15 @@ function SearcIdComponent() {
       setConfirm(response.data);
       console.log(`setConfirm ${confirm.confirmNo}`);
       console.log(`setConfirm ${confirm.userId}`);
-      console.log(`setConfirm ${confirm.confirmName}`);
       console.log(`setConfirm ${confirm.confirmTarget}`);
       console.log(`setConfirm ${confirm.confirmPath}`);
+      console.log(`setConfirm ${confirm.confirmNum}`);
       console.log(`setConfirm ${confirm.confirmLimitDate}`);
       // 고객정보 확인, 인증번호 얻기, sms 발송
       send_sms(response.data)
       .then((result) => {
           console.log("인증번호 발송이 성공하였습니다.");
-          setConfirm(result.data);
+          
 
           clearVerificationTimer();             // 초기화
           setIsVerificationCodeSent(true);      // 활성화

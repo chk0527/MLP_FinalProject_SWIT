@@ -187,8 +187,8 @@ public class ConfirmController {
      * 단일 메시지 발송 예제
      */
     @PostMapping("send")
-    // public SingleMessageSentResponse sendOne(@RequestBody ConfirmDTO confirmDTO) {
-    public String sendOne(@RequestBody ConfirmDTO confirmDTO) {
+    public SingleMessageSentResponse sendOne(@RequestBody ConfirmDTO confirmDTO) {
+    // public String sendOne(@RequestBody ConfirmDTO confirmDTO) {
         System.out.println("SingleMessageSentResponse start");
 
         UserDTO userDTO = userService.get(confirmDTO.getUserId());
@@ -204,8 +204,8 @@ public class ConfirmController {
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("response " + response);
-        // return response;
-        return "ok";
+        
+        return response;
     }
 
     // 핸드폰 발송 인증 번호 확인
@@ -214,7 +214,7 @@ public class ConfirmController {
         System.out.println("userCheck2 start=================");
 
         System.out.println("no  " + confirmDTO.getConfirmNo());
-        System.out.println("name  " + confirmDTO.getConfirmNum());
+        System.out.println("Num  " + confirmDTO.getConfirmNum());
         System.out.println("date  " + confirmDTO.getConfirmLimitDate());
 
         // 제한일시 확인
