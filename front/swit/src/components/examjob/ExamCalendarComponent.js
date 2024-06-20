@@ -183,15 +183,7 @@ const ExamCalendarComponent = () => {
         eventMouseLeave={handleMouseLeave}
         eventClick={handleEventClick}
 
-        customButtons={{
-          today: {
-            text: '오늘', //today-> 오늘
-            click: function () {
-              const calendarApi = this.getApi();
-              calendarApi.today();
-            }
-          }
-        }}
+      
       />
     </div>
     </div>

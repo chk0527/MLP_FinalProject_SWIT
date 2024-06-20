@@ -82,10 +82,26 @@ const useCustomMove = () => {
         navigate({ pathname: `../study` })
     }
 
+    const moveToBoardList = (pageParam) => {
+        let queryStr = ""
+        if (pageParam) {
+            const pageNum = getNum(pageParam.page, 1)
+            const sizeNum = getNum(pageParam.size, 10)
+            queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
+        }
+        else {
+            queryStr = queryDefault
+        }
+        navigate({ pathname: `..`, search: queryStr })
+
+    }
+
+    const moveToBoardRead = (num) => {
+        navigate({ pathname: `../board/read/${num}`  ,search: queryDefault }) //조회시에 기존의 쿼리문자열을 유지하기 위해
+    }
 
 
-
-    return { moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList, moveToPlaceList, moveToExamRead, moveToJobRead, moveToGroup, moveToList }
+    return { moveToExamList, page, size, PlacePage, PlaceSize, moveToRead, moveToJobList, moveToPlaceList, moveToExamRead, moveToJobRead, moveToGroup, moveToList, moveToBoardList, moveToBoardRead }
 }
 
 export default useCustomMove;

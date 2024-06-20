@@ -18,6 +18,7 @@ const initState = {
   studyHeadcount: 1,
   studyOnline: true,
   studySubject: "개발",
+  studyAddr: "서울시 강동구",
 };
 
 const questionInit = {
@@ -47,6 +48,8 @@ const StudyAddComponent = () => {
   const handleChangeStudy = (e) => {
     study[e.target.name] = e.target.value;
     setStudy({ ...study });
+    console.log(e.target.name)
+    console.log(e.target.value)
   };
 
   const handleClickAdd = () => {
@@ -76,9 +79,10 @@ const StudyAddComponent = () => {
       formData.append("questions", question);
     });
 
+    console.log(formData);
     postAdd(formData)
       .then((result) => {
-        console.log("추가 실행");
+        console.log("테스트@@@@@@@@@@@@@@@@@@",formData );
         setResult(result.studyNo);
         setStudy({ ...initState });
         setQuestion({ ...questionInit });

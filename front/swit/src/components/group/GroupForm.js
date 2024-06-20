@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { addGroup } from '../../api/GroupApi';
+import { addGroup, isMember } from '../../api/GroupApi';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { getUserIdFromToken } from '../../util/jwtDecode';
 
 const GroupForm = ({ studyNo, closeModal }) => {
     const [questions, setQuestions] = useState({});
@@ -23,26 +24,50 @@ const GroupForm = ({ studyNo, closeModal }) => {
     }, [studyNo]);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const groupData = {
-            studyNo: parseInt(studyNo)
-        };
+      e.preventDefault();
 
-        const answerData = {
-            studyNo: parseInt(studyNo),
-            ...answers
-        };
+      const userId = getUserIdFromToken();
+      let memberStatus = userId ? -1 : -2; // -1: 가입신청을 하지 않은경우, -2: 비회원(로그인 안 한 상태)
+      if (userId) {
+          memberStatus = await isMember(userId, studyNo);
+      }
 
-        try {
-            const response = await addGroup(groupData, answerData);
-            console.log('Group added successfully:', response);
-            alert('신청이 완료 되었습니다.');
-            closeModal(); // Close modal after successful submission
-        } catch (error) {
-            console.error('Error adding group:', error);
-            alert('Error adding group');
-        }
-    };
+      switch (memberStatus) {
+          case 0:
+              alert('승인 대기 중입니다.');
+              closeModal()
+              return;
+          case 1:
+              alert('이미 가입된 상태입니다.');
+              closeModal()
+              return;
+          case 2:
+              alert('가입이 거절되었습니다.');
+              closeModal()
+              return;
+          default:
+              break;
+      }
+
+      const groupData = {
+          studyNo: parseInt(studyNo)
+      };
+
+      const answerData = {
+          studyNo: parseInt(studyNo),
+          ...answers
+      };
+
+      try {
+          const response = await addGroup(groupData, answerData);
+          console.log('Group added successfully:', response);
+          alert('신청이 완료 되었습니다.');
+          closeModal(); // Close modal after successful submission
+      } catch (error) {
+          console.error('Error adding group:', error);
+          alert('Error adding group');
+      }
+  };
 
     const handleAnswerChange = (e) => {
         const { name, value } = e.target;

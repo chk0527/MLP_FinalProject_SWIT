@@ -1,3 +1,4 @@
+import BoardAddComponent from "../../components/board/BoardAddComponent";
 import BasicLayout from "../../layouts/BasicLayout";
 
 const BoardAddPage = () => {
@@ -8,7 +9,7 @@ const BoardAddPage = () => {
             </div>
             <div className="flex">
                 <div className="w-full pr-2">
-                    {/* <StudyReadComponent studyNo={studyNo} /> */}
+                    <BoardAddComponent/>
                 </div>
             </div>
         </BasicLayout>       

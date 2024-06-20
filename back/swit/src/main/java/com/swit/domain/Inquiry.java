@@ -28,8 +28,9 @@ public class Inquiry {
     @JoinColumn(name = "study_no", nullable = false)
     private Study study;
 
-    @Column(name = "inquiry_content", nullable = false, length = 200)
+    @Column(name = "inquiry_content", nullable = false, columnDefinition = "TEXT")
     private String inquiryContent;
+
 
     @Column(name = "inquiry_time", nullable = false)
     private LocalDateTime inquiryTime;

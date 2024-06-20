@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getJobList } from '../../api/ExamJobApi';
+import { getJobList, isJobFavorite, addJobFavorite, removeJobFavorite } from '../../api/ExamJobApi';
 import useCustomMove from '../../hooks/useCustomMove';
 import PageComponent from '../common/PageComponent';
 import searchIcon from "../../img/search-icon.png";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import { FaStar, FaRegStar } from 'react-icons/fa';
+import { getUserIdFromToken } from "../../util/jwtDecode";
 
 
 const initState = {
@@ -26,7 +27,7 @@ const ListComponent = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [jobField, setJobField] = useState('');
   const [sort, setSort] = useState('jobNo');
-
+  const [favoriteStatus, setFavoriteStatus] = useState({});
   const navigate = useNavigate();
 
   const handleClickExamList = useCallback(() => {
@@ -40,6 +41,16 @@ const ListComponent = () => {
   const fetchJobs = async (params) => {
     const jobList = await getJobList(params || { page, size, searchKeyword, jobField, sort });
     setServerData(jobList);
+
+    const userId = getUserIdFromToken();
+    if (userId) {
+      const status = {};
+      for (const job of jobList.dtoList) {
+        const isFavorite = await isJobFavorite(userId, job.jobNo);
+        status[job.jobNo] = isFavorite;
+      }
+      setFavoriteStatus(status);
+    }
   };
 
   useEffect(() => {
@@ -67,6 +78,36 @@ const ListComponent = () => {
   const handleJobFieldClick = (field) => {
     setJobField(field);
   };
+
+
+  //즐겨찾기 기능
+  const handleFavorite = async (jobNo) => {
+
+    //로그인x
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      if (window.confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+        navigate('/login');
+      }
+      return;
+    }
+
+    //로그인o
+    const isFavorite = favoriteStatus[jobNo];
+    const request = isFavorite ? removeJobFavorite : addJobFavorite;
+    try {
+      await request(userId, jobNo);
+      setFavoriteStatus({
+        ...favoriteStatus,
+        [jobNo]: !isFavorite
+      });
+      alert(isFavorite ? '즐겨찾기에서 삭제되었습니다.' : '즐겨찾기에 추가되었습니다.');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
 
 
   return (
@@ -140,9 +181,9 @@ const ListComponent = () => {
 
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="">
-
-                      <FaStar size={30} color="#FFF06B" />
-                      {/* faRegStar : 빈별 faStar: 채워진 별 */}
+                    <button onClick={() => handleFavorite(job.jobNo)} className='mb-5'>
+                          {favoriteStatus[job.jobNo] ? <FaStar size={30} color="#FFF06B" /> : <FaRegStar size={30} color="#FFF06B" />}
+                        </button>
                     </dt>
                     <dd></dd>
                   </div>
