@@ -16,7 +16,7 @@ const initState = {
 }
 
 const BoardListComponent = () => {
-    const { page, size, moveToList, moveToRead } = useCustomMove()
+    const { page, size, moveToBoardList, moveToBoardRead } = useCustomMove()
     //
     const [serverData, setServerData] = useState(initState)
 
@@ -31,23 +31,23 @@ const BoardListComponent = () => {
             <div className="flex flex-wrap mx-auto justify-center p-6">
                 {serverData.dtoList.map(board =>
                     <div key={board.boardNo}
-                        className="w-full min-w-[400px] p-2 m-2 rounded shadow-md" onClick={()=>moveToRead(board.boardNo)}>
+                        className="w-full min-w-[400px] p-2 m-2 rounded shadow-md" onClick={()=>moveToBoardRead(board.boardNo)}>
                         <div className="flex">
                             <div className="font-extrabold text-2xl p-2 w-1/12">
                                 {board.boardNo}
                             </div>
                             <div className="text-1xl m-1 p-2 w-8/12 font-extrabold">
-                                {board.title}
+                                {board.boardTitle}
                             </div>
                             <div className="text-1xl m-1 p-2 w-2/10 font-medium">
-                                {board.boardCreatDate}
+                                {board.boardCreatedDate}
                             </div>
                         </div>
                     </div>
 
                 )}
             </div>
-            <PageComponent serverData={serverData} movePage={moveToList}/>
+            <PageComponent serverData={serverData} movePage={moveToBoardList}/>
         </div>
     ) //return 
 }

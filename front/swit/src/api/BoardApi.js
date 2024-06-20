@@ -28,3 +28,24 @@ export const getBoardList = async (pageParam) => {
   const res = await axios.get(`${prefix}/list`, { params: { page: page, size: size } })
   return res.data;
 }
+
+export const deleteOne = async (boardNo) => {
+  const res = await axios.delete(`${prefix}/${boardNo}`)
+  return res.data;
+}
+
+export const putOne = async (board) => {
+  const token = sessionStorage.getItem("accessToken");
+  console.log("react sessionStorage Token값:" + token);
+  if (!token) {
+    throw new Error("No access token found");
+  }
+  const header = {
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": `Bearer ${token}`,
+    },
+  };
+  const res = await axios.put(`${prefix}/${board.boardNo}`, board, header)
+  return res.data;
+}
