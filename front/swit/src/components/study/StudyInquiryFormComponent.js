@@ -1,33 +1,56 @@
-import React, { useState } from 'react';
-import { inquirySubmit, fetchInquiries } from '../../api/StudyApi';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { inquirySubmit, fetchInquiries } from "../../api/StudyApi";
+import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 
 const StudyInquiryFormComponent = ({ studyNo, setInquiries }) => {
-    const [inquiryContent, setInquiryContent] = useState('');
+  const [inquiryContent, setInquiryContent] = useState("");
+  const navigate = useNavigate();
 
-    const handleInquirySubmit = async () => {
-        await inquirySubmit(studyNo, inquiryContent);
-        setInquiryContent('');
-        const inquiriesData = await fetchInquiries(studyNo);
-        setInquiries(inquiriesData);
-    };
+  const handleInquirySubmit = async () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    
+    await inquirySubmit(studyNo, inquiryContent);
+    setInquiryContent("");
+    const inquiriesData = await fetchInquiries(studyNo);
+    setInquiries(inquiriesData);
+  };
 
-    return (
-        <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-4">문의하기</h2>
-            <textarea
-                className="w-full p-4 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={inquiryContent}
-                onChange={(e) => setInquiryContent(e.target.value)}
-                placeholder="질문을 입력하세요..."
-            />
-            <button
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300"
-                onClick={handleInquirySubmit}
-            >
-                등록
-            </button>
-        </div>
-    );
+  //엔터키이벤트
+  const pressEnter = (e) => {
+    if (e.nativeEvent.isComposing) {
+      // isComposing 이 true 이면 조합 중이므로 동작을 막는다.
+      return;
+    }
+    if (e.key === "Enter" && e.shiftKey) {
+      return;
+    } else if (e.key === "Enter") {
+      handleInquirySubmit();
+    }
+  };
+
+  return (
+    <div className="flex border border-gray-200 justify-center items-center py-4 gap-8">
+      <textarea
+        className="resize-none  w-750 h-10 py-1.5 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+        value={inquiryContent}
+        onKeyDown={(e) => pressEnter(e)}
+        onChange={(e) => setInquiryContent(e.target.value)}
+        placeholder="질문을 입력하세요."
+      />
+      <button
+        className="text-gray-500 border-2 border-solid border-gray-400 bg-white px-6 py-2 rounded hover:border-black hover:text-black transition duration-300"
+        onClick={handleInquirySubmit}
+      >
+        등록
+      </button>
+    </div>
+  );
 };
 
 export default StudyInquiryFormComponent;

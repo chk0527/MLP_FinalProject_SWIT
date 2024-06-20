@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import Cookies from 'js-cookie';
-import api from "../api/api";
-import * as auth from "../api/loginApi";
+import api from "../api/Api"
+import * as auth from "../api/LoginApi"
 
 export const LoginContext = createContext();
 LoginContext.displayName = "LoginContextName";
@@ -102,7 +102,7 @@ const LoginContextProvider = ({ children }) => {
             }
 
         } catch (error) {
-            alert('로그인 실패!');
+            alert('아이디나 비밀번호가 틀렸습니다.');
         }
     };
 

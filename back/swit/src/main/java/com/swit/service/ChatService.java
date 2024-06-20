@@ -1,40 +1,56 @@
 package com.swit.service;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.List;
-
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.swit.domain.Study;
-import com.swit.dto.StudyDTO;
 import com.swit.repository.ChatMessageRepository;
+import com.swit.repository.UserRepository;
 import com.swit.repository.StudyRepository;
 import com.swit.domain.ChatMessage;
+import com.swit.domain.User;
+import com.swit.dto.ChatMessageDTO;
+import com.swit.domain.Study;
 
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.util.List;
 
 @Service
-@Transactional
-@Log4j2
-
 public class ChatService {
 
-    private final ChatMessageRepository chatMessageRepository;
+  private final ChatMessageRepository chatMessageRepository;
+  private final UserRepository userRepository;
+  private final StudyRepository studyRepository;
 
-    public ChatService(ChatMessageRepository chatMessageRepository) {
-        this.chatMessageRepository = chatMessageRepository;
-    }
+  public ChatService(ChatMessageRepository chatMessageRepository, UserRepository userRepository,
+      StudyRepository studyRepository) {
+    this.chatMessageRepository = chatMessageRepository;
+    this.userRepository = userRepository;
+    this.studyRepository = studyRepository;
+  }
 
-    public List<ChatMessage> getChatMessagesByStudyNo(Long studyNo) {
-        return chatMessageRepository.findByStudyNo(studyNo);
-    }
+  public List<ChatMessage> getChatMessagesByStudyNo(Integer studyNo) {
+    return chatMessageRepository.findByStudyStudyNo(studyNo);
+  }
 
-    public void saveChatMessage(ChatMessage chatMessage) {
-        chatMessageRepository.save(chatMessage);
-    }
+  @Transactional
+  public void saveChatMessage(ChatMessage chatMessage) {
+    chatMessageRepository.save(chatMessage);
+  }
+
+  public User getUserById(String userId) {
+    return userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+  }
+
+  public Study getStudyById(Integer studyNo) {
+    return studyRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Study not found"));
+  }
+
+  public ChatMessageDTO convertToDTO(ChatMessage chatMessage) {
+    ChatMessageDTO dto = new ChatMessageDTO();
+    dto.setId(chatMessage.getId());
+    dto.setStudyNo(chatMessage.getStudy().getStudyNo());
+    dto.setMessage(chatMessage.getMessage());
+    dto.setUserNick(chatMessage.getUser().getUserNick());
+    dto.setCreatedDate(chatMessage.getCreatedDate());
+    return dto;
+  }
 }

@@ -1,10 +1,17 @@
 package com.swit.domain;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,18 +26,29 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long studyNo;
+    @ManyToOne
+    @JoinColumn(name = "study_no", referencedColumnName = "studyNo", nullable = false)
+    private Study study;
 
     @Column(nullable = false)
-    private String name;
+    private String userNick;
 
     @Column(nullable = false)
     private String message;
 
-    public ChatMessage(Long studyNo, String name, String message) {
-        this.studyNo = studyNo;
-        this.name = name;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    private User user;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    public ChatMessage(Study study, String userNick, String message, User user) {
+        this.study = study;
+        this.userNick = userNick;
         this.message = message;
+        this.user = user;
+        this.createdDate = LocalDateTime.now();  // createdDate를 현재 시간으로 설정
     }
 }
