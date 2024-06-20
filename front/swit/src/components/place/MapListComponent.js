@@ -224,6 +224,23 @@ const MapListComponent = () => {
                   key={place.placeNo}
                   className="w-350 h-350 text-center mb-8"
                 >
+                  <Link
+                    to={{ pathname: `/place/read/${place.placeNo}` }}
+                    state={1}
+                  >
+                    <div className="overflow-hidden ">
+                      <img
+                        className="w-400 h-96 object-cover"
+                        src={place.placeImg}
+                      ></img>
+                    </div>
+                    <div className="pt-2 text-start">
+                      <p className="font-bold my-2">
+                        {place.placeAddr.substring(0, 6)}
+                      </p>
+                      <p className="text-2xl">{place.placeName}</p>
+                    </div>
+                  </Link>
                   <div className="overflow-hidden">
                     <img
                       className="w-400 h-96 object-cover"

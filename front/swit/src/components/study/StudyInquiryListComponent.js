@@ -71,7 +71,7 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
               <div key={inquiry.inquiryNo} className="border-t py-8">
                 <div>
                   <p className="break-words text-sm text-gray-400 mx-6 mt-4">
-                    {inquiry.user.userId} 님
+                    {inquiry.user.userNick} 님
                   </p>
                   <div className="flex mt-4 mb-10">
                     <div className="border mx-4 border-gray-200 rounded bg-gray-500 text-white h-fit">
