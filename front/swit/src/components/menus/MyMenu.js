@@ -1,25 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useContext, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import profile from "../../img/profileEx.jpg";
 import { LoginContext } from "../../contexts/LoginContextProvider";
-import Cookies from 'js-cookie';
 import { getUserImage } from '../../api/UserApi';
 import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 
-
 const MyMenu = ({ callbackFn }) => {
   const [studyList, setStudyList] = useState(false);  //모달창
-  const { isLogin, login, logout } = useContext(LoginContext)
-  const [userImage, setUserImage] = useState(null)   // 이미지 관리
-  const navigate = useNavigate() // useNavigate 훅 추가
+  const { isLogin, logout } = useContext(LoginContext);
+  const [userImage, setUserImage] = useState(null);   // 이미지 관리
+  const navigate = useNavigate(); // useNavigate 훅 추가
 
-  console.info("MyMenu isLogin [" + isLogin + "]");
-  const myStudy = () => {
-    setStudyList(!studyList);
-  };
-
-  // 로그인한 상태면 유저ID 가져오고, 로그아웃한 상태면 null 반환
   const userId = isLogin ? getUserIdFromToken() : null;
 
   useEffect(() => {
@@ -34,15 +25,13 @@ const MyMenu = ({ callbackFn }) => {
       } else {
         setUserImage(`${process.env.PUBLIC_URL}/user0_blank.png`);
       }
-    }
+    };
     fetchUserInfo();
   }, [userId]);
 
-  // if (!userId) {
-  //     alert("로그인 후 이용해주세요");
-  //     navigate("/login");
-  //     return;
-  // }
+  const myStudy = () => {
+    setStudyList(!studyList);
+  };
 
   return (
     <AnimatePresence>
@@ -65,9 +54,9 @@ const MyMenu = ({ callbackFn }) => {
         transition={{ duration: 0.5 }}
       >
         <button className="absolute p-6 pb-10 right-0" onClick={callbackFn}>
-          🤍
+          X
         </button>
-        <div className="pt-24">
+        <div className="pt-24 font-GSans">
           <div className="flex pb-2">
             {isLogin ? (
               <>
@@ -84,7 +73,7 @@ const MyMenu = ({ callbackFn }) => {
             alt="이미지"
           ></img>
           <div className="text-2xl pt-8">
-            {isLogin ? (
+            
               <>
                 <Link to={`/mypage/${userId}`}>
                   <p className="py-2">내 정보</p>
@@ -112,23 +101,17 @@ const MyMenu = ({ callbackFn }) => {
                   )}
                 </div>
                 <div className="absolute bottom-0 pb-24">
-                  <button onClick={logout}>로그아웃</button>
+                  <button onClick={logout} className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700">
+                    로그아웃
+                  </button>
                 </div>
               </>
-            ) : (
-              <div className="absolute bottom-0 pb-24">
-                <button
-                  onClick={() => navigate('/login')}
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                >
-                  로그인
-                </button>
-              </div>
-            )}
+           
           </div>
         </div>
       </motion.div>
     </AnimatePresence>
   );
 };
+
 export default MyMenu;
