@@ -73,5 +73,7 @@ export const send_sms = (confirmDTO) => {
 };
 
 // 아이디 찾기 : 핸드폰 번호 검증 -> 인증번호 확인
-export const searchId2   = (confirmNum) => axios.post(`/api/confirm/userCheck2`, confrimNum)
-
+export const searchId2   = (confirmDTO) => {
+  const { confirmNo, userId, confirmTarget, confirmPath, confirmNum, confirmLimitDate } = confirmDTO;
+  return api.post(`/api/confirm/userCheck2`, confirmDTO);
+}

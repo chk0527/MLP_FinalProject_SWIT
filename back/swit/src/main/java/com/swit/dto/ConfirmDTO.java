@@ -2,17 +2,19 @@ package com.swit.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
+// import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
+// @AllArgsConstructor
 @NoArgsConstructor
 public class ConfirmDTO {
     private Integer confirmNo;
@@ -23,4 +25,21 @@ public class ConfirmDTO {
     private String confirmNum;                          // 난수 발생 6자리 숫자
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime confirmLimitDate;             
+
+    @JsonCreator
+    public ConfirmDTO(
+        @JsonProperty("confirmNo") Integer confirmNo,
+        @JsonProperty("userId") String userId,
+        @JsonProperty("confirmTarget") String confirmTarget,
+        @JsonProperty("confirmPath") String confirmPath,
+        @JsonProperty("confirmNum") String confirmNum,
+        @JsonProperty("confirmLimitDate") LocalDateTime confirmLimitDate
+    ) {
+        this.confirmNo = confirmNo;
+        this.userId = userId;
+        this.confirmTarget = confirmTarget;
+        this.confirmPath = confirmPath;
+        this.confirmNum = confirmNum;
+        this.confirmLimitDate = confirmLimitDate;
+    }
 }

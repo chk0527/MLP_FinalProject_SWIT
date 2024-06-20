@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { searchId, send_sms } from "../../api/LoginApi"
+import { searchId, searchId2, send_sms } from "../../api/LoginApi"
 
 const initState = { 
-  userNo:'',
+  confirmNo:'',
   userId:'',
-  userName:'',
-  userEmail:'',
-  userPhone:'',
-  userCreateDate:''
+  confirmTarget:'',
+  confirmPath:'',
+  confirmNum:'',
+  confirmLimitDate:''
 }
-
-
 
 function SearcIdComponent() {
   const [certifyType, setCertifyType] = useState('1');
+  const [resultType, setResultType] = useState('1');
+  
   const [name, setName] = useState('');
   const [emailHead, setEmailHead] = useState('');
   const [emailDetail, setEmailDetail] = useState('');
@@ -48,10 +48,12 @@ function SearcIdComponent() {
 
   const handleEmailDetailChange = (e) => {
     setEmailDetail(e.target.value);
+    setEmailDomain("");
   };
 
   const handleEmailDomainChange = (e) => {
     setEmailDomain(e.target.value);
+    setEmailDetail("");
   };
 
   const handleMobilePrefixChange = (e) => {
@@ -93,12 +95,21 @@ function SearcIdComponent() {
       console.log("sms 발송 nework에서 확인" + response.data);
       // 임시 처리
       setConfirm(response.data);
-
+      console.log(`setConfirm ${confirm.confirmNo}`);
+      console.log(`setConfirm ${confirm.userId}`);
+      console.log(`setConfirm ${confirm.confirmName}`);
+      console.log(`setConfirm ${confirm.confirmTarget}`);
+      console.log(`setConfirm ${confirm.confirmPath}`);
+      console.log(`setConfirm ${confirm.confirmLimitDate}`);
       // 고객정보 확인, 인증번호 얻기, sms 발송
       // send_sms(response.data)
       // .then((result) => {
       //     console.log("인증번호 발송이 성공하였습니다.");
       //     setConfirm(result.data);
+
+            clearVerificationTimer();             // 초기화
+            setIsVerificationCodeSent(true);      // 활성화
+            startVerificationTimer();             // 타이머 카운트 시작
       // })
       // .catch((error) => {
       //     console.log("인증번호 발송이 실패하였습니다.");
@@ -107,13 +118,11 @@ function SearcIdComponent() {
 
     })
     .catch((error) => {
-      console.log("회원명, 핸드폰번호를 확인해 주세요.");
+      alert("회원명, 핸드폰번호를 확인해 주세요.");
       return;
     });
+    
 
-    clearVerificationTimer();             // 초기화
-    setIsVerificationCodeSent(true);      // 활성화
-    startVerificationTimer();             // 타이머 카운트 시작
   };
 
   const startVerificationTimer = () => {
@@ -133,20 +142,40 @@ function SearcIdComponent() {
   const handleVerifyCode = () => {
     // 실제 인증 코드 확인 로직 작성
     console.log('인증 코드 확인');
+
+    try {
+      console.log(`try ${confirm.confirmNo}`);
+      console.log(`try ${confirm.userId}`);
+      console.log(`try ${confirm.confirmTarget}`);
+      console.log(`try ${confirm.confirmPath}`);
+      console.log(`try ${confirmNum}`);
+      console.log(`try ${confirm.confirmLimitDate}`);
+      searchId2({
+        confirmNo: confirm.confirmNo,
+        userId: confirm.userId,
+        confirmTarget: confirm.confirmTarget,
+        confirmPath: confirm.confirmPath,
+        confirmNum: confirmNum,
+        confirmLimitDate: confirm.confirmLimitDate
+      })
+      .then((response) => {
+        console.log("인증번호 정상 입니다.");
+        setConfirm(response.data);
+        setIsVerificationCodeSent(false);
+        alert("인증번호 정상입니다.");
+        // 인증 성공 시
+        // setTimeRemaining(300); // 남은 시간 5분으로 초기화
+        // clearVerificationTimer();
+
+      })
+      .catch((error) => {
+        alert("인증번호 틀렸습니다. 다시 입력해 주세요");
+        return;
+      });
+    } catch (error) {
+      alert("인증번호 틀렸습니다. 다시 입력해 주세요");
+    }
     
-    searchId2(`${confirmNum}`)
-    .then((response) => {
-      console.log("인증번호 정상 입니다.");
-      
-    })
-    .catch((error) => {
-      console.log("인증번호 틀렸습니다. 다시 입력해 주세요");
-      return;
-    });
-    
-    // 인증 성공 시
-    setTimeRemaining(300); // 남은 시간 5분으로 초기화
-    clearVerificationTimer();
     // 인증 실패 시
     // setIsVerificationCodeSent(false);
     // setTimeRemaining(300);
@@ -161,43 +190,72 @@ function SearcIdComponent() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    console.log(`${confirm.userId}`);
+
     // 여기서 form 데이터를 서버로 전송하는 로직 작성
     // "1" 이메일 검증, "2" 핸드폰 검증
+
     if (certifyType == '1') {
         console.log("이메일 검증")
-        searchId(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+
+        // 이름 필수 입력 체크
+        if (!name.trim()) {
+          alert('이름을 입력해 주세요.');
+          return;
+        }
+        
+        if (!emailHead.trim()) {
+          alert('이메일을 입력해 주세요1.');
+          return;
+        }
+
+        if (!emailDomain.trim()) {
+          if(!emailDetail.trim()) {
+            alert('이메일을 입력해 주세요.');
+            return;
+          } else {
+            setUserEmail(emailHead + "@" + emailDetail);
+          }
+
+        } else {
+          setUserEmail(emailHead + "@" + emailDetail);
+        }
+
+        searchId(certifyType, "", name, userEmail, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
         .then((response) => {
-          // 고객정보 확인, 이메일 발송
+
           console.log("이메일 검증 nework에서 확인" + response.data);
-          send_email(response.data)
+          // 고객정보 확인, 이메일 발송
+          // send_email(response.data)
         })
         .catch((error) => {
           console.log("회원명, 이메일을 확인해 주세요.");
           return;
         });
-    } else {
-      console.log("핸드폰 인증번호 검증")
-      searchId2(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
-      .then((response) => {
-        // 고객정보 확인, 이메일 발송
-        console.log("이메일 검증 nework에서 확인" + response.data);
-        send_email(response.data)
-      })
-      .catch((error) => {
-        console.log("회원명, 이메일을 확인해 주세요.");
-        return;
-      });
 
+    } else {
+      if (`${confirm.confirmPath}` == '2') {
+        if (certifyType == '2') {
+            console.log("핸드폰 인증번호 검증")
+            // searchId2(certifyType, "", name, `${emailHead}@${emailDomain}`, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+            // .then((response) => {
+            //   // 고객정보 확인, 이메일 발송
+            //   console.log("이메일 검증 nework에서 확인" + response.data);
+            //   send_email(response.data)
+            // })
+            // .catch((error) => {
+            //   console.log("회원명, 이메일을 확인해 주세요.");
+            //   return;
+            // });
+        } else {
+          console.log("아이디 찾기가 핸드폰인지 확인해 주세요.");
+          return;
+        }
+      }
     }
 
-    console.log({
-      certifyType,
-      name,
-      email: `${emailHead}@${emailDetail} or  ${emailDomain}`,
-      mobile: `${mobilePrefix}-${mobile1}-${mobile2}`,
-    });
+    
   };
-
 
 
   // return (
@@ -389,8 +447,8 @@ function SearcIdComponent() {
         <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
         <form name="pageForm" method="post" onSubmit={handleSubmit}>
           <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
-          <input type="hidden" id="ResultType" name="ResultType" value="1" />
-        {ResultType === '1' && (  
+          <input type="hidden" id="resultType" name="resultType" value="1" />
+        {resultType === '1' && (  
         <>
           <div className="space-y-6">
             <div>
@@ -405,8 +463,7 @@ function SearcIdComponent() {
                   className="mr-2"
                 />
                 이메일 인증
-              </label>
-              <label className="block font-medium mb-2">
+                &emsp;
                 <input
                   type="radio"
                   id="lb_certifytype_mobile"
@@ -562,13 +619,13 @@ function SearcIdComponent() {
           </p>
         </>
         )}
-        {ResultType === '2' && ( 
+        {resultType === '2' && ( 
         <> 
           <div>
             <label htmlFor="lb_mobile" className="block font-medium mb-2">
                   회원님의 아이디는 
                   <p>
-                    {userId} 
+
                   </p> 입니다.
             </label>
           </div> 

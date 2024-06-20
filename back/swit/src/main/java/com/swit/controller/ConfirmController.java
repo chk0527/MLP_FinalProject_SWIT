@@ -170,7 +170,9 @@ public class ConfirmController {
         confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
 
         // 저장 후 PK(confirmNO)를 객체에 저장 후 front에 return
-        confirmDTO.setConfirmNo(confirmService.confirmIns(confirmDTO));
+        confirmDTO = confirmService.confirmIns(confirmDTO);
+        System.out.println("confirmDTO.getConfirmNo(): " + confirmDTO.getConfirmNo());
+        System.out.println("confirmDTO: " + confirmDTO);
 
         return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
     }
@@ -207,35 +209,31 @@ public class ConfirmController {
     }
 
     // 핸드폰 발송 인증 번호 확인
-    @GetMapping("userCheck2")
+    @PostMapping("userCheck2")
     public ResponseEntity<?> userCheck2(@RequestBody ConfirmDTO confirmDTO) {
         System.out.println("userCheck2 start=================");
 
         System.out.println("no  " + confirmDTO.getConfirmNo());
         System.out.println("name  " + confirmDTO.getConfirmNum());
+        System.out.println("date  " + confirmDTO.getConfirmLimitDate());
 
-
+        // 제한일시 확인
+        // 인증번호 확인
+        confirmDTO = confirmService.confirmSel(confirmDTO);
         
-        //     userDTO = confirmService.userCheck4(id
-        //                                    ,userName
-        //                                    ,userPhone
-        //                                    ,"");
-        // } else {
-        //     System.out.println("userCheck5555 start");
-        //     return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
-        // }
+        int confirmNo = confirmDTO.getConfirmNo();
+        String confirmNum = confirmDTO.getConfirmNum();
+        
+        System.out.println("confirmNo  " + confirmNo);
+        if (confirmNo == 0) {
+            
+            return new ResponseEntity<>(confirmDTO, HttpStatus.GONE);  // 410 기간만료 
+        }
 
-
-        // confirmDTO.setUserId(userDTO.getUserId());
-        // confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
-        // confirmDTO.setConfirmPath(certifyType);         // "1" 이메일, "2", 핸드폰번호
-
-        // String randomString = generateRandomSixDigitString();
-        // System.out.println("Generated random string: " + randomString);
-
-        // confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
-
-        // confirmService.confirmIns(confirmDTO);
+        if (confirmNum.isEmpty() || confirmNum.length() == 0) {
+            System.out.println("confirmNum check " + confirmNum);
+            return new ResponseEntity<>(confirmDTO, HttpStatus.FAILED_DEPENDENCY);  // 424 인증번호 다름 처리
+        }
         
         return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
     }
