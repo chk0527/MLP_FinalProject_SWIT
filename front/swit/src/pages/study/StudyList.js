@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { API_SERVER_HOST, getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
 import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { getUserIdFromToken } from "../../util/jwtDecode";
+// import CustomCheckbox from "../../css/CustomCheckbox.css"
 
 //아이콘
 import searchIcon from "../../img/search-icon.png";
@@ -21,7 +22,20 @@ const StudyListPage = () => {
   const [studyTitle, setStudyTitle] = useState("");
   const [studySubject, setStudySubject] = useState("");
   const [studyAddr, setStudyAddr] = useState("");
-  const [studyOnline, setStudyOnline] = useState("");
+  const [studyOnline, setStudyOnline] = useState(false);
+
+  //이름 검색
+  const [inputText, setInputText] = useState("");
+  const [searchText, setSearchText] = useState(""); //검색 이름
+
+  const handleInput = (e) => {
+    setInputText(e.target.value);
+  };
+
+  const handleButton = () => {
+    setSearchText(inputText);
+    setStudyTitle(searchText);
+  };
 
   //주제 검색
   const subjectList = [
@@ -36,9 +50,25 @@ const StudyListPage = () => {
     { value: "기타" },
   ];
   const subjectStyle = "ml-4";
+  const [selectedSubject, setSelectedSubject] = useState("");
+
+  const selectSubject = (e) => {
+    const value = e.target.value;
+    const newSelectedSubject = selectedSubject === value ? "" : value;
+    setSelectedSubject(newSelectedSubject);
+    setStudySubject(newSelectedSubject);
+  };
 
   //주소 검색
-  const addrList = [{ value: "서울" }, { value: "경기도" }];
+  const addrList = [
+    { value: "", name: "전체" },
+    { value: "서울", name: "서울" },
+    { value: "경기도", name: "경기도" },
+  ];
+  const selectAddr = (e) => {
+    const value = e.target.value;
+    setStudyAddr(value);
+  };
 
   useEffect(() => {
     // 모든 스터디 목록을 가져오는 API 호출
@@ -72,6 +102,22 @@ const StudyListPage = () => {
             };
           })
         );
+
+        // 상태별로 정렬하는 함수
+        const getStatusPriority = (study) => {
+          if (study.isLeader) return 0;
+          if (study.isMemberStatus === 1) return 1;
+          if (study.isMemberStatus === 0) return 2;
+          if (study.isMemberStatus === 2) return 3;
+          if (study.isMemberStatus === -2) return 4;
+          return 5;
+        };
+
+        // studyListWithStatus를 상태별로 정렬
+        studyListWithStatus.sort(
+          (a, b) => getStatusPriority(a) - getStatusPriority(b)
+        );
+
         console.log("Study list with status:", studyListWithStatus); // 상태가 추가된 리스트 로그
         setStudyList(studyListWithStatus);
       } catch (error) {
@@ -162,19 +208,28 @@ const StudyListPage = () => {
   return (
     <BasicLayout>
       {/* 검색창 */}
-      <div className="flex w-full justify-between px-8">
-        <div className="text-5xl pb-16 font-blackHans">
-          <div>스터디 그룹</div>
-        </div>
-        <div className="text-right">
-          <div className="text-xl">
-            {/* 지역검색 */}
-            <select
-              className="focus:outline-none p-2"
-              onChange={(e) => setStudyAddr(e.target.value)}
+      <div className="flex w-full justify-between items-center px-6 pb-8">
+        <div className="text-5xl font-blackHans">스터디 그룹</div>
+        <div className="">
+          <div className="text-right flex justify-end">
+            {/* 대면비대면 */}
+            <div
+              className="px-4 font-bold cursor-pointer"
+              onClick={() => setStudyOnline(false)}
             >
+              대면
+            </div>
+            /
+            <div
+              className="px-4 font-bold cursor-pointer"
+              onClick={() => setStudyOnline(true)}
+            >
+              비대면
+            </div>
+            {/* 지역검색 */}
+            <select className="focus:outline-none p-2" onChange={selectAddr}>
               {addrList.map((addr) => (
-                <option value={addr.value}>{addr.value}</option>
+                <option value={addr.value}>{addr.name}</option>
               ))}
             </select>
             {/* 제목검색 */}
@@ -182,24 +237,28 @@ const StudyListPage = () => {
               className="focus:outline-none"
               type="text"
               placeholder="제목 검색"
+              onChange={handleInput}
             />
-            <button type="button">
+            <button type="button" onClick={handleButton}>
               <img className="size-6" src={searchIcon}></img>
             </button>
           </div>
-          {/* 주제검색 */}
-          <div className="text-xl">
-            {subjectList.map((subject) => (
-              <label>
-                <input
-                  className={subjectStyle}
-                  type="radio"
-                  name="subject"
-                  value={subject.value}
-                />
-                {subject.value}
-              </label>
-            ))}
+          <div>
+            {/* 주제검색 */}
+            <div className="text-xl">
+              {subjectList.map((subject) => (
+                <label key={subject.value}>
+                  <input
+                    className={subjectStyle}
+                    type="checkbox"
+                    value={subject.value}
+                    checked={selectedSubject === subject.value}
+                    onChange={selectSubject}
+                  />
+                  {subject.value}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -252,7 +311,8 @@ const StudyListPage = () => {
                     </div>
                     <div className="absolute bottom-0 p-8">
                       <p className="text-xl py-2">
-                        #{study.studyAddr.substring(0, 3)} #{study.studyTitle ? "비대면" : "대면"}
+                        #{study.studyOnline ? "비대면" : "대면"}
+                        <br />#{study.studyAddr}
                       </p>
                       <p className="w-60 truncate text-2xl">
                         {study.studyTitle}
