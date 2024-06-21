@@ -238,7 +238,8 @@ const GroupTimerComponent = ({ studyNo }) => {
                 ...timer,
                 running: false,
                 updatedAt: new Date().toISOString(),
-                time: timer.time + elapsedTime
+                time: timer.time + elapsedTime,
+                elapsedTime: elapsedTime
             }
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
@@ -248,8 +249,8 @@ const GroupTimerComponent = ({ studyNo }) => {
             const updatedUserStudyTimes = {
                 ...userStudyTimes,
                 [userId]: {
-                    today: (userStudyTimes[userId]?.today || 0) + elapsedTime,
-                    total: (userStudyTimes[userId]?.total || 0) + elapsedTime
+                    today: elapsedTime, //(userStudyTimes[userId]?.today || 0) + elapsedTime,
+                    total: elapsedTime  //(userStudyTimes[userId]?.total || 0) + elapsedTime
                 }
             }
             setUserStudyTimes(updatedUserStudyTimes)
@@ -269,7 +270,8 @@ const GroupTimerComponent = ({ studyNo }) => {
                 ...timer,
                 running: false,
                 time: 0,
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
+                elapsedTime: elapsedTime
             }
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
@@ -326,21 +328,13 @@ const GroupTimerComponent = ({ studyNo }) => {
                 ...timer,
                 running: false,
                 updatedAt: new Date().toISOString(),
-                time: timer.time // 현재 남은 시간으로 업데이트
-            };
+                time: timer.time, // 현재 남은 시간으로 업데이트
+                elapsedTime: timer.time - elapsedTime
+            }
             setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentTimer(updatedTimer)
             localStorage.setItem(`currentTimer_${studyNo}`, JSON.stringify(updatedTimer)) // 로컬 스토리지에 상태 저장
-            // 유저별 공부 시간 업데이트
-            const updatedUserStudyTimes = {
-                ...userStudyTimes,
-                [userId]: {
-                    today: (userStudyTimes[userId]?.today || 0) + elapsedTime,
-                    total: (userStudyTimes[userId]?.total || 0) + elapsedTime
-                }
-            }
-            setUserStudyTimes(updatedUserStudyTimes)
-            localStorage.setItem(`userStudyTimes_${studyNo}`, JSON.stringify(updatedUserStudyTimes))
+
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('타이머 일시정지 실패 : ', error)
@@ -360,9 +354,6 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
             setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentTimer(updatedTimer)
-            // 여기서 현재 타이머 시간을 오늘의 공부 시간과 누적 공부 시간에 추가
-            setStudyTimeToday(prev => prev + elapsedTime)
-            setTotalStudyTime(prev => prev + elapsedTime)
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('타이머 정지/초기화 실패 : ', error)
