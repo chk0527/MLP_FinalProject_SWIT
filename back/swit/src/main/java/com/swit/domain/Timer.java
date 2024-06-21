@@ -1,6 +1,5 @@
 package com.swit.domain;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,17 +47,16 @@ public class Timer {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime startAt;
 
     @UpdateTimestamp // db에서 업데이트될 때마다, 해당 필드를 현재 시각으로 "자동 갱신"
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime updatedAt;
+    private LocalDateTime stopAt;
 
 
     private Integer elapsedTime;
     private String time;
     private String name;
-    private String type;
     private boolean running;
 }
