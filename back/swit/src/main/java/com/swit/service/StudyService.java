@@ -35,16 +35,22 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    public List<Study> getAllStudies() {
-      return studyRepository.findAll();
-  }
+    public List<Study> getAllStudies(String studyTitle,
+            String studySubject,
+            String studyAddr,
+            Boolean studyOnline) {
+        return studyRepository.studyList(studyTitle,
+                studySubject,
+                studyAddr,
+                studyOnline);
+    }
 
     // 스터디별 질문
     public Integer register(StudyDTO studyDTO, List<String> questions) {
         log.info("-----------------------------");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info(authentication+"@@");
-        log.info(authentication.getClass().getName()+"!!");
+        log.info(authentication + "@@");
+        log.info(authentication.getClass().getName() + "!!");
         if (authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUsername();
@@ -82,8 +88,10 @@ public class StudyService {
     }
 
     public StudyWithQuestionDTO getStudyWithQuestionDTO(Integer studyNo) {
-        Study study = studyRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
-        Question question = questionRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
+        Study study = studyRepository.findById(studyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionRepository.findById(studyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
         StudyDTO studyDTO = entityToDTO(study);
         QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
         // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
@@ -111,7 +119,7 @@ public class StudyService {
         Study saveStudy = studyRepository.save(study);
 
         Optional<Question> questionResult = questionRepository.findById(studyDTO.getStudyNo());
-        Question question  = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
         question.setStudy(saveStudy);
         question.setQ1(questions.size() > 0 ? questions.get(0) : null);
         question.setQ2(questions.size() > 1 ? questions.get(1) : null);
