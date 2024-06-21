@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody; // 추가된 부분
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestParam; // 추가된 부분
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,6 @@ import com.swit.domain.Study;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyWithQuestionDTO;
-import com.swit.repository.findList;
 import com.swit.service.GroupService;
 import com.swit.service.StudyService;
 import com.swit.util.CustomFileUtil;
@@ -41,13 +41,14 @@ public class StudyController {
     private final CustomFileUtil fileUtil;
 
     @GetMapping("/all")
-    public List<Study> getAllStudies() {
+    public List<Study> getAllStudies(@RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
+                                     @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
+                                     @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
+                                     @RequestParam(name = "studyOnline", required = false) Boolean studyOnline) { // 수정된 부분
         String userId = (String) session.getAttribute("userId");
         log.info("Logged in user: " + userId);
 
-        List<Study> studyList = service.getAllStudies(); // StudyService에 새로운 메서드 추가 필요
-
-        log.info("Study List: " + studyList);
+        List<Study> studyList = service.getAllStudies(studyTitle, studySubject, studyAddr, studyOnline);
         return studyList;
     }
 
@@ -56,24 +57,22 @@ public class StudyController {
         return service.get(studyNo);
     }
 
-    @GetMapping("question/{studyNo}")
+    @GetMapping("/question/{studyNo}")
     public StudyWithQuestionDTO getStudyWithQuestion(@PathVariable(name = "studyNo") Integer studyNo) {
         return service.getStudyWithQuestionDTO(studyNo);
     }
 
     @PostMapping("/")
-    public Map<String, Integer> register(StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
+    public Map<String, Integer> register(@RequestBody StudyDTO studyDTO, @RequestParam("questions") List<String> questions) { // 수정된 부분
         List<MultipartFile> files = studyDTO.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         studyDTO.setUploadFileNames(uploadFileNames);
         log.info(uploadFileNames);
-    
+
         Integer studyNo = service.register(studyDTO, questions);
-        // 현재 로그인된 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
 
-        // 그룹에 등록
         GroupDTO groupDTO = new GroupDTO();
         groupDTO.setUserId(userId);
         groupDTO.setStudyNo(studyNo);
@@ -85,8 +84,9 @@ public class StudyController {
     }
 
     @PutMapping("/{studyNo}")
-    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
-        StudyDTO currentStudyDTO = service.get(studyNo); // 기존 파일 정보를 가져옴
+    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, @RequestBody StudyDTO studyDTO, // 수정된 부분
+                                      @RequestParam("questions") List<String> questions) { // 수정된 부분
+        StudyDTO currentStudyDTO = service.get(studyNo);
         List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
         List<MultipartFile> newFiles = studyDTO.getFiles();
         List<String> uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
@@ -98,7 +98,7 @@ public class StudyController {
     }
 
     @GetMapping("/display/{fileName}")
-    public ResponseEntity<Resource> displayFileGet(@PathVariable(name="fileName") String fileName) {
+    public ResponseEntity<Resource> displayFileGet(@PathVariable(name = "fileName") String fileName) {
         return fileUtil.getFile(fileName);
     }
 

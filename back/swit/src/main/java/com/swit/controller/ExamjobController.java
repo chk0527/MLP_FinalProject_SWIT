@@ -157,6 +157,17 @@ public class ExamjobController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isJObFavorite에러" + e.getMessage());
         }
     }
+
+    @GetMapping("/exam/favorites/{userId}")
+    public ResponseEntity<List<ExamDTO>> getFavoriteExams(@PathVariable(name = "userId") String userId) {
+    try {
+        List<ExamDTO> favoriteExams = service.getFavoriteExams(userId);
+        return ResponseEntity.ok(favoriteExams);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+}
+
  
     
       

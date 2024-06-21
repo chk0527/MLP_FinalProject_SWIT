@@ -1,7 +1,7 @@
 
 import BasicMenu from "../components/menus/Header";
 import Footer from "../components/menus/Footer";
-
+// import notification from "../img/notification-icon.png"
 const BasicLayout = ({children}) => {
     return (
         <>
@@ -16,6 +16,10 @@ const BasicLayout = ({children}) => {
                     <h1 className="text-2xl md:text-4xl">Sidebar</h1>
                 </aside> */}
             </div>
+            {/* <button 
+                className="fixed bottom-5 right-5 w-10 h-10 bg-no-repeat bg-center bg-cover" 
+                style={{ backgroundImage: `url(${notification})` }}
+            ></button> */}
             <Footer></Footer>
         </>
     )

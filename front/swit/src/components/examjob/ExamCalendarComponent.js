@@ -1,26 +1,38 @@
-import React, { useEffect, useState , useCallback} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { getExamAll } from '../../api/ExamJobApi'; 
+import { getExamAll, getFavoriteExams } from '../../api/ExamJobApi';
 import searchIcon from "../../img/search-icon.png";
 import { CiCalendarDate, CiBoxList } from "react-icons/ci";
 import "./ExamListComponent.css"
 import { Link, useNavigate } from "react-router-dom";
 import "./ExamCalendarComponent.css"
+import { getUserIdFromToken } from "../../util/jwtDecode"; //userId 받아옴
 
 const ExamCalendarComponent = () => {
   const [events, setEvents] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [showFavorites, setShowFavorites] = useState(false);
   const navigate = useNavigate();
+  
+  const userId = getUserIdFromToken();
 
-  const fetchExamData = async (keyword = '') => {
+  const fetchExamData = async (keyword = '', onlyFavorites = false) => {
     try {
-      const data = await getExamAll();
+      let data;
+      if (onlyFavorites) {
+        data = await getFavoriteExams(userId);
+      } else {
+        data = await getExamAll();
+      }
+
       const filteredData = keyword
         ? data.filter(exam => exam.examTitle.toLowerCase().includes(keyword.toLowerCase()))
         : data;
+
       const formattedEvents = filteredData.map(exam => {
         const eventsList = [
           {
@@ -30,7 +42,7 @@ const ExamCalendarComponent = () => {
             backgroundColor: 'rgb(248, 232, 238)',
             borderColor: 'rgb(248, 232, 238)',
             textColor: 'black',
-            id: `${exam.examNo}-1` // id: 고유해야해서 뒤에 번호 안붙이면 오류
+            id: `${exam.examNo}-1`
           },
           {
             title: `${exam.examTitle} 필기시험`,
@@ -48,7 +60,7 @@ const ExamCalendarComponent = () => {
             backgroundColor: 'rgb(253, 206, 223)',
             borderColor: 'rgb(253, 206, 223)',
             textColor: 'black',
-            id: `${exam.examNo}-3` 
+            id: `${exam.examNo}-3`
           },
           {
             title: `${exam.examTitle} 실기시험`,
@@ -73,7 +85,7 @@ const ExamCalendarComponent = () => {
             backgroundColor: 'rgb(255, 246, 189)',
             borderColor: 'rgb(255, 246, 189)',
             textColor: 'black',
-            id: `${exam.examNo}-6` 
+            id: `${exam.examNo}-6`
           }
         ];
         return eventsList;
@@ -85,8 +97,12 @@ const ExamCalendarComponent = () => {
   };
 
   useEffect(() => {
+    // 로그인
+    if (userId) {
+      setIsLoggedIn(true);
+    }
     fetchExamData();
-  }, []);
+  }, [userId]);
 
   const handleSearch = () => {
     fetchExamData(searchKeyword);
@@ -126,13 +142,27 @@ const ExamCalendarComponent = () => {
   };
 
   //일정클릭 -> 상세페이지 이동
-  const handleEventClick = (info) => {
+  const handleReadClick = (info) => {
     navigate(`/exam/read/${info.event.id.split('-')[0]}`);
+  };
+
+  //즉려찾기
+  const clickFavorites = () => {
+    setShowFavorites(!showFavorites);
+    fetchExamData(searchKeyword, !showFavorites);
   };
 
   return (
     <div className=''>
       <div className=''>
+
+        <div>
+          {isLoggedIn && (
+            <button className='bg-red-500 size-10 w-1/2' onClick={clickFavorites}>
+              {showFavorites ? '전체 보기' : '즐겨찾기만 보기'}
+            </button>
+          )}
+        </div>
 
         {/* 채용/시험/검색 */}
         <div className="flex-col space-y-2">
@@ -166,26 +196,22 @@ const ExamCalendarComponent = () => {
         </div>
         {/* 채용/시험/검색 끝 */}
 
-     
-
       </div>
       <div className="flex-wrap w-1300 font-GSans">
-      <FullCalendar
-        height={1600}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        locale={'ko'}
-        dayCellContent={(arg) => {
-          return arg.dayNumberText.replace('일', ''); // 1일 => 1
-        }}
-        eventMouseEnter={handleMouseEnter}
-        eventMouseLeave={handleMouseLeave}
-        eventClick={handleEventClick}
-
-      
-      />
-    </div>
+        <FullCalendar
+          height={1600}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          events={events}
+          locale={'ko'}
+          dayCellContent={(arg) => {
+            return arg.dayNumberText.replace('일', ''); // 1일 => 1
+          }}
+          eventMouseEnter={handleMouseEnter}
+          eventMouseLeave={handleMouseLeave}
+          eventClick={handleReadClick}
+        />
+      </div>
     </div>
   );
 };

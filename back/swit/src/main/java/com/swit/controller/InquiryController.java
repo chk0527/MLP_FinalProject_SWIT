@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,5 +51,11 @@ public class InquiryController {
     @GetMapping("/{studyNo}/inquiries")
     public List<Inquiry> getInquiries(@PathVariable(name="studyNo") Integer studyNo) {
         return inquiryService.getInquiries(studyNo);
+    }
+
+    @DeleteMapping("/inquiries/{inquiryNo}")
+    public ResponseEntity<Void> deleteInquiry(@PathVariable("inquiryNo") Integer inquiryNo) {
+        inquiryService.deleteInquiry(inquiryNo);
+        return ResponseEntity.noContent().build();
     }
 }
