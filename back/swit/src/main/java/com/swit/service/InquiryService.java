@@ -52,4 +52,7 @@ public class InquiryService {
     public List<Inquiry> getInquiries(Integer studyNo) {
         return inquiryRepository.findByStudyStudyNo(studyNo);
     }
+    public void deleteInquiry(Integer inquiryNo) {
+      inquiryRepository.deleteById(inquiryNo);
+  }
 }
