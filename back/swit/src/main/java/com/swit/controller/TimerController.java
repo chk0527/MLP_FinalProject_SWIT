@@ -37,7 +37,7 @@ public class TimerController {
 
     // 해당 스터디의 그룹원의 타이머만 조회
     @GetMapping("/{studyNo}/{userId}")
-    public ResponseEntity<List<TimerDTO>> getUserTimers(@PathVariable Integer studyNo, @PathVariable String userId) {
+    public ResponseEntity<List<TimerDTO>> getUserTimers(@PathVariable(name = "studyNo") Integer studyNo, @PathVariable String userId) {
         List<TimerDTO> timers = timerService.getUserTimers(studyNo, userId);
         return ResponseEntity.ok(timers);
     }
