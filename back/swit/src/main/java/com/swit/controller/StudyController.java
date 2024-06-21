@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -62,8 +63,8 @@ public class StudyController {
         return service.getStudyWithQuestionDTO(studyNo);
     }
 
-    @PostMapping("/")
-    public Map<String, Integer> register(@RequestBody StudyDTO studyDTO, @RequestParam("questions") List<String> questions) { // 수정된 부분
+     @PostMapping("/")
+    public Map<String, Integer> register(@ModelAttribute StudyDTO studyDTO, @RequestParam("questions") List<String> questions) {
         List<MultipartFile> files = studyDTO.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         studyDTO.setUploadFileNames(uploadFileNames);
