@@ -29,8 +29,8 @@ export const postAdd = async (study) => {
   return res.data;
 };
 
-export const getAllStudies = async () => {
-  const res = await axios.get(`${prefix}/all`);
+export const getAllStudies = async (studyTitle,studySubject,studyAddr,studyOnline) => {
+  const res = await axios.get(`${prefix}/all`,{params:{studyTitle:studyTitle,studySubject:studySubject,studyAddr:studyAddr,studyOnline:studyOnline}});
   return res.data;
 };
 

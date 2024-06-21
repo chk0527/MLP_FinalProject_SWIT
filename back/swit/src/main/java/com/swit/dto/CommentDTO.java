@@ -1,5 +1,8 @@
 package com.swit.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import kotlinx.datetime.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,4 +15,7 @@ public class CommentDTO {
     private String commentContent;
     private Integer boardNo;
     private Integer userNo;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime commentCreatedDate;
 }
