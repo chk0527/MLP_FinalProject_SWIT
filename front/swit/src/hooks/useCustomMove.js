@@ -92,7 +92,7 @@ const useCustomMove = () => {
         else {
             queryStr = queryDefault
         }
-        navigate({ pathname: `..`, search: queryStr })
+        navigate({ pathname: `../board`, search: queryStr })
 
     }
 

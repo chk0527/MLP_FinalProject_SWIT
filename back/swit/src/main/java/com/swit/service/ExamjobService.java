@@ -287,6 +287,17 @@ public class ExamjobService {
         }
     }
 
+
+    //캘린더 -> 즐겨찾기만 불러오기
+    public List<ExamDTO> getFavoriteExams(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("user못찾음"));
+        List<FavoritesExam> favoriteExams = favoritesExamRepository.findByUser(user);
+        return favoriteExams.stream()
+            .map(favExam -> modelMapper.map(favExam.getExam(), ExamDTO.class))
+            .collect(Collectors.toList());
+    }
+    
+
    
 
 
