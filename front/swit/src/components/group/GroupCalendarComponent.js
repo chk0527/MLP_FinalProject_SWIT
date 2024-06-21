@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getStudy } from "../../api/StudyApi";
 import { getCalendar, addEvent, deleteEvent, updateEvent } from "../../api/CalendarApi";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
@@ -9,6 +10,8 @@ import ko from "date-fns/locale/ko";
 import moment from 'moment';
 import 'moment/locale/ko';
 import axios from 'axios';
+import { getUserIdFromToken, getUserNickFromToken, getUserRoleFromToken } from "../../util/jwtDecode";
+
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -24,6 +27,7 @@ const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 const GroupCalendarComponent = ({ studyNo }) => {
+  const [study, setStudy] = useState([]);                   // 방장 id 추출에 필요한 study 조회
   const [events, setEvents] = useState([]);                 // 캘린더 - 일정 관리
   const [tasks, setTasks] = useState([]);                   // 캘린더 - 할 일 저장
   const [taskInput, setTaskInput] = useState('');           // 캘린더 - 할 일 입력
@@ -32,6 +36,18 @@ const GroupCalendarComponent = ({ studyNo }) => {
   const [modalClass, setModalClass] = useState('modal');    // 모달창 css 클래스값 설정
   const [holidays, setHolidays] = useState([]);             // 공휴일 처리
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month'));
+
+  // 스터디의 방장 ID 추출
+  useEffect(() => {
+    getStudy(studyNo).then((data) => {
+      console.log(data)
+      setStudy(data)
+    })
+  }, [studyNo])
+
+  const currentUserId = getUserIdFromToken();
+  const isManager = currentUserId === study.userId; // 현재 사용자가 방장인지 확인
+
 
   // 컴포넌트가 마운트될 때 캘린더(일정) 데이터 가져오기
   useEffect(() => {
@@ -147,6 +163,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
+    if (!isManager) {
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     const title = getNextTitle()
     const newEvent = {
       startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
@@ -181,6 +201,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 일정 삭제
   const handleRemoveEvent = async (eventId) => {
+    if (!isManager) {
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     try {
       await deleteEvent(studyNo, eventId)
       setEvents(events.filter(event => event.calendarNo !== eventId))
@@ -191,6 +215,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 일정 완료 상태 업데이트
   const handleCompleteEvent = async (eventId, completeChk) => {
+    if (!isManager) {
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     try {
       const updatedEvent = await updateEvent(studyNo, eventId, { completeChk })
       setEvents(events.map(event =>
@@ -218,6 +246,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 일정 드래그앤드롭 이벤트
   const handleDragEvent = async ({ event, start, end }) => {
+    if (!isManager) {
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     const updatedEvent = {
       ...event,
       startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
@@ -233,6 +265,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 일정 바 사이즈 늘리기 이벤트(날짜 범위 변경)
   const handleResizeEvent = async ({ event, start, end }) => {
+    if (!isManager) {
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     const updatedEvent = {
       ...event,
       startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
@@ -248,6 +284,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 일정 정보 업데이트(모달창)
   const handleUpdateEvent = async () => {
+    if (!isManager) {
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     const updatedEvent = {
       title: modalEvent.title,
       content: modalEvent.content,
@@ -270,6 +310,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 할 일 추가
   const handleAddTask = (e) => {
+    if (!isManager) {
+      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     e.preventDefault()
     if (taskInput.trim()) {
       // 새로운 할 일을 state에 추가
@@ -280,6 +324,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 할 일의 완료 상태 토글
   const handleToggleTask = (index) => {
+    if (!isManager) {
+      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     const newTasks = tasks.map((task, i) =>
       i === index ? { ...task, completed: !task.completed } : task
     )
@@ -288,6 +336,10 @@ const GroupCalendarComponent = ({ studyNo }) => {
 
   // 캘린더 - 할 일 제거
   const handleRemoveTask = (index) => {
+    if (!isManager) {
+      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      return
+    }
     const newTasks = tasks.filter((_, i) => i !== index)
     setTasks(newTasks)
   }
