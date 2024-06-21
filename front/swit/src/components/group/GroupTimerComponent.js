@@ -207,9 +207,14 @@ const GroupTimerComponent = ({ studyNo }) => {
             clearInterval(timer.type === 'stopwatch' ? intervalStopWatchIds.current[timer.timerNo] : intervalTimerIds.current[timer.timerNo])
             await deleteTimer(studyNo, timer.timerNo)
 
-            setStopwatches(stopwatches.filter(t => t.timerNo !== timer.timerNo))
+            const updatedStopwatches = stopwatches.filter(t => t.timerNo !== timer.timerNo)
+            setStopwatches(updatedStopwatches)
             if (currentStopwatch && currentStopwatch.timerNo === timer.timerNo) {
-                setCurrentStopwatch(null)
+                if (updatedStopwatches.length > 0) {
+                    setCurrentStopwatch(updatedStopwatches[0])
+                } else {
+                    setCurrentStopwatch(null)
+                }
                 localStorage.removeItem(`currentStopwatch_${studyNo}`)
             }
 
@@ -446,80 +451,86 @@ const GroupTimerComponent = ({ studyNo }) => {
                         </div>
                     )}
 
-                    {currentStopwatch && (
+                    {stopwatches.length > 0 && (
                         <div className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg mb-4">
-                            <FaStopwatch className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">
-                                {getUserNickFromToken(currentStopwatch.userId)}님의 스톱워치
-                            </h2>
-                            <div className="space-y-4 w-full">
-                                <input
-                                    type="text"
-                                    placeholder="제목"
-                                    value={currentStopwatch.name}
-                                    onChange={(e) => setCurrentStopwatch({ ...currentStopwatch, name: e.target.value })}
-                                    disabled={!isEditing || currentStopwatch.running}
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
-                                <div className="text-3xl font-mono text-center">{formatStopWatchTime(currentStopwatch.time)}</div>
-                                <div className="flex justify-center space-x-2">
-                                    {!currentStopwatch.running ? (
-                                        <button
-                                            onClick={() => {
-                                                if (!currentStopwatch.name) {
-                                                    alert("제목을 입력하세요.")
-                                                } else {
-                                                    handleStartStopwatch(currentStopwatch)
-                                                    setIsEditing(false) // 시작 시 제목 입력창 비활성화
-                                                }
-                                            }}
-                                            className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
-                                        >
-                                            시작
-                                        </button>
-                                    ) : (
-                                        <>
-                                            <button
-                                                onClick={() => {
-                                                    handlePauseStopwatch(currentStopwatch)
-                                                }}
-                                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                                            >
-                                                일시정지
-                                            </button>
-                                            <button
-                                                onClick={() => handleStopStopwatch(currentStopwatch)}
-                                                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
-                                            >
-                                                정지
-                                            </button>
-                                        </>
-                                    )}
-                                    {!currentStopwatch.running && (
-                                        <>
-                                            <button
-                                                onClick={() => {
-                                                    if (!currentStopwatch.name) {
-                                                        alert("제목을 입력하세요.")
-                                                    } else {
-                                                        addRecord(currentStopwatch)
-                                                        handleCreateTimer(true)
-                                                    }
-                                                }}
-                                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-gray-700"
-                                            >
-                                                다음
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteTimer(currentStopwatch)}
-                                                className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
-                                            >
-                                                삭제
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
+                            {currentStopwatch ? (
+                                <>
+                                    <FaStopwatch className="text-4xl mb-2" />
+                                    <h2 className="text-2xl font-semibold mb-4">
+                                        {getUserNickFromToken(currentStopwatch.userId)}님의 스톱워치
+                                    </h2>
+                                    <div className="space-y-4 w-full">
+                                        <input
+                                            type="text"
+                                            placeholder="제목"
+                                            value={currentStopwatch.name}
+                                            onChange={(e) => setCurrentStopwatch({ ...currentStopwatch, name: e.target.value })}
+                                            disabled={!isEditing || currentStopwatch.running}
+                                            className="w-full p-2 border border-gray-300 rounded"
+                                        />
+                                        <div className="text-3xl font-mono text-center">{formatStopWatchTime(currentStopwatch.time)}</div>
+                                        <div className="flex justify-center space-x-2">
+                                            {!currentStopwatch.running ? (
+                                                <button
+                                                    onClick={() => {
+                                                        if (!currentStopwatch.name) {
+                                                            alert("제목을 입력하세요.")
+                                                        } else {
+                                                            handleStartStopwatch(currentStopwatch)
+                                                            setIsEditing(false) // 시작 시 제목 입력창 비활성화
+                                                        }
+                                                    }}
+                                                    className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
+                                                >
+                                                    시작
+                                                </button>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={() => {
+                                                            handlePauseStopwatch(currentStopwatch)
+                                                        }}
+                                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                                                    >
+                                                        일시정지
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStopStopwatch(currentStopwatch)}
+                                                        className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                                                    >
+                                                        정지
+                                                    </button>
+                                                </>
+                                            )}
+                                            {!currentStopwatch.running && (
+                                                <>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (!currentStopwatch.name) {
+                                                                alert("제목을 입력하세요.")
+                                                            } else {
+                                                                addRecord(currentStopwatch)
+                                                                handleCreateTimer(true)
+                                                            }
+                                                        }}
+                                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-gray-700"
+                                                    >
+                                                        다음
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteTimer(currentStopwatch)}
+                                                        className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
+                                                    >
+                                                        삭제
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <p className="text-center">선택된 스톱워치가 없습니다.</p>
+                            )}
                             {/* 유저의 스톱워치 기록 남기는 곳 */}
                             <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
                                 {stopwatches.filter(sw => !sw.running).map((stopwatch, index) => (
