@@ -92,5 +92,14 @@ export const isJobFavorite = async (userId, jobNo) => {
     return res.data;
 };
 
-
+//캘린더 -> 즐겨찾기만
+export const getFavoriteExams = async (userId) => {
+    try {
+      const response = await axios.get(`/api/examjob/exam/favorites/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
