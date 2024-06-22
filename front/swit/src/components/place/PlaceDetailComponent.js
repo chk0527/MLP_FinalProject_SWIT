@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { getPlaceDetail } from "../../api/PlaceApi";
-import useCustomMove from "../../hooks/useCustomMove";
+import { Link } from "react-router-dom";
 import MapComponent from "./MapComponent";
 import star1 from "../../img/star1.png";
-import star2 from "../../img/star2.png";
 
 const initState = {
   placeNo: 0,
@@ -25,9 +24,6 @@ const PlaceDetailComponent = ({ placeNo }) => {
     });
   }, [placeNo]);
 
-  //전체목록으로 이동
-  const { moveToPlaceList } = useCustomMove();
-
   return (
     <div className="font-GSans">
       <div className="font-bold text-3xl text-center mb-16 pb-4 border-soild border-gray-400 border-b-4">
@@ -42,7 +38,7 @@ const PlaceDetailComponent = ({ placeNo }) => {
         {/* <div id="map" className="w-96 h-96"></div> */}
         <MapComponent placeAddr={place.placeAddr}></MapComponent>
       </div>
-      <div className="md:flex pt-16">
+      <div className="md:flex pt-16 mt-8 border">
         <div className="w-450 text-xl whitespace-pre-line mr-24">
           <p className="text-2xl pt-2">위치</p>
           <p className="p-4">{place.placeAddr}</p>
@@ -59,7 +55,7 @@ const PlaceDetailComponent = ({ placeNo }) => {
         </div>
         <div className="w-450 text-xl whitespace-pre-line">
           <p className="text-2xl pt-2">메뉴</p>
-          <p className="pl-4">
+          <p className="p-4">
             {place.placeDetail === ""
               ? "메뉴 정보가 없습니다."
               : place.placeDetail}
@@ -67,13 +63,14 @@ const PlaceDetailComponent = ({ placeNo }) => {
         </div>
       </div>
       <div className="flex justify-center my-24">
+        <Link to={{ pathname: "/place/list" }} state={1}>
         <button
           type="button"
           className="rounded p-3 m-2 text-xl w-28 text-white bg-gray-500"
-          onClick={() => moveToPlaceList()}
         >
           목록
         </button>
+        </Link>
       </div>
     </div>
   );
