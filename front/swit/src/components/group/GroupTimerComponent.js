@@ -1,75 +1,87 @@
 import { useState, useEffect, useRef } from 'react';
 import { getAllTimers, getUserTimers, addTimer, deleteTimer, updateTimer } from '../../api/TimerApi';
-import { FaStopwatch, FaClock, FaBell, FaChevronDown, FaRedo } from 'react-icons/fa';
+import { FaStopwatch, FaClock, FaBell, FaChevronDown, FaRedo, FaBookReader } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
-import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
+import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import { isLeader } from '../../api/GroupApi';
-
-
-// 유저별로 타이머 및 스톱워치 데이터 필터링
-const userNick = getUserNickFromToken();
 
 const GroupTimerComponent = ({ studyNo }) => {
     const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
-    const [timers, setTimers] = useState([]);   // 타이머 객체 관리
+    const [timers, setTimers] = useState([]); // 타이머 객체 관리
     const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
     const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
     const [currentStopwatch, setCurrentStopwatch] = useState(null); // 현재 스톱워치 값 관리
-    const [userStudyTimes, setUserStudyTimes] = useState({});   // 유저별 공부 시간
-    const intervalTimerIds = useRef({});    // 각 타이머의 인터벌 ID 관리
-    const intervalStopWatchIds = useRef({});    // 각 스톱워치의 인터벌 ID 관리
+    const [userStudyTimes, setUserStudyTimes] = useState({}); // 유저별 공부 시간
+    const intervalTimerIds = useRef({}); // 각 타이머의 인터벌 ID 관리
+    const intervalStopWatchIds = useRef({}); // 각 스톱워치의 인터벌 ID 관리
     const [isEditing, setIsEditing] = useState(false); // 제목 입력창 활성화 상태 관리
     const [userIsLeader, setUserIsLeader] = useState(false) // 방장 여부 식별
+    const [userNick, setUserNick] = useState(getUserNickFromToken()) // 로그인한 유저의 닉네임 관리
 
-
+    // 닉네임별로 스탑워치 리스트 구분
     const userStopwatches = stopwatches.filter(sw => sw.userNick === userNick)
 
     useEffect(() => {
         // studyNo에 따른 타이머/스톱워치 불러오기
         const fetchTimers = async () => {
+            const userNickFromToken = getUserNickFromToken() // 로그아웃 후 로그인 시 값을 다시 가져옴
+            setUserNick(userNickFromToken)  // 유저 닉네임 업데이트
             try {
                 const isAdmin = await isLeader(studyNo)
                 console.log('현재 당신은 리더입니까? : ' + isAdmin)
                 setUserIsLeader(isAdmin)
+
                 // 방장이면 그룹원 전체의 스톱워치 조회
                 // 그룹원이면 그룹원 본인 꺼만 조회
-                const res = await getUserTimers(studyNo, userNick)
+                const res = isAdmin ? await getAllTimers(studyNo) : await getUserTimers(studyNo, userNickFromToken)
+                // 스톱워치들 설정
+                setStopwatches(res)
 
-                // 유저 닉네임과 함께 스톱워치 저장
-                res.map(timer => ({ ...timer }))
-                setStopwatches(res.filter(sw => sw.userNick === userNick)) // 로그인된 유저의 스톱워치만 설정
-
-                const savedStopwatches = JSON.parse(localStorage.getItem(`stopwatches_${studyNo}_${userNick}`)) || []
+                const savedStopwatches = JSON.parse(localStorage.getItem(`stopwatches_${studyNo}_${userNickFromToken}`)) || []
                 const updatedStopwatches = res.map(timer => {
                     const savedTimer = savedStopwatches.find(t => t.timerNo === timer.timerNo)
                     if (savedTimer) {
                         // 로컬 스토리지의 time 값을 우선 적용
-                        return { ...timer, time: savedTimer.time ?? timer.time, running: savedTimer.running, elapsedTime: savedTimer.elapsedTime };
-                    } else {
-                        console.log('찾아야 되는 ' + timer.timerNo + '번 스톱워치: ' + timer)
-                        //console.log('불러와져야 되는 ' + savedTimer.timerNo + '번 스톱워치: ' + savedTimer)
+                        return {
+                            ...timer,
+                            time: savedTimer.time ?? timer.time,
+                            running: savedTimer.running,
+                            elapsedTime: savedTimer.elapsedTime
+                        };
                     }
                     return timer
-                }).filter(sw => sw.userNick === userNick)
+                })
                 setStopwatches(updatedStopwatches)
 
+                // 현재 작업 중인 스톱워치 설정
+                let initialStopwatch = null
                 updatedStopwatches.forEach(stopwatch => {
                     const savedStopwatch = JSON.parse(localStorage.getItem(`currentStopwatch_${stopwatch.timerNo}`))
                     if (savedStopwatch) {
                         const fetchedStopwatch = updatedStopwatches.find(timer => timer.timerNo === savedStopwatch.timerNo)
-                        if (fetchedStopwatch && fetchedStopwatch.userNick === userNick) {
-                            setCurrentStopwatch({ ...fetchedStopwatch, time: savedStopwatch.time})
+                        if (fetchedStopwatch && fetchedStopwatch.userNick === userNickFromToken) {
+                            initialStopwatch = {
+                                ...fetchedStopwatch,
+                                time: savedStopwatch.time
+                            }
                             if (fetchedStopwatch.running) {
-                                handleStartStopwatch({ ...fetchedStopwatch, time: savedStopwatch.time })
+                                handleStartStopwatch({
+                                    ...fetchedStopwatch,
+                                    time: savedStopwatch.time
+                                })
                             }
                         } else {
                             localStorage.removeItem(`currentStopwatch_${stopwatch.timerNo}`)
                         }
                     }
                 })
+                if (!initialStopwatch && updatedStopwatches.length > 0) {
+                    initialStopwatch = updatedStopwatches.find(sw => sw.userNick === userNickFromToken)
+                }
+                setCurrentStopwatch(initialStopwatch)
 
-                const savedTimer = JSON.parse(localStorage.getItem(`currentTimer_${studyNo}_${userNick}`));
                 // (타이머) 로컬 스토리지의 상태가 DB에 있는지 확인
+                const savedTimer = JSON.parse(localStorage.getItem(`currentTimer_${studyNo}_${userNick}`));
                 if (savedTimer) {
                     const fetchedTimer = res.find(timer => timer.timerNo === savedTimer.timerNo);
                     if (fetchedTimer) {
@@ -87,7 +99,7 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
         }
         fetchTimers()
-    }, [studyNo])
+    }, [studyNo, userNick])
 
     // 타이머 및 스톱워치 상태 저장
     // 상태가 바뀔 때마다 로컬스토리지에 저장
@@ -103,9 +115,9 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
         }
         saveState()
-    }, [timers, stopwatches, currentTimer, currentStopwatch, studyNo])
+    }, [timers, stopwatches, currentTimer, currentStopwatch, studyNo, userNick])
 
-
+    // 사용자가 작동 중에 서버 끄거나 페이지 나갈 때 일시정지 처리
     useEffect(() => {
         window.addEventListener('beforeunload', handleBeforeUnload)
         return () => {
@@ -113,18 +125,18 @@ const GroupTimerComponent = ({ studyNo }) => {
         };
     }, [currentTimer, currentStopwatch, stopwatches])
 
-    // 사용자가 작동 중에 서버를 끄거나 페이지를 나갈 때 일시정지 처리
+    // 서버 끄거나 페이지 나갈 때 일시정지 처리 기능함수
     const handleBeforeUnload = async () => {
         if (currentStopwatch && currentStopwatch.running) {
-            const updatedTimer = { ...currentStopwatch, running: false}
+            const updatedTimer = { ...currentStopwatch, running: false }
             await updateTimer(studyNo, currentStopwatch.timerNo, updatedTimer)
             setCurrentStopwatch(updatedTimer)
             localStorage.setItem(`currentStopwatch_${currentStopwatch.timerNo}`, JSON.stringify(updatedTimer))
-            
+
             const updatedStopwatches = stopwatches.map(t => t.timerNo === currentStopwatch.timerNo ? { ...t, running: false, time: currentStopwatch.time } : t)
             setStopwatches(updatedStopwatches)
             localStorage.setItem(`stopwatches_${studyNo}_${userNick}`, JSON.stringify(updatedStopwatches))
-        }  
+        }
         if (currentTimer && currentTimer.running) {
             const updatedTimer = { ...currentTimer, running: false }
             await updateTimer(studyNo, currentTimer.timerNo, updatedTimer)
@@ -141,7 +153,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}:${minutes}:${seconds}`
     }
 
-    // 스톱워치 시간 계산
+    // 개인 스톱워치 기록란 포맷팅
     const formatStopWatchTime = (time) => {
         const hours = String(Math.floor(time / 3600000)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600000) / 60000)).padStart(2, '0')
@@ -149,7 +161,15 @@ const GroupTimerComponent = ({ studyNo }) => {
         return `${hours}:${minutes}:${seconds}`
     }
 
-    // 기록 추가 함수
+    // 방장 전용 전체 기록란 포맷팅
+    const formatStopWatchAdmin = (time) => {
+        const hours = Math.floor(time / 3600000)
+        const minutes = Math.floor((time % 3600000) / 60000)
+        const seconds = Math.floor((time % 60000) / 1000)
+        return `${hours}시간${minutes}분${seconds}초`
+    }
+
+    // 기록란에 남길 스톱워치 데이터를 로컬에 저장
     const addRecord = (stopwatch) => {
         const updatedStopwatches = stopwatches.map(t => t.timerNo === stopwatch.timerNo ? { ...t, running: false, time: stopwatch.time } : t)
         setStopwatches(updatedStopwatches)
@@ -157,6 +177,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         localStorage.setItem(`currentStopwatch_${stopwatch.timerNo}`, JSON.stringify(stopwatch))
     }
 
+    // 그룹원 전체 기록 표시할 때, 그룹원별로 나열해주는 함수
     const groupByuserNick = (array) => {
         return array.reduce((result, item) => {
             const userNick = item.userNick
@@ -180,9 +201,8 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
-    // 새로운 타이머(스톱워치) 생성
-    const handleCreateTimer = async (isNext = false) => {
-        const userNick = getUserNickFromToken()
+    // 스톱워치 생성
+    const handleCreateStopwatch = async (isNext = false) => {
         if (!userNick) {
             alert("로그인 후 이용해주세요")
             navigate("/login")
@@ -213,8 +233,8 @@ const GroupTimerComponent = ({ studyNo }) => {
         }
     }
 
-    // 타이머(스톱워치) 삭제
-    const handleDeleteTimer = async (timer) => {
+    // 스톱워치 삭제
+    const handleDeleteStopwatch = async (timer) => {
         try {
             clearInterval(intervalStopWatchIds.current[timer.timerNo])
             await deleteTimer(studyNo, timer.timerNo)
@@ -243,10 +263,10 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
 
             const updatedTimer = {
-                ...timer, 
-                running: true, 
+                ...timer,
+                running: true,
                 startAt: timer.startAt || new Date().toISOString().replace('Z', '')
-             }
+            }
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
 
@@ -326,6 +346,14 @@ const GroupTimerComponent = ({ studyNo }) => {
     }
 
     // ================== "타이머" 기능 핸들러 =========================
+
+    // 타이머 생성
+    const handleCreateTimer = async (timer) => {
+    }
+
+    // 타이머 삭제
+    const handleDeleteTimer = async (timer) => {
+    }
 
     // // 타이머 시작
     const handleStartTimer = async (timer) => {
@@ -424,7 +452,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                             <FaStopwatch className="text-4xl mb-2" />
                             <h2 className="text-2xl font-semibold mb-4">스톱워치</h2>
                             <button
-                                onClick={() => handleCreateTimer(false)}
+                                onClick={() => handleCreateStopwatch(false)}
                                 className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
                             >
                                 스톱워치 생성
@@ -491,7 +519,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                                                             } else {
                                                                 addRecord(currentStopwatch)
                                                                 handlePauseStopwatch(currentStopwatch)
-                                                                handleCreateTimer(true)
+                                                                handleCreateStopwatch(true)
                                                             }
                                                         }}
                                                         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-gray-700"
@@ -499,7 +527,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                                                         다음
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDeleteTimer(currentStopwatch)}
+                                                        onClick={() => handleDeleteStopwatch(currentStopwatch)}
                                                         className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
                                                     >
                                                         삭제
@@ -521,7 +549,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                                             <div className="w-1/3 text-center cursor-pointer mr-4" onClick={() => handleLoadStopwatch(stopwatch.timerNo)}>{index + 1}. {stopwatch.name}</div>
                                             <div className="w-1/3 text-center">{formatStopWatchTime(stopwatch.time)}</div>
                                             <button
-                                                onClick={() => handleDeleteTimer(stopwatch)}
+                                                onClick={() => handleDeleteStopwatch(stopwatch)}
                                                 className="w-1/3 text-center text-red-500 hover:text-red-700"
                                             >
                                                 X
@@ -663,33 +691,29 @@ const GroupTimerComponent = ({ studyNo }) => {
                 {/* 방장 전용 전체 기록 */}
                 {userIsLeader ? (
                     <div className="bg-gray-200 p-4 w-full flex flex-col items-center rounded-lg h-full">
-                        <FaBell className="text-4xl mb-2" />
-                        <h2 className="text-2xl font-semibold mb-4">전체 기록</h2>
+                        <FaBookReader className="text-4xl mb-2" />
+                        <h2 className="text-2xl font-semibold mb-4">그룹원의 공부량</h2>
                         <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
-                            {Object.entries(groupByuserNick(stopwatches)).map(([userNick, userTimers], index) => (
-                                <div key={userNick}>
-                                    <div className="w-full text-center mb-2">{userNick} {userNick === getUserNickFromToken() ? '(방장)' : '(일반)'}님의 기록</div>
-                                    {userTimers.map((stopwatch, idx) => (
-                                        <div key={stopwatch.timerNo} className="flex justify-between items-center mb-2">
-                                            <div className="w-1/3 text-center cursor-pointer mr-4" onClick={() => handleLoadStopwatch(stopwatch.timerNo)}>{index + 1}.{idx + 1} {stopwatch.name}</div>
-                                            <div className="w-1/3 text-center">{formatStopWatchTime(stopwatch.time)}</div>
-                                            <button
-                                                onClick={() => handleDeleteTimer(stopwatch)}
-                                                className="w-1/3 text-center text-red-500 hover:text-red-700"
-                                            >
-                                                X
-                                            </button>
-                                        </div>
-                                    ))}
-                                    {index < Object.keys(groupByuserNick(stopwatches)).length - 1 && <hr className="w-full my-4 border-t border-gray-400" />}
-                                </div>
-                            ))}
+                            {Object.entries(groupByuserNick(stopwatches))
+                                .sort(([a], [b]) => a === userNick ? -1 : b === userNick ? 1 : 0)
+                                .map(([userNick, userTimers], index) => (
+                                    <div key={userNick}>
+                                        <div className="w-full text-center mb-2">{userNick} {userNick === getUserNickFromToken() ? '(방장)' : '(일반)'}</div>
+                                        {userTimers.map((stopwatch, idx) => (
+                                            <div key={stopwatch.timerNo} className="flex justify-between items-center mb-2">
+                                                <div className="w-1/3 text-center">{idx + 1}. {stopwatch.name}</div>
+                                                <div className="w-2/3 text-center">{formatStopWatchAdmin(stopwatch.time)}</div>
+                                            </div>
+                                        ))}
+                                        {index < Object.keys(groupByuserNick(stopwatches)).length - 1 && <hr className="w-full my-4 border-t border-gray-400" />}
+                                    </div>
+                                ))}
                         </div>
                     </div>
                 ) : (
                     <div className="bg-gray-200 p-4 w-full flex flex-col items-center rounded-lg h-full">
-                        <FaBell className="text-4xl mb-2" />
-                        <h2 className="text-2xl font-semibold mb-4">기록</h2>
+                        <FaBookReader className="text-4xl mb-2" />
+                        <h2 className="text-2xl font-semibold mb-4">그룹원의 공부량</h2>
                         <p className="text-gray-500">방장만 조회할 수 있습니다.</p>
                     </div>
                 )}
