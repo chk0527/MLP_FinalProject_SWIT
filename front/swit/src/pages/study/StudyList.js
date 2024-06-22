@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import BasicLayout from "../../layouts/BasicLayout";
-import { motion, AnimatePresence } from "framer-motion";
 import { API_SERVER_HOST, getAllStudies } from "../../api/StudyApi"; // getAllStudies 함수를 가져옴
 import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { getUserIdFromToken } from "../../util/jwtDecode";
-// import CustomCheckbox from "../../css/CustomCheckbox.css"
+import StudyListComponent from "../../components/study/StudyListComponent";
+// import styles from "../../css/CustomCheckbox.css";
 
 //아이콘
 import searchIcon from "../../img/search-icon.png";
-import defaultImg from "../../img/defaultImage.png";
-
-const host = API_SERVER_HOST;
 
 const StudyListPage = () => {
   // 스터디 목록을 저장할 상태
@@ -23,6 +20,11 @@ const StudyListPage = () => {
   const [studySubject, setStudySubject] = useState("");
   const [studyAddr, setStudyAddr] = useState("");
   const [studyOnline, setStudyOnline] = useState(false);
+
+  //대면비대면
+  const handleClick = (online) => {
+    setStudyOnline(online);
+  };
 
   //이름 검색
   const [inputText, setInputText] = useState("");
@@ -49,7 +51,6 @@ const StudyListPage = () => {
     { value: "개발" },
     { value: "기타" },
   ];
-  const subjectStyle = "ml-4";
   const [selectedSubject, setSelectedSubject] = useState("");
 
   const selectSubject = (e) => {
@@ -61,7 +62,7 @@ const StudyListPage = () => {
 
   //주소 검색
   const addrList = [
-    { value: "", name: "전체" },
+    { value: "", name: "지역" },
     { value: "서울", name: "서울" },
     { value: "경기도", name: "경기도" },
   ];
@@ -73,17 +74,18 @@ const StudyListPage = () => {
   useEffect(() => {
     // 모든 스터디 목록을 가져오는 API 호출
     const fetchStudyList = async () => {
+      const userId = getUserIdFromToken();
       try {
         const studyListData = await getAllStudies(
           studyTitle,
           studySubject,
           studyAddr,
-          studyOnline
+          studyOnline,
+          userId
         );
         console.log("Fetched study list:", studyListData); // API 결과 로그
 
         // 각 스터디에 대한 상태 정보 추가
-        const userId = getUserIdFromToken();
         const studyListWithStatus = await Promise.all(
           studyListData.map(async (study) => {
             let leaderStatus = false;
@@ -103,20 +105,7 @@ const StudyListPage = () => {
           })
         );
 
-        // 상태별로 정렬하는 함수
-        const getStatusPriority = (study) => {
-          if (study.isLeader) return 0;
-          if (study.isMemberStatus === 1) return 1;
-          if (study.isMemberStatus === 0) return 2;
-          if (study.isMemberStatus === 2) return 3;
-          if (study.isMemberStatus === -2) return 4;
-          return 5;
-        };
 
-        // studyListWithStatus를 상태별로 정렬
-        studyListWithStatus.sort(
-          (a, b) => getStatusPriority(a) - getStatusPriority(b)
-        );
 
         console.log("Study list with status:", studyListWithStatus); // 상태가 추가된 리스트 로그
         setStudyList(studyListWithStatus);
@@ -175,18 +164,6 @@ const StudyListPage = () => {
     navigate("/study/add", { state: 0 });
   };
 
-  //리스트 목록 애니메이션
-  const [isHovered, setHovered] = useState(false);
-  const [currentItem, setCurrentItem] = useState(null);
-
-  useEffect(() => {
-    if (!currentItem) {
-      setHovered(false);
-    } else {
-      setHovered(true);
-    }
-  }, [currentItem]);
-
   const getStatusText = (study) => {
     if (!study.isLeader && study.isMemberStatus === -2) return "비회원";
     if (study.isLeader) return "방장";
@@ -208,30 +185,10 @@ const StudyListPage = () => {
   return (
     <BasicLayout>
       {/* 검색창 */}
-      <div className="flex w-full justify-between items-center px-6 pb-8">
+      <div className="flex justify-between font-GSans == px-8 pb-8">
         <div className="text-5xl font-blackHans">스터디 그룹</div>
-        <div className="">
-          <div className="text-right flex justify-end">
-            {/* 대면비대면 */}
-            <div
-              className="px-4 font-bold cursor-pointer"
-              onClick={() => setStudyOnline(false)}
-            >
-              대면
-            </div>
-            /
-            <div
-              className="px-4 font-bold cursor-pointer"
-              onClick={() => setStudyOnline(true)}
-            >
-              비대면
-            </div>
-            {/* 지역검색 */}
-            <select className="focus:outline-none p-2" onChange={selectAddr}>
-              {addrList.map((addr) => (
-                <option value={addr.value}>{addr.name}</option>
-              ))}
-            </select>
+        <div className="text-2xl -m-4 pb-10">
+          <div className="text-right flex justify-end pb-4">
             {/* 제목검색 */}
             <input
               className="focus:outline-none"
@@ -243,19 +200,55 @@ const StudyListPage = () => {
               <img className="size-6" src={searchIcon}></img>
             </button>
           </div>
+          <div className="flex justify-end pb-4">
+            {/* 대면비대면 */}
+            <div
+              className={`mx-4 cursor-pointer ${
+                studyOnline === false ? "font-bold text-black" : "text-gray-500"
+              }`}
+              onClick={() => handleClick(false)}
+            >
+              대면
+            </div>
+            |
+            <div
+              className={`mx-4 cursor-pointer ${
+                studyOnline === true ? "font-bold text-black" : "text-gray-500"
+              }`}
+              onClick={() => handleClick(true)}
+            >
+              비대면
+            </div>
+            {/* 지역검색 */}
+            <select className="focus:outline-none mx-4" onChange={selectAddr}>
+              {addrList.map((addr) => (
+                <option key={addr.value} value={addr.value}>
+                  {addr.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div>
             {/* 주제검색 */}
-            <div className="text-xl">
+            <div className="text-xl flex justify-end">
               {subjectList.map((subject) => (
-                <label key={subject.value}>
-                  <input
-                    className={subjectStyle}
-                    type="checkbox"
-                    value={subject.value}
-                    checked={selectedSubject === subject.value}
-                    onChange={selectSubject}
-                  />
-                  {subject.value}
+                <label
+                  key={subject.value}
+                  className={
+                    selectedSubject === subject.value
+                      ? ""
+                      : "text-gray-400 px-1"
+                  }
+                  onClick={() =>
+                    selectSubject({ target: { value: subject.value } })
+                  }
+                >
+                  <span
+                    className={`${selectedSubject === subject.value ? "" : ""}`}
+                  >
+                    {selectedSubject === subject.value && <span>✔</span>}
+                  </span>
+                  {subject.value} ·
                 </label>
               ))}
             </div>
@@ -264,81 +257,12 @@ const StudyListPage = () => {
       </div>
 
       <div className="flex-wrap w-1300 font-GSans">
-        <div className="md:grid place-items-center md:grid-cols-4 ">
-          {/* 스터디 목록을 카드 형식으로 출력 */}
-          <AnimatePresence>
-            {studyList.map((study, index) => (
-              <div
-                key={study.studyNo}
-                onMouseEnter={() => setCurrentItem(study.studyNo)}
-                onMouseLeave={() => setCurrentItem(null)}
-                onClick={() => handleReadStudy(study.studyNo)}
-                className="relative w-72 h-72 mb-8 rounded"
-              >
-                <img
-                  src={
-                    study.imageList.length > 0
-                      ? `${host}/api/study/display/${study.imageList[0].fileName}`
-                      : defaultImg
-                  }
-                  className="w-72 h-72 bg-cover rounded"
-                  alt={study.studyTitle}
-                ></img>
-                <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded">
-                  <motion.div
-                    initial={{ opacity: 1 }}
-                    animate={{
-                      opacity:
-                        isHovered && `${study.studyNo}` == currentItem ? 0 : 1,
-                    }}
-                  >
-                    <div className="flex justify-between p-8">
-                      <div className="flex gap-4">
-                        <p
-                          className={`px-2 rounded pt-1 ${getStatusClass(
-                            study
-                          )}`}
-                        >
-                          {getStatusText(study)}
-                        </p>
-                        <p className="px-2 pt-1 rounded bg-gray-500/50">
-                          {study.studySubject}
-                        </p>
-                      </div>
-                      <p>
-                        {study.currentMemberCount}/{study.studyHeadcount}명
-                      </p>
-                    </div>
-                    <div className="absolute bottom-0 p-8">
-                      <p className="text-xl py-2">
-                        #{study.studyOnline ? "비대면" : "대면"}
-                        <br />#{study.studyAddr}
-                      </p>
-                      <p className="w-60 truncate text-2xl">
-                        {study.studyTitle}
-                      </p>
-                    </div>
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity:
-                      isHovered && `${study.studyNo}` == currentItem ? 1 : 0,
-                    border: "4px solid rgb(253 230 138)",
-                    scale: 0.8,
-                  }}
-                  className="absolute w-72 h-72 bottom-0 p-10 cursor-pointer"
-                >
-                  <div className="line-clamp-8 text-center text-white">
-                    {study.studyContent}
-                  </div>
-                </motion.div>
-              </div>
-            ))}
-          </AnimatePresence>
-        </div>
+        <StudyListComponent
+          studyList={studyList}
+          handleReadStudy={handleReadStudy}
+          getStatusText={getStatusText}
+          getStatusClass={getStatusClass}
+        />
         <div className="grid place-items-end">
           <button
             onClick={handleAddStudy}

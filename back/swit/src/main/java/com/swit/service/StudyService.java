@@ -38,11 +38,11 @@ public class StudyService {
     public List<Study> getAllStudies(String studyTitle,
             String studySubject,
             String studyAddr,
-            Boolean studyOnline) {
+            Boolean studyOnline, String userId) {
         return studyRepository.studyList(studyTitle,
                 studySubject,
                 studyAddr,
-                studyOnline);
+                studyOnline, userId);
     }
 
     // 스터디별 질문
