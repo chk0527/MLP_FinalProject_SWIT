@@ -1,6 +1,7 @@
 package com.swit.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,10 +46,10 @@ public class TimerService {
     }
 
     // 해당 스터디의 그룹원의 타이머 정보 가져오기
-    public List<TimerDTO> getUserTimers(Integer studyNo, String userId) {
-        List<Timer> timers = timerRepository.findByStudyUserId(studyNo, userId);
+    public List<TimerDTO> getUserTimers(Integer studyNo, String userNick) {
+        List<Timer> timers = timerRepository.findByStudyUserNick(studyNo, userNick);
         if (timers.isEmpty()) {
-            log.warn("No timers found for studyNo: " + studyNo);
+            log.warn("No timers found for studyNo: " + studyNo + " and userNick: " + userNick);
             return Collections.emptyList();
         }
         return timers.stream()
@@ -61,7 +62,7 @@ public class TimerService {
         Timer timer = modelMapper.map(timerDTO, Timer.class);
         Study study = studyRepository.findById(timerDTO.getStudyNo())
                 .orElseThrow(() -> new NoSuchElementException("Study not found"));
-        User user = userRepository.findByUserId(timerDTO.getUserId())
+        User user = userRepository.findByUserNick(timerDTO.getUserNick())
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
         timer.setStudy(study);
         timer.setUser(user);
@@ -85,8 +86,23 @@ public class TimerService {
         if (updates.containsKey("elapsedTime")) {
             timer.setElapsedTime((Integer) updates.get("elapsedTime"));
         }
-
-        // timer.setUpdatedAt(LocalDateTime.now()); // updatedAt 필드를 수동으로 설정
+        if (updates.containsKey("time")) {
+            timer.setTime((Integer) updates.get("time"));
+        }
+        // startAt, stopAt : 파싱할 때 null 허용
+        // 초기값이 null이여야 해서 허용 처리 필요
+        if (updates.containsKey("startAt")) {
+            String startAtStr = (String) updates.get("startAt");
+            if (startAtStr != null && timer.getStartAt() == null) {
+                timer.setStartAt(LocalDateTime.parse(startAtStr, DateTimeFormatter.ISO_DATE_TIME));
+            }
+        }
+        if (updates.containsKey("stopAt")) {
+            String stopAtStr = (String) updates.get("stopAt");
+            if (stopAtStr != null) {
+                timer.setStopAt(LocalDateTime.parse(stopAtStr, DateTimeFormatter.ISO_DATE_TIME));
+            }
+        }
         Timer updatedTimer = timerRepository.save(timer);
         return modelMapper.map(updatedTimer, TimerDTO.class);
     }

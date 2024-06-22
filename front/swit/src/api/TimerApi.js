@@ -14,9 +14,9 @@ export const getAllTimers = async (studyNo) => {
 }
 
 // 그룹원의 타이머 불러오기
-export const getUserTimers = async (studyNo, userId) => {
+export const getUserTimers = async (studyNo, userNick) => {
     try {
-        const res = await axios.get(`${prefix}/${studyNo}/${userId}`);
+        const res = await axios.get(`${prefix}/${studyNo}/${userNick}`);
         return res.data;
     } catch (error) {
         console.error('해당 스터디에는 타이머 기록이 하나도 없습니다.');
@@ -25,9 +25,9 @@ export const getUserTimers = async (studyNo, userId) => {
 }
 
 // 타이머 새로 추가
-export const addTimer = async (studyNo, userId, timer) => {
+export const addTimer = async (studyNo, userNick, timer) => {
     try {
-        const res = await axios.post(`${prefix}/${studyNo}/${userId}`, { ...timer, studyNo, userId });
+        const res = await axios.post(`${prefix}/${studyNo}/${userNick}`, { ...timer, studyNo, userNick });
         return res.data;
     } catch (error) {
         console.error('타이머를 추가하는데 실패했습니다:', error);
