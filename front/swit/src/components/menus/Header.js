@@ -9,7 +9,7 @@ const items1 = [
   { name: "스터디 그룹", path: "/study", no: 0 },
   { name: "스터디 장소", path: "/place/list", no: 1 },
   { name: "시험 및 채용", path: "/job/list", no: 2 },
-  { name: "게시판", path: "/", no: 3 },
+  { name: "게시판", path: "/board", no: 3 },
 ];
 
 const items2 = [
