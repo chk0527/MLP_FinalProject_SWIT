@@ -4,6 +4,8 @@ import { FaStopwatch, FaClock, FaBell, FaChevronDown, FaRedo, FaBookReader } fro
 import { useNavigate } from "react-router-dom";
 import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import { isLeader } from '../../api/GroupApi';
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const GroupTimerComponent = ({ studyNo }) => {
     const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
@@ -11,12 +13,18 @@ const GroupTimerComponent = ({ studyNo }) => {
     const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
     const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
     const [currentStopwatch, setCurrentStopwatch] = useState(null); // 현재 스톱워치 값 관리
-    const [userStudyTimes, setUserStudyTimes] = useState({}); // 유저별 공부 시간
     const intervalTimerIds = useRef({}); // 각 타이머의 인터벌 ID 관리
     const intervalStopWatchIds = useRef({}); // 각 스톱워치의 인터벌 ID 관리
     const [isEditing, setIsEditing] = useState(false); // 제목 입력창 활성화 상태 관리
+    const [isTimerEditing, setIsTimerEditing] = useState(false); // 제목 입력창 활성화 상태 관리
     const [userIsLeader, setUserIsLeader] = useState(false) // 방장 여부 식별
     const [userNick, setUserNick] = useState(getUserNickFromToken()) // 로그인한 유저의 닉네임 관리
+
+    // 날짜 범위 계산에 필요한 관리(방장 화면)
+    const [startDate, setStartDate] = useState(null)
+    const [endDate, setEndDate] = useState(null)
+    const [filteredStudyTimes, setFilteredStudyTimes] = useState({})
+
 
     // 닉네임별로 스탑워치 리스트 구분
     const userStopwatches = stopwatches.filter(sw => sw.userNick === userNick)
@@ -54,6 +62,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                 setStopwatches(updatedStopwatches)
 
                 // 현재 작업 중인 스톱워치 설정
+                // 다른 유저로 로그인하면 해당 유저의 currentStopwatch을 로컬에서 불러오기
                 let initialStopwatch = null
                 updatedStopwatches.forEach(stopwatch => {
                     const savedStopwatch = JSON.parse(localStorage.getItem(`currentStopwatch_${stopwatch.timerNo}`))
@@ -79,21 +88,6 @@ const GroupTimerComponent = ({ studyNo }) => {
                     initialStopwatch = updatedStopwatches.find(sw => sw.userNick === userNickFromToken)
                 }
                 setCurrentStopwatch(initialStopwatch)
-
-                // (타이머) 로컬 스토리지의 상태가 DB에 있는지 확인
-                const savedTimer = JSON.parse(localStorage.getItem(`currentTimer_${studyNo}_${userNick}`));
-                if (savedTimer) {
-                    const fetchedTimer = res.find(timer => timer.timerNo === savedTimer.timerNo);
-                    if (fetchedTimer) {
-                        setCurrentTimer({ ...fetchedTimer, time: savedTimer.time });
-                        setTimers(timers => timers.map(t => t.timerNo === fetchedTimer.timerNo ? { ...fetchedTimer, time: savedTimer.time } : t));
-                        if (fetchedTimer.running) {
-                            handleStartTimer({ ...fetchedTimer, time: savedTimer.time });
-                        }
-                    } else {
-                        localStorage.removeItem(`currentTimer_${studyNo}_${userNick}`);
-                    }
-                }
             } catch (error) {
                 console.error('타이머를 불러오는 데 실패했습니다:', error)
             }
@@ -105,17 +99,13 @@ const GroupTimerComponent = ({ studyNo }) => {
     // 상태가 바뀔 때마다 로컬스토리지에 저장
     useEffect(() => {
         const saveState = () => {
-            localStorage.setItem(`timers_${studyNo}_${userNick}`, JSON.stringify(timers))
             localStorage.setItem(`stopwatches_${studyNo}_${userNick}`, JSON.stringify(stopwatches))
-            if (currentTimer) {
-                localStorage.setItem(`currentTimer_${studyNo}_${userNick}`, JSON.stringify(currentTimer))
-            }
             if (currentStopwatch) {
                 localStorage.setItem(`currentStopwatch_${currentStopwatch.timerNo}`, JSON.stringify(currentStopwatch))
             }
         }
         saveState()
-    }, [timers, stopwatches, currentTimer, currentStopwatch, studyNo, userNick])
+    }, [stopwatches, currentStopwatch, studyNo, userNick])
 
     // 사용자가 작동 중에 서버 끄거나 페이지 나갈 때 일시정지 처리
     useEffect(() => {
@@ -127,6 +117,7 @@ const GroupTimerComponent = ({ studyNo }) => {
 
     // 서버 끄거나 페이지 나갈 때 일시정지 처리 기능함수
     const handleBeforeUnload = async () => {
+        // 스톱워치가 작동 중일 때 처리
         if (currentStopwatch && currentStopwatch.running) {
             const updatedTimer = { ...currentStopwatch, running: false }
             await updateTimer(studyNo, currentStopwatch.timerNo, updatedTimer)
@@ -137,15 +128,47 @@ const GroupTimerComponent = ({ studyNo }) => {
             setStopwatches(updatedStopwatches)
             localStorage.setItem(`stopwatches_${studyNo}_${userNick}`, JSON.stringify(updatedStopwatches))
         }
-        if (currentTimer && currentTimer.running) {
-            const updatedTimer = { ...currentTimer, running: false }
-            await updateTimer(studyNo, currentTimer.timerNo, updatedTimer)
-            setCurrentTimer(updatedTimer)
-            localStorage.setItem(`currentTimer_${studyNo}_${userNick}`, JSON.stringify(updatedTimer))
-        }
     }
 
-    // 타이머 시간 계산
+    // 타이머를 로컬에서 불러오기(페이지 로드 시)
+    useEffect(() => {
+        const savedTimer = JSON.parse(localStorage.getItem(`currentTimer_${studyNo}_${userNick}`))
+        if (savedTimer) {
+            setCurrentTimer(savedTimer)
+            if (savedTimer.running) {
+                const remainingTime = (savedTimer.endTime - Date.now()) / 1000
+                if (remainingTime > 0) {
+                    setCurrentTimer(prev => ({ ...prev, time: Math.ceil(remainingTime) }))
+                    handleStartTimer() // 타이머 다시 시작
+                } else {
+                    setCurrentTimer({ ...savedTimer, time: 0, running: false })
+                    localStorage.setItem(`currentTimer_${studyNo}_${userNick}`, JSON.stringify({ ...savedTimer, time: 0, running: false }))
+                }
+            }
+        }
+    }, [])
+
+    // 타이머 작동 중에 페이지,서버 꺼지면 일시정지한 채로 저장
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (intervalTimerIds.current) {
+                clearInterval(intervalTimerIds.current)
+            }
+            if (currentTimer) {
+                localStorage.setItem(`currentTimer_${studyNo}_${userNick}`, JSON.stringify({ ...currentTimer, running: false }))
+            }
+        }
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+        }
+    }, [currentTimer, studyNo, userNick])
+
+
+    // ===================== 시간 포맷팅 처리 ==============================
+
+
+    // 타이머 시간 계산 포맷팅
     const formatTimerTime = (time) => {
         const hours = String(Math.floor(time / 3600)).padStart(2, '0')
         const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, '0')
@@ -160,6 +183,9 @@ const GroupTimerComponent = ({ studyNo }) => {
         const seconds = String(Math.floor((time % 60000) / 1000)).padStart(2, '0')
         return `${hours}:${minutes}:${seconds}`
     }
+
+
+    // ===================== 기록란 처리 ==============================
 
     // 방장 전용 전체 기록란 포맷팅
     const formatStopWatchAdmin = (time) => {
@@ -238,7 +264,6 @@ const GroupTimerComponent = ({ studyNo }) => {
         try {
             clearInterval(intervalStopWatchIds.current[timer.timerNo])
             await deleteTimer(studyNo, timer.timerNo)
-
             const updatedStopwatches = stopwatches.filter(t => t.timerNo !== timer.timerNo)
             setStopwatches(updatedStopwatches)
             if (currentStopwatch && currentStopwatch.timerNo === timer.timerNo) {
@@ -249,7 +274,6 @@ const GroupTimerComponent = ({ studyNo }) => {
                 }
                 localStorage.removeItem(`currentStopwatch_${timer.timerNo}`)
             }
-
         } catch (error) {
             console.error('타이머 삭제 실패 : ', error)
         }
@@ -261,7 +285,6 @@ const GroupTimerComponent = ({ studyNo }) => {
             if (intervalStopWatchIds.current[timer.timerNo]) {
                 clearInterval(intervalStopWatchIds.current[timer.timerNo])
             }
-
             const updatedTimer = {
                 ...timer,
                 running: true,
@@ -269,6 +292,7 @@ const GroupTimerComponent = ({ studyNo }) => {
             }
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
+            setIsEditing(false) // 스톱워치 시작 시 제목 입력란 비활성화
 
             const startTime = Date.now() - (timer.time || 0)
             intervalStopWatchIds.current[timer.timerNo] = setInterval(() => {
@@ -277,7 +301,6 @@ const GroupTimerComponent = ({ studyNo }) => {
                 setCurrentStopwatch(prev => ({ ...prev, time: updatedTime }))
                 localStorage.setItem(`currentStopwatch_${timer.timerNo}`, JSON.stringify({ ...updatedTimer, time: updatedTime }))
             }, 10)
-
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
         } catch (error) {
             console.error('스톱워치 시작 오류 : ', error);
@@ -304,18 +327,6 @@ const GroupTimerComponent = ({ studyNo }) => {
 
             // 2. DB 업데이트(순서 어긋나면 충돌!!)
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
-
-            // 유저별 공부 시간 업데이트
-            // const userNick = timer.userNick
-            // const updatedUserStudyTimes = {
-            //     ...userStudyTimes,
-            //     [userNick]: {
-            //         today: elapsedTime, //(userStudyTimes[userId]?.today || 0) + elapsedTime,
-            //         total: elapsedTime  //(userStudyTimes[userId]?.total || 0) + elapsedTime
-            //     }
-            // }
-            // setUserStudyTimes(updatedUserStudyTimes)
-            // localStorage.setItem(`userStudyTimes_${studyNo}`, JSON.stringify(updatedUserStudyTimes))
         } catch (error) {
             console.error('스톱워치 일시정지 실패 : ', error)
         }
@@ -348,85 +359,119 @@ const GroupTimerComponent = ({ studyNo }) => {
     // ================== "타이머" 기능 핸들러 =========================
 
     // 타이머 생성
-    const handleCreateTimer = async (timer) => {
+    const handleCreateTimer = () => {
+        try {
+            if (currentTimer) {
+                alert("현재 실행 중인 타이머가 있습니다.")
+                return
+            }
+            const newTimer = { name: '', time: 1800, running: false } // 기본값 30분
+            setCurrentTimer(newTimer)
+            setIsTimerEditing(true)
+            localStorage.setItem(`currentTimer_${studyNo}_${userNick}`, JSON.stringify(newTimer))
+        } catch (error) {
+            console.error('타이머 생성 실패 : ', error)
+        }
     }
 
     // 타이머 삭제
-    const handleDeleteTimer = async (timer) => {
+    const handleDeleteTimer = () => {
+        try {
+            if (intervalTimerIds.current) {
+                clearInterval(intervalTimerIds.current)
+            }
+            setCurrentTimer(null)
+            localStorage.removeItem('currentTimer')
+        } catch (error) {
+            console.error('타이머 삭제 실패 : ', error)
+        }
     }
 
-    // // 타이머 시작
-    const handleStartTimer = async (timer) => {
-        // try {
-        //     clearInterval(intervalTimerIds.current[timer.timerNo])
-
-        //     const updatedTimer = { ...timer, running: true, startTime: Date.now() }
-        //     setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
-        //     setCurrentTimer(updatedTimer)
-
-        //     const startTime = Date.now()
-        //     intervalTimerIds.current[timer.timerNo] = setInterval(() => {
-        //         const updatedTime = timer.time - Math.floor((Date.now() - startTime) / 1000)
-        //         if (updatedTime <= 0) {
-        //             clearInterval(intervalTimerIds.current[timer.timerNo])
-        //             const finalTimer = { ...updatedTimer, running: false, time: 0, updatedAt: new Date().toISOString() }
-        //             setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? finalTimer : t))
-        //             setCurrentTimer(finalTimer)
-        //             localStorage.removeItem(`currentTimer_${studyNo}`)
-        //             updateTimer(studyNo, timer.timerNo, finalTimer)
-        //         } else {
-        //             setTimers(prev => prev.map(t => t.timerNo === timer.timerNo ? { ...t, time: updatedTime } : t))
-        //             setCurrentTimer(prev => ({ ...prev, time: updatedTime }))
-        //             localStorage.setItem(`currentTimer_${studyNo}`, JSON.stringify({ ...timer, time: updatedTime }))
-        //         }
-        //     }, 1000)
-
-        //     await updateTimer(studyNo, timer.timerNo, updatedTimer)
-        // } catch (error) {
-        //     console.error('타이머 시작 실패 : ', error)
-        // }
+    // 타이머 시작
+    const handleStartTimer = () => {
+        try {
+            if (!currentTimer.name) {
+                alert("타이머 이름을 입력해주세요.")
+                return
+            }
+            if (currentTimer.time <= 0) {
+                alert("시간은 0보다 커야 합니다.")
+                return
+            }
+            if (intervalTimerIds.current) {
+                clearInterval(intervalTimerIds.current)
+            }
+            const endTime = Date.now() + currentTimer.time * 1000
+            setCurrentTimer(prev => ({ ...prev, running: true }))
+            setIsTimerEditing(false) // 타이머 시작 시 제목 입력란 비활성화
+            localStorage.setItem(`currentTimer_${studyNo}_${userNick}`
+                , JSON.stringify({
+                    ...currentTimer,
+                    running: true,
+                    endTime
+                }))
+            intervalTimerIds.current = setInterval(() => {
+                const remainingTime = (endTime - Date.now()) / 1000
+                if (remainingTime <= 0) {
+                    clearInterval(intervalTimerIds.current)
+                    setCurrentTimer({ ...currentTimer, time: 0, running: false })
+                    localStorage.setItem(`currentTimer_${studyNo}_${userNick}`
+                        , JSON.stringify({
+                            ...currentTimer,
+                            time: 0,
+                            running: false
+                        }))
+                    alert("타이머가 종료되었습니다.")
+                } else {
+                    setCurrentTimer(prev => ({
+                        ...prev,
+                        time: Math.ceil(remainingTime)
+                    }))
+                }
+            }, 1000)
+        } catch (error) {
+            console.error('타이머 시작 실패 : ', error)
+        }
     }
 
     // 타이머 일시정지
-    const handlePauseTimer = async (timer) => {
-        // try {
-        //     clearInterval(intervalTimerIds.current[timer.timerNo])
-        //     const elapsedTime = Math.floor((Date.now() - timer.startTime) / 1000) // 작동한 시간 계산
-        //     const updatedTimer = {
-        //         ...timer,
-        //         running: false,
-        //         updatedAt: new Date().toISOString(),
-        //         time: timer.time, // 현재 남은 시간으로 업데이트
-        //         elapsedTime: timer.time - elapsedTime
-        //     }
-        //     setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
-        //     setCurrentTimer(updatedTimer)
-        //     localStorage.setItem(`currentTimer_${studyNo}`, JSON.stringify(updatedTimer)) // 로컬 스토리지에 상태 저장
-
-        //     await updateTimer(studyNo, timer.timerNo, updatedTimer)
-        // } catch (error) {
-        //     console.error('타이머 일시정지 실패 : ', error)
-        // }
+    const handlePauseTimer = () => {
+        try {
+            if (intervalTimerIds.current) {
+                clearInterval(intervalTimerIds.current)
+            }
+            setCurrentTimer(prev => ({ ...prev, running: false }))
+            localStorage.setItem(`currentTimer_${studyNo}_${userNick}`
+                , JSON.stringify({
+                    ...currentTimer,
+                    running: false
+                }))
+        } catch (error) {
+            console.error('타이머 일시정지 실패 : ', error)
+        }
     }
 
     // 타이머 정지(초기화)
-    const handleStopTimer = async (timer) => {
-        // try {
-        //     clearInterval(intervalTimerIds.current[timer.timerNo])
-        //     const elapsedTime = (Date.now() - timer.startTime) / 1000
-        //     const updatedTimer = {
-        //         ...timer,
-        //         running: false,
-        //         time: 0,
-        //         updatedAt: new Date().toISOString()
-        //     }
-        //     setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
-        //     setCurrentTimer(updatedTimer)
-        //     await updateTimer(studyNo, timer.timerNo, updatedTimer)
-        // } catch (error) {
-        //     console.error('타이머 정지/초기화 실패 : ', error)
-        // }
+    const handleStopTimer = () => {
+        try {
+            if (intervalTimerIds.current) {
+                clearInterval(intervalTimerIds.current)
+            }
+            setCurrentTimer(prev => ({ ...prev, time: 0, running: false }))
+            localStorage.setItem(`currentTimer_${studyNo}_${userNick}`
+                , JSON.stringify({
+                    ...currentTimer,
+                    time: 0,
+                    running: false
+                }))
+        } catch (error) {
+            console.error('타이머 정지/초기화 실패 : ', error)
+        }
     }
+
+    // ================== "날짜 범위로 검색" 기능 핸들러 =========================
+
+
 
     return (
         <div className="w-full space-y-4">
@@ -444,7 +489,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                 ))}
             </div> */}
 
-            {/*유저별 개인 스톱워치 화면 */}
+            {/*스톱워치 개인화면 */}
             <div className="flex flex-col md:flex-row justify-between w-full space-y-4 md:space-y-0 md:space-x-4 items-stretch">
                 <div className="flex flex-col w-full">
                     {userStopwatches.length === 0 && (
@@ -561,132 +606,121 @@ const GroupTimerComponent = ({ studyNo }) => {
                     )}
                 </div>
 
-                {/* 타이머 (추후 수정 예정) */}
+                {/* 타이머 개인화면 */}
                 <div className="flex flex-col w-full">
-                    {timers.length === 0 && (
-                        <div className="bg-green-200 p-4 flex flex-col items-center rounded-lg">
-                            <FaClock className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">타이머</h2>
-                            <button
-                                onClick={() => handleCreateTimer('timer')}
-                                className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
-                            >
-                                타이머 생성
-                            </button>
-                        </div>
-                    )}
-
-                    {timers.map((timer) => (
-                        <div key={timer.timerNo} className="bg-green-200 p-4 flex flex-col items-center rounded-lg mb-4">
-                            <FaClock className="text-4xl mb-2" />
-                            <h2 className="text-2xl font-semibold mb-4">{timer.userNick}님의 타이머</h2>
-                            <div className="space-y-4 w-full">
-                                <input
-                                    type="text"
-                                    placeholder="제목"
-                                    value={timer.name}
-                                    onChange={(e) => setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? { ...t, name: e.target.value } : t))}
-                                    disabled={timer.running}
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
-                                {!timer.running ? (
-                                    <div className="grid grid-cols-3 gap-2 justify-center">
-                                        <label className="flex flex-col items-center">
-                                            시
-                                            <input
-                                                type="number"
-                                                value={Math.floor(timer.time / 3600)}
-                                                onChange={(e) =>
-                                                    setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? {
-                                                        ...t,
-                                                        time: e.target.value * 3600 + (timer.time % 3600),
-                                                    } : t))
-                                                }
-                                                className="w-full p-2 border border-gray-300 rounded"
-                                            />
-                                        </label>
-                                        <label className="flex flex-col items-center">
-                                            분
-                                            <input
-                                                type="number"
-                                                value={Math.floor((timer.time % 3600) / 60)}
-                                                onChange={(e) =>
-                                                    setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? {
-                                                        ...t,
-                                                        time: Math.floor(timer.time / 3600) * 3600 + e.target.value * 60 + (timer.time % 60),
-                                                    } : t))
-                                                }
-                                                className="w-full p-2 border border-gray-300 rounded"
-                                            />
-                                        </label>
-                                        <label className="flex flex-col items-center">
-                                            초
-                                            <input
-                                                type="number"
-                                                value={timer.time % 60}
-                                                onChange={(e) =>
-                                                    setTimers(timers => timers.map(t => t.timerNo === timer.timerNo ? {
-                                                        ...t,
-                                                        time: Math.floor(timer.time / 3600) * 3600 + Math.floor((timer.time % 3600) / 60) * 60 + parseInt(e.target.value, 10),
-                                                    } : t))
-                                                }
-                                                className="w-full p-2 border border-gray-300 rounded"
-                                            />
-                                        </label>
-                                    </div>
-                                ) : (
-                                    <div className="text-3xl font-mono text-center">{formatTimerTime(timer.time)}</div>
-                                )}
-                                <div className="flex justify-center space-x-2">
-                                    {!timer.running ? (
-                                        <button
-                                            onClick={() => {
-                                                if (!timer.name || timer.time < 1) {
-                                                    alert("제목과 상세내용을 입력하고 시간은 1초 이상이어야 합니다.")
-                                                } else {
-                                                    handleStartTimer(timer)
-                                                }
-                                            }}
-                                            className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
-                                        >
-                                            시작
-                                        </button>
+                    <div className="bg-green-200 p-4 flex flex-col items-center rounded-lg">
+                        <FaClock className="text-4xl mb-2" />
+                        <h2 className="text-2xl font-semibold mb-4">타이머</h2>
+                        <div className="space-y-4 w-full">
+                            {currentTimer ? (
+                                <>
+                                    <input
+                                        type="text"
+                                        placeholder="타이머 이름"
+                                        value={currentTimer.name}
+                                        onChange={(e) => setCurrentTimer(prev => ({ ...prev, name: e.target.value }))}
+                                        className="w-full p-2 border border-gray-300 rounded"
+                                        disabled={currentTimer.running}
+                                    />
+                                    {!currentTimer.running ? (
+                                        <>
+                                            <div className="grid grid-cols-3 gap-2 justify-center">
+                                                <label className="flex flex-col items-center">
+                                                    시
+                                                    <input
+                                                        type="number"
+                                                        value={Math.floor(currentTimer.time / 3600)}
+                                                        onChange={(e) => {
+                                                            const hours = Math.max(0, e.target.value)
+                                                            setCurrentTimer(prev => ({
+                                                                ...prev,
+                                                                time: hours * 3600 + (prev ? prev.time % 3600 : 0),
+                                                            }))
+                                                        }}
+                                                        className="w-full p-2 border border-gray-300 rounded"
+                                                        disabled={currentTimer.running}
+                                                    />
+                                                </label>
+                                                <label className="flex flex-col items-center">
+                                                    분
+                                                    <input
+                                                        type="number"
+                                                        value={Math.floor((currentTimer.time % 3600) / 60)}
+                                                        onChange={(e) => {
+                                                            const minutes = Math.max(0, e.target.value)
+                                                            setCurrentTimer(prev => ({
+                                                                ...prev,
+                                                                time: Math.floor(prev ? prev.time / 3600 : 0) * 3600 + minutes * 60 + (prev ? prev.time % 60 : 0),
+                                                            }))
+                                                        }}
+                                                        className="w-full p-2 border border-gray-300 rounded"
+                                                        disabled={currentTimer.running}
+                                                    />
+                                                </label>
+                                                <label className="flex flex-col items-center">
+                                                    초
+                                                    <input
+                                                        type="number"
+                                                        value={currentTimer.time % 60}
+                                                        onChange={(e) => {
+                                                            const seconds = Math.max(0, e.target.value)
+                                                            setCurrentTimer(prev => ({
+                                                                ...prev,
+                                                                time: Math.floor(prev ? prev.time / 3600 : 0) * 3600 + Math.floor((prev ? prev.time % 3600 : 0) / 60) * 60 + seconds,
+                                                            }))
+                                                        }}
+                                                        className="w-full p-2 border border-gray-300 rounded"
+                                                        disabled={currentTimer.running}
+                                                    />
+                                                </label>
+                                            </div>
+                                            <div className="flex justify-center space-x-2">
+                                                <button
+                                                    onClick={handleStartTimer}
+                                                    className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
+                                                >
+                                                    시작
+                                                </button>
+                                                <button
+                                                    onClick={handleStopTimer}
+                                                    className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                                                >
+                                                    초기화
+                                                </button>
+                                                <button
+                                                    onClick={handleDeleteTimer}
+                                                    className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
+                                                >
+                                                    삭제
+                                                </button>
+                                            </div>
+                                        </>
                                     ) : (
                                         <>
-                                            <button
-                                                onClick={() => handlePauseTimer(timer)}
-                                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                                            >
-                                                일시정지
-                                            </button>
-                                            <button
-                                                onClick={() => handleStopTimer(timer)}
-                                                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
-                                            >
-                                                정지
-                                            </button>
+                                            <div className="text-3xl font-mono text-center">{formatTimerTime(currentTimer.time)}</div>
+                                            <div className="flex justify-center space-x-2">
+                                                <button
+                                                    onClick={handlePauseTimer}
+                                                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                                                >
+                                                    일시정지
+                                                </button>
+                                            </div>
                                         </>
                                     )}
-                                    {!timer.running && (
-                                        <button
-                                            onClick={() => handleDeleteTimer(timer)}
-                                            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
-                                        >
-                                            삭제
-                                        </button>
-                                    )}
+                                </>
+                            ) : (
+                                <div className="flex justify-center">
+                                    <button
+                                        onClick={handleCreateTimer}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                                    >
+                                        생성하기
+                                    </button>
                                 </div>
-                            </div>
+                            )}
                         </div>
-                    ))}
-                    {timers.length >= 1 && (
-                        <div className="flex justify-center mt-4">
-                            <FaChevronDown
-                                className="text-3xl cursor-pointer"
-                                onClick={() => handleCreateTimer('timer')}
-                            />
-                        </div>
-                    )}
+                    </div>
                 </div>
                 {/* 방장 전용 전체 기록 */}
                 {userIsLeader ? (
