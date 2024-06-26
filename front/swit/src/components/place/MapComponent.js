@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { getPlaceDetail } from "../../api/PlaceApi";
-import useCustomMove from "../../hooks/useCustomMove";
 
 const MapComponent = ({ placeAddr }) => {
   //카카오맵 api

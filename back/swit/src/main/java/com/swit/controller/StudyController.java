@@ -45,11 +45,12 @@ public class StudyController {
     public List<Study> getAllStudies(@RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
                                      @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
                                      @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
-                                     @RequestParam(name = "studyOnline", required = false) Boolean studyOnline) { // 수정된 부분
-        String userId = (String) session.getAttribute("userId");
-        log.info("Logged in user: " + userId);
+                                     @RequestParam(name = "studyOnline", required = false) Boolean studyOnline,
+                                     @RequestParam(name = "userId", required = false) String userId) { // 수정된 부분
+        // String userId = (String) session.getAttribute("userId");
+        // log.info("Logged in user: " + userId);
 
-        List<Study> studyList = service.getAllStudies(studyTitle, studySubject, studyAddr, studyOnline);
+        List<Study> studyList = service.getAllStudies(studyTitle, studySubject, studyAddr, studyOnline, userId);
         return studyList;
     }
 
