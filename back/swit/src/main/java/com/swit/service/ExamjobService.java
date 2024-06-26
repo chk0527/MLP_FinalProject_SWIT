@@ -71,13 +71,13 @@ public class ExamjobService {
     }
 
     // jobactive 설정 -> 날짜지나면 jobactive 0으로
-    // @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
-    // public void updateJobStatus() {
-    //     LocalDate currentDate = LocalDate.now();
-    //     List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
-    //     jobsToUpdate.forEach(job -> job.setJobActive(0));
-    //     jobRepository.saveAll(jobsToUpdate);
-    // }
+    @Scheduled(fixedRate = 43200000, initialDelay = 0) // 12시간마다
+    public void updateJobStatus() {
+        LocalDate currentDate = LocalDate.now();
+        List<Job> jobsToUpdate = jobRepository.findByJobDeadlineBeforeAndJobActive(currentDate.minusDays(1), 1);
+        jobsToUpdate.forEach(job -> job.setJobActive(0));
+        jobRepository.saveAll(jobsToUpdate);
+    }
 
 
     public PageResponseDTO<JobDTO> jobList(PageRequestDTO pageRequestDTO, String searchKeyword, String jobField, String sort) {
