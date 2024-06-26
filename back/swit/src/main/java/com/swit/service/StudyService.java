@@ -6,6 +6,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
-import com.swit.dto.QuestionDTO;
 import com.swit.dto.CustomUserDetails;
+import com.swit.dto.QuestionDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyPageRequestDTO;
+import com.swit.dto.StudyPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
@@ -35,14 +40,30 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    public List<Study> getAllStudies(String studyTitle,
+    public StudyPageResponseDTO<StudyDTO> studyList(String studyTitle,
             String studySubject,
             String studyAddr,
-            Boolean studyOnline, String userId) {
-        return studyRepository.studyList(studyTitle,
+            Boolean studyOnline, String userId, StudyPageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getStudyPage() - 1, // 1페이지가 0
+                pageRequestDTO.getStudySize());
+
+        Page<Study> result = studyRepository.studyList(studyTitle,
                 studySubject,
                 studyAddr,
-                studyOnline, userId);
+                studyOnline, userId, pageable);
+        List<StudyDTO> studyList = result.getContent().stream()
+                .map(Study -> modelMapper.map(Study, StudyDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        StudyPageResponseDTO<StudyDTO> responseDTO = StudyPageResponseDTO.<StudyDTO>withAll()
+                .dtoList(studyList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+
     }
 
     // 스터디별 질문
