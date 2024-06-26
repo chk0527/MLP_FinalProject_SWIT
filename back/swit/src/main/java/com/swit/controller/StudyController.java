@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam; // 추가된 부분
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.swit.domain.Study;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyPageRequestDTO;
@@ -43,7 +44,7 @@ public class StudyController {
     private final CustomFileUtil fileUtil;
 
     @GetMapping("/all")
-    public StudyPageResponseDTO<StudyDTO> getAllStudies(@RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
+    public StudyPageResponseDTO<Study> getAllStudies(@RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
     @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
     @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
     @RequestParam(name = "studyOnline", required = false) Boolean studyOnline,

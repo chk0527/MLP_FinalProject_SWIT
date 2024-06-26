@@ -40,7 +40,7 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    public StudyPageResponseDTO<StudyDTO> studyList(String studyTitle,
+    public StudyPageResponseDTO<Study> studyList(String studyTitle,
             String studySubject,
             String studyAddr,
             Boolean studyOnline, String userId, StudyPageRequestDTO pageRequestDTO) {
@@ -52,12 +52,12 @@ public class StudyService {
                 studySubject,
                 studyAddr,
                 studyOnline, userId, pageable);
-        List<StudyDTO> studyList = result.getContent().stream()
-                .map(Study -> modelMapper.map(Study, StudyDTO.class))
+        List<Study> studyList = result.getContent().stream()
+                .map(Study -> modelMapper.map(Study, Study.class))
                 .collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();
-        StudyPageResponseDTO<StudyDTO> responseDTO = StudyPageResponseDTO.<StudyDTO>withAll()
+        StudyPageResponseDTO<Study> responseDTO = StudyPageResponseDTO.<Study>withAll()
                 .dtoList(studyList)
                 .pageRequestDTO(pageRequestDTO)
                 .totalCount(totalCount)
