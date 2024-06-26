@@ -111,7 +111,7 @@ const ListComponent = () => {
 
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full font-GSans">
       {/* <div className="flex justify-between items-center border-b-2 pb-4 mb-4"> */}
       <div className="flex justify-between items-center pb-4 ">
         <div className="flex space-x-12">
@@ -119,7 +119,7 @@ const ListComponent = () => {
           <h2 className="text-3xl font-blackHans text-gray-300 hover:border-b-2 hover:border-black cursor-pointer" onClick={handleClickExamList}>시험</h2>
         </div>
 
-        <div className="text-xl">
+        <div className="text-2xl">
           <input
             className="focus:outline-none"
             type="text"
@@ -134,7 +134,7 @@ const ListComponent = () => {
       </div>
 
 
-      <div className='w-full flex justify-end border-b-2 pb-4 mb-4 text-1xl'>
+      <div className='w-full flex justify-end border-b-2 pb-4 mb-4 text-2xl font-GSans'>
 
         {/* 직무선택 그리드  */}
         {/* <div className="grid grid-cols-5 gap-px bg-gray-300 border border-gray-300 w-full">
@@ -153,7 +153,7 @@ const ListComponent = () => {
         <select
           value={jobField}
           onChange={(e) => setJobField(e.target.value)}
-          className="focus:outline-none p-2 text-1xl"
+          className="focus:outline-none mx-4"
         >
           {jobFields.map((field, index) => (
             <option key={index} value={field.value}>
@@ -171,13 +171,13 @@ const ListComponent = () => {
 
       </div>
 
-      <div className="flex-wrap w-1300 font-GSans">
+      <div className="flex-wrap w-1300 font-GSans text-xl">
         <ul className="divide-y divide-slate-200">
           {serverData.dtoList.map(job => (
             <article key={job.jobNo} className="flex items-start space-x-6 p-6">
               <div className="min-w-0 relative flex-auto">
                 <h2 className="font-semibold text-slate-900 truncate pr-20 cursor-pointer" onClick={() => moveToJobRead(job.jobNo)}>{job.jobTitle}</h2>
-                <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium text-slate-500">
+                <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium text-gray-400">
 
                   <div className="absolute top-0 right-0 flex items-center space-x-1">
                     <dt className="">
@@ -189,17 +189,17 @@ const ListComponent = () => {
                   </div>
 
 
-                  <div className="ml-2">
+                  <div className="ml-2 text-lg">
                     <dt className="sr-only">회사</dt>
                     <dd>{job.jobCompany}</dd>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center text-lg">
                     <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                       <circle cx="1" cy="1" r="1" />
                     </svg>
                     <dd>{job.jobField}</dd>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center text-lg ">
                     <svg width="2" height="2" fill="currentColor" className="mx-2 text-slate-300" aria-hidden="true">
                       <circle cx="1" cy="1" r="1" />
                     </svg>

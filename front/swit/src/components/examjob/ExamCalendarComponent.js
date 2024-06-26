@@ -157,7 +157,7 @@ const ExamCalendarComponent = () => {
   //라디오버튼
   const radioOptions = [
     { label: '전체', value: '' },
-    { label: '기사·산업기사', value: '산업기사' },
+    { label: '기사,산업기사', value: '기사·산업기사' },
     { label: '기능장', value: '기능장' },
     { label: '기능사', value: '기능사' },
     { label: '기술사', value: '기술사' },
@@ -171,20 +171,7 @@ const ExamCalendarComponent = () => {
   }
 
   return (
-    <div className=''>
-      <style>
-        {`
-          .hover-underline:hover {
-            text-decoration: underline;
-            text-underline-offset: 4px;
-          }
-
-          .selected-label {
-            text-decoration: underline;
-            text-underline-offset: 4px;
-          }
-        `}
-      </style>
+    <div className='font-GSans'>
       <div className=''>
         {/* 채용/시험/검색 */}
         <div className="flex-col space-y-2">
@@ -196,7 +183,7 @@ const ExamCalendarComponent = () => {
 
             {/* 검색 */}
             <div className="">
-              <div className="flex items-center space-x-2 text-xl">
+              <div className="flex items-center space-x-2 text-2xl">
                 <input
                   className="focus:outline-none"
                   type="text"
@@ -211,11 +198,13 @@ const ExamCalendarComponent = () => {
 
             </div>
           </div>
-          <div className="flex justify-between items-end space-x-4  pb-5 mb-4 font-GSans">
+          {/* <div className="flex justify-between items-end space-x-4  pb-5 mb-4 font-GSans"> */}
+          <div className="flex justify-between items-end pb-5 mb-4 font-GSans">
             <div className=''>
-              <form className='flex justify-items-start'>
-                {radioOptions.map((option) => (
-                  <label key={option.value} className={`mr-4 ${selectRadio === option.value ? 'selected-label text-xl' : ''}`}>
+
+              <form className='flex text-xl justify-items-start'>
+                {radioOptions.map((option, index) => (
+                  <label key={option.value} className={` ${selectRadio === option.value ? '' : 'text-gray-400 px-1'}`}>
                     <input
                       type="radio"
                       value={option.value}
@@ -223,16 +212,20 @@ const ExamCalendarComponent = () => {
                       onChange={radioChange}
                       className="forced-colors:appearance-auto appearance-none flex-initial"
                     />
-                    {/* <div className="rounded-lg p-2 m-2 hover:bg-slate-100 hover:text-slate-900">{option.label}</div> */}
-                    <div className="rounded-lg p-2 m-2">{option.label}</div>
+                    <div className="">
+                      <span className={`${selectRadio === option.value ? "" : ""}`}>
+                        {selectRadio === option.value && <span>✔</span>}
+                      </span>
+                      {option.label}{index < radioOptions.length - 1 && ' · '}
+                    </div>
                   </label>
                 ))}
               </form>
 
             </div>
             <div className='order-last'>
-              <Link to={{ pathname: "/exam/list/calendar" }} className="tooltip" data-tooltip="캘린더"><CiCalendarDate size={30} /></Link>
-              <Link to={{ pathname: "/exam/list" }} className="tooltip ml-4" data-tooltip="리스트"><CiBoxList size={30} /></Link>
+              <Link to={{ pathname: "/exam/list/calendar" }} className="tooltip" data-tooltip="캘린더"><CiCalendarDate size={35} /></Link>
+              <Link to={{ pathname: "/exam/list" }} className="tooltip ml-4" data-tooltip="리스트"><CiBoxList size={35} /></Link>
             </div>
 
           </div>
