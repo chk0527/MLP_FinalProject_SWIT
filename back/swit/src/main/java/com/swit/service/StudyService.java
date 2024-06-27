@@ -6,6 +6,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ import com.swit.domain.User;
 import com.swit.dto.CustomUserDetails;
 import com.swit.dto.QuestionDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyPageRequestDTO;
+import com.swit.dto.StudyPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
@@ -38,14 +43,30 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    public List<Study> getAllStudies(String studyTitle,
+    public StudyPageResponseDTO<Study> studyList(String studyTitle,
             String studySubject,
             String studyAddr,
-            Boolean studyOnline, String userId) {
-        return studyRepository.studyList(studyTitle,
+            Boolean studyOnline, String userId, StudyPageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getStudyPage() - 1, // 1페이지가 0
+                pageRequestDTO.getStudySize());
+
+        Page<Study> result = studyRepository.studyList(studyTitle,
                 studySubject,
                 studyAddr,
-                studyOnline, userId);
+                studyOnline, userId, pageable);
+        List<Study> studyList = result.getContent().stream()
+                .map(Study -> modelMapper.map(Study, Study.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        StudyPageResponseDTO<Study> responseDTO = StudyPageResponseDTO.<Study>withAll()
+                .dtoList(studyList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+
     }
 
     // 스터디별 질문
