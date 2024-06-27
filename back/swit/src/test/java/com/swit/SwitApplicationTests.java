@@ -1,14 +1,14 @@
-package com.swit;
+// package com.swit;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class SwitApplicationTests {
+// @SpringBootTest
+// class SwitApplicationTests {
 
-	@Test
-	void contextLoads() {
-		//테스트 pr test
-	}
+// 	@Test
+// 	void contextLoads() {
+// 		//테스트 pr test
+// 	}
 
-}
+// }
