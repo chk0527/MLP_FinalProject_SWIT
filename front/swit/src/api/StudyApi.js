@@ -8,6 +8,13 @@ export const getStudy = async (studyNo) => {
   return res.data;
 }
 
+export const getMyStudy = async (userId) => { //내가 가입한 스터디 목록
+  const res = await axios.get(`${prefix}/myStudy`, {
+    params: {userId }
+  });
+  return res.data;
+};
+
 export const getStudyWithQuestion = async (studyNo) => {
   const res = await axios.get(`${prefix}/question/${studyNo}`);
   return res.data;

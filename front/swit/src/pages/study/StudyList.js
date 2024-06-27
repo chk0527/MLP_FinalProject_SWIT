@@ -35,15 +35,13 @@ const StudyListPage = () => {
   const [studyOnline, setStudyOnline] = useState(false);
 
   const [inputText, setInputText] = useState("");
-  const [searchText, setSearchText] = useState("");
 
   const handleInput = (e) => {
     setInputText(e.target.value);
   };
 
   const handleButton = () => {
-    setSearchText(inputText);
-    setStudyTitle(searchText);
+    setStudyTitle(inputText); 
   };
 
   const subjectList = [
