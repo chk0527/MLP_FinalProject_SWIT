@@ -18,7 +18,9 @@ import com.swit.dto.AnswerDTO;
 import com.swit.dto.CustomUserDetails;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.GroupRequestDTO;
+import com.swit.dto.UserDTO;
 import com.swit.repository.AnswerRepository;
+import com.swit.repository.GroupMemberProjection;
 import com.swit.repository.GroupRepository;
 import com.swit.repository.StudyRepository;
 import com.swit.repository.UserRepository;
@@ -177,6 +179,21 @@ public Integer registerWithAnswer(GroupDTO groupDTO, AnswerDTO answerDTO) {
   public int getCurrentMemberCount(Integer studyNo) { // 현재 가입 인원 가져오기
     List<Group> currentMembers = groupRepository.findByStudyStudyNoAndGroupJoin(studyNo, 1); // 승인된 인원만 체크
     return currentMembers.size();
+  }
+
+    public List<GroupMemberProjection> getGroupMembers(Integer studyNo) { //현재 가입 인원 정보 가져오기
+        return groupRepository.findGroupMembersByStudyNo(studyNo);
+    }
+
+    public boolean expelMember(String userId, Integer studyNo) {
+      Optional<Group> group = groupRepository.findByUserUserIdAndStudyStudyNo(userId, studyNo);
+      if (group.isPresent()) {
+          Group groupEntity = group.get();
+          groupEntity.setGroupJoin(3); // 추방된 상태를 나타내는 값으로 설정
+          groupRepository.save(groupEntity);
+          return true;
+      }
+      return false;
   }
 
 }

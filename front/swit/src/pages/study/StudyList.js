@@ -157,6 +157,8 @@ const StudyListPage = () => {
         return "승인대기";
       case 2:
         return "승인거절";
+      case 3:
+        return "추방";
       default:
         return "미가입";
     }
@@ -173,6 +175,8 @@ const StudyListPage = () => {
         return "bg-yellow-500";
       case 2:
         return "bg-red-500";
+      case 3:
+        return "bg-purple-500";
       default:
         return "bg-gray-500";
     }

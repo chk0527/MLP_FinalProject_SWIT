@@ -1,14 +1,19 @@
+import React, { useEffect, useState } from "react";
+import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
+import { getUserIdFromToken } from "../../util/jwtDecode"; // 사용자 ID를 가져오는 함수 가져오기
 import GroupCalendarComponent from "../group/GroupCalendarComponent";
 import GroupTimerComponent from "../group/GroupTimerComponent";
 import GroupJoinConfirmComponent from "../group/GroupJoinConfirmComponent";
 import StudyListBtnComponent from "./StudyListBtnComponent";
-import { useState, useEffect } from "react";
 import StudyInquiryListComponent from "./StudyInquiryListComponent";
-import { fetchInquiries, getStudy } from "../../api/StudyApi";
+import MemberManagementComponent from "../group/MemberManagementComponent";
+import { fetchInquiries } from "../../api/StudyApi";
 
 const StudyGroupComponent = ({ studyNo }) => {
-  const [view, setView] = useState("calendar"); // 뷰 설정(캘린더|신청)
+  const [view, setView] = useState("calendar");
   const [inquiries, setInquiries] = useState([]);
+  const [isLeaderState, setIsLeaderState] = useState(false); // 방장 여부 상태 추가
+
   useEffect(() => {
     const fetchData = async () => {
       const inquiriesData = await fetchInquiries(studyNo);
@@ -16,6 +21,16 @@ const StudyGroupComponent = ({ studyNo }) => {
     };
 
     fetchData();
+  }, [studyNo]);
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      const isLeaderCheck = await isLeader(studyNo);
+      console.log(isLeaderCheck+"@@@@@@@@@@")
+      setIsLeaderState(isLeaderCheck);
+    };
+
+    checkUserRole();
   }, [studyNo]);
 
   return (
@@ -28,7 +43,7 @@ const StudyGroupComponent = ({ studyNo }) => {
       <div className="flex justify-center my-3 w-full">
         <span
           onClick={() => setView("calendar")}
-          className={`mx-2 px-4 py-2 cursor-pointer ${
+          className={`mx-2 px-4 cursor-pointer ${
             view === "calendar" ? "font-bold text-red-500" : "text-gray-500"
           }`}
         >
@@ -37,12 +52,25 @@ const StudyGroupComponent = ({ studyNo }) => {
         <span className="mx-5">|</span>
         <span
           onClick={() => setView("chat")}
-          className={`mx-2 px-4 py-2 cursor-pointer ${
+          className={`mx-2 px-4 cursor-pointer ${
             view === "chat" ? "font-bold text-red-500" : "text-gray-500"
           }`}
         >
           문의 및 신청
         </span>
+        {isLeaderState && (
+          <>
+            <span className="mx-5">|</span>
+            <span
+              onClick={() => setView("memberManagement")}
+              className={`mx-2 px-4 cursor-pointer ${
+                view === "memberManagement" ? "font-bold text-red-500" : "text-gray-500"
+              }`}
+            >
+              회원 관리
+            </span>
+          </>
+        )}
       </div>
 
       {/* 뷰 - 캘린더 항목 */}
@@ -56,6 +84,11 @@ const StudyGroupComponent = ({ studyNo }) => {
           setInquiries={setInquiries} />
           <GroupJoinConfirmComponent />
         </div>
+      )}
+
+      {/* 뷰 - 회원 관리 항목 (방장만 볼 수 있음) */}
+      {view === "memberManagement" && isLeaderState && (
+        <MemberManagementComponent studyNo={studyNo} />
       )}
 
       {/* 목록으로 돌아가기 */}
