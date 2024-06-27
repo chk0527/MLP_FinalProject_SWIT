@@ -1,5 +1,7 @@
 package com.swit.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -30,26 +32,28 @@ public class TimerController {
 
     // 해당 스터디의 모든 타이머 조회
     @GetMapping("/{studyNo}")
-    public ResponseEntity<List<TimerDTO>> getAllTimers(@PathVariable(name="studyNo") Integer studyNo) {
+    public ResponseEntity<List<TimerDTO>> getAllTimers(@PathVariable(name = "studyNo") Integer studyNo) {
         List<TimerDTO> timers = timerService.getAllTimers(studyNo);
         return ResponseEntity.ok(timers);
     }
 
     // 해당 스터디의 그룹원의 타이머만 조회
-    @GetMapping("/{studyNo}/{userId}")
-    public ResponseEntity<List<TimerDTO>> getUserTimers(@PathVariable(name="studyNo") Integer studyNo, @PathVariable(name="userId") String userId) {
-        List<TimerDTO> timers = timerService.getUserTimers(studyNo, userId);
+    @GetMapping("/{studyNo}/{userNick}")
+    public ResponseEntity<List<TimerDTO>> getUserTimers(
+            @PathVariable(name = "studyNo") Integer studyNo,
+            @PathVariable(name = "userNick") String userNick) {
+        List<TimerDTO> timers = timerService.getUserTimers(studyNo, userNick);
         return ResponseEntity.ok(timers);
     }
 
     // 해당 스터디에서 타이머 새로 생성
-    @PostMapping("/{studyNo}/{userId}")
+    @PostMapping("/{studyNo}/{userNick}")
     public ResponseEntity<TimerDTO> addTimer(
-            @PathVariable(name="studyNo") Integer studyNo,
-            @PathVariable(name="userId") String userId,
+            @PathVariable(name = "studyNo") Integer studyNo,
+            @PathVariable(name = "userNick") String userNick,
             @RequestBody TimerDTO timerDTO) {
         timerDTO.setStudyNo(studyNo);
-        timerDTO.setUserId(userId);
+        timerDTO.setUserNick(userNick);
         TimerDTO newTimer = timerService.addTimer(timerDTO);
         return new ResponseEntity<>(newTimer, HttpStatus.CREATED);
     }
@@ -57,16 +61,16 @@ public class TimerController {
     // 해당 스터디에서 타이머 하나 삭제
     @DeleteMapping("/{studyNo}/{timerNo}")
     public void deleteTimer(
-            @PathVariable(name="studyNo") Integer studyNo,
-            @PathVariable(name="timerNo") Integer timerNo) {
-                timerService.deleteTimer(timerNo);
+            @PathVariable(name = "studyNo") Integer studyNo,
+            @PathVariable(name = "timerNo") Integer timerNo) {
+        timerService.deleteTimer(timerNo);
     }
 
     // 해당 스터디에서 타이머 하나 수정
     @PatchMapping("/{studyNo}/{timerNo}")
     public ResponseEntity<TimerDTO> updateTimer(
-            @PathVariable(name="studyNo") Integer studyNo,
-            @PathVariable(name="timerNo") Integer timerNo,
+            @PathVariable(name = "studyNo") Integer studyNo,
+            @PathVariable(name = "timerNo") Integer timerNo,
             @RequestBody Map<String, Object> updates) {
         TimerDTO updatedTimer = timerService.updateTimer(timerNo, updates);
         return new ResponseEntity<>(updatedTimer, HttpStatus.OK);
