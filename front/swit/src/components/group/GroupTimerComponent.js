@@ -9,7 +9,6 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 const GroupTimerComponent = ({ studyNo }) => {
     const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
-    const [timers, setTimers] = useState([]); // 타이머 객체 관리
     const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
     const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
     const [currentStopwatch, setCurrentStopwatch] = useState(null); // 현재 스톱워치 값 관리
@@ -19,6 +18,7 @@ const GroupTimerComponent = ({ studyNo }) => {
     const [isTimerEditing, setIsTimerEditing] = useState(false); // 제목 입력창 활성화 상태 관리
     const [userIsLeader, setUserIsLeader] = useState(false) // 방장 여부 식별
     const [userNick, setUserNick] = useState(getUserNickFromToken()) // 로그인한 유저의 닉네임 관리
+    const [totalStudyTime, setTotalStudyTime] = useState({}) // 그룹원별 총 공부 시간
 
     // 날짜 범위 계산에 필요한 관리(방장 화면)
     const [startDate, setStartDate] = useState(null)
@@ -60,6 +60,9 @@ const GroupTimerComponent = ({ studyNo }) => {
                     return timer
                 })
                 setStopwatches(updatedStopwatches)
+
+                // 총 공부 시간 계산 및 설정
+                setTotalStudyTime(calculateTotalStudyTime(updatedStopwatches))
 
                 // 현재 작업 중인 스톱워치 설정
                 // 다른 유저로 로그인하면 해당 유저의 currentStopwatch을 로컬에서 불러오기
@@ -215,6 +218,17 @@ const GroupTimerComponent = ({ studyNo }) => {
         }, {})
     }
 
+    const calculateTotalStudyTime = (stopwatches) => {
+        const userTotalTime = {}
+        stopwatches.forEach(sw => {
+            if (!userTotalTime[sw.userNick]) {
+                userTotalTime[sw.userNick] = 0
+            }
+            userTotalTime[sw.userNick] += sw.elapsedTime || 0
+        })
+        return userTotalTime
+    }
+
     // ================== "스톱워치" 기능 핸들러 =========================
 
     // 기록된 스톱워치를 불러오는 함수
@@ -274,6 +288,12 @@ const GroupTimerComponent = ({ studyNo }) => {
                 }
                 localStorage.removeItem(`currentStopwatch_${timer.timerNo}`)
             }
+
+            // 총 공부 시간 업데이트
+            setTotalStudyTime(prev => ({
+                ...prev,
+                [timer.userNick]: (prev[timer.userNick] || 0) - Math.floor(timer.time / 1000)
+            }))
         } catch (error) {
             console.error('타이머 삭제 실패 : ', error)
         }
@@ -320,6 +340,10 @@ const GroupTimerComponent = ({ studyNo }) => {
                 time: timer.time,
                 elapsedTime: Math.floor(timer.time / 1000)
             }
+            // 이전에 저장된 elapsedTime
+            const previousElapsedTime = stopwatches.find(t => t.timerNo === timer.timerNo)?.elapsedTime || 0
+            const addedTime = Math.floor(timer.time / 1000) - previousElapsedTime
+
             // 1. 로컬 업데이트(순서 어긋나면 충돌!!)
             setStopwatches(stopwatches => stopwatches.map(t => t.timerNo === timer.timerNo ? updatedTimer : t))
             setCurrentStopwatch(updatedTimer)
@@ -327,6 +351,12 @@ const GroupTimerComponent = ({ studyNo }) => {
 
             // 2. DB 업데이트(순서 어긋나면 충돌!!)
             await updateTimer(studyNo, timer.timerNo, updatedTimer)
+
+            // 총 공부 시간 업데이트
+            setTotalStudyTime(prev => ({
+                ...prev,
+                [timer.userNick]: (prev[timer.userNick] || 0) + addedTime
+            }))
         } catch (error) {
             console.error('스톱워치 일시정지 실패 : ', error)
         }
@@ -601,6 +631,9 @@ const GroupTimerComponent = ({ studyNo }) => {
                                             </button>
                                         </div>
                                     ))}
+                                <div className="text-center mb-4 font-semibold">
+                                    총 공부 시간: {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -732,13 +765,16 @@ const GroupTimerComponent = ({ studyNo }) => {
                                 .sort(([a], [b]) => a === userNick ? -1 : b === userNick ? 1 : 0)
                                 .map(([userNick, userTimers], index) => (
                                     <div key={userNick}>
-                                        <div className="w-full text-center mb-2">{userNick} {userNick === getUserNickFromToken() ? '(방장)' : '(일반)'}</div>
+                                        <div className="w-full text-center mb-2 font-semibold">{userNick} {userNick === getUserNickFromToken() ? '(방장)' : '(일반)'}</div>
                                         {userTimers.map((stopwatch, idx) => (
                                             <div key={stopwatch.timerNo} className="flex justify-between items-center mb-2">
                                                 <div className="w-1/3 text-center">{idx + 1}. {stopwatch.name}</div>
                                                 <div className="w-2/3 text-center">{formatStopWatchAdmin(stopwatch.time)}</div>
                                             </div>
                                         ))}
+                                        <div className="text-center mb-4">
+                                            총 공부 시간: {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                                        </div>
                                         {index < Object.keys(groupByuserNick(stopwatches)).length - 1 && <hr className="w-full my-4 border-t border-gray-400" />}
                                     </div>
                                 ))}
