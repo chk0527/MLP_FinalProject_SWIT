@@ -2,19 +2,17 @@ package com.swit.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.swit.domain.FavoritesPlace;
 import com.swit.domain.Place;
+import com.swit.domain.User;
 import com.swit.dto.PlaceDTO;
-import com.swit.dto.PlacePageRequestDTO;
-import com.swit.dto.PlacePageResponseDTO;
+import com.swit.repository.FavoritesPlaceRepository;
 import com.swit.repository.PlaceRepository;
+import com.swit.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PlaceService {
         private final ModelMapper modelMapper;
+        private final UserRepository userRepository;
         private final PlaceRepository placeRepository;
+        private final FavoritesPlaceRepository favoritesPlaceRepository;
 
         // place 하나
         public PlaceDTO getPlace(Long place_no) {
@@ -34,51 +34,56 @@ public class PlaceService {
                 return placeDto;
         }
 
-        // place 전체 목록
-        public PlacePageResponseDTO<PlaceDTO> getPlaceList(PlacePageRequestDTO pageRequestDTO) {
-                Pageable pageable = PageRequest.of(
-                                pageRequestDTO.getPlacePage() - 1, // 1페이지가 0
-                                pageRequestDTO.getPlaceSize());
-
-                Page<Place> result = placeRepository.findAll(pageable);
-                List<PlaceDTO> placeList = result.getContent().stream()
-                                .map(Place -> modelMapper.map(Place, PlaceDTO.class))
-                                .collect(Collectors.toList());
-
-                long totalCount = result.getTotalElements();
-                PlacePageResponseDTO<PlaceDTO> responseDTO = PlacePageResponseDTO.<PlaceDTO>withAll()
-                                .dtoList(placeList)
-                                .pageRequestDTO(pageRequestDTO)
-                                .totalCount(totalCount)
-                                .build();
-                return responseDTO;
-        }
-
-        //스터디 맵에 쓸 전체 리스트
+        // 스터디 맵에 쓸 전체 리스트
         public List<Place> getPlaceAllList() {
                 return placeRepository.findAll();
         }
 
-        // 이름or지역 검색
-        public PlacePageResponseDTO<PlaceDTO> getPlaceSearch(String placeName,
-                        String placeAddr, PlacePageRequestDTO pageRequestDTO) {
-                Pageable pageable = PageRequest.of(
-                                pageRequestDTO.getPlacePage() - 1, // 1페이지가 0
-                                pageRequestDTO.getPlaceSize());
+        // 즐겨찾기
+        @Transactional
+        public boolean addFavorite(String userId, Long placeNo) {
 
-                Page<Place> result = placeRepository.findByPlaceNameContainingAndPlaceAddrContaining(placeName,
-                                placeAddr, pageable);
-                List<PlaceDTO> placeList = result.getContent().stream()
-                                .map(Place -> modelMapper.map(Place, PlaceDTO.class))
-                                .collect(Collectors.toList());
+                User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Usr못찾으"));
+                Place place = placeRepository.findById(placeNo).orElseThrow(() -> new RuntimeException("Place못찾음"));
 
-                long totalCount = result.getTotalElements();
-                PlacePageResponseDTO<PlaceDTO> responseDTO = PlacePageResponseDTO.<PlaceDTO>withAll()
-                                .dtoList(placeList)
-                                .pageRequestDTO(pageRequestDTO)
-                                .totalCount(totalCount)
-                                .build();
-                return responseDTO;
+                if (!favoritesPlaceRepository.existsByUserAndPlace(user, place)) {
+                        FavoritesPlace favoritesPlace = new FavoritesPlace();
+                        favoritesPlace.setUser(user);
+                        favoritesPlace.setPlace(place);
+                        favoritesPlaceRepository.save(favoritesPlace);
+                        return true;
+                }
+                return false;
 
         }
+
+        @Transactional
+        public boolean removeFavorite(String userId, Long placeNo) throws Exception {
+                try {
+                        User user = userRepository.findByUserId(userId)
+                                        .orElseThrow(() -> new RuntimeException("Usr못찾으2"));
+                        Place place = placeRepository.findById(placeNo).orElseThrow(() -> new RuntimeException("Place못찾음2"));
+
+                        if (favoritesPlaceRepository.existsByUserAndPlace(user, place)) {
+                                favoritesPlaceRepository.deleteByUserAndPlace(user, place);
+                                return true;
+                        }
+                        return false;
+                } catch (Exception e) {
+                        throw new Exception("즐겨찾기삭제에러", e);
+                }
+        }
+
+        @Transactional
+        public boolean isFavorite(String userId, Long placeNo) throws Exception {
+                try {
+                        User user = userRepository.findByUserId(userId)
+                                        .orElseThrow(() -> new RuntimeException("Usr못찾으3"));
+                        Place place = placeRepository.findById(placeNo).orElseThrow(() -> new RuntimeException("Place못찾음3"));
+                        return favoritesPlaceRepository.existsByUserAndPlace(user, place);
+                } catch (Exception e) {
+                        throw new Exception("ifFavorite에러", e);
+                }
+        }
+
 }

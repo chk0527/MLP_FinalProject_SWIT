@@ -1,21 +1,38 @@
-import axios from "axios"
-export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/place`
+import axios from "axios";
+export const API_SERVER_HOST = "http://localhost:8181";
+const prefix = `${API_SERVER_HOST}/api/place`;
 
 //스터디 장소 하나
-export const getPlaceDetail = async (placeNo) =>{
-    const res =await axios.get(`${prefix}/${placeNo}`)
-    return res.data
-    }
-//스터디 장소 전체 목록 // 검색
-export const getPlaceList = async (placeName,placeAddr,pageParam) => {
-    const {PlacePage,PlaceSize} = pageParam
-    const res = await axios.get(`${prefix}/list`,{params:{placeName:placeName,placeAddr:placeAddr,PlacePage:PlacePage,PlaceSize:PlaceSize}});
-    return res.data;
-}
+export const getPlaceDetail = async (placeNo) => {
+  const res = await axios.get(`${prefix}/${placeNo}`);
+  return res.data;
+};
 
 //스터디 장소 전체 (맵에 띄울 용)
 export const getPlaceAllList = async () => {
-    const res = await axios.get(`${prefix}/all`);
-    return res.data;
-}
+  const res = await axios.get(`${prefix}/all`);
+  return res.data;
+};
+
+//시험즐겨찾기
+//추가
+export const addPlaceFavorite = async (userId, placeNo) => {
+  const res = await axios.post(`${prefix}/place/favorites`, { userId, placeNo });
+  return res.data;
+};
+
+//삭제
+export const removePlaceFavorite = async (userId, placeNo) => {
+  const res = await axios.delete(`${prefix}/place/favorites`, {
+    data: { userId, placeNo },
+  });
+  return res.data;
+};
+
+//확인
+export const isPlaceFavorite = async (userId, placeNo) => {
+  const res = await axios.get(`${prefix}/place/favorites`, {
+    params: { userId, placeNo },
+  });
+  return res.data;
+};
