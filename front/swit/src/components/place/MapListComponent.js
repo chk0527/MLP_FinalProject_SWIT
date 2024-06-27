@@ -196,10 +196,14 @@ const MapListComponent = () => {
   // 내 스터디 검색
   useEffect(() => {
     const userId = getUserIdFromToken();
+    if(userId){
     getMyStudy(userId).then((data) => {
       setMyStudyData(data);
     });
-    console.log(myStudyData);
+    console.log(myStudyData);}
+    else{
+      setMyStudyData([])
+    }
   }, []);
 
   const myStudyList = myStudyData.map((myStudy) => ({
@@ -249,7 +253,7 @@ const MapListComponent = () => {
             <PostComponent setAddress={handleAddrChange}></PostComponent>
           </div>
           <div className="flex text-2xl">
-            <button onClick={MyFavorite}>즐겨찾기</button>
+            <button>즐겨찾기</button>
             {myStudyData ? (
               <select
                 className="w-36 text-gray-900 rounded-lg focus:ring-none block p-2 mx-4"
