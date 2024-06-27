@@ -5,9 +5,6 @@ import BasicLayout from "../../layouts/BasicLayout";
 const Login = () => {
     return (
         <BasicLayout>
-            <div className="text-2xl font-medium ">
-                <div>로그인</div>
-            </div>
             <LoginComponent/>
         </BasicLayout>
         
