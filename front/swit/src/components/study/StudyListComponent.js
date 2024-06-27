@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import defaultImg from "../../img/defaultImage.png";
 import { API_SERVER_HOST } from "../../api/StudyApi";
-
+import { getUserIdFromToken } from "../../util/jwtDecode";
+import { isLeader, isMember, memberCount } from "../../api/GroupApi";
 const host = API_SERVER_HOST;
 
 const StudyListComponent = ({
-  studyList,
   handleReadStudy,
   getStatusText,
   getStatusClass,
+  studyList,
+  loading,
 }) => {
   //리스트 목록 애니메이션
   const [isHovered, setHovered] = useState(false);
@@ -23,11 +26,14 @@ const StudyListComponent = ({
     }
   }, [currentItem]);
 
+  if (loading) {
+    return <div>로딩</div>;
+  }
   return (
     <div className="md:grid place-items-center md:grid-cols-4 ">
       {/* 스터디 목록을 카드 형식으로 출력 */}
       <AnimatePresence>
-        {studyList.map((study, index) => (
+        {studyList.dtoList.map((study) => (
           <div
             key={study.studyNo}
             onMouseEnter={() => setCurrentItem(study.studyNo)}
@@ -37,7 +43,7 @@ const StudyListComponent = ({
           >
             <img
               src={
-                study.imageList.length > 0
+                study.imageList && study.imageList.length > 0
                   ? `${host}/api/study/display/${study.imageList[0].fileName}`
                   : defaultImg
               }
