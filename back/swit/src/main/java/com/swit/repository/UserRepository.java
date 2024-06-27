@@ -28,6 +28,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Boolean existsByUserId(String userId);
 
     Optional<User> findByUserId(String userId);
+    Optional<User> findByUserNick(String userNick);
 
     // 네이버 로그인 체크
     // 아이디/비밀번호 찾기 확인 처리(이메일, 핸드폰번호)
