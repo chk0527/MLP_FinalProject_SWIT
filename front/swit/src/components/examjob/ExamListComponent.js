@@ -91,7 +91,7 @@ const ListComponent = () => {
 
   return (
     <div>
-      <div className="relative w-full">
+      <div className="relative w-full font-GSans">
         {/* 채용/시험/검색 */}
         <div className="flex-col space-y-2">
           <div className="flex w-full justify-between items-center">
@@ -102,7 +102,7 @@ const ListComponent = () => {
 
             {/* 검색 */}
             <div className="">
-              <div className="flex items-center space-x-2 text-xl">
+              <div className="flex items-center space-x-2 text-2xl">
                 <input
                   className="focus:outline-none"
                   type="text"
@@ -117,19 +117,19 @@ const ListComponent = () => {
             </div>
           </div>
           <div className="flex justify-end items-end space-x-4 border-b-2 pb-5 mb-4 font-GSans">
-            <Link to={{ pathname: "/exam/list/calendar" }} className="tooltip" data-tooltip="캘린더"><CiCalendarDate size={30} /></Link>
-            <Link to={{ pathname: "/exam/list" }} className="tooltip" data-tooltip="리스트"><CiBoxList size={30} /></Link>
+            <Link to={{ pathname: "/exam/list/calendar" }} className="tooltip" data-tooltip="캘린더"><CiCalendarDate size={35} /></Link>
+            <Link to={{ pathname: "/exam/list" }} className="tooltip" data-tooltip="리스트"><CiBoxList size={35} /></Link>
           </div>
         </div>
         {/* 채용/시험/검색 끝 */}
 
-        <div className="flex-wrap w-1300 font-GSans mt-4">
+        <div className="flex-wrap w-1300 font-GSans mt-4 text-xl">
           <ul className="divide-y divide-slate-200">
             {serverData.dtoList.map(exam => (
               <article key={exam.examNo} className="flex items-start space-x-6 p-6">
                 <div className="min-w-0 relative flex-auto">
                   <h2 className=" font-semibold text-slate-900 truncate pr-20" onClick={() => moveToExamRead(exam.examNo)}>{exam.examTitle}</h2>
-                  <dl className="mt-2 flex flex-wrap text-sm leading-6 font-medium">
+                  <dl className="mt-2 flex flex-wrap text-lg text-gray-400 leading-6 font-medium">
                     <div className="absolute top-0 right-0 flex items-center space-x-1">
                       <dt className="">
                         <button onClick={() => handleFavorite(exam.examNo)}>

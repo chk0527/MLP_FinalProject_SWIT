@@ -14,10 +14,11 @@ import { getUserIdFromToken } from "../../util/jwtDecode"; //userId 받아옴
 const ExamCalendarComponent = () => {
   const [events, setEvents] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [selectRadio, setSelectRadio] = useState('');
   const navigate = useNavigate();
-  
+
   const userId = getUserIdFromToken();
 
   const fetchExamData = async (keyword = '', onlyFavorites = false) => {
@@ -108,6 +109,7 @@ const ExamCalendarComponent = () => {
     fetchExamData(searchKeyword);
   };
 
+
   // 채용, 시험 클릭 시 이동
   const handleClickExamList = useCallback(() => {
     navigate({ pathname: '../../exam' });
@@ -146,24 +148,31 @@ const ExamCalendarComponent = () => {
     navigate(`/exam/read/${info.event.id.split('-')[0]}`);
   };
 
-  //즉려찾기
+  //즐겨찾기
   const clickFavorites = () => {
     setShowFavorites(!showFavorites);
     fetchExamData(searchKeyword, !showFavorites);
   };
 
+  //라디오버튼
+  const radioOptions = [
+    { label: '전체', value: '' },
+    { label: '기사,산업기사', value: '기사·산업기사' },
+    { label: '기능장', value: '기능장' },
+    { label: '기능사', value: '기능사' },
+    { label: '기술사', value: '기술사' },
+  ];
+
+  const radioChange = (event) => {
+    const radioSelectValue = event.target.value;
+    setSelectRadio(radioSelectValue);
+    setSearchKeyword(radioSelectValue);
+    fetchExamData(radioSelectValue);
+  }
+
   return (
-    <div className=''>
+    <div className='font-GSans'>
       <div className=''>
-
-        <div>
-          {isLoggedIn && (
-            <button className='bg-red-500 size-10 w-1/2' onClick={clickFavorites}>
-              {showFavorites ? '전체 보기' : '즐겨찾기만 보기'}
-            </button>
-          )}
-        </div>
-
         {/* 채용/시험/검색 */}
         <div className="flex-col space-y-2">
           <div className="flex w-full justify-between items-center">
@@ -174,7 +183,7 @@ const ExamCalendarComponent = () => {
 
             {/* 검색 */}
             <div className="">
-              <div className="flex items-center space-x-2 text-xl">
+              <div className="flex items-center space-x-2 text-2xl">
                 <input
                   className="focus:outline-none"
                   type="text"
@@ -189,9 +198,36 @@ const ExamCalendarComponent = () => {
 
             </div>
           </div>
-          <div className="flex justify-end items-end space-x-4  pb-5 mb-4 font-GSans">
-            <Link to={{ pathname: "/exam/list/calendar" }} className="tooltip" data-tooltip="캘린더"><CiCalendarDate size={30} /></Link>
-            <Link to={{ pathname: "/exam/list" }} className="tooltip" data-tooltip="리스트"><CiBoxList size={30} /></Link>
+          {/* <div className="flex justify-between items-end space-x-4  pb-5 mb-4 font-GSans"> */}
+          <div className="flex justify-between items-end pb-5 mb-4 font-GSans">
+            <div className=''>
+
+              <form className='flex text-xl justify-items-start'>
+                {radioOptions.map((option, index) => (
+                  <label key={option.value} className={` ${selectRadio === option.value ? '' : 'text-gray-400 px-1'}`}>
+                    <input
+                      type="radio"
+                      value={option.value}
+                      checked={selectRadio === option.value}
+                      onChange={radioChange}
+                      className="forced-colors:appearance-auto appearance-none flex-initial"
+                    />
+                    <div className="">
+                      <span className={`${selectRadio === option.value ? "" : ""}`}>
+                        {selectRadio === option.value && <span>✔</span>}
+                      </span>
+                      {option.label}{index < radioOptions.length - 1 && ' · '}
+                    </div>
+                  </label>
+                ))}
+              </form>
+
+            </div>
+            <div className='order-last'>
+              <Link to={{ pathname: "/exam/list/calendar" }} className="tooltip" data-tooltip="캘린더"><CiCalendarDate size={35} /></Link>
+              <Link to={{ pathname: "/exam/list" }} className="tooltip ml-4" data-tooltip="리스트"><CiBoxList size={35} /></Link>
+            </div>
+
           </div>
         </div>
         {/* 채용/시험/검색 끝 */}
@@ -210,6 +246,23 @@ const ExamCalendarComponent = () => {
           eventMouseEnter={handleMouseEnter}
           eventMouseLeave={handleMouseLeave}
           eventClick={handleReadClick}
+          buttonText={{
+            today: "오늘"
+          }}
+          customButtons={
+            isLoggedIn
+              ? {
+                myCustomButton: {
+                  text: showFavorites ? '전체 보기' : '즐겨찾기',
+                  click: clickFavorites
+                }
+              }
+              : {}
+          }
+          headerToolbar={{
+            right: isLoggedIn ? 'myCustomButton today prev next' : 'today prev next',
+            left: 'title',
+          }}
         />
       </div>
     </div>
