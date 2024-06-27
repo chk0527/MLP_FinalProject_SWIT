@@ -258,9 +258,13 @@ function SearcIdComponent() {
   };
 
   return (
-    <div className="bg-gray-100 py-10">
-      <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
+    <>
+    <div className="text-5xl pb-16 font-blackHans text-center">
+          <div>아이디 찾기</div>
+    </div>
+    {/* <div className="bg-gray-100 py-10"> */}
+      <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-200">
+        {/* <h1 className="text-2xl font-bold mb-6">아이디찾기</h1> */}
         <form name="pageForm" method="post" onSubmit={handleSubmit}>
           <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
           <input type="hidden" id="resultType" name="resultType" value="1" />
@@ -318,7 +322,7 @@ function SearcIdComponent() {
                         name="lb_email_head"
                         id="lb_email_head"
                         maxLength={30}
-                        className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mr-2"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
                         value={emailHead}
                         onChange={handleEmailHeadChange}
                       />
@@ -328,14 +332,14 @@ function SearcIdComponent() {
                         name="lb_email_detail"
                         id="lb_email_detail"
                         maxLength={30}
-                        className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mx-2"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
                         value={emailDetail}
                         onChange={handleEmailDetailChange}
                       />
                       <select
                         name="lb_email_domain"
                         id="lb_email_domain"
-                        className="border border-gray-300 rounded-md px-4 py-2 w-1/3 ml-2"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 ml-2"
                         value={emailDomain}
                         onChange={handleEmailDomainChange}
                       >
@@ -347,13 +351,13 @@ function SearcIdComponent() {
                       </select>
                       <button
                         type="button"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md ml-2"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 w-1/4 px-4 rounded-md ml-2"
                         onClick={handleSendVerificationCode}
                       >
                         이메일 발송
                       </button>
                     </div>
-                    <div className="flex items-center mt-4">
+                    {/* <div className="flex items-center mt-4">
                       <input
                         type="text"
                         name="lb_confirmNum"
@@ -376,7 +380,7 @@ function SearcIdComponent() {
                           남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
                         </div>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                   </>
                 )}
@@ -422,13 +426,13 @@ function SearcIdComponent() {
                         />
                         <button
                           type="button"
-                          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md ml-2"
+                          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 w-1/4 rounded-md ml-2"
                           onClick={handleSendVerificationCode}
                         >
                           SMS 발송
                         </button>
                       </div>
-                      <div className="flex items-center mt-4">
+                      {/* <div className="flex items-center mt-4">
                             <input
                               type="text"
                               name="lb_confirmNum"
@@ -451,26 +455,61 @@ function SearcIdComponent() {
                                 남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
                               </div>
                             )}
-                      </div>
+                      </div> */}
                     </div>
                   </>
                 )}
-                {resultType === '2' && (
-                  <div className="mt-6">
-                    <h2 className="text-lg font-bold mb-4">아이디 찾기 결과</h2>
-                      <div className="bg-gray-100 p-4 rounded-md">
-                        <p>
-                          회원님의 아이디는 <span className="font-bold">{confirm.userId}</span> 입니다.
-                        </p>
-                      </div>
-                  </div>
-                )}
+                <div className="flex items-center mt-4">
+                      <input
+                        type="text"
+                        name="lb_confirmNum"
+                        id="lb_confirmNum"
+                        maxLength={certifyType === '1' ? 8 : 6}
+                        placeholder="인증 코드 입력"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/2 mr-2"
+                        value={confirmNum}
+                        onChange={handleConfirmNumChange}
+                      />
+                      <button
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                        onClick={handleVerifyCode}
+                      >
+                        확인
+                      </button>
+                      {isVerificationCodeSent && (
+                        <div className="mt-2 text-gray-500">
+                          남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+                        </div>
+                      )}
+                </div>
+                <p className="mbrBtnFunc">
+                <span className="mbrBtn mbrBtnSearch_4">
+                   <button
+                     type="submit"
+                     className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                   >
+                     <span>아이디찾기</span>
+                   </button>
+                 </span>
+                </p>
               </div>
             </>
           )}
+          {resultType === '2' && (
+            <div className="mt-6">
+              <h2 className="text-lg font-bold mb-4">아이디 찾기 결과</h2>
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <p>
+                    회원님의 아이디는 <span className="font-bold">{confirm.userId}</span> 입니다.
+                  </p>
+                </div>
+            </div>
+          )}
         </form>
       </div>
-    </div>
+    {/* </div> */}
+    </>
   )
 
 

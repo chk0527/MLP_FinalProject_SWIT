@@ -57,7 +57,7 @@ const LoginComponent =() => {
           <div className="text-5xl pb-16 font-blackHans text-center">
             <div>로그인</div>
           </div>
-          <div className="bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-400">
+          <div className="bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-200">
             <div className="space-y-6">
               <div className="flex items-center">
                 <label className="block font-medium text-slate-700 mr-4 w-24">
