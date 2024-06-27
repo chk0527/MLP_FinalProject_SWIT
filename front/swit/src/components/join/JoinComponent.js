@@ -8,7 +8,6 @@ const initState = {
     userId:'',
     userName:'',
     userPassword:'',
-    userPasswordConfirm:'',
     userEmail:'',
     userPhone:'',
     userNick:'',
@@ -87,10 +86,12 @@ const JoinComponent =() => {
             alert('연락처는 필수 입력 항목입니다.');
             return false;
         }
+        return true;
         
     };
 
     const handleJoin = () => { 
+        console.info("들어왔니?")
         if (validateForm()) {
             const userInfo = { ...user, userPhone: user.userPhone.replace(/\-/g, "") };
             console.log(userInfo)
@@ -108,7 +109,7 @@ const JoinComponent =() => {
         <div className="text-5xl pb-16 font-blackHans text-center">
           <div>회원 가입</div>
         </div>
-        <div className="bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-200">
+        <div className="bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-100">
           <div className="space-y-6">
             <div className="flex items-center">
               <label className="block font-medium text-slate-700 mr-4 w-24">

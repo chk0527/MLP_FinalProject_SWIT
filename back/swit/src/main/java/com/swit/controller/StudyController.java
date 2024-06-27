@@ -44,14 +44,20 @@ public class StudyController {
     private final CustomFileUtil fileUtil;
 
     @GetMapping("/all")
-    public StudyPageResponseDTO<Study> getAllStudies(@RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
-    @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
-    @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
-    @RequestParam(name = "studyOnline", required = false) Boolean studyOnline,
-    @RequestParam(name = "userId", required = false) String userId,
-    StudyPageRequestDTO pageRequestDTO) {
+    public StudyPageResponseDTO<Study> getAllStudies(
+            @RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
+            @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
+            @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
+            @RequestParam(name = "studyOnline", required = false) Boolean studyOnline,
+            @RequestParam(name = "userId", required = false) String userId,
+            StudyPageRequestDTO pageRequestDTO) {
         log.info(pageRequestDTO);
         return service.studyList(studyTitle, studySubject, studyAddr, studyOnline, userId, pageRequestDTO);
+    }
+
+    @GetMapping("/myStudy") // 내 스터디 목록
+    public List<Study> myStudy(@RequestParam("userId") String userId) {
+        return service.myStudy(userId);
     }
 
     @GetMapping("/{studyNo}")
