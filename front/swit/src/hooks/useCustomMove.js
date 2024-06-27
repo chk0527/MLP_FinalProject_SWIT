@@ -13,50 +13,47 @@ const getNum = (param, defaultValue) => {
 };
 
 const useCustomMove = () => {
-  const navigate = useNavigate();
-  const [queryParams] = useSearchParams();
-  const page = getNum(queryParams.get("page"), 1);
-  const size = getNum(queryParams.get("size"), 5);
-  
+  const navigate = useNavigate()
+  const [queryParams] = useSearchParams()
+  const page = getNum(queryParams.get('page'), 1)
+  const size = getNum(queryParams.get('size'), 10)
+
   const StudyPage = getNum(queryParams.get("StudyPage"), 1);
   const StudySize = getNum(queryParams.get("StudySize"), 16);
 
   const queryDefault = createSearchParams({ page, size }).toString();
   const StudyqueryDefault = createSearchParams({ StudyPage, StudySize }).toString();
 
+
   const moveToExamList = (pageParam) => {
-    let queryStr = "";
+    let queryStr = ""
     if (pageParam) {
-      const pageNum = getNum(pageParam.page, 1);
-      const sizeNum = getNum(pageParam.size, 5);
+      const pageNum = getNum(pageParam.page, 1)
+      const sizeNum = getNum(pageParam.size, 10)
       const location = {};
       location.state = 1;
-      queryStr = createSearchParams({
-        page: pageNum,
-        size: sizeNum,
-      }).toString();
+      queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
     } else {
-      queryStr = queryDefault;
+      queryStr = queryDefault
     }
-    navigate({ pathname: `../list`, search: queryStr });
+    navigate({ pathname: `../list`, search: queryStr })
   };
 
   const moveToJobList = (pageParam) => {
-    let queryStr = "";
+    let queryStr = ""
     if (pageParam) {
-      const pageNum = getNum(pageParam.page, 1);
-      const sizeNum = getNum(pageParam.size, 5);
+      const pageNum = getNum(pageParam.page, 1)
+      const sizeNum = getNum(pageParam.size, 10)
       const location = {};
       location.state = 1;
-      queryStr = createSearchParams({
-        page: pageNum,
-        size: sizeNum,
-      }).toString();
+      queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
     } else {
-      queryStr = queryDefault;
+      queryStr = queryDefault
     }
-    navigate({ pathname: `../list`, search: queryStr });
-  };
+    navigate({ pathname: `../list`, search: queryStr })
+
+  }
+  // navigate({ pathname: `../list`, search: queryStr });
 
   const moveToStudy = (pageParam) => {
     let queryStr = "";
@@ -70,7 +67,7 @@ const useCustomMove = () => {
         StudySize: sizeNum,
       }).toString();
     } else {
-        queryStr = StudyqueryDefault;
+      queryStr = StudyqueryDefault;
     }
     navigate({ pathname: `../study`, search: queryStr });
   };
