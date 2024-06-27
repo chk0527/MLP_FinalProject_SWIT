@@ -63,7 +63,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
               {study.studyEndDate}
             </p>
             <p>
-              <strong>방장:</strong> {study.userId}
+              <strong>방장:</strong> {study.userNick}
             </p>
           </div>
         </div>

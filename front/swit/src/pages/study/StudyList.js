@@ -170,6 +170,7 @@ const StudyListPage = () => {
     if (study.isMemberStatus === 1) return "참가중";
     if (study.isMemberStatus === 2) return "거절";
     if (study.isMemberStatus === 0) return "승인 대기중";
+    if (study.isMemberStatus === 3) return "추방";
     return "미가입";
   };
 
@@ -179,6 +180,7 @@ const StudyListPage = () => {
     if (study.isMemberStatus === 1) return "bg-green-500";
     if (study.isMemberStatus === 2) return "bg-red-500";
     if (study.isMemberStatus === 0) return "bg-yellow-500";
+    if (study.isMemberStatus === 3) return "bg-purple-500";
     return "bg-gray-500";
   };
 

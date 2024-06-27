@@ -39,7 +39,7 @@ const StudyGroupPage = () => {
 
   return (
     <BasicLayout>
-      <div className="flex font-GSans">
+      <div className="font-GSans">
         <StudyInfoComponent
           studyNo={studyNo}
           ActionComponent={GroupMeetingComponent}

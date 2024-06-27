@@ -14,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
-import com.swit.dto.QuestionDTO;
+import com.swit.domain.User;
 import com.swit.dto.CustomUserDetails;
+import com.swit.dto.QuestionDTO;
 import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
+import com.swit.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ import lombok.extern.log4j.Log4j2;
 public class StudyService {
     private final ModelMapper modelMapper;
     private final StudyRepository studyRepository;
+    private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
@@ -138,32 +141,37 @@ public class StudyService {
     }
 
     private StudyDTO entityToDTO(Study study) {
-        StudyDTO studyDTO = StudyDTO.builder()
-                .studyNo(study.getStudyNo())
-                .userId(study.getUserId())
-                .studyTitle(study.getStudyTitle())
-                .studyContent(study.getStudyContent())
-                .studyType(study.getStudyType())
-                .studyStartDate(study.getStudyStartDate())
-                .studyHeadcount(study.getStudyHeadcount())
-                .studyOnline(study.getStudyOnline())
-                .studySubject(study.getStudySubject())
-                .studyAddr(study.getStudyAddr())
-                .studyUuid(study.getStudyUuid())
-                .build();
+      String userId = study.getUserId();
+      Optional<User> user = userRepository.findByUserId(userId);
+      String userNick = user.map(User::getUserNick).orElse(null);
 
-        List<StudyImage> imageList = study.getImageList();
-        if (imageList == null || imageList.isEmpty()) {
-            return studyDTO;
-        }
+      StudyDTO studyDTO = StudyDTO.builder()
+              .studyNo(study.getStudyNo())
+              .userId(study.getUserId())
+              .userNick(userNick) // userNick 설정
+              .studyTitle(study.getStudyTitle())
+              .studyContent(study.getStudyContent())
+              .studyType(study.getStudyType())
+              .studyStartDate(study.getStudyStartDate())
+              .studyHeadcount(study.getStudyHeadcount())
+              .studyOnline(study.getStudyOnline())
+              .studySubject(study.getStudySubject())
+              .studyAddr(study.getStudyAddr())
+              .studyUuid(study.getStudyUuid())
+              .build();
 
-        List<String> fileNameList = imageList.stream()
-                .map(StudyImage::getFileName)
-                .collect(Collectors.toList());
-        studyDTO.setUploadFileNames(fileNameList);
+      List<StudyImage> imageList = study.getImageList();
+      if (imageList == null || imageList.isEmpty()) {
+          return studyDTO;
+      }
 
-        return studyDTO;
-    }
+      List<String> fileNameList = imageList.stream()
+              .map(StudyImage::getFileName)
+              .collect(Collectors.toList());
+      studyDTO.setUploadFileNames(fileNameList);
+
+      return studyDTO;
+  }
 
     private Study dtoToEntity(StudyDTO studyDTO) {
         Study study = Study.builder()
