@@ -45,6 +45,10 @@ const GroupForm = ({ studyNo, closeModal }) => {
               alert('가입이 거절되었습니다.');
               closeModal()
               return;
+          case 3:
+              alert('추방된 스터디 그룹입니다.');
+              closeModal()
+              return;              
           default:
               break;
       }
@@ -154,6 +158,9 @@ const GroupForm = ({ studyNo, closeModal }) => {
             </div>
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4">
                 제출
+            </button>
+            <button onClick={closeModal} className="bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded mt-4 ml-10">
+                닫기
             </button>
         </form>
     );

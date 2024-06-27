@@ -89,5 +89,14 @@ export const getUserAnswers = async (userId, studyNo) => {
   return res.data;
 };
 
+export const fetchGroupMembers = async (studyNo) => {
+  const res = await axios.get(`${prefix}/${studyNo}/members`);
+  return res.data;
+};
+
+export const expelMember = async (userId, studyNo) => {
+  const res = await axios.put(`${prefix}/expel`, null, { params: { userId, studyNo } });
+  return res.data;
+};
 
 

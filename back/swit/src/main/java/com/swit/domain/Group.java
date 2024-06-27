@@ -19,7 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "group1") // 테이블 이름을 변경
+@Table(name = "group1") // 테이블  이름을 변경
 @Data
 @Builder
 @AllArgsConstructor
