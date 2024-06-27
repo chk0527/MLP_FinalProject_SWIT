@@ -2,15 +2,20 @@ package com.swit.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swit.domain.Place;
+import com.swit.dto.FavoritesPlaceDTO;
 import com.swit.dto.PlaceDTO;
-import com.swit.dto.PlacePageRequestDTO;
-import com.swit.dto.PlacePageResponseDTO;
 import com.swit.service.PlaceService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,13 +33,6 @@ public class PlaceController {
         return service.getPlace(placeNo);
     }
 
-    @GetMapping("/mapList")
-    public PlacePageResponseDTO<PlaceDTO> getPlaceList(PlacePageRequestDTO
-    pageRequestDTO) {
-    log.info(pageRequestDTO);
-    return service.getPlaceList(pageRequestDTO);
-    }
-
     // 스터디 맵에 쓸 전체 리스트
     @GetMapping("/all")
     public List<Place> getPlaceAllList() {
@@ -42,11 +40,45 @@ public class PlaceController {
         return placeList;
     }
 
-    // 스터디 장소 표시할 리스트
-    @GetMapping("/list")
-    public PlacePageResponseDTO<PlaceDTO> getPlaceSearch(String placeName, String placeAddr,
-            PlacePageRequestDTO pageRequestDTO) {
-        log.info(pageRequestDTO);
-        return service.getPlaceSearch(placeName, placeAddr, pageRequestDTO);
+    //즐겨찾기
+    //추가
+    @PostMapping("/place/favorites")
+    public ResponseEntity<?> addPlaceFavorite(@RequestBody FavoritesPlaceDTO favoritesPlaceDTO) {
+        try {
+            boolean success = service.addFavorite(favoritesPlaceDTO.getUserId(), favoritesPlaceDTO.getPlaceNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기 추가됨");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 존재함");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("addPlaceFavorite 에러" + e.getMessage());
+        }
     }
+    //삭제
+    @DeleteMapping("/place/favorites")
+    public ResponseEntity<?> removePlaceFavorite(@RequestBody FavoritesPlaceDTO favoritesPlaceDTO) {
+        try {
+            boolean success = service.removeFavorite(favoritesPlaceDTO.getUserId(), favoritesPlaceDTO.getPlaceNo());
+            if (success) {
+                return ResponseEntity.ok("즐겨찾기에서 삭제");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("즐겨찾기에 없음");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("removeFavorite에러" + e.getMessage());
+        }
+    }
+    //조회
+    @GetMapping("/place/favorites")
+    public ResponseEntity<?> isPlaceFavorite(@RequestParam(value = "userId") String userId, @RequestParam(value = "placeNo") Long placeNo) {
+        try {
+            boolean isFavorite = service.isFavorite(userId, placeNo);
+            return ResponseEntity.ok(isFavorite);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("isFavorite에러" + e.getMessage());
+        }
+    }
+
+
 }

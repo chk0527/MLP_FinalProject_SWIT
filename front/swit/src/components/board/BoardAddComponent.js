@@ -31,7 +31,7 @@ const BoardAddComponent = () => {
     const [board, setBoard] = useState({ ...initState })
     const [result, setResult] = useState(null)
 
-    const { moveToRead } = useCustomMove();
+    const { moveToBoardList } = useCustomMove();
 
     const handleChangeBoard = (e) => {
         board[e.target.name] = e.target.value
@@ -50,7 +50,7 @@ const BoardAddComponent = () => {
     }
 
     const closeModal = () => {
-        moveToRead(result)
+        moveToBoardList(result)
         setResult(null)
     }
 

@@ -6,6 +6,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
-import com.swit.dto.QuestionDTO;
 import com.swit.dto.CustomUserDetails;
+import com.swit.dto.QuestionDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyPageRequestDTO;
+import com.swit.dto.StudyPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
@@ -35,16 +40,38 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    public List<Study> getAllStudies() {
-      return studyRepository.findAll();
-  }
+    public StudyPageResponseDTO<Study> studyList(String studyTitle,
+            String studySubject,
+            String studyAddr,
+            Boolean studyOnline, String userId, StudyPageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getStudyPage() - 1, // 1페이지가 0
+                pageRequestDTO.getStudySize());
+
+        Page<Study> result = studyRepository.studyList(studyTitle,
+                studySubject,
+                studyAddr,
+                studyOnline, userId, pageable);
+        List<Study> studyList = result.getContent().stream()
+                .map(Study -> modelMapper.map(Study, Study.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        StudyPageResponseDTO<Study> responseDTO = StudyPageResponseDTO.<Study>withAll()
+                .dtoList(studyList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+
+    }
 
     // 스터디별 질문
     public Integer register(StudyDTO studyDTO, List<String> questions) {
         log.info("-----------------------------");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info(authentication+"@@");
-        log.info(authentication.getClass().getName()+"!!");
+        log.info(authentication + "@@");
+        log.info(authentication.getClass().getName() + "!!");
         if (authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUsername();
@@ -82,8 +109,10 @@ public class StudyService {
     }
 
     public StudyWithQuestionDTO getStudyWithQuestionDTO(Integer studyNo) {
-        Study study = studyRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
-        Question question = questionRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
+        Study study = studyRepository.findById(studyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionRepository.findById(studyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
         StudyDTO studyDTO = entityToDTO(study);
         QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
         // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
@@ -111,7 +140,7 @@ public class StudyService {
         Study saveStudy = studyRepository.save(study);
 
         Optional<Question> questionResult = questionRepository.findById(studyDTO.getStudyNo());
-        Question question  = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
         question.setStudy(saveStudy);
         question.setQ1(questions.size() > 0 ? questions.get(0) : null);
         question.setQ2(questions.size() > 1 ? questions.get(1) : null);
