@@ -6,20 +6,28 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.swit.domain.Group;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
-import com.swit.dto.QuestionDTO;
+import com.swit.domain.User;
 import com.swit.dto.CustomUserDetails;
+import com.swit.dto.QuestionDTO;
 import com.swit.dto.StudyDTO;
+import com.swit.dto.StudyPageRequestDTO;
+import com.swit.dto.StudyPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
+import com.swit.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -32,19 +40,48 @@ import lombok.extern.log4j.Log4j2;
 public class StudyService {
     private final ModelMapper modelMapper;
     private final StudyRepository studyRepository;
+    private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
-    public List<Study> getAllStudies() {
-      return studyRepository.findAll();
-  }
+    // 전체 스터디
+    public StudyPageResponseDTO<Study> studyList(String studyTitle,
+            String studySubject,
+            String studyAddr,
+            Boolean studyOnline, String userId, StudyPageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getStudyPage() - 1, // 1페이지가 0
+                pageRequestDTO.getStudySize());
+
+        Page<Study> result = studyRepository.studyList(studyTitle,
+                studySubject,
+                studyAddr,
+                studyOnline, userId, pageable);
+        List<Study> studyList = result.getContent().stream()
+                .map(Study -> modelMapper.map(Study, Study.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        StudyPageResponseDTO<Study> responseDTO = StudyPageResponseDTO.<Study>withAll()
+                .dtoList(studyList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+
+    }
+
+    // 나의 스터디
+    public List<Study> myStudy(String userId) { // 내가 가입되어있는 그룹 리스트
+        return studyRepository.myStudy(userId);
+    }
 
     // 스터디별 질문
     public Integer register(StudyDTO studyDTO, List<String> questions) {
         log.info("-----------------------------");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info(authentication+"@@");
-        log.info(authentication.getClass().getName()+"!!");
+        log.info(authentication + "@@");
+        log.info(authentication.getClass().getName() + "!!");
         if (authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUsername();
@@ -82,8 +119,10 @@ public class StudyService {
     }
 
     public StudyWithQuestionDTO getStudyWithQuestionDTO(Integer studyNo) {
-        Study study = studyRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
-        Question question = questionRepository.findById(studyNo).orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
+        Study study = studyRepository.findById(studyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionRepository.findById(studyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
         StudyDTO studyDTO = entityToDTO(study);
         QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
         // StudyDTO studyDTO = modelMapper.map(study, StudyDTO.class);
@@ -111,7 +150,7 @@ public class StudyService {
         Study saveStudy = studyRepository.save(study);
 
         Optional<Question> questionResult = questionRepository.findById(studyDTO.getStudyNo());
-        Question question  = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
+        Question question = questionResult.orElseThrow(() -> new IllegalArgumentException("Invalid study ID"));
         question.setStudy(saveStudy);
         question.setQ1(questions.size() > 0 ? questions.get(0) : null);
         question.setQ2(questions.size() > 1 ? questions.get(1) : null);
@@ -130,32 +169,37 @@ public class StudyService {
     }
 
     private StudyDTO entityToDTO(Study study) {
-        StudyDTO studyDTO = StudyDTO.builder()
-                .studyNo(study.getStudyNo())
-                .userId(study.getUserId())
-                .studyTitle(study.getStudyTitle())
-                .studyContent(study.getStudyContent())
-                .studyType(study.getStudyType())
-                .studyStartDate(study.getStudyStartDate())
-                .studyHeadcount(study.getStudyHeadcount())
-                .studyOnline(study.getStudyOnline())
-                .studySubject(study.getStudySubject())
-                .studyAddr(study.getStudyAddr())
-                .studyUuid(study.getStudyUuid())
-                .build();
+      String userId = study.getUserId();
+      Optional<User> user = userRepository.findByUserId(userId);
+      String userNick = user.map(User::getUserNick).orElse(null);
 
-        List<StudyImage> imageList = study.getImageList();
-        if (imageList == null || imageList.isEmpty()) {
-            return studyDTO;
-        }
+      StudyDTO studyDTO = StudyDTO.builder()
+              .studyNo(study.getStudyNo())
+              .userId(study.getUserId())
+              .userNick(userNick) // userNick 설정
+              .studyTitle(study.getStudyTitle())
+              .studyContent(study.getStudyContent())
+              .studyType(study.getStudyType())
+              .studyStartDate(study.getStudyStartDate())
+              .studyHeadcount(study.getStudyHeadcount())
+              .studyOnline(study.getStudyOnline())
+              .studySubject(study.getStudySubject())
+              .studyAddr(study.getStudyAddr())
+              .studyUuid(study.getStudyUuid())
+              .build();
 
-        List<String> fileNameList = imageList.stream()
-                .map(StudyImage::getFileName)
-                .collect(Collectors.toList());
-        studyDTO.setUploadFileNames(fileNameList);
+      List<StudyImage> imageList = study.getImageList();
+      if (imageList == null || imageList.isEmpty()) {
+          return studyDTO;
+      }
 
-        return studyDTO;
-    }
+      List<String> fileNameList = imageList.stream()
+              .map(StudyImage::getFileName)
+              .collect(Collectors.toList());
+      studyDTO.setUploadFileNames(fileNameList);
+
+      return studyDTO;
+  }
 
     private Study dtoToEntity(StudyDTO studyDTO) {
         Study study = Study.builder()

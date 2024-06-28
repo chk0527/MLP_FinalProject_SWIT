@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,6 +43,7 @@ public class Study {
     private Integer studyNo;
     private String userId;
     private String studyTitle;
+    @Column(name = "study_content", nullable = false, columnDefinition = "TEXT")
     private String studyContent;
     private String studyAddr;
     private String studyType;

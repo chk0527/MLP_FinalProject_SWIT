@@ -99,6 +99,7 @@ const LoginContextProvider = ({ children }) => {
                 sessionStorage.setItem("refreshToken", refreshToken);
                 loginCheck();
                 alert('로그인 성공');
+                window.location.href = '/'; // 로그인 성공 시 메인 페이지로 이동
             }
 
         } catch (error) {

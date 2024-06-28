@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class StudyDTO {
     private Integer studyNo;
     private String userId;
+    private String userNick; // 정보에 닉네임을 넣기 위해 엔티티에는 없는 속성 추가
     private String studyTitle;
     private String studyContent;
     private String studyAddr;

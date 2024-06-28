@@ -27,3 +27,10 @@ export const getUserNickFromToken = () => {
     return null;
   }
 };
+
+export const getUserRoleFromToken = () => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) return null;
+  const decoded = jwtDecode(token);
+  return decoded.userRole;
+};

@@ -1,6 +1,5 @@
 package com.swit.domain;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -40,25 +39,19 @@ public class Timer {
     private Study study;
 
     // User 테이블에서 userNo 외래키 조인
+    // referencedColumnName 선언 안하면 자꾸 User의 PK를 가져오게 됨!!
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "userNick", referencedColumnName = "userNick", nullable = false)
     private User user;
 
-    @CreationTimestamp // 해당 필드를 현재 시각으로 "자동 설정"
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime startAt;
 
-    @UpdateTimestamp // db에서 업데이트될 때마다, 해당 필드를 현재 시각으로 "자동 갱신"
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime updatedAt;
-
+    private LocalDateTime stopAt;
 
     private Integer elapsedTime;
-    private String time;
+    private Integer time;
     private String name;
-    private String type;
     private boolean running;
 }

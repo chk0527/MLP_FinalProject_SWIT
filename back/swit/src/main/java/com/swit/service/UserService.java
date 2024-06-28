@@ -41,6 +41,14 @@ public class UserService {
     return userDTO;
   }
 
+  // 닉네임으로 유저 조회
+  public UserDTO getUserByNick(String userNick) {
+    Optional<User> result = userRepository.findByUserNick(userNick);
+    User user = result.orElseThrow();
+    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+    return userDTO;
+  }
+
   // 프로필 수정(모달창)
   public void modify(UserDTO userDTO, MultipartFile userImage) throws IOException {
     // Optional<User> result = userRepository.findById(userDTO.getUserId());

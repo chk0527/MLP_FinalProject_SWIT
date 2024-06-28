@@ -23,7 +23,6 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
 
   useEffect(() => {
     getStudy(studyNo).then((data) => {
-      console.log(data);
       setStudy(data);
     });
   }, [studyNo]);
@@ -33,7 +32,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
       {/*스터디 정보란*/}
       <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
         <h1 className="text-2xl font-bold text-center">
-          리액트 같이 공부하실 분 모집해요~!
+          {study.studyTitle}
         </h1>
         <div className="flex items-start mt-4">
           <div className="w-64 h-64 rounded-lg mr-6 bg-gray-500 border border-none flex items-center justify-center">
@@ -64,7 +63,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
               {study.studyEndDate}
             </p>
             <p>
-              <strong>방장:</strong> {study.userId}
+              <strong>방장:</strong> {study.userNick}
             </p>
           </div>
         </div>
@@ -73,20 +72,8 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
         </div>
         <div className="mt-4 p-4 border border-gray-300 bg-yellow-100 text-left">
           <p>
-            ✏️ 주 4회 상시 자율 출석 취업 스터디반 운영 중입니다! (현재 모집X)
+            {study.studyContent}
           </p>
-          <p>스터디 멤버가 아니어도 줌 참석 자유 이용 가능합니다!</p>
-          <p>
-            (타이머 정지 없이 캠 off 5분 이상 금지, 캠 화면에 책이나 모니터 등
-            공부하는 모습이 잘 보이게 부탁드립니다.)
-          </p>
-          <p>오류 발생 시 임시 대피소:</p>
-          <a
-            href="https://study.whaleon.naver.com/detail/9503d642815e4355987b9afd00bbb6d3"
-            className="text-blue-500"
-          >
-            https://study.whaleon.naver.com/detail/9503d642815e4355987b9afd00bbb6d3
-          </a>
         </div>
       </div>
     </div>

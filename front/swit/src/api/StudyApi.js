@@ -8,6 +8,13 @@ export const getStudy = async (studyNo) => {
   return res.data;
 }
 
+export const getMyStudy = async (userId) => { //내가 가입한 스터디 목록
+  const res = await axios.get(`${prefix}/myStudy`, {
+    params: {userId }
+  });
+  return res.data;
+};
+
 export const getStudyWithQuestion = async (studyNo) => {
   const res = await axios.get(`${prefix}/question/${studyNo}`);
   return res.data;
@@ -29,8 +36,9 @@ export const postAdd = async (study) => {
   return res.data;
 };
 
-export const getAllStudies = async (studyTitle,studySubject,studyAddr,studyOnline) => {
-  const res = await axios.get(`${prefix}/all`,{params:{studyTitle:studyTitle,studySubject:studySubject,studyAddr:studyAddr,studyOnline:studyOnline}});
+export const getAllStudies = async (studyTitle,studySubject,studyAddr,studyOnline,userId,pageParam) => {
+  const {StudyPage,StudySize} = pageParam
+  const res = await axios.get(`${prefix}/all`,{params:{studyTitle:studyTitle,studySubject:studySubject,studyAddr:studyAddr,studyOnline:studyOnline,userId:userId,StudyPage:StudyPage,StudySize:StudySize}});
   return res.data;
 };
 
@@ -63,6 +71,19 @@ export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등�
     headers: {
       Authorization: `Bearer ${token}`
     }
+  });
+  return res.data;
+};
+
+export const deleteInquiry = async (inquiryNo) => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+      throw new Error('No access token found');
+  }
+  const res = await axios.delete(`${API_SERVER_HOST}/api/study/inquiries/${inquiryNo}`, {
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
   });
   return res.data;
 };

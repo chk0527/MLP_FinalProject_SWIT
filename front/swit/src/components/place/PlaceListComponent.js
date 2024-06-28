@@ -1,89 +1,54 @@
-import { Link,useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import searchIcon from "../../img/search-icon.png";
-import {
-  getPlaceList,
-} from "../../api/PlaceApi";
-import useCustomMove from "../../hooks/useCustomMove";
-import PlacePageComponent from "./PlacePageComponent ";
+import React from "react";
+import { Link } from "react-router-dom";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
-
-const initState = {
-  dtoList: [],
-  pageNumList: [],
-  pageRequestDTO: null,
-  prev: false,
-  next: false,
-  totalCount: 0,
-  prevPage: 0,
-  nextPage: 0,
-  totalPage: 0,
-  current: 0,
-};
-
-const PlaceListComponent = (filteredPlaceList) => {
-  //page정보를 가지고 page 이동
-  const { PlacePage, PlaceSize, moveToPlaceList } = useCustomMove();
-  const [serverData, setServerData] = useState(initState);
-
-  //이름 검색
-  const [inputText, setInputText] = useState("");
-  const [placeName, setPlaceName] = useState("");
-  const handleInput = (e) => {
-    setInputText(e.target.value);
-  };
-  const handleButton = () => {
-    setPlaceName(inputText);
-  };
-
-  //지역 검색
-  const selectList = ["서울", "경기"];
-  const [placeAddr, setPlaceAddr] = useState("");
-
-  const handleSelect = (e) => {
-    setPlaceAddr(e.target.value);
-  };
-
-  useEffect(() => {
-    getPlaceList(placeName, placeAddr, { PlacePage, PlaceSize }).then(
-      (data) => {
-        console.log(data);
-        setServerData(data);
-      }
-    );
-  }, [placeName, placeAddr, PlacePage, PlaceSize]);
-
-
+const PlaceListComponent = ({
+  currentPlaces,
+  lastPlaceElementRef,
+  isLoading,
+  favoriteStatus,
+  handleFavorite,
+}) => {
   return (
-    <div className="relative w-full">
-
-      {/* 목록 */}
-      <div className="flex-wrap w-1300 font-GSans">
-        <div className="md:grid place-items-center md:grid-cols-3 ">
-          {serverData.dtoList.map((place) => (
-            <div
-              key={place.placeNo}
-              className="w-350 h-350 text-center mb-8"
+    <div className="flex-wrap w-1300 font-GSans mb-20">
+      <div className="md:grid place-items-center gap-16 md:grid-cols-3 ">
+        {currentPlaces.map((place, index) => (
+          <div
+            ref={index === currentPlaces.length - 1 ? lastPlaceElementRef : null}
+            key={place.placeNo}
+            className="relative w-350 h-350 text-center mb-8"
+          >
+            <Link to={{ pathname: `/place/read/${place.placeNo}` }} state={1}>
+              <div className="overflow-hidden">
+                <img
+                  className="w-400 h-96 object-cover"
+                  src={place.placeImg}
+                  alt={place.placeName}
+                />
+              </div>
+              <div className="pt-4 text-start">
+                <p className="font-bold my-2">{place.placeAddr.substring(0, 6)}</p>
+                <p className="text-2xl">{place.placeName}</p>
+              </div>
+            </Link>
+            <button
+              onClick={() => handleFavorite(place.placeNo)}
+              className="absolute bottom-0 right-3 mb-5"
             >
-              <Link to={{ pathname: `/place/read/${place.placeNo}`}} state={1}>
-                <div className="overflow-hidden ">
-                  <img
-                    className="w-400 h-96 object-cover"
-                    src={place.placeImg}
-                  ></img>
-                </div>
-                <div className="pt-2 text-start">
-                  <p className="font-bold my-2">
-                    {place.placeAddr.substring(0, 6)}
-                  </p>
-                  <p className="text-2xl">{place.placeName}</p>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </div>
+              {favoriteStatus[place.placeNo] ? (
+                <FaStar size={30} color="#FFF06B" />
+              ) : (
+                <FaRegStar size={30} color="#FFF06B" />
+              )}
+            </button>
+          </div>
+        ))}
       </div>
-      <PlacePageComponent serverData={serverData} movePage={moveToPlaceList} />
+      {isLoading && (
+        <div className="flex justify-center my-8">
+          <div className="loader"></div>
+        </div>
+      )}
     </div>
   );
 };

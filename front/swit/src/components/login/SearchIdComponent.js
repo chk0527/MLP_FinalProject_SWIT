@@ -79,7 +79,7 @@ function SearcIdComponent() {
     
     // 이름 필수 입력 체크
     if (!name.trim()) {
-      alert('이름을 입력해 주세요.');
+      alert('이름을 입력해 주세요.111');
       return;
     }
     // 휴대폰 번호 필수 입력 체크
@@ -139,6 +139,7 @@ function SearcIdComponent() {
     setVerificationTimeout(timer);
   };
 
+  // 이메일/핸드폰 인증번호 생성
   const handleVerifyCode = () => {
     // 실제 인증 코드 확인 로직 작성
     console.log('인증 코드 확인');
@@ -166,6 +167,7 @@ function SearcIdComponent() {
         // 인증 성공 시
         // setTimeRemaining(300); // 남은 시간 5분으로 초기화
         // clearVerificationTimer();
+        setResultType("2")
 
       })
       .catch((error) => {
@@ -253,9 +255,913 @@ function SearcIdComponent() {
         }
       }
     }
-
-    
   };
+
+  return (
+    <>
+    <div className="text-5xl pb-16 font-blackHans text-center">
+          <div>아이디 찾기</div>
+    </div>
+    {/* <div className="bg-gray-100 py-10"> */}
+      <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-200">
+        {/* <h1 className="text-2xl font-bold mb-6">아이디찾기</h1> */}
+        <form name="pageForm" method="post" onSubmit={handleSubmit}>
+          <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
+          <input type="hidden" id="resultType" name="resultType" value="1" />
+          {resultType === '1' && (
+            <>
+              <div className="space-y-6">
+                <div>
+                  <label className="block font-medium mb-2">
+                    <input
+                      type="radio"
+                      id="lb_certifytype_email"
+                      name="lb_certifytype"
+                      value="1"
+                      checked={certifyType === '1'}
+                      onChange={handleCertifyTypeChange}
+                      className="mr-2"
+                    />
+                    이메일 인증
+                    &emsp;
+                    <input
+                      type="radio"
+                      id="lb_certifytype_mobile"
+                      name="lb_certifytype"
+                      value="2"
+                      checked={certifyType === '2'}
+                      onChange={handleCertifyTypeChange}
+                      className="mr-2"
+                    />
+                    휴대폰 인증
+                  </label>
+                </div>
+                <div>
+                  <label htmlFor="lb_name" className="block font-medium mb-2">
+                    이름
+                  </label>
+                  <input
+                    type="text"
+                    name="lb_name"
+                    id="lb_name"
+                    maxLength={50}
+                    className="border border-gray-300 rounded-md px-4 py-2 w-full"
+                    value={name}
+                    onChange={handleNameChange}
+                  />
+                </div>
+                {certifyType === '1' && (
+                  <>
+                  <div>
+                    <label htmlFor="lb_email_head" className="block font-medium mb-2">
+                      이메일 주소
+                    </label>
+                    <div className="flex items-center">
+                      <input
+                        type="text"
+                        name="lb_email_head"
+                        id="lb_email_head"
+                        maxLength={30}
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
+                        value={emailHead}
+                        onChange={handleEmailHeadChange}
+                      />
+                      <span className="font-medium">@</span>
+                      <input
+                        type="text"
+                        name="lb_email_detail"
+                        id="lb_email_detail"
+                        maxLength={30}
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+                        value={emailDetail}
+                        onChange={handleEmailDetailChange}
+                      />
+                      <select
+                        name="lb_email_domain"
+                        id="lb_email_domain"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 ml-2"
+                        value={emailDomain}
+                        onChange={handleEmailDomainChange}
+                      >
+                        <option value="">직접입력</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                        <option value="naver.com">naver.com</option>
+                      </select>
+                      <button
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 w-1/4 px-4 rounded-md ml-2"
+                        onClick={handleSendVerificationCode}
+                      >
+                        이메일 발송
+                      </button>
+                    </div>
+                    {/* <div className="flex items-center mt-4">
+                      <input
+                        type="text"
+                        name="lb_confirmNum"
+                        id="lb_confirmNum"
+                        maxLength={6}
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+                        placeholder="인증 코드 입력"
+                        value={confirmNum}
+                        onChange={handleConfirmNumChange}
+                      />
+                      <button
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                        onClick={handleVerifyCode}
+                      >
+                        확인
+                      </button>
+                      {isVerificationCodeSent && (
+                        <div className="ml-4 text-gray-500">
+                          남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+                        </div>
+                      )}
+                    </div> */}
+                  </div>
+                  </>
+                )}
+                {certifyType === '2' && (
+                  <>
+                    <div>
+                      <label htmlFor="lb_mobile" className="block font-medium mb-2">
+                        휴대폰 번호
+                      </label>
+                      <div className="flex items-center">
+                        <select
+                          name="lb_mobile_prefix"
+                          id="lb_mobile_prefix"
+                          className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
+                          value={mobilePrefix}
+                          onChange={handleMobilePrefixChange}
+                        >
+                          <option value="010">010</option>
+                          <option value="011">011</option>
+                          <option value="016">016</option>
+                          <option value="017">017</option>
+                          <option value="018">018</option>
+                          <option value="019">019</option>
+                        </select>
+                        <input
+                          type="text"
+                          name="lb_mobile1"
+                          id="lb_mobile1"
+                          maxLength={4}
+                          className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+                          value={mobile1}
+                          onChange={handleMobile1Change}
+                        />
+                        <span className="font-medium">-</span>
+                        <input
+                          type="text"
+                          name="lb_mobile2"
+                          id="lb_mobile2"
+                          maxLength={4}
+                          className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+                          value={mobile2}
+                          onChange={handleMobile2Change}
+                        />
+                        <button
+                          type="button"
+                          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 w-1/4 rounded-md ml-2"
+                          onClick={handleSendVerificationCode}
+                        >
+                          SMS 발송
+                        </button>
+                      </div>
+                      {/* <div className="flex items-center mt-4">
+                            <input
+                              type="text"
+                              name="lb_confirmNum"
+                              id="lb_confirmNum"
+                              maxLength={6}
+                              placeholder="인증 코드 입력"
+                              className="border border-gray-300 rounded-md px-4 py-2 w-1/2 mr-2"
+                              value={confirmNum}
+                              onChange={handleConfirmNumChange}
+                            />
+                            <button
+                              type="button"
+                              className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                              onClick={handleVerifyCode}
+                            >
+                              확인
+                            </button>
+                            {isVerificationCodeSent && (
+                              <div className="mt-2 text-gray-500">
+                                남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+                              </div>
+                            )}
+                      </div> */}
+                    </div>
+                  </>
+                )}
+                <div className="flex items-center mt-4">
+                      <input
+                        type="text"
+                        name="lb_confirmNum"
+                        id="lb_confirmNum"
+                        maxLength={certifyType === '1' ? 8 : 6}
+                        placeholder="인증 코드 입력"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-1/2 mr-2"
+                        value={confirmNum}
+                        onChange={handleConfirmNumChange}
+                      />
+                      <button
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                        onClick={handleVerifyCode}
+                      >
+                        확인
+                      </button>
+                      {isVerificationCodeSent && (
+                        <div className="mt-2 text-gray-500">
+                          남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+                        </div>
+                      )}
+                </div>
+                <p className="mbrBtnFunc">
+                <span className="mbrBtn mbrBtnSearch_4">
+                   <button
+                     type="submit"
+                     className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                   >
+                     <span>아이디찾기</span>
+                   </button>
+                 </span>
+                </p>
+              </div>
+            </>
+          )}
+          {resultType === '2' && (
+            <div className="mt-6">
+              <h2 className="text-lg font-bold mb-4">아이디 찾기 결과</h2>
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <p>
+                    회원님의 아이디는 <span className="font-bold">{confirm.userId}</span> 입니다.
+                  </p>
+                </div>
+            </div>
+          )}
+        </form>
+      </div>
+    {/* </div> */}
+    </>
+  )
+
+
+
+
+
+  // return (
+  //   <div className="bg-gray-100 py-10">
+  //     <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
+  //       <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
+  //       <form name="pageForm" method="post" onSubmit={handleSubmit}>
+  //         <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
+  //         <input type="hidden" id="resultType" name="resultType" value="1" />
+  //         {resultType === '1' && (
+  //           <>
+  //             <div className="space-y-6">
+  //               <div>
+  //                 <label className="block font-medium mb-2">
+  //                   <input
+  //                     type="radio"
+  //                     id="lb_certifytype_email"
+  //                     name="lb_certifytype"
+  //                     value="1"
+  //                     checked={certifyType === '1'}
+  //                     onChange={handleCertifyTypeChange}
+  //                     className="mr-2"
+  //                   />
+  //                   이메일 인증
+  //                   &emsp;
+  //                   <input
+  //                     type="radio"
+  //                     id="lb_certifytype_mobile"
+  //                     name="lb_certifytype"
+  //                     value="2"
+  //                     checked={certifyType === '2'}
+  //                     onChange={handleCertifyTypeChange}
+  //                     className="mr-2"
+  //                   />
+  //                   휴대폰 인증
+  //                 </label>
+  //               </div>
+  //               <div>
+  //                 <label htmlFor="lb_name" className="block font-medium mb-2">
+  //                   이름
+  //                 </label>
+  //                 <input
+  //                   type="text"
+  //                   name="lb_name"
+  //                   id="lb_name"
+  //                   maxLength={50}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-full"
+  //                   value={name}
+  //                   onChange={handleNameChange}
+  //                 />
+  //               </div>
+  //               {certifyType === '1' && (
+  //                 <div>
+  //                   <label htmlFor="lb_email_head" className="block font-medium mb-2">
+  //                     이메일 주소
+  //                   </label>
+  //                   <div className="flex items-center">
+  //                     <input
+  //                       type="text"
+  //                       name="lb_email_head"
+  //                       id="lb_email_head"
+  //                       maxLength={30}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mr-2"
+  //                       value={emailHead}
+  //                       onChange={handleEmailHeadChange}
+  //                     />
+  //                     <span className="font-medium">@</span>
+  //                     <input
+  //                       type="text"
+  //                       name="lb_email_detail"
+  //                       id="lb_email_detail"
+  //                       maxLength={30}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mx-2"
+  //                       value={emailDetail}
+  //                       onChange={handleEmailDetailChange}
+  //                     />
+  //                     <select
+  //                       name="lb_email_domain"
+  //                       id="lb_email_domain"
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/3 ml-2"
+  //                       value={emailDomain}
+  //                       onChange={handleEmailDomainChange}
+  //                     >
+  //                       <option value="">직접입력</option>
+  //                       <option value="naver.com">naver.com</option>
+  //                       <option value="gmail.com">gmail.com</option>
+  //                       <option value="daum.net">daum.net</option>
+  //                       <option value="naver.com">naver.com</option>
+  //                     </select>
+  //                     <button
+  //                       type="button"
+  //                       className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                       onClick={handleSendVerificationCode}
+  //                     >
+  //                       이메일 발송
+  //                     </button>
+  //                   </div>
+  //                   <div className="flex items-center mt-4">
+
+  //                     <input
+  //                       type="text"
+  //                       name="lb_confirmNum"
+  //                       id="lb_confirmNum"
+  //                       maxLength={6}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                       placeholder="인증 코드 입력"
+  //                       value={confirmNum}
+  //                       onChange={handleConfirmNumChange}
+  //                     />
+  //                     <button
+  //                       type="button"
+  //                       className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                       onClick={handleVerifyCode}
+  //                     >
+  //                       확인
+  //                     </button>
+  //                     {isVerificationCodeSent && (
+  //                       <div className="ml-4">
+  //                         남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+  //                       </div>
+  //                     )}
+  //                   </div>
+  //                 </div>
+  //               )}
+  //               {certifyType === '2' && (
+  //                 <>
+  //                   <div>
+  //                     <label htmlFor="lb_mobile" className="block font-medium mb-2">
+  //                       휴대폰 번호
+  //                     </label>
+  //                     <div className="flex items-center">
+  //                       <select
+  //                         name="lb_mobile_prefix"
+  //                         id="lb_mobile_prefix"
+  //                         className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
+  //                         value={mobilePrefix}
+  //                         onChange={handleMobilePrefixChange}
+  //                       >
+  //                         <option value="010">010</option>
+  //                         <option value="011">011</option>
+  //                         <option value="016">016</option>
+  //                         <option value="017">017</option>
+  //                         <option value="018">018</option>
+  //                         <option value="019">019</option>
+  //                       </select>
+  //                       <input
+  //                         type="text"
+  //                         name="lb_mobile1"
+  //                         id="lb_mobile1"
+  //                         maxLength={4}
+  //                         className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                         value={mobile1}
+  //                         onChange={handleMobile1Change}
+  //                       />
+  //                       <span className="font-medium">-</span>
+  //                       <input
+  //                         type="text"
+  //                         name="lb_mobile2"
+  //                         id="lb_mobile2"
+  //                         maxLength={4}
+  //                         className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                         value={mobile2}
+  //                         onChange={handleMobile2Change}
+  //                       />
+  //                       <button
+  //                         type="button"
+  //                         className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                         onClick={handleSendVerificationCode}
+  //                       >
+  //                         SMS 발송
+  //                       </button>
+  //                     </div>
+  //                     <div className="flex items-center mt-4">
+  //                       <input
+  //                         type="text"
+  //                         name="lb_confirmNum"
+  //                         id="lb_confirmNum"
+  //                         maxLength={6}
+  //                         className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                         placeholder="인증 코드 입력"
+  //                         value={confirmNum}
+  //                         onChange={handleConfirmNumChange}
+  //                       />
+  //                       {/* <input type="text" className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2" placeholder="인증 코드 입력" /> */}
+  //                       <button type="button"
+  //                         className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                         onClick={handleVerifyCode}>확인</button>
+  //                         {isVerificationCodeSent && (
+  //                           <>
+  //                               남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+  //                           </>
+  //                         )}
+  //                     </div>
+  //                   </div>
+  //                   </>
+  //                 )}
+  //               </div>
+  //               <p className="mbrBtnFunc">
+  //                 <span className="mbrBtn mbrBtnSearch_4">
+  //                   <button
+  //                     type="submit"
+  //                     className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                   >
+  //                     <span>아이디찾기</span>
+  //                   </button>
+  //                 </span>
+  //               </p>
+  //             </>
+  //           )}
+  //           {resultType === '2' && (
+  //             <>
+  //               <div>
+  //                 <label htmlFor="lb_mobile" className="block font-medium mb-2">
+  //                   회원님의 아이디는 <p>{confirm.userId}</p> 입니다.
+  //                 </label>
+  //               </div>
+  //             </>
+  //           )}
+  //         </form>
+  //       </div>
+  //     </div>
+  //   );
+
+
+
+
+
+  // return (
+  //   <div className="bg-gray-100 py-10">
+  //     <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
+  //       <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
+  //       <form name="pageForm" method="post" onSubmit={handleSubmit}>
+  //         <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
+  //         <input type="hidden" id="resultType" name="resultType" value="1" />
+  //         {resultType === '1' && (
+  //           <>
+  //             <div className="space-y-6">
+  //               <div>
+  //                 <label className="block font-medium mb-2">
+  //                   <input
+  //                     type="radio"
+  //                     id="lb_certifytype_email"
+  //                     name="lb_certifytype"
+  //                     value="1"
+  //                     checked={certifyType === '1'}
+  //                     onChange={handleCertifyTypeChange}
+  //                     className="mr-2"
+  //                   />
+  //                   이메일 인증
+  //                   &emsp;
+  //                   <input
+  //                     type="radio"
+  //                     id="lb_certifytype_mobile"
+  //                     name="lb_certifytype"
+  //                     value="2"
+  //                     checked={certifyType === '2'}
+  //                     onChange={handleCertifyTypeChange}
+  //                     className="mr-2"
+  //                   />
+  //                   휴대폰 인증
+  //                 </label>
+  //               </div>
+  //               <div>
+  //                 <label htmlFor="lb_name" className="block font-medium mb-2">
+  //                   이름
+  //                 </label>
+  //                 <input
+  //                   type="text"
+  //                   name="lb_name"
+  //                   id="lb_name"
+  //                   maxLength={50}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-full"
+  //                   value={name}
+  //                   onChange={handleNameChange}
+  //                 />
+  //               </div>
+  //               {certifyType === '1' && (
+  //                 <div>
+  //                   <label htmlFor="lb_email_head" className="block font-medium mb-2">
+  //                     이메일 주소
+  //                   </label>
+  //                   <div className="flex items-center">
+  //                     <input
+  //                       type="text"
+  //                       name="lb_email_head"
+  //                       id="lb_email_head"
+  //                       maxLength={30}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mr-2"
+  //                       value={emailHead}
+  //                       onChange={handleEmailHeadChange}
+  //                     />
+  //                     <span className="font-medium">@</span>
+  //                     <input
+  //                       type="text"
+  //                       name="lb_email_detail"
+  //                       id="lb_email_detail"
+  //                       maxLength={30}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mx-2"
+  //                       value={emailDetail}
+  //                       onChange={handleEmailDetailChange}
+  //                     />
+  //                     <select
+  //                       name="lb_email_domain"
+  //                       id="lb_email_domain"
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/3 ml-2"
+  //                       value={emailDomain}
+  //                       onChange={handleEmailDomainChange}
+  //                     >
+  //                       <option value="">직접입력</option>
+  //                       <option value="naver.com">naver.com</option>
+  //                       <option value="gmail.com">gmail.com</option>
+  //                       <option value="daum.net">daum.net</option>
+  //                       <option value="naver.com">naver.com</option>
+  //                     </select>
+  //                   </div>
+  //                   <div className="flex items-center mt-4">
+  //                     <button
+  //                       type="button"
+  //                       className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                       onClick={handleSendVerificationCode}
+  //                     >
+  //                       이메일 발송
+  //                     </button>
+  //                     <input
+  //                       type="text"
+  //                       name="lb_confirmNum"
+  //                       id="lb_confirmNum"
+  //                       maxLength={6}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                       placeholder="인증 코드 입력"
+  //                       value={confirmNum}
+  //                       onChange={handleConfirmNumChange}
+  //                     />
+  //                     <button
+  //                       type="button"
+  //                       className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                       onClick={handleVerifyCode}
+  //                     >
+  //                       확인
+  //                     </button>
+  //                     {isVerificationCodeSent && (
+  //                       <div className="ml-4">
+  //                         남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+  //                       </div>
+  //                     )}
+  //                   </div>
+  //                 </div>
+  //               )}
+  //               {certifyType === '2' && (
+  //                 <>
+  //                 <div>
+  //                   <label htmlFor="lb_mobile" className="block font-medium mb-2">
+  //                     휴대폰 번호
+  //                   </label>
+  //                   <div className="flex items-center">
+  //                     <select
+  //                       name="lb_mobile_prefix"
+  //                       id="lb_mobile_prefix"
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
+  //                       value={mobilePrefix}
+  //                       onChange={handleMobilePrefixChange}
+  //                     >
+  //                       <option value="010">010</option>
+  //                       <option value="011">011</option>
+  //                       <option value="016">016</option>
+  //                       <option value="017">017</option>
+  //                       <option value="018">018</option>
+  //                       <option value="019">019</option>
+  //                     </select>
+  //                     <input
+  //                       type="text"
+  //                       name="lb_mobile1"
+  //                       id="lb_mobile1"
+  //                       maxLength={4}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                       value={mobile1}
+  //                       onChange={handleMobile1Change}
+  //                     />
+  //                     <span className="font-medium">-</span>
+  //                     <input
+  //                       type="text"
+  //                       name="lb_mobile2"
+  //                       id="lb_mobile2"
+  //                       maxLength={4}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                       value={mobile2}
+  //                       onChange={handleMobile2Change}
+  //                     />
+  //                     <button
+  //                       type="button"
+  //                       className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                       onClick={handleSendVerificationCode}
+  //                     >
+  //                       인증번호 (재)발송
+                        
+  //                     </button>
+  //                   </div>
+  //                   <div>
+                              
+  //                     <input
+  //                       type="text"
+  //                       name="lb_confirmNum"
+  //                       id="lb_confirmNum"
+  //                       maxLength={6}
+  //                       className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                       placeholder="인증 코드 입력"
+  //                       value={confirmNum}
+  //                       onChange={handleConfirmNumChange}
+  //                     />
+  //                     {/* <input type="text" className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2" placeholder="인증 코드 입력" /> */}
+  //                     <button type="button"
+  //                       className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                       onClick={handleVerifyCode}>확인</button>
+  //                       {isVerificationCodeSent && (
+  //                         <>
+  //                             남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+  //                         </>
+  //                       )}
+  //                   </div>
+  //                 </div>
+  //                 </>
+  //               )}
+  //             </div>
+  //             <p className="mbrBtnFunc">
+  //               <span className="mbrBtn mbrBtnSearch_4">
+  //                 <button
+  //                   type="submit"
+  //                   className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                 >
+  //                   <span>아이디찾기</span>
+  //                 </button>
+  //               </span>
+  //             </p>
+  //           </>
+  //         )}
+  //         {resultType === '2' && (
+  //           <>
+  //             <div>
+  //               <label htmlFor="lb_mobile" className="block font-medium mb-2">
+  //                 회원님의 아이디는 <p>{confirm.userId}</p> 입니다.
+  //               </label>
+  //             </div>
+  //           </>
+  //         )}
+  //       </form>
+  //     </div>
+  //   </div>
+  // );
+  
+
+
+
+
+
+  // return (
+  //   <div className="bg-gray-100 py-10">
+  //     <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
+  //       <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
+  //       <form name="pageForm" method="post" onSubmit={handleSubmit}>
+  //         <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
+  //         <input type="hidden" id="resultType" name="resultType" value="1" />
+  //       {resultType === '1' && (  
+  //       <>
+  //         <div className="space-y-6">
+  //           <div>
+  //             <label className="block font-medium mb-2">
+  //               <input
+  //                 type="radio"
+  //                 id="lb_certifytype_email"
+  //                 name="lb_certifytype"
+  //                 value="1"
+  //                 checked={certifyType === '1'}
+  //                 onChange={handleCertifyTypeChange}
+  //                 className="mr-2"
+  //               />
+  //               이메일 인증
+  //               &emsp;
+  //               <input
+  //                 type="radio"
+  //                 id="lb_certifytype_mobile"
+  //                 name="lb_certifytype"
+  //                 value="2"
+  //                 checked={certifyType === '2'}
+  //                 onChange={handleCertifyTypeChange}
+  //                 className="mr-2"
+  //               />
+  //               휴대폰 인증
+  //             </label>
+  //           </div>
+  //           <div>
+  //             <label htmlFor="lb_name" className="block font-medium mb-2">
+  //               이름
+  //             </label>
+  //             <input
+  //               type="text"
+  //               name="lb_name"
+  //               id="lb_name"
+  //               maxLength={50}
+  //               className="border border-gray-300 rounded-md px-4 py-2 w-full"
+  //               value={name}
+  //               onChange={handleNameChange}
+  //             />
+  //           </div>
+  //           {certifyType === '1' && (
+  //             <div>
+  //               <label htmlFor="lb_email_head" className="block font-medium mb-2">
+  //                 이메일 주소
+  //               </label>
+  //               <div className="flex items-center">
+  //                 <input
+  //                   type="text"
+  //                   name="lb_email_head"
+  //                   id="lb_email_head"
+  //                   maxLength={30}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mr-2"
+  //                   value={emailHead}
+  //                   onChange={handleEmailHeadChange}
+  //                 />
+  //                 <span className="font-medium">@</span>
+  //                 <input
+  //                   type="text"
+  //                   name="lb_email_detail"
+  //                   id="lb_email_detail"
+  //                   maxLength={30}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mx-2"
+  //                   value={emailDetail}
+  //                   onChange={handleEmailDetailChange}
+  //                 />
+  //                 <select
+  //                   name="lb_email_domain"
+  //                   id="lb_email_domain"
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/3 ml-2"
+  //                   value={emailDomain}
+  //                   onChange={handleEmailDomainChange}
+  //                 >
+  //                   <option value="">직접입력</option>
+  //                   <option value="naver.com">naver.com</option>
+  //                   <option value="gmail.com">gmail.com</option>
+  //                   <option value="daum.net">daum.net</option>
+  //                   <option value="naver.com">naver.com</option>
+  //                  </select>
+  //               </div>
+  //             </div>
+  //           )}
+  //           {certifyType === '2' && (
+  //             <>
+  //             <div>
+  //               <label htmlFor="lb_mobile" className="block font-medium mb-2">
+  //                 휴대폰 번호
+  //               </label>
+  //               <div className="flex items-center">
+  //                 <select
+  //                   name="lb_mobile_prefix"
+  //                   id="lb_mobile_prefix"
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
+  //                   value={mobilePrefix}
+  //                   onChange={handleMobilePrefixChange}
+  //                 >
+  //                   <option value="010">010</option>
+  //                   <option value="011">011</option>
+  //                   <option value="016">016</option>
+  //                   <option value="017">017</option>
+  //                   <option value="018">018</option>
+  //                   <option value="019">019</option>
+  //                 </select>
+  //                 <input
+  //                   type="text"
+  //                   name="lb_mobile1"
+  //                   id="lb_mobile1"
+  //                   maxLength={4}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                   value={mobile1}
+  //                   onChange={handleMobile1Change}
+  //                 />
+  //                 <span className="font-medium">-</span>
+  //                 <input
+  //                   type="text"
+  //                   name="lb_mobile2"
+  //                   id="lb_mobile2"
+  //                   maxLength={4}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                   value={mobile2}
+  //                   onChange={handleMobile2Change}
+  //                 />
+  //                 <button
+  //                   type="button"
+  //                   className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                   onClick={handleSendVerificationCode}
+  //                 >
+  //                   인증번호 (재)발송
+                    
+  //                 </button>
+  //               </div>
+  //               <div>
+                          
+  //                 <input
+  //                   type="text"
+  //                   name="lb_confirmNum"
+  //                   id="lb_confirmNum"
+  //                   maxLength={6}
+  //                   className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
+  //                   placeholder="인증 코드 입력"
+  //                   value={confirmNum}
+  //                   onChange={handleConfirmNumChange}
+  //                 />
+  //                 {/* <input type="text" className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2" placeholder="인증 코드 입력" /> */}
+  //                 <button type="button"
+  //                   className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+  //                   onClick={handleVerifyCode}>확인</button>
+  //                   {isVerificationCodeSent && (
+  //                     <>
+  //                         남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
+  //                     </>
+  //                   )}
+  //               </div>
+  //             </div>
+  //             </>
+  //           )}
+
+            
+  //         </div>
+  //         <p className="mbrBtnFunc">
+  //                <span className="mbrBtn mbrBtnSearch_4">
+  //                  <button
+  //                   type="submit"
+  //                   className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md">
+  //                    <span>아이디찾기</span>
+  //                  </button>
+  //                </span>
+  //         </p>
+  //       </>
+  //       )}
+  //       {resultType === '2' && ( 
+  //       <> 
+  //         <div>
+  //           <label htmlFor="lb_mobile" className="block font-medium mb-2">
+  //                 회원님의 아이디는 
+  //                 <p>
+  //                   {confirm.userId}
+  //                 </p> 입니다.
+  //           </label>
+  //         </div> 
+  //       </>
+  //       )}
+  //       </form>
+  //     </div>
+  //   </div>
+  // );
 
 
   // return (
@@ -441,199 +1347,7 @@ function SearcIdComponent() {
   //     <hr />
   //   </div>
   // );
-  return (
-    <div className="bg-gray-100 py-10">
-      <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-2xl font-bold mb-6">아이디찾기</h1>
-        <form name="pageForm" method="post" onSubmit={handleSubmit}>
-          <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
-          <input type="hidden" id="resultType" name="resultType" value="1" />
-        {resultType === '1' && (  
-        <>
-          <div className="space-y-6">
-            <div>
-              <label className="block font-medium mb-2">
-                <input
-                  type="radio"
-                  id="lb_certifytype_email"
-                  name="lb_certifytype"
-                  value="1"
-                  checked={certifyType === '1'}
-                  onChange={handleCertifyTypeChange}
-                  className="mr-2"
-                />
-                이메일 인증
-                &emsp;
-                <input
-                  type="radio"
-                  id="lb_certifytype_mobile"
-                  name="lb_certifytype"
-                  value="2"
-                  checked={certifyType === '2'}
-                  onChange={handleCertifyTypeChange}
-                  className="mr-2"
-                />
-                휴대폰 인증
-              </label>
-            </div>
-            <div>
-              <label htmlFor="lb_name" className="block font-medium mb-2">
-                이름
-              </label>
-              <input
-                type="text"
-                name="lb_name"
-                id="lb_name"
-                maxLength={50}
-                className="border border-gray-300 rounded-md px-4 py-2 w-full"
-                value={name}
-                onChange={handleNameChange}
-              />
-            </div>
-            {certifyType === '1' && (
-              <div>
-                <label htmlFor="lb_email_head" className="block font-medium mb-2">
-                  이메일 주소
-                </label>
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    name="lb_email_head"
-                    id="lb_email_head"
-                    maxLength={30}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mr-2"
-                    value={emailHead}
-                    onChange={handleEmailHeadChange}
-                  />
-                  <span className="font-medium">@</span>
-                  <input
-                    type="text"
-                    name="lb_email_detail"
-                    id="lb_email_detail"
-                    maxLength={30}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/3 mx-2"
-                    value={emailDetail}
-                    onChange={handleEmailDetailChange}
-                  />
-                  <select
-                    name="lb_email_domain"
-                    id="lb_email_domain"
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/3 ml-2"
-                    value={emailDomain}
-                    onChange={handleEmailDomainChange}
-                  >
-                    <option value="">직접입력</option>
-                    <option value="naver.com">naver.com</option>
-                    <option value="gmail.com">gmail.com</option>
-                    <option value="daum.net">daum.net</option>
-                    <option value="naver.com">naver.com</option>
-                   </select>
-                </div>
-              </div>
-            )}
-            {certifyType === '2' && (
-              <>
-              <div>
-                <label htmlFor="lb_mobile" className="block font-medium mb-2">
-                  휴대폰 번호
-                </label>
-                <div className="flex items-center">
-                  <select
-                    name="lb_mobile_prefix"
-                    id="lb_mobile_prefix"
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mr-2"
-                    value={mobilePrefix}
-                    onChange={handleMobilePrefixChange}
-                  >
-                    <option value="010">010</option>
-                    <option value="011">011</option>
-                    <option value="016">016</option>
-                    <option value="017">017</option>
-                    <option value="018">018</option>
-                    <option value="019">019</option>
-                  </select>
-                  <input
-                    type="text"
-                    name="lb_mobile1"
-                    id="lb_mobile1"
-                    maxLength={4}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
-                    value={mobile1}
-                    onChange={handleMobile1Change}
-                  />
-                  <span className="font-medium">-</span>
-                  <input
-                    type="text"
-                    name="lb_mobile2"
-                    id="lb_mobile2"
-                    maxLength={4}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
-                    value={mobile2}
-                    onChange={handleMobile2Change}
-                  />
-                  <button
-                    type="button"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
-                    onClick={handleSendVerificationCode}
-                  >
-                    인증번호 (재)발송
-                    
-                  </button>
-                </div>
-                <div>
-                          
-                  <input
-                    type="text"
-                    name="lb_confirmNum"
-                    id="lb_confirmNum"
-                    maxLength={6}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2"
-                    placeholder="인증 코드 입력"
-                    value={confirmNum}
-                    onChange={handleConfirmNumChange}
-                  />
-                  {/* <input type="text" className="border border-gray-300 rounded-md px-4 py-2 w-1/4 mx-2" placeholder="인증 코드 입력" /> */}
-                  <button type="button"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
-                    onClick={handleVerifyCode}>확인</button>
-                    {isVerificationCodeSent && (
-                      <>
-                          남은 시간: {Math.floor(timeRemaining / 60)}분 {timeRemaining % 60}초
-                      </>
-                    )}
-                </div>
-              </div>
-              </>
-            )}
 
-            
-          </div>
-          <p className="mbrBtnFunc">
-                 <span className="mbrBtn mbrBtnSearch_4">
-                   <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md">
-                     <span>아이디찾기</span>
-                   </button>
-                 </span>
-          </p>
-        </>
-        )}
-        {resultType === '2' && ( 
-        <> 
-          <div>
-            <label htmlFor="lb_mobile" className="block font-medium mb-2">
-                  회원님의 아이디는 
-                  <p>
-
-                  </p> 입니다.
-            </label>
-          </div> 
-        </>
-        )}
-        </form>
-      </div>
-    </div>
-  );
+  
 }
 export default SearcIdComponent;

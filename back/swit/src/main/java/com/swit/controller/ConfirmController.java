@@ -31,9 +31,11 @@ import com.swit.dto.ConfirmReqDTO;
 import com.swit.dto.UserDTO;
 import com.swit.service.UserService;
 import com.swit.service.ConfirmService;
+import com.swit.service.MailService;
 
 import jakarta.persistence.Column;
 
+import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -43,6 +45,9 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
+
+import javax.mail.MessagingException;
+
 import java.security.SecureRandom;
 
 @ResponseBody
@@ -138,43 +143,78 @@ public class ConfirmController {
 
         ConfirmDTO confirmDTO = new ConfirmDTO();
         UserDTO userDTO = new UserDTO();
-        System.out.println("userCheck222 start");
+
         if (certifyType.equals("1")) {  // 이메일로 회원 확인
-            System.out.println("userCheck3333 start");
+            System.out.println("userCheck Email start");
             userDTO = confirmService.userCheck3(id
                                            ,userName
                                            ,userEmail
                                            ,"");
+
+            // 고객이 존재 여부 확인
+            if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
+                return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+            }
+
+            confirmDTO.setUserId(userDTO.getUserId());
+            confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
+            confirmDTO.setConfirmPath(certifyType);         // "1" 이메일, "2", 핸드폰번호
+    
+            String randomString = confirmService.createKey();  // 랜덤 인증번호 생성
+            System.out.println("Generated random string: " + randomString);
+    
+            confirmDTO.setConfirmNum(randomString);         // 8자리 소문자, 대문자, 숫자 랜덤 생성
+    
+            // 저장 후 PK(confirmNO)를 객체에 저장 후 front에 return
+            confirmDTO = confirmService.confirmIns(confirmDTO);
+            System.out.println("confirmDTO.getConfirmNo(): " + confirmDTO.getConfirmNo());
+            System.out.println("confirmDTO: " + confirmDTO);
+
+            try {
+                // 이메일 발송
+                String code = confirmService.sendSimpleMessage(userEmail, randomString);
+                System.out.println("인증코드 : " + code);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+             }
+            
         } else if (certifyType.equals("2")) {  // 핸드폰 번호로 회원 확인
-            System.out.println("userCheck4444 start");
+            System.out.println("userCheck Phone start");
             userDTO = confirmService.userCheck4(id
                                            ,userName
                                            ,userPhone
                                            ,"");
+
+            // 고객이 존재 여부 확인
+            if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
+                return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+            }
+    
+            confirmDTO.setUserId(userDTO.getUserId());
+            confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
+            confirmDTO.setConfirmPath(certifyType);         // "1" 이메일, "2", 핸드폰번호
+    
+            String randomString = generateRandomSixDigitString();
+            System.out.println("Generated random string: " + randomString);
+    
+            confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
+    
+            // 저장 후 PK(confirmNO)를 객체에 저장 후 front에 return
+            confirmDTO = confirmService.confirmIns(confirmDTO);
+            System.out.println("confirmDTO.getConfirmNo(): " + confirmDTO.getConfirmNo());
+            System.out.println("confirmDTO: " + confirmDTO);
+    
+            // return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
+
         } else {
             System.out.println("userCheck5555 start");
             return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
         }
 
-        if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
-            return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
-        }
-
-        confirmDTO.setUserId(userDTO.getUserId());
-        confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
-        confirmDTO.setConfirmPath(certifyType);         // "1" 이메일, "2", 핸드폰번호
-
-        String randomString = generateRandomSixDigitString();
-        System.out.println("Generated random string: " + randomString);
-
-        confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
-
-        // 저장 후 PK(confirmNO)를 객체에 저장 후 front에 return
-        confirmDTO = confirmService.confirmIns(confirmDTO);
-        System.out.println("confirmDTO.getConfirmNo(): " + confirmDTO.getConfirmNo());
-        System.out.println("confirmDTO: " + confirmDTO);
-
         return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
+
     }
 
     public static String generateRandomSixDigitString() {
@@ -183,9 +223,7 @@ public class ConfirmController {
         return String.format("%06d", randomNumber);
     }
 
-    /**
-     * 단일 메시지 발송 예제
-     */
+    // 단일 메시지 발송 예제
     @PostMapping("send")
     public SingleMessageSentResponse sendOne(@RequestBody ConfirmDTO confirmDTO) {
     // public String sendOne(@RequestBody ConfirmDTO confirmDTO) {
@@ -197,14 +235,13 @@ public class ConfirmController {
         // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
  
         message.setFrom(sendPhone);
-        // message.setFrom("01026957284");
         message.setTo(userDTO.getUserPhone());
         message.setText("[Swit] 인증번호 " + confirmDTO.getConfirmNum()  + " 타인 유출로 인한 피해 주의");
         System.out.println("message " + message);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("response " + response);
-        
+
         return response;
     }
 
@@ -237,5 +274,7 @@ public class ConfirmController {
         
         return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
     }
+
+
 
 }

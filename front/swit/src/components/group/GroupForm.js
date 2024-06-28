@@ -45,6 +45,10 @@ const GroupForm = ({ studyNo, closeModal }) => {
               alert('가입이 거절되었습니다.');
               closeModal()
               return;
+          case 3:
+              alert('추방된 스터디 그룹입니다.');
+              closeModal()
+              return;              
           default:
               break;
       }
@@ -80,80 +84,83 @@ const GroupForm = ({ studyNo, closeModal }) => {
     return (
         <form onSubmit={handleSubmit} className="p-4">
             <div className="mt-4">
-                <p>질문 목록:</p>
+                <p className='text-center text-xl font-bold bg-yellow-200 mb-8'>질문 목록</p>
                 {questions.q1 && (
                     <div className="mt-2">
-                        <label>{questions.q1}</label>
-                        <input
+                        <label className='font-bold'>{questions.q1}</label>
+                        <textarea
                             type="text"
                             name="a1"
                             value={answers.a1}
                             onChange={handleAnswerChange}
-                            className="border border-gray-300 rounded p-2 w-full"
+                            className="border border-gray-300 rounded p-2 w-full mb-8"
                         />
                     </div>
                 )}
                 {questions.q2 && (
                     <div className="mt-2">
-                        <label>{questions.q2}</label>
-                        <input
+                        <label className='font-bold'>{questions.q2}</label>
+                        <textarea
                             type="text"
                             name="a2"
                             value={answers.a2}
                             onChange={handleAnswerChange}
-                            className="border border-gray-300 rounded p-2 w-full"
+                            className="border border-gray-300 rounded p-2 w-full mb-8"
                         />
                     </div>
                 )}
                 {questions.q3 && (
                     <div className="mt-2">
-                        <label>{questions.q3}</label>
-                        <input
+                        <label className='font-bold'>{questions.q3}</label>
+                        <textarea
                             type="text"
                             name="a3"
                             value={answers.a3}
                             onChange={handleAnswerChange}
-                            className="border border-gray-300 rounded p-2 w-full"
+                            className="border border-gray-300 rounded p-2 w-full mb-8"
                         />
                     </div>
                 )}
                 {questions.q4 && (
                     <div className="mt-2">
-                        <label>{questions.q4}</label>
-                        <input
+                        <label className='font-bold'>{questions.q4}</label>
+                        <textarea
                             type="text"
                             name="a4"
                             value={answers.a4}
                             onChange={handleAnswerChange}
-                            className="border border-gray-300 rounded p-2 w-full"
+                            className="border border-gray-300 rounded p-2 w-full mb-8"
                         />
                     </div>
                 )}
                 {questions.q5 && (
                     <div className="mt-2">
-                        <label>{questions.q5}</label>
-                        <input
+                        <label className='font-bold'>{questions.q5}</label>
+                        <textarea
                             type="text"
                             name="a5"
                             value={answers.a5}
                             onChange={handleAnswerChange}
-                            className="border border-gray-300 rounded p-2 w-full"
+                            className="border border-gray-300 rounded p-2 w-full mb-8"
                         />
                     </div>
                 )}
             </div>
             <div className="mt-2">
-                <p>하고 싶은 말:</p>
+                <p className='font-bold'>하고 싶은 말</p>
                 <textarea
                     name="selfintro"
                     value={answers.selfintro}
                     onChange={handleAnswerChange}
                     required
-                    className="border border-gray-300 rounded p-2 w-full"
+                    className="border border-gray-300 rounded p-2 w-full mb-8"
                 ></textarea>
             </div>
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4">
                 제출
+            </button>
+            <button onClick={closeModal} className="bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded mt-4 ml-10">
+                닫기
             </button>
         </form>
     );
