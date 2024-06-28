@@ -1,7 +1,7 @@
 import axios from "axios"
 
-export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/examjob`
+export const API_SERVER_HOST = 'http://223.130.157.92:10527'
+const prefix = `/api/examjob`
 
 export const getExamList = async (pageParam) => {
     const { page, size, searchKeyword } = pageParam;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
 import { useNavigate } from "react-router-dom";
+import defaultImg from "../../img/defaultImage.png";
 
 const initState = {
   studyNo: 0,
@@ -29,21 +30,29 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
 
   return (
     <div className="p-4 flex flex-col items-center">
-      {/*스터디 정보란*/}
-      <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
-        <h1 className="text-2xl font-bold text-center">
-          {study.studyTitle}
-        </h1>
-        <div className="flex items-start mt-4">
-          <div className="w-64 h-64 rounded-lg mr-6 bg-gray-500 border border-none flex items-center justify-center">
-            {study.uploadFileNames.map((imgFile, i) => (
+    {/*스터디 정보란*/}
+    <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
+      <h1 className="text-2xl font-bold text-center">
+        {study?.studyTitle}
+      </h1>
+      <div className="flex items-start mt-4">
+        <div className="w-64 h-64 rounded-lg mr-6 bg-gray-500 border border-none flex items-center justify-center">
+        {study.uploadFileNames.length > 0 ? (
+              study.uploadFileNames.map((imgFile, i) => (
+                <img
+                  alt="StudyImage"
+                  key={i}
+                  className="w-full h-full"
+                  src={`${host}/api/study/display/${imgFile}`}
+                />
+              ))
+            ) : (
               <img
-                alt="StudyImage"
-                key={i}
+                alt="DefaultStudyImage"
                 className="w-full h-full"
-                src={`${host}/api/study/display/${imgFile}`}
+                src={defaultImg}
               />
-            ))}
+            )}
           </div>
           <div className="text-left flex flex-col justify-center h-64">
             <p>

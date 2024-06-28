@@ -26,7 +26,7 @@ function StudyChatComponent({ studyNo }) {
 
   // WebSocket 연결을 설정하는 함수
   const connect = () => {
-    const socket = new WebSocket(`ws://localhost:8181/ws`); // WebSocket 연결을 생성
+    const socket = new WebSocket(`ws://223.130.157.92:10527/ws`); // WebSocket 연결을 생성
     stompClient.current = Stomp.over(socket); // STOMP 프로토콜을 사용하는 클라이언트로 WebSocket 래핑
     stompClient.current.connect({}, () => {
       // 연결이 성공적으로 이루어지면 특정 채팅룸을 구독
@@ -49,7 +49,7 @@ function StudyChatComponent({ studyNo }) {
   // 서버로부터 초기 메시지를 가져오는 함수
   const fetchMessages = () => {
     return axios
-      .get(`http://localhost:8181/chat/${studyNo}`)
+      .get(`http://223.130.157.92:10527/chat/${studyNo}`)
       .then((response) => {
         setMessages(response.data); // 서버로부터 받은 메시지를 상태에 설정
       })

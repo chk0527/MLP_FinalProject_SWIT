@@ -90,7 +90,7 @@ public class LoginController {
 	private String kakaoRedirectUrl;
 
 
-    @GetMapping("/snslogin")
+    @GetMapping("/api/snslogin")
 	public Map<String, String> snsLogin(HttpSession session) {
 		log.info("snslogin --------- start");
 

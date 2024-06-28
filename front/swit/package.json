@@ -62,5 +62,5 @@
   "devDependencies": {
     "tailwindcss": "^3.4.3"
   },
-  "proxy": "http://localhost:8181"
+  "proxy": "http://223.130.157.92:10527/"
 }

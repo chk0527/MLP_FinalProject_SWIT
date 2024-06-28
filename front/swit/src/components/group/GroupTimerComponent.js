@@ -28,6 +28,39 @@ const GroupTimerComponent = ({ studyNo }) => {
 
     // 닉네임별로 스탑워치 리스트 구분
     const userStopwatches = stopwatches.filter(sw => sw.userNick === userNick)
+    //조회 날짜 지정
+    const filterStopwatchesByDateRange = (stopwatches, startDate, endDate) => {
+      if (!startDate || !endDate) return [];
+    
+      // 시간 부분을 무시하고 날짜 부분만 비교하도록 startDate와 endDate를 설정
+      const startOfDay = (date) => { //시작 시간은 0시 기준
+        const newDate = new Date(date);
+        newDate.setHours(0, 0, 0, 0);
+        return newDate;
+      };
+    
+      const endOfDay = (date) => { //끝 시간은 23시59분 기준
+        const newDate = new Date(date);
+        newDate.setHours(23, 59, 59, 999);
+        return newDate;
+      };
+    
+      const start = startOfDay(startDate);
+      const end = endOfDay(endDate);
+    
+      return stopwatches.filter((stopwatch) => {
+        const stopwatchStart = new Date(stopwatch.startAt);
+        const stopwatchEnd = new Date(stopwatch.stopAt);
+        return (
+          (stopwatchStart >= start && stopwatchStart <= end) ||
+          (stopwatchEnd >= start && stopwatchEnd <= end) ||
+          (stopwatchStart <= start && stopwatchEnd >= end)
+        );
+      });
+    };
+    
+    const filteredStopwatches = filterStopwatchesByDateRange(stopwatches, startDate, endDate);
+    
 
     useEffect(() => {
         // studyNo에 따른 타이머/스톱워치 불러오기
@@ -723,33 +756,57 @@ const GroupTimerComponent = ({ studyNo }) => {
                     </div>
                 </div>
                 {/* 방장 전용 전체 기록 */}
-                {userIsLeader ? (
-                    <div className="bg-gray-200 p-4 w-full flex flex-col items-center rounded-lg h-full">
-                        <FaBookReader className="text-4xl mb-2" />
-                        <h2 className="text-2xl font-semibold mb-4">그룹원의 공부량</h2>
-                        <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
-                            {Object.entries(groupByuserNick(stopwatches))
-                                .sort(([a], [b]) => a === userNick ? -1 : b === userNick ? 1 : 0)
-                                .map(([userNick, userTimers], index) => (
-                                    <div key={userNick}>
-                                        <div className="w-full text-center mb-2">{userNick} {userNick === getUserNickFromToken() ? '(방장)' : '(일반)'}</div>
-                                        {userTimers.map((stopwatch, idx) => (
-                                            <div key={stopwatch.timerNo} className="flex justify-between items-center mb-2">
-                                                <div className="w-1/3 text-center">{idx + 1}. {stopwatch.name}</div>
-                                                <div className="w-2/3 text-center">{formatStopWatchAdmin(stopwatch.time)}</div>
-                                            </div>
-                                        ))}
-                                        {index < Object.keys(groupByuserNick(stopwatches)).length - 1 && <hr className="w-full my-4 border-t border-gray-400" />}
-                                    </div>
-                                ))}
+{userIsLeader ? (
+    <div className="bg-gray-200 p-4 w-full flex flex-col items-center rounded-lg h-full">
+        <FaBookReader className="text-4xl mb-2" />
+        <h2 className="text-2xl font-semibold mb-4">그룹원의 공부량</h2>
+        <div className="flex space-x-4 mb-4">
+            <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                className="p-2 border rounded"
+                dateFormat="yyyy-MM-dd"
+                placeholderText="시작 날짜"
+            />
+            <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                className="p-2 border rounded"
+                dateFormat="yyyy-MM-dd"
+                placeholderText="끝 날짜"
+            />
+        </div>
+        <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
+            {Object.entries(groupByuserNick(filteredStopwatches))
+                .sort(([a], [b]) => (a === getUserNickFromToken() ? -1 : b === getUserNickFromToken() ? 1 : 0))
+                .map(([userNick, userTimers], index) => (
+                    <div key={userNick}>
+                        <div className="w-full text-center mb-2">
+                            {userNick} {userNick === getUserNickFromToken() ? "(방장)" : "(일반)"}
                         </div>
+                        {userTimers.map((stopwatch, idx) => (
+                            <div key={stopwatch.timerNo} className="flex justify-between items-center mb-2">
+                                <div className="w-1/3 text-center">
+                                    {idx + 1}. {stopwatch.name}
+                                </div>
+                                <div className="w-2/3 text-center">{formatStopWatchAdmin(stopwatch.time)}</div>
+                            </div>
+                        ))}
+                        {index < Object.keys(groupByuserNick(filteredStopwatches)).length - 1 && (
+                            <hr className="w-full my-4 border-t border-gray-400" />
+                        )}
                     </div>
-                ) : (
-                    <div className="bg-gray-200 p-4 w-full flex flex-col items-center rounded-lg h-full">
-                        <FaBookReader className="text-4xl mb-2" />
-                        <h2 className="text-2xl font-semibold mb-4">그룹원의 공부량</h2>
-                        <p className="text-gray-500">방장만 조회할 수 있습니다.</p>
-                    </div>
+                ))}
+        </div>
+    </div>
+) : (
+    <div className="bg-gray-200 p-4 w-full flex flex-col items-center rounded-lg h-full">
+        <FaBookReader className="text-4xl mb-2" />
+        <h2 className="text-2xl font-semibold mb-4">그룹원의 공부량</h2>
+        <p className="text-gray-500">방장만 조회할 수 있습니다.</p>
+    </div>
+
+
                 )}
             </div>
         </div>

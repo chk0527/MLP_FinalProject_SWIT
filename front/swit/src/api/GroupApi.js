@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getUserIdFromToken } from "../util/jwtDecode";
 
-export const API_SERVER_HOST = 'http://localhost:8181';
+export const API_SERVER_HOST = 'http://223.130.157.92:10527';
 const prefix = `${API_SERVER_HOST}/api/group`;
 
 // export const addGroup = async (studyObj) => {

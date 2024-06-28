@@ -1,5 +1,5 @@
 server:
-  port: 8181
+  port: 10527
 
 spring:
   profiles.include: login

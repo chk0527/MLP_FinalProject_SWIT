@@ -1,22 +1,24 @@
 import axios from "axios";
-export const API_SERVER_HOST = "http://localhost:8181";
-const prefix = `${API_SERVER_HOST}/api/study`;
+export const API_SERVER_HOST = 'http://223.130.157.92:10527'
+const prefix2 = `${API_SERVER_HOST}/api/study`
+const prefix = `api/study`;
 // 로컬 스토리지에서 토큰 가져오기
 
 export const getStudy = async (studyNo) => {
-  const res = await axios.get(`${prefix}/${studyNo}`);
+  console.log("getStudy APi파일 호출");
+  const res = await axios.get(`/api/study/${studyNo}`);
   return res.data;
 }
 
 export const getMyStudy = async (userId) => { //내가 가입한 스터디 목록
-  const res = await axios.get(`${prefix}/myStudy`, {
-    params: {userId }
+  const res = await axios.get(`/api/study/myStudy`, {
+    params: {userId}
   });
   return res.data;
 };
 
 export const getStudyWithQuestion = async (studyNo) => {
-  const res = await axios.get(`${prefix}/question/${studyNo}`);
+  const res = await axios.get(`/api/study/question/${studyNo}`);
   return res.data;
 }
 
@@ -32,24 +34,25 @@ export const postAdd = async (study) => {
       "Authorization": `Bearer ${token}`,
     },
   };
-  const res = await axios.post(`${prefix}/`, study, header);
+  //수정체크
+  const res = await axios.post(`${prefix2}/`, study, header);
   return res.data;
 };
 
 export const getAllStudies = async (studyTitle,studySubject,studyAddr,studyOnline,userId,pageParam) => {
   const {StudyPage,StudySize} = pageParam
-  const res = await axios.get(`${prefix}/all`,{params:{studyTitle:studyTitle,studySubject:studySubject,studyAddr:studyAddr,studyOnline:studyOnline,userId:userId,StudyPage:StudyPage,StudySize:StudySize}});
+  const res = await axios.get(`/api/study/all`,{params:{studyTitle:studyTitle,studySubject:studySubject,studyAddr:studyAddr,studyOnline:studyOnline,userId:userId,StudyPage:StudyPage,StudySize:StudySize}});
   return res.data;
 };
 
 export const deleteOne = async (studyNo) => {
-  const res = await axios.delete(`${prefix}/${studyNo}`);
+  const res = await axios.delete(`/api/study/${studyNo}`);
   return res.data;
 };
 
 export const putOne = async (studyNo, study) => {
   const header = { headers: { "Content-Type": "multipart/form-data" } };
-  const res = await axios.put(`${prefix}/${studyNo}`, study, header);
+  const res = await axios.put(`/api/study/${studyNo}`, study, header);
   return res.data;
 };
 
@@ -57,7 +60,7 @@ export const fetchInquiries = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   
-  const res = await axios.get(`${prefix}/${studyNo}/inquiries`, { headers });
+  const res = await axios.get(`/api/study/${studyNo}/inquiries`, { headers });
   return res.data;
 };
 
@@ -67,7 +70,7 @@ export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등�
   if (!token) {
     throw new Error('No access token found');
   }
-  const res = await axios.post(`${prefix}/${studyNo}/inquiries`, { inquiryContent }, {
+  const res = await axios.post(`/api/study/${studyNo}/inquiries`, { inquiryContent }, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -80,7 +83,7 @@ export const deleteInquiry = async (inquiryNo) => {
   if (!token) {
       throw new Error('No access token found');
   }
-  const res = await axios.delete(`${API_SERVER_HOST}/api/study/inquiries/${inquiryNo}`, {
+  const res = await axios.delete(`/api/study/inquiries/${inquiryNo}`, {
       headers: {
           Authorization: `Bearer ${token}`,
       },
@@ -93,7 +96,7 @@ export const responseSubmit = async (inquiryNo, responseContent) => { //답변 �
   if (!token) {
     throw new Error('No access token found');
   }
-  const res = await axios.post(`${prefix}/inquiries/${inquiryNo}/responses`, { responseContent }, {
+  const res = await axios.post(`/api/study/inquiries/${inquiryNo}/responses`, { responseContent }, {
     headers: {
       Authorization: `Bearer ${token}`
     }
