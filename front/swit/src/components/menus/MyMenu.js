@@ -19,11 +19,16 @@ const MyMenu = ({ callbackFn }) => {
         try {
           const imageUrl = await getUserImage(userId);
           setUserImage(imageUrl);
+          // 사용자 프로필 이미지가 없으면 기본 이미지로 대체
+          if (!imageUrl) {
+            setUserImage(`${process.env.PUBLIC_URL}/user0_blank.png`);
+          }
         } catch (error) {
           console.error(
             "마이메뉴에서 유저 이미지를 가져올 수 없습니다:",
             error
           );
+          setUserImage(`${process.env.PUBLIC_URL}/user0_blank.png`);
         }
       } else {
         setUserImage(`${process.env.PUBLIC_URL}/user0_blank.png`);
@@ -72,47 +77,62 @@ const MyMenu = ({ callbackFn }) => {
               <p className="text-2xl">로그인이 필요합니다</p>
             )}
           </div>
-          <img
-            className="object-cover size-52"
-            src={userImage}
-            alt="이미지"
-          ></img>
+          <img className="object-cover size-52" src={userImage} alt="이미지"></img>
           <div className="text-2xl pt-8">
-            <>
-              <Link to={`/mypage/${userId}`}>
-                <p className="py-2">내 정보</p>
-              </Link>
-              <Link to={"/study/add"}>
-                <p className="py-2">스터디 만들기</p>
-              </Link>
-              <Link to={"/study"}>
-                <p className="py-2">내 스터디</p>
-              </Link>
-              <div className="w-52 h-52 bg-white overflow-hidden text-xl">
-                {studyList ? (
-                  <motion.ul
-                    className="myStudyList"
-                    initial={{ opacity: 1, y: -30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ y: -30 }}
-                    transition={{ duration: 0.5 }}
+            {isLogin ? (
+              <>
+                <Link to={`/mypage/${userId}`}>
+                  <p className="py-2">내 정보</p>
+                </Link>
+                <Link to={"/study/add"}>
+                  <p className="py-2">스터디 만들기</p>
+                </Link>
+                <Link to={"/study"}>
+                  <p className="py-2">내 스터디</p>
+                </Link>
+                <div className="w-52 h-52 bg-white overflow-hidden text-xl">
+                  {studyList ? (
+                    <motion.ul
+                      className="myStudyList"
+                      initial={{ opacity: 1, y: -30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ y: -30 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <li className="pb-2">º 리액트 스터디</li>
+                      <li>º 스프링부트 스터디</li>
+                    </motion.ul>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+                <div className="absolute bottom-0 pb-24 w-full flex justify-center">
+                  <button
+                    onClick={logout}
+                    className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700 mr-28"
                   >
-                    <li className="pb-2">º 리액트 스터디</li>
-                    <li>º 스프링부트 스터디</li>
-                  </motion.ul>
-                ) : (
-                  <div></div>
-                )}
-              </div>
-              <div className="absolute bottom-0 pb-24 w-full flex justify-center">
-                <button
-                  onClick={logout}
-                  className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700 mr-28"
-                >
-                  로그아웃
-                </button>
-              </div>
-            </>
+                    로그아웃
+                  </button>
+                </div>
+              </>
+            ) : (
+                <div className="relative bottom-[-150px] pb-24 w-full flex justify-center">
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                    >
+                      로그인
+                    </button>
+                    <button
+                      onClick={() => navigate("/join")}
+                      className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700"
+                    >
+                      회원가입
+                    </button>
+                  </div>
+                </div>
+            )}
           </div>
         </div>
       </motion.div>

@@ -632,7 +632,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                                         </div>
                                     ))}
                                 <div className="text-center mb-4 font-semibold">
-                                    총 공부 시간: {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                                    Total: {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
                                 </div>
                             </div>
                         </div>
@@ -773,7 +773,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                                             </div>
                                         ))}
                                         <div className="text-center mb-4">
-                                            총 공부 시간: {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                                            Total: {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
                                         </div>
                                         {index < Object.keys(groupByuserNick(stopwatches)).length - 1 && <hr className="w-full my-4 border-t border-gray-400" />}
                                     </div>
