@@ -9,7 +9,7 @@ const BoardListPage = () => {
     return (      
         <BasicLayout>
             <div className="text-3xl">
-                <div>게시글 리스트 페이지</div>
+                <h1>게시판</h1>
             </div>
             <div className="flex">
                 <div className="w-full pr-2">

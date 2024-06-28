@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { getBoard } from "../../api/BoardApi";
+import { getComments } from "../../api/CommentApi";
 import { postAdd } from "../../api/CommentApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import { LoginContext } from "../../contexts/LoginContextProvider";
@@ -22,7 +23,8 @@ const commentInit = {
 const BoardReadComponent = ({ boardNo }) => {
     const { userInfo } = useContext(LoginContext)
     const [board, setBoard] = useState({ ...initState });
-    const [comment, setComment] = useState({...commentInit})
+    const [comment, setComment] = useState({ ...commentInit })
+    const [comments, setComments] = useState([]); // 댓글 상태 추가
 
     const handleChangeComment = (e) => {
         comment[e.target.name] = e.target.value
@@ -35,6 +37,11 @@ const BoardReadComponent = ({ boardNo }) => {
             console.log(data);
             setBoard(data);
         });
+
+        getComments(boardNo).then((data) => { // 댓글 데이터를 가져오는 API 호출
+            console.log(data);
+            setComments(data);
+        });
     }, [boardNo]);
 
     const handleClickAdd = () => {
@@ -43,6 +50,10 @@ const BoardReadComponent = ({ boardNo }) => {
         postAdd(comment).then(result => {
             console.log(result)
             setComment({ ...initState })
+            getComments(boardNo).then((data) => {
+                console.log(data);
+                setComments(data);
+            });
         }).catch(e => {
             console.error(e)
         })
@@ -50,61 +61,82 @@ const BoardReadComponent = ({ boardNo }) => {
 
     return (
         <div className="isolate bg-white px-6 lg:px-8">
-            <div className="mx-auto max-w-xl sm:mt-20">
-                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                        <label htmlFor="company" className="block text-sm font-semibold leading-6 text-gray-900">제목</label>
-                        <div className="mt-2.5">
-                            <input
-                                type="text"
-                                name="boardTitle"
-                                autoComplete="organization"
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                value={board.boardTitle}
-                                readOnly
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">카테고리</label>
-                        <div className="relative mt-2.5">
-                            <select
-                                name="boardCategory"
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                value={board.boardCategory}
-                                disabled
-                            >
-                                <option value="질문">질문</option>
-                                <option value="정보공유">정보공유</option>
-                                <option value="자유">자유</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">내용</label>
-                        <div className="mt-2.5">
-                            <textarea
-                                name="boardContent"
-                                id="message"
-                                rows="4"
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                value={board.boardContent}
-                                readOnly
-                            ></textarea>
-                        </div>
+            <div className="mx-auto min-w-[800px] max-w-7xl py-10 px-20">
+                <div className="border-b border-gray-300 pb-4 mb-4">
+                    <h2 className="text-2xl font-semibold mb-2">[{board.boardCategory}] {board.boardTitle}</h2>
+                    <div className="flex justify-between text-sm text-gray-600">
+                        <span>{board.userNo}</span>
+                        <span>{board.boardCreatedDate}</span>
                     </div>
                 </div>
-                                    <div className="sm:col-span-2">
-                        <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">댓글</label>
-                        <div className="mt-2.5">
-                            <textarea name="commentContent" id="message" rows="4" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={comment.commentCotent} onChange={handleChangeComment}></textarea>
+                <div className="py-4 mb-6" style={{ minHeight: '200px' }}>
+                    {board.boardContent}
+                </div>
+                <div className="mb-6">
+                    <label htmlFor="commentContent" className="block text-sm font-semibold mb-2">댓글</label>
+                    <textarea 
+                        name="commentContent" 
+                        id="commentContent" 
+                        rows="4" 
+                        className="block w-full rounded-md border border-gray-300 p-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
+                        value={comment.commentContent} 
+                        onChange={handleChangeComment}>
+                    </textarea>
+                </div>
+                <div>
+                    {comments.map((comment, index) => (
+                        <div key={index} className="mb-4 p-4 border rounded-lg bg-gray-50">
+                            <div className="text-sm text-gray-600">
+                                {comment.userNo}
+                            </div>
+                            <div className="mt-2 text-gray-900">
+                                {comment.commentContent}
+                            </div>
                         </div>
-                    </div>
+                    ))}
+                </div>
                 <div className="mt-10">
-                    <button className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleClickAdd}>작성</button>
+                    <button 
+                        className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" 
+                        onClick={handleClickAdd}>
+                        작성
+                    </button>
                 </div>
             </div>
         </div>
+        // <div className="isolate bg-white px-6 lg:px-8">
+        //     <div className="mx-auto max-w-xl sm:mt-20">
+        //         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+        //             <div className="sm:col-span-2">
+        //                 [{board.boardCategory}]{board.boardTitle}
+        //             </div>
+        //             <div className="sm:col-span-2">
+        //                 {board.boardContent}
+        //             </div>
+        //         </div>
+        //         <div className="sm:col-span-2">
+        //             <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">댓글</label>
+        //             <div className="mt-2.5">
+        //                 <textarea name="commentContent" id="message" rows="4" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={comment.commentContent} onChange={handleChangeComment}></textarea>
+        //             </div>
+        //         </div>
+        //         <div>
+        //             {comments.map((comment, index) => (
+        //                 <div key={index} className="mb-4 p-4 border rounded-lg bg-gray-50">
+        //                     <div className="text-sm text-gray-600">
+        //                         {comment.userNo} ({comment.userId})
+        //                     </div>
+        //                     <div className="mt-2 text-gray-900">
+        //                         {comment.commentContent}
+        //                     </div>
+        //                 </div>
+        //             ))}
+        //         </div>
+        //         <div className="mt-10">
+        //             <button className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleClickAdd}>작성</button>
+        //         </div>
+        //     </div>
+        // </div>
     );
 }
 
