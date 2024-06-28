@@ -164,7 +164,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const title = getNextTitle()
@@ -202,7 +202,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 삭제
   const handleRemoveEvent = async (eventId) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     try {
@@ -216,7 +216,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 완료 상태 업데이트
   const handleCompleteEvent = async (eventId, completeChk) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     try {
@@ -247,7 +247,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 드래그앤드롭 이벤트
   const handleDragEvent = async ({ event, start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const updatedEvent = {
@@ -266,7 +266,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 바 사이즈 늘리기 이벤트(날짜 범위 변경)
   const handleResizeEvent = async ({ event, start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const updatedEvent = {
@@ -285,7 +285,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 정보 업데이트(모달창)
   const handleUpdateEvent = async () => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const updatedEvent = {
@@ -311,7 +311,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 할 일 추가
   const handleAddTask = (e) => {
     if (!isManager) {
-      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     e.preventDefault()
@@ -325,7 +325,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 할 일의 완료 상태 토글
   const handleToggleTask = (index) => {
     if (!isManager) {
-      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const newTasks = tasks.map((task, i) =>
@@ -337,7 +337,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 할 일 제거
   const handleRemoveTask = (index) => {
     if (!isManager) {
-      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const newTasks = tasks.filter((_, i) => i !== index)
