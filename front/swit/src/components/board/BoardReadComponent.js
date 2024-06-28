@@ -10,7 +10,7 @@ const initState = {
     boardTitle: '추가',
     boardContent: '콘텐츠',
     boardCategory: "스터디",
-    userNo: 1
+    userNo: 0
 };
 
 const commentInit = {
@@ -97,7 +97,7 @@ const BoardReadComponent = ({ boardNo }) => {
                                     <div className="sm:col-span-2">
                         <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">댓글</label>
                         <div className="mt-2.5">
-                            <textarea name="commentContent" id="message" rows="4" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={comment.commentCotent} onChange={handleChangeComment}></textarea>
+                            <textarea name="commentContent" id="message" rows="4" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={comment.commentContent} onChange={handleChangeComment}></textarea>
                         </div>
                     </div>
                 <div className="mt-10">
