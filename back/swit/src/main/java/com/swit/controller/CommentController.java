@@ -1,5 +1,6 @@
 package com.swit.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,6 +40,11 @@ public class CommentController {
     public Map<String, Integer> postMethodName(CommentDTO commentDTO) {
         Integer commentNo = commentService.register(commentDTO);
         return Map.of("commentNo", commentNo);
+    }
+
+    @GetMapping("/board/{boardNo}")
+    public List<CommentDTO> getCommentsByBoardNo(@PathVariable(name = "boardNo") Integer boardNo) {
+        return commentService.getCommentsByBoardNo(boardNo);
     }
 
     // @GetMapping("/list")

@@ -34,6 +34,12 @@ public class CommentService {
         return commentRepository.save(comment).getCommentNo();
     }
 
+    public List<CommentDTO> getCommentsByBoardNo(Integer boardNo) {
+        List<Comment> comments = commentRepository.findByBoardBoardNo(boardNo);
+        return comments.stream()
+                .map(comment -> modelMapper.map(comment, CommentDTO.class))
+                .collect(Collectors.toList());
+    }
     // public BoardDTO get(Integer boardNo) {
     //     Board board = boardRepository.findById(boardNo).orElseThrow();
     //     BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
