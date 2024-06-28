@@ -218,6 +218,7 @@ const GroupTimerComponent = ({ studyNo }) => {
         }, {})
     }
 
+    // 유저별 총 공부 시간 계산
     const calculateTotalStudyTime = (stopwatches) => {
         const userTotalTime = {}
         stopwatches.forEach(sw => {
