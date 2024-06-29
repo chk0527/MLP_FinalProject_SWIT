@@ -28,6 +28,12 @@ export const deleteEvent = async (studyNo, eventId) => {
 // 캘린더(일정) 데이터 수정
 // 데이터들이 수정된 일정 객체를 반환
 export const updateEvent = async (studyNo, eventId, updatedEvent) => {
-    const res = await axios.patch(`${prefix}/${studyNo}/${eventId}`, updatedEvent);
+  const token = sessionStorage.getItem('accessToken');
+  const config = {
+      headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+      }};
+    const res = await axios.patch(`/api/calendar/${studyNo}/${eventId}`, updatedEvent, config);
     return res.data;
 }

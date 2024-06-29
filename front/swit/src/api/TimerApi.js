@@ -48,8 +48,16 @@ export const deleteTimer = async (studyNo, timerNo) => {
 
 // 타이머 데이터 수정
 export const updateTimer = async (studyNo, timerNo, updatedTimer) => {
+  const token = sessionStorage.getItem('accessToken');
+  console.log("타이머의 토큰: "+{token});
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  };
     try {
-        const res = await axios.patch(`/api/timer/${studyNo}/${timerNo}`, updatedTimer);
+        const res = await axios.patch(`/api/timer/${studyNo}/${timerNo}`, updatedTimer, config);
         return res.data;
     } catch (error) {
         console.error('타이머를 업데이트하는데 실패했습니다:', error);
