@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.swit.domain.Group;
+import com.swit.dto.PendingApplicationDTO;
 
 public interface GroupRepository extends JpaRepository<Group, Integer> {
   List<Group> findByStudyStudyNoAndGroupJoin(Integer studyNo, Integer groupJoin); // 새로운 메소드 추가
@@ -26,4 +27,10 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
       +
       "FROM Group g JOIN g.user u WHERE g.study.studyNo = :studyNo")
   List<GroupMemberProjection> findGroupMembersByStudyNo(@Param("studyNo") Integer studyNo);
+
+
+   @Query("SELECT new com.swit.dto.PendingApplicationDTO(g.study.studyNo, g.study.studyTitle, COUNT(g)) " +
+          "FROM Group g WHERE g.study.userId = :userId AND g.groupJoin = 0 " +
+          "GROUP BY g.study.studyNo, g.study.studyTitle")
+    List<PendingApplicationDTO> findPendingApplicationsByLeaderId(@Param("userId") String userId);
 }

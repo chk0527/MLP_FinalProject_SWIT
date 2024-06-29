@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swit.dto.AnswerDTO;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.GroupRequestDTO;
-import com.swit.dto.UserDTO;
+import com.swit.dto.PendingApplicationDTO;
 import com.swit.repository.GroupMemberProjection;
 import com.swit.service.GroupService;
 
@@ -101,4 +101,10 @@ public class GroupController {
     }
   }
 
+
+  @GetMapping("/pending_applications") //승인 대기중인 유저 수 확인
+  public ResponseEntity<List<PendingApplicationDTO>> getPendingApplications(@RequestParam String userId) {
+      List<PendingApplicationDTO> pendingApplications = service.getPendingApplicationsByLeaderId(userId);
+      return ResponseEntity.ok(pendingApplications);
+  }
 }

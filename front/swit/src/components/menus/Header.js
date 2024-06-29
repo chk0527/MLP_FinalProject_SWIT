@@ -4,6 +4,7 @@ import logo from "../../img/logoBlack.png";
 import MyMenu from "./MyMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoginContext } from "../../contexts/LoginContextProvider";
+import GroupJoinCheckComponent from "../../components/group/GroupJoinCheckComponent";
 
 const items1 = [
   { name: "스터디 그룹", path: "/study", no: 0 },
@@ -48,7 +49,6 @@ const Header = () => {
           <img className="object-contain size-24" src={logo} alt="이미지"></img>
         </Link>
       </div>
-
       <div className="p-6 flex sticky top-0 z-40 justify-center bg-white border-b-2 border-gray-400 font-GSans">
         <AnimatePresence>
           <ul
@@ -81,11 +81,14 @@ const Header = () => {
       {result ? (
         <MyMenu callbackFn={closeModal} />
       ) : (
-        <div className="fixed top-0 right-0 z-50 p-6">
+        <div className="fixed top-0 right-0 z-50 p-6 flex items-center gap-4">
           {isLogin ? (
-            <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer" onClick={openModal}>
-              메뉴
-            </p>
+            <>
+              <GroupJoinCheckComponent />
+              <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer" onClick={openModal}>
+                메뉴
+              </p>
+            </>
           ) : (
             <div className="flex gap-4">
               <p
