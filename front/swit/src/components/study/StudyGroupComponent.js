@@ -35,11 +35,9 @@ const StudyGroupComponent = ({ studyNo }) => {
 
   return (
     <div className="p-4 flex flex-col items-center font-GSans">
-      {/* 스터디 정보란 */}
-      <div className="h-1 bg-gray-300 my-4 w-full"></div>
       {/* 타이머 항목 */}
       <GroupTimerComponent studyNo={studyNo} />
-      <div className="h-1 bg-gray-300 my-4 w-full"></div>
+      <hr className="border border-black mt-8 mb-8 w-full" />
       <div className="flex justify-center my-3 w-full">
         <span
           onClick={() => setView("calendar")}

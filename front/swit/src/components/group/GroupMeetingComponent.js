@@ -16,14 +16,14 @@ const GroupMeetingComponent = () => {
   };
 
   return (
-    <div className="meeting-container">
+    <div className="">
       {/* <p>
         확인용 URL(추후제거):{" "}
         <a href={meetingUrl} target="_blank" rel="noopener noreferrer">
           {meetingUrl}
         </a>
       </p> */}
-      <button className="join-button" onClick={handleJoinMeeting}>
+      <button className="rounded p-2 px-3 text-sm bg-blue-700 text-white hover:bg-blue-800" onClick={handleJoinMeeting}>
         회의 참가
       </button>
     </div>
