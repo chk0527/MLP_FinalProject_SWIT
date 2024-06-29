@@ -1,6 +1,6 @@
 import StudyGroupComponent from "../../components/study/StudyGroupComponent";
 import StudyInfoComponent from "../../components/study/StudyInfoComponent";
-import BasicLayout from "../../layouts/BasicLayout";
+import BasicLayout from "../../layouts/StudyLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { isMember } from "../../api/GroupApi";
@@ -44,12 +44,11 @@ const StudyGroupPage = () => {
           studyNo={studyNo}
           ActionComponent={GroupMeetingComponent}
         />
+        <StudyGroupComponent studyNo={studyNo} />
       </div>
-      <div className="absolute -right-96 top-80 my-4">
+      <div>
         <StudyChatPage />
       </div>
-
-      <StudyGroupComponent studyNo={studyNo} />
     </BasicLayout>
   );
 };
