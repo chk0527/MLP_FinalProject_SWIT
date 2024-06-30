@@ -18,6 +18,7 @@ const initState = {
     studyOnline: true,
     studySubject: "개발",
     studyAddr: "서울시 강동구",
+    studyUuid: ""
 };
 
 const questionInit = {
@@ -33,7 +34,7 @@ const StudyModifyComponent = ({ studyNo }) => {
     const uploadRef = useRef()
     const navigate = useNavigate();
 
-    const { moveToRead, moveToList } = useCustomMove();
+    const { moveToRead, moveToList, moveToGroup } = useCustomMove();
 
     useEffect(() => {
         const userId = getUserIdFromToken();
@@ -66,7 +67,7 @@ const StudyModifyComponent = ({ studyNo }) => {
     const handleRadioChange = (e) => {
         setStudy(prevState => ({
             ...prevState,
-            studyOnline: e.target.value === 'online'
+            studyOnline: e.target.value === 'true'
         }));
     }
 
@@ -81,7 +82,6 @@ const StudyModifyComponent = ({ studyNo }) => {
         }
 
         const formatDate = (date) => date.toISOString().split('T')[0];
-
         formData.append("studyTitle", study.studyTitle);
         formData.append("studyContent", study.studyContent);
         formData.append("studyType", study.studyType);
@@ -91,7 +91,8 @@ const StudyModifyComponent = ({ studyNo }) => {
         formData.append("studySubject", study.studySubject);
         formData.append("studyComm", study.studyComm);
         formData.append("studyLink", study.studyLink);
-        formData.append("country", study.country);
+        formData.append("studyAddr", study.studyAddr);
+        formData.append("studyUuid", study.studyUuid);
 
         studyQuestion.questions.forEach((question, index) => {
             formData.append("questions", question);
@@ -112,7 +113,7 @@ const StudyModifyComponent = ({ studyNo }) => {
         if (result == 'Deleted')
             moveToList()
         else
-            moveToRead(studyNo)
+            moveToGroup(studyNo)
     }
 
     const handleQuestionCountChange = (e) => {
@@ -393,7 +394,7 @@ const StudyModifyComponent = ({ studyNo }) => {
                             className=" rounded bg-yellow-200 px-28 py-4 text-center font-semibold shadow-sm hover:bg-yellow-400"
                             onClick={handleClickModify}
                         >
-                            작성 완료
+                            수정
                         </button>
                     </div>
                     <div className="my-20 flex justify-center">
