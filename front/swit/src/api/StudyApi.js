@@ -1,5 +1,5 @@
 import axios from "axios";
-export const API_SERVER_HOST = "http://localhost:8181";
+export const API_SERVER_HOST = "http://223.130.157.92:10527";
 const prefix = `/api/study`;
 // 로컬 스토리지에서 토큰 가져오기
 
@@ -34,7 +34,7 @@ export const postAdd = async (study) => {
     },
   };
   //수정체크
-  const res = await axios.post(`${prefix2}/`, study, header);
+  const res = await axios.post(`${prefix}/`, study, header);
   return res.data;
 };
 
