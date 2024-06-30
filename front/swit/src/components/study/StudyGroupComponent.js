@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
 import { getUserIdFromToken } from "../../util/jwtDecode"; // 사용자 ID를 가져오는 함수 가져오기
 import GroupCalendarComponent from "../group/GroupCalendarComponent";
-import GroupTimerComponent from "../group/GroupTimerComponent";
 import GroupJoinConfirmComponent from "../group/GroupJoinConfirmComponent";
 import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInquiryListComponent from "./StudyInquiryListComponent";
 import MemberManagementComponent from "../group/MemberManagementComponent";
+import GroupTotalTimerComponent from "../group/GroupTotalTimerComponent";
 import { fetchInquiries } from "../../api/StudyApi";
 
 const StudyGroupComponent = ({ studyNo }) => {
@@ -36,7 +36,7 @@ const StudyGroupComponent = ({ studyNo }) => {
   return (
     <div className="p-4 flex flex-col items-center font-GSans">
       {/* 타이머 항목 */}
-      <GroupTimerComponent studyNo={studyNo} />
+      
       <hr className="border border-black mt-8 mb-8 w-full" />
       <div className="flex justify-center my-3 w-full">
         <span
@@ -86,7 +86,10 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 회원 관리 항목 (방장만 볼 수 있음) */}
       {view === "memberManagement" && isLeaderState && (
+        <div>
+        <GroupTotalTimerComponent studyNo={studyNo}/>
         <MemberManagementComponent studyNo={studyNo} />
+        </div>
       )}
 
       {/* 목록으로 돌아가기 */}

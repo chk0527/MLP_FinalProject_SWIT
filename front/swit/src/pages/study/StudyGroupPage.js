@@ -7,6 +7,7 @@ import { isMember } from "../../api/GroupApi";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import StudyChatPage from "./StudyChatPage";
 import GroupMeetingComponent from "../../components/group/GroupMeetingComponent";
+import StudyTimerPage from "./StudyTimerPage";
 
 const StudyGroupPage = () => {
   const { studyNo } = useParams();
@@ -46,8 +47,9 @@ const StudyGroupPage = () => {
         />
         <StudyGroupComponent studyNo={studyNo} />
       </div>
-      <div>
+      <div className="flex flex-col gap-8">
         <StudyChatPage />
+        <StudyTimerPage studyNo={studyNo} />
       </div>
     </BasicLayout>
   );
