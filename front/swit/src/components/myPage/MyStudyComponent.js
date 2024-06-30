@@ -63,7 +63,7 @@ const MyStudyComponent = () => {
             const userStudiesData = await Promise.all(combinedStudyListData.dtoList.map(async (study) => {
                 let memberStatus = await isMember(userId, study.studyNo)
                 let leaderStatus = await isLeader(study.studyNo)
-                
+
                 if (leaderStatus) {
                     memberStatus = 'leader'; // 방장인 경우 상태를 leader로 설정
                 }
@@ -77,7 +77,7 @@ const MyStudyComponent = () => {
             console.log("User studies data:", userStudiesData)
             setStudies(userStudiesData) // 상태 업데이트
         } catch (error) {
-            console.error("Failed to fetch user studies:", error) // 에러 처리
+            console.error("Failed to fetch user studies:", error)
         }
     }
 
@@ -113,11 +113,13 @@ const MyStudyComponent = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                     {studies.map(study => {
                         const statusInfo = getStatusInfo(study.isMemberStatus);
-                        if (statusInfo.text === "") return null; // 미가입 상태는 표시하지 않음
+                        if (statusInfo.text === "") {
+                            return null; // 미가입 상태는 표시하지 않음           
+                        }
                         return (
                             <tr key={study.studyNo}>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <Link to={`/study/${study.studyNo}`} className="text-blue-600 hover:underline">
+                                    <Link to={study.isMemberStatus === 'leader' ? `/study/group/${study.studyNo}` : `/study/read/${study.studyNo}`} className="text-blue-600 hover:underline">
                                         {study.studyTitle} {/* 스터디 제목 */}
                                     </Link>
                                 </td>
