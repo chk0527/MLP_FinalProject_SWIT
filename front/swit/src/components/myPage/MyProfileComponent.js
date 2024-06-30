@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage } from '../../api/UserApi';
-// import { info } from '../../api/loginApi';
+import { FaPen } from 'react-icons/fa';
 
 const initState = {
     userName: '',
@@ -123,13 +123,16 @@ const MyProfileComponent = ({ userId }) => {
             <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
                 <div className="flex items-center">
                     <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
-                        <div className="w-32 h-32 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center">
+                        <div className="w-36 h-36 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center relative">
                             <img
                                 // front/swit/public 폴더에 접근하는 절대경로
                                 src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
                                 alt="Profile"
-                                className="w-32 h-32 rounded-lg object-cover"
+                                className="w-34 h-34 rounded-lg object-cover"
                             />
+                            <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-2">
+                                <FaPen className="text-white" size={16} />
+                            </div>
                         </div>
                         <input
                             id="fileInput"
@@ -170,22 +173,6 @@ const MyProfileComponent = ({ userId }) => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative">
                         <span className="absolute top-2 right-2 text-2xl cursor-pointer" onClick={closeModalOptionX}>&times;</span>
-                        <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
-                            <div className="w-32 h-32 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center">
-                                <img
-                                    // front/swit/public 폴더에 접근하는 절대경로
-                                    src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
-                                    alt="Profile"
-                                    className="w-32 h-32 rounded-lg object-cover"
-                                />
-                            </div>
-                            <input
-                                id="fileInput"
-                                type="file"
-                                className="hidden"
-                                onChange={handleImageUpload}
-                            />
-                        </label>
                         <div className="mb-4">
                             <label className="block mb-1">이름:</label>
                             <input className="w-full border border-gray-300 p-2 rounded"
