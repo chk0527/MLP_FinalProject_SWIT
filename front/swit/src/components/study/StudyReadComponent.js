@@ -89,7 +89,7 @@ const StudyReadComponent = ({ studyNo }) => {
   const ApplyButton = () => (
     <button
       onClick={openModal}
-      className="bg-green-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-green-600 transition duration-300"
+      className="bg-green-500 text-white px-6 py-2 rounded mt-4 hover:bg-green-600 transition duration-300"
     >
       신청
     </button>
@@ -98,7 +98,7 @@ const StudyReadComponent = ({ studyNo }) => {
   return (
     <div>
       {/* 스터디정보 */}
-      <div className="flex justify-between ">
+      <div className="flex justify-center ">
         <StudyInfoComponent studyNo={studyNo} ActionComponent={ApplyButton} />
       </div>
 

@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { getPlaceAllList } from "../../api/PlaceApi";
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Add useNavigate
+import { getPlaceAllList, isPlaceFavorite, addPlaceFavorite, removePlaceFavorite } from "../../api/PlaceApi";
 import searchIcon from "../../img/search-icon.png";
 import PlaceListComponent from "./PlaceListComponent";
+import { getUserIdFromToken } from "../../util/jwtDecode";
+import { getMyStudy } from "../../api/StudyApi"; // isMember 함수를 가져옴
 import PostComponent from "./PostComponent";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
 const MapListComponent = () => {
   const [placeList, setPlaceList] = useState([]);
@@ -13,12 +16,29 @@ const MapListComponent = () => {
   const [searchText, setSearchText] = useState("");
   const [currentState, setCurrentState] = useState("");
   const [filteredPlaceList, setFilteredPlaceList] = useState([]);
+  const [myStudyData, setMyStudyData] = useState([]);
+  const [favoriteStatus, setFavoriteStatus] = useState({});
   const apiKey = "b0eff766121570e5d6bb6985397aed73";
-  let map = null;
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
+    // 장소 목록 가져오기
     getPlaceAllList().then((data) => {
       setPlaceList(data);
+
+      // 각 장소에 대한 즐겨찾기 상태 판별
+      const userId = getUserIdFromToken();
+      const status = {};
+      data.forEach((place) => {
+        if (userId) {
+          isPlaceFavorite(userId, place.placeNo).then((isFavorite) => {
+            status[place.placeNo] = isFavorite;
+          });
+        } else {
+          status[place.placeNo] = false; // 비로그인 상태에서는 모두 즐겨찾기하지 않은 상태로 설정
+        }
+      });
+      setFavoriteStatus(status);
     });
   }, []);
 
@@ -65,7 +85,7 @@ const MapListComponent = () => {
           level: 4,
         };
 
-        map = new window.kakao.maps.Map(container, options);
+        const map = new window.kakao.maps.Map(container, options);
 
         geocoder.addressSearch(searchText, function (result, status) {
           if (status === window.kakao.maps.services.Status.OK) {
@@ -172,15 +192,54 @@ const MapListComponent = () => {
   const handleAddrChange = (address) => {
     setSearchText(address);
   };
-  //내 스터디 검색
-  const myStudyList = [
-    { value: "", name: "내 스터디" },
-    { value: "서울시 강동구", name: "스터디1" },
-    { value: "경기도 안산시", name: "스터디2" },
-  ];
+
+  // 내 스터디 검색
+  useEffect(() => {
+    const userId = getUserIdFromToken();
+    if(userId){
+    getMyStudy(userId).then((data) => {
+      setMyStudyData(data);
+    });
+    }
+    else{
+      setMyStudyData([])
+    }
+  }, []);
+
+  const myStudyList = myStudyData.map((myStudy) => ({
+    no: myStudy.studyNo,
+    value: myStudy.studyAddr,
+    name: myStudy.studyTitle,
+  }));
+
   const selectStudy = (e) => {
     const value = e.target.value;
     handleAddrChange(value);
+  };
+
+  // 즐겨찾기 추가/제거 함수
+  const handleFavorite = async (placeNo) => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      if (
+        window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")
+      ) {
+        navigate("/login");
+      }
+      return;
+    }
+
+    const isFavorite = favoriteStatus[placeNo];
+    const request = isFavorite ? removePlaceFavorite : addPlaceFavorite;
+    try {
+      await request(userId, placeNo);
+      setFavoriteStatus({
+        ...favoriteStatus,
+        [placeNo]: !isFavorite,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -195,13 +254,21 @@ const MapListComponent = () => {
           </div>
           <div className="flex text-2xl">
             <button>즐겨찾기</button>
-            <select className="focus:outline-none mx-4" onChange={selectStudy}>
-              {myStudyList.map((study) => (
-                <option key={study.value} value={study.value}>
-                  {study.name}
-                </option>
-              ))}
-            </select>
+            {myStudyData ? (
+              <select
+                className="w-36 text-gray-900 rounded-lg focus:ring-none block p-2 mx-4"
+                onChange={selectStudy}
+              >
+                <option value="">내 스터디</option>
+                {myStudyList.map((study) => (
+                  <option key={study.no} value={study.value}>
+                    {study.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
       </div>
@@ -211,6 +278,8 @@ const MapListComponent = () => {
         currentPlaces={currentPlaces}
         lastPlaceElementRef={lastPlaceElementRef}
         isLoading={isLoading}
+        favoriteStatus={favoriteStatus}
+        handleFavorite={handleFavorite}
       />
     </div>
   );
