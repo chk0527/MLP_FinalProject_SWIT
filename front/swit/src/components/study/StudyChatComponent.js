@@ -20,7 +20,7 @@ function StudyChatComponent({ studyNo }) {
     // chatContainerRef가 현재 DOM 요소를 참조하고 있다면, 스크롤을 컨테이너의 맨 아래로 이동
     chatContainerRef.current?.scrollTo({
       top: chatContainerRef.current.scrollHeight,
-      behavior: "smooth",
+      behavior: "auto", // smooth에서 auto로 변경하여 초기 로드 시 맨 아래로 이동
     });
   };
 
@@ -60,6 +60,7 @@ function StudyChatComponent({ studyNo }) {
   useEffect(() => {
     connect(); // WebSocket 연결 설정
     fetchMessages(); // 초기 메시지 가져오기
+    scrollToBottom(); // 컴포넌트가 마운트될 때 한 번 스크롤을 맨 아래로 이동
     return () => disconnect(); // 컴포넌트가 언마운트될 때 WebSocket 연결 해제
   }, [studyNo]);
 
@@ -70,18 +71,19 @@ function StudyChatComponent({ studyNo }) {
 
   // 메시지를 전송하는 함수
   const sendMessage = () => {
-    if (stompClient.current && inputValue) {
+    if (stompClient.current && inputValue.trim()) {
       const userId = getUserIdFromToken();
       const body = {
         studyNo: studyNo,
         userId: userId, // 전송자 ID
-        message: inputValue, // 입력된 메시지
+        message: inputValue.trim(), // 입력된 메시지에서 앞뒤 공백 제거
       };
       stompClient.current.send(`/pub/message`, {}, JSON.stringify(body)); // STOMP 클라이언트를 통해 메시지 전송
       setInputValue(""); // 입력 필드를 초기화
     }
   };
-  //엔터키이벤트
+
+  // 엔터키 이벤트
   const pressEnter = (e) => {
     if (e.nativeEvent.isComposing) { // isComposing 이 true 이면 조합 중이므로 동작을 막는다.
       return;
@@ -89,81 +91,80 @@ function StudyChatComponent({ studyNo }) {
     if (e.key === "Enter" && e.shiftKey) {
       return;
     } else if (e.key === "Enter") {
+      e.preventDefault();
       sendMessage();
     }
   };
 
   return (
-    <div className="flex flex-col bg-gray-400 w-96 h-650 rounded">
+    <div className="flex text-sm flex-col border border-gray-300 w-96 rounded-lg shadow">
       {/* 채팅 메시지 컨테이너 */}
-      <div
-        className="flex-grow overflow-auto px-4 py-2 h-12 custom-scrollbar"
-        ref={chatContainerRef}
-      >
-        <div className="flex flex-col">
-          <div></div>
-          {messages.map((item, index) => (
-            <div
-              key={index}
-              className={`mb-2 flex ${
-                item.userNick === getUserNickFromToken()
-                  ? "justify-end"
-                  : "justify-start"
-              }`}
-            >
-              <div className="flex flex-col items-end max-w-md">
-                <div
-                  className={`text-sm text-white text-gray-500 mb-1 w-full ${
-                    item.userNick === getUserNickFromToken()
-                      ? "text-right"
-                      : "text-left"
-                  }`}
-                >
-                  {item.userNick === getUserNickFromToken()
-                    ? ""
-                    : item.userNick}
-                </div>
-                <div
-                  className={`flex items-center ${
-                    item.userNick === getUserNickFromToken()
-                      ? "flex-row-reverse"
-                      : "flex-row"
-                  }`}
-                >
+      <div className="p-4 bg-yellow-100 rounded-t-lg">
+        <div
+          className="flex-grow bg-white h-96 overflow-auto p-4 custom-scrollbar rounded"
+          ref={chatContainerRef}
+        >
+          <div className="flex flex-col">
+            {messages.map((item, index) => (
+              <div
+                key={index}
+                className={`mb-2 flex ${
+                  item.userNick === getUserNickFromToken()
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
+              >
+                <div className="flex flex-col">
                   <div
-                    className={`p-2 rounded shadow whitespace-pre-line ${
+                    className={`text-xs text-gray-500 ${
                       item.userNick === getUserNickFromToken()
-                        ? "bg-yellow-200"
-                        : "bg-white"
+                        ? "text-right"
+                        : "text-left"
                     }`}
                   >
-                    {item.message}
+                    {item.userNick === getUserNickFromToken() ? "" : item.userNick}
                   </div>
-                  <div className="text-xs text-white text-gray-500 ml-2 mr-2">
-                    {new Date(item.createdDate).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <div
+                    className={`flex items-end ${
+                      item.userNick === getUserNickFromToken()
+                        ? "flex-row-reverse"
+                        : "flex-row"
+                    }`}
+                  >
+                    <div
+                      className={`p-2 rounded-lg shadow whitespace-pre-line ${
+                        item.userNick === getUserNickFromToken()
+                          ? "bg-yellow-200"
+                          : "bg-white"
+                      }`}
+                    >
+                      {item.message}
+                    </div>
+                    <div className="text-2xs text-gray-500 ml-2 mr-2">
+                      {new Date(item.createdDate).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       {/* 메시지 입력 필드와 전송 버튼 */}
-      <div className="flex items-center border-t border-gray-300 py-2 bg-white">
+      <div className="flex items-center border-t border-gray-300 bg-white py-2 px-4 rounded">
         <textarea
           onKeyDown={(e) => pressEnter(e)}
           value={inputValue}
           onChange={handleInputChange}
-          className="flex-grow resize-none border h-9 border-gray-300 rounded py-1 px-4 ml-2 mr-2 focus:outline-none"
+          className="flex-grow resize-none border border-gray-300 rounded-md py-2 px-4 mr-2 focus:outline-none focus:ring focus:border-yellow-300"
           placeholder="메시지를 입력하세요..."
         />
         <button
           onClick={sendMessage}
-          className="bg-yellow-300 text-black text-sm rounded-lg hover:bg-yellow-400 focus:outline-none flex items-center justify-center w-1/5"
-          style={{ height: "2.5rem", padding: 0, marginLeft: 0 }}
+          className="bg-yellow-300 text-black text-sm rounded-md py-2 px-4 hover:bg-yellow-400 focus:outline-none focus:ring"
         >
           전송
         </button>
