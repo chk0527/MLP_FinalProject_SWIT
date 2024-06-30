@@ -965,7 +965,7 @@ const GroupTimerComponent = ({ studyNo }) => {
               />
             </div>
             <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
-              {Object.entries(groupByuserNick(stopwatches))
+              {Object.entries(groupByuserNick(filteredStopwatches))
                 .sort(([a], [b]) =>
                   a === userNick ? -1 : b === userNick ? 1 : 0
                 )
