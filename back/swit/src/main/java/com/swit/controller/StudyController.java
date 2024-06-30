@@ -93,19 +93,21 @@ public class StudyController {
     }
 
     @PutMapping("/{studyNo}")
-    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, @RequestBody StudyDTO studyDTO, // 수정된
-                                                                                                                       // 부분
-            @RequestParam("questions") List<String> questions) { // 수정된 부분
-        StudyDTO currentStudyDTO = service.get(studyNo);
-        List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
-        List<MultipartFile> newFiles = studyDTO.getFiles();
-        List<String> uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
-        studyDTO.setUploadFileNames(uploadFileNames);
-        studyDTO.setStudyNo(studyNo);
-        log.info("Modify:" + studyDTO);
-        service.modify(studyDTO, questions);
-        return Map.of("RESULT", "SUCCESS");
-    }
+    public Map<String, String> modify(
+        @PathVariable(name = "studyNo") Integer studyNo,
+        @ModelAttribute StudyDTO studyDTO) { // 수정된 부분
+    StudyDTO currentStudyDTO = service.get(studyNo);
+    List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
+    List<MultipartFile> newFiles = studyDTO.getFiles();
+    List<String> uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
+    studyDTO.setUploadFileNames(uploadFileNames);
+    studyDTO.setStudyNo(studyNo);
+    log.info("Modify:" + studyDTO);
+    service.modify(studyDTO, studyDTO.getQuestions());
+    return Map.of("RESULT", "SUCCESS");
+}
+
+
 
     @GetMapping("/display/{fileName}")
     public ResponseEntity<Resource> displayFileGet(@PathVariable(name = "fileName") String fileName) {

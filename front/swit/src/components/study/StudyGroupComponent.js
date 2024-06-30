@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
 import { getUserIdFromToken } from "../../util/jwtDecode"; // 사용자 ID를 가져오는 함수 가져오기
 import GroupCalendarComponent from "../group/GroupCalendarComponent";
-import GroupTimerComponent from "../group/GroupTimerComponent";
 import GroupJoinConfirmComponent from "../group/GroupJoinConfirmComponent";
 import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInquiryListComponent from "./StudyInquiryListComponent";
+import StudyModifyButtonComponent from "./StudyModifyButton";
 import MemberManagementComponent from "../group/MemberManagementComponent";
+import GroupTotalTimerComponent from "../group/GroupTotalTimerComponent";
 import { fetchInquiries } from "../../api/StudyApi";
+import { useNavigate } from "react-router-dom"; // useNavigate 가져오기
 
 const StudyGroupComponent = ({ studyNo }) => {
   const [view, setView] = useState("calendar");
   const [inquiries, setInquiries] = useState([]);
   const [isLeaderState, setIsLeaderState] = useState(false); // 방장 여부 상태 추가
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,10 +36,14 @@ const StudyGroupComponent = ({ studyNo }) => {
     checkUserRole();
   }, [studyNo]);
 
+  const handleEditClick = () => {
+    navigate(`/study/${studyNo}/edit`); // 수정 페이지로 이동하는 함수
+  };
+
   return (
     <div className="p-4 flex flex-col items-center font-GSans">
       {/* 타이머 항목 */}
-      <GroupTimerComponent studyNo={studyNo} />
+      
       <hr className="border border-black mt-8 mb-8 w-full" />
       <div className="flex justify-center my-3 w-full">
         <span
@@ -86,11 +93,17 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 회원 관리 항목 (방장만 볼 수 있음) */}
       {view === "memberManagement" && isLeaderState && (
+        <div>
+        <GroupTotalTimerComponent studyNo={studyNo}/>
         <MemberManagementComponent studyNo={studyNo} />
+        </div>
       )}
 
       {/* 목록으로 돌아가기 */}
-      <StudyListBtnComponent />
+      <div className="flex justify-between w-full">
+        <StudyListBtnComponent />
+        <StudyModifyButtonComponent studyNo={studyNo} isLeader={isLeaderState}/>
+      </div>
     </div>
   );
 };

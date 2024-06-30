@@ -20,7 +20,7 @@ import { isLeader } from "../../api/GroupApi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const GroupTimerComponent = ({ studyNo }) => {
+const GroupStopwatchComponent = ({ studyNo }) => {
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
   const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
   const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
@@ -663,144 +663,153 @@ const GroupTimerComponent = ({ studyNo }) => {
 
       {/*스톱워치 개인화면 */}
       <div className="flex flex-col md:flex-row justify-between w-full space-y-4 md:space-y-0 md:space-x-4 items-stretch">
-        {/* 타이머 개인화면 */}
         <div className="flex flex-col w-full">
-          <div className="bg-green-200 p-4 flex flex-col items-center rounded-lg">
-            <FaClock className="text-4xl mb-2" />
-            <h2 className="text-2xl font-semibold mb-4">타이머</h2>
-            <div className="space-y-4 w-full">
-              {currentTimer ? (
+          {userStopwatches.length === 0 && (
+            <div className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg">
+              <FaStopwatch className="text-4xl mb-2" />
+              <h2 className="text-2xl font-semibold mb-4">스톱워치</h2>
+              <button
+                onClick={() => handleCreateStopwatch(false)}
+                className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
+              >
+                스톱워치 생성
+              </button>
+            </div>
+          )}
+          {userStopwatches.length > 0 && (
+            <div className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg mb-4">
+              {currentStopwatch ? (
                 <>
-                  <input
-                    type="text"
-                    placeholder="타이머 이름"
-                    value={currentTimer.name}
-                    onChange={(e) =>
-                      setCurrentTimer((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    className="w-full p-2 border border-gray-300 rounded"
-                    disabled={currentTimer.running}
-                  />
-                  {!currentTimer.running ? (
-                    <>
-                      <div className="grid grid-cols-3 gap-2 justify-center">
-                        <label className="flex flex-col items-center">
-                          시
-                          <input
-                            type="number"
-                            value={Math.floor(currentTimer.time / 3600)}
-                            onChange={(e) => {
-                              const hours = Math.max(0, e.target.value);
-                              setCurrentTimer((prev) => ({
-                                ...prev,
-                                time:
-                                  hours * 3600 + (prev ? prev.time % 3600 : 0),
-                              }));
-                            }}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            disabled={currentTimer.running}
-                          />
-                        </label>
-                        <label className="flex flex-col items-center">
-                          분
-                          <input
-                            type="number"
-                            value={Math.floor((currentTimer.time % 3600) / 60)}
-                            onChange={(e) => {
-                              const minutes = Math.max(0, e.target.value);
-                              setCurrentTimer((prev) => ({
-                                ...prev,
-                                time:
-                                  Math.floor(prev ? prev.time / 3600 : 0) *
-                                    3600 +
-                                  minutes * 60 +
-                                  (prev ? prev.time % 60 : 0),
-                              }));
-                            }}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            disabled={currentTimer.running}
-                          />
-                        </label>
-                        <label className="flex flex-col items-center">
-                          초
-                          <input
-                            type="number"
-                            value={currentTimer.time % 60}
-                            onChange={(e) => {
-                              const seconds = Math.max(0, e.target.value);
-                              setCurrentTimer((prev) => ({
-                                ...prev,
-                                time:
-                                  Math.floor(prev ? prev.time / 3600 : 0) *
-                                    3600 +
-                                  Math.floor(
-                                    (prev ? prev.time % 3600 : 0) / 60
-                                  ) *
-                                    60 +
-                                  seconds,
-                              }));
-                            }}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            disabled={currentTimer.running}
-                          />
-                        </label>
-                      </div>
-                      <div className="flex justify-center space-x-2">
+                  <FaStopwatch className="text-4xl mb-2" />
+                  <h2 className="text-2xl font-semibold mb-4">
+                    {currentStopwatch.userNick}님의 스톱워치
+                  </h2>
+                  <div className="space-y-4 w-full">
+                    <input
+                      type="text"
+                      placeholder="제목"
+                      value={currentStopwatch.name}
+                      onChange={(e) =>
+                        setCurrentStopwatch({
+                          ...currentStopwatch,
+                          name: e.target.value,
+                        })
+                      }
+                      disabled={!isEditing || currentStopwatch.running}
+                      className="w-full p-2 border border-gray-300 rounded"
+                    />
+                    <div className="text-3xl font-mono text-center">
+                      {formatStopWatchTime(currentStopwatch.time)}
+                    </div>
+                    <div className="flex justify-center space-x-2">
+                      {!currentStopwatch.running ? (
                         <button
-                          onClick={handleStartTimer}
+                          onClick={() => {
+                            if (!currentStopwatch.name) {
+                              alert("제목을 입력하세요.");
+                            } else {
+                              handleStartStopwatch(currentStopwatch);
+                              setIsEditing(false); // 시작 시 제목 입력창 비활성화
+                            }
+                          }}
                           className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
                         >
                           시작
                         </button>
-                        <button
-                          onClick={handleStopTimer}
-                          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
-                        >
-                          초기화
-                        </button>
-                        <button
-                          onClick={handleDeleteTimer}
-                          className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-3xl font-mono text-center">
-                        {formatTimerTime(currentTimer.time)}
-                      </div>
-                      <div className="flex justify-center space-x-2">
-                        <button
-                          onClick={handlePauseTimer}
-                          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                        >
-                          일시정지
-                        </button>
-                      </div>
-                    </>
-                  )}
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              handlePauseStopwatch(currentStopwatch);
+                            }}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                          >
+                            일시정지
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleStopStopwatch(currentStopwatch)
+                            }
+                            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                          >
+                            정지
+                          </button>
+                        </>
+                      )}
+                      {!currentStopwatch.running && (
+                        <>
+                          <button
+                            onClick={() => {
+                              if (!currentStopwatch.name) {
+                                alert("제목을 입력하세요.");
+                              } else {
+                                addRecord(currentStopwatch);
+                                handlePauseStopwatch(currentStopwatch);
+                                handleCreateStopwatch(true);
+                              }
+                            }}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-gray-700"
+                          >
+                            다음
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteStopwatch(currentStopwatch)
+                            }
+                            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
+                          >
+                            삭제
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </>
               ) : (
-                <div className="flex justify-center">
-                  <button
-                    onClick={handleCreateTimer}
-                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                  >
-                    생성하기
-                  </button>
-                </div>
+                <p className="text-center">선택된 스톱워치가 없습니다.</p>
               )}
+              {/* 유저의 스톱워치 기록 남기는 곳 */}
+              <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
+                {userStopwatches
+                  .filter((sw) => !sw.running)
+                  .map(
+                    (
+                      stopwatch,
+                      index // 유저 본인꺼만 조회
+                    ) => (
+                      <div
+                        key={stopwatch.timerNo}
+                        className="flex justify-between items-center mb-2"
+                      >
+                        <div
+                          className="w-1/3 text-center cursor-pointer mr-4"
+                          onClick={() => handleLoadStopwatch(stopwatch.timerNo)}
+                        >
+                          {index + 1}. {stopwatch.name}
+                        </div>
+                        <div className="w-1/3 text-center">
+                          {formatStopWatchTime(stopwatch.time)}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteStopwatch(stopwatch)}
+                          className="w-1/3 text-center text-red-500 hover:text-red-700"
+                        >
+                          X
+                        </button>
+                      </div>
+                    )
+                  )}
+                <div className="text-center mb-4 font-semibold">
+                  Total:{" "}
+                  {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default GroupTimerComponent;
+export default GroupStopwatchComponent;
