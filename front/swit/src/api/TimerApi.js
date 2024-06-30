@@ -1,6 +1,6 @@
 import axios from "axios"
 export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/timer`
+const prefix = `/api/timer`
 
 // 스터디의 타이머 불러오기
 export const getAllTimers = async (studyNo) => {
