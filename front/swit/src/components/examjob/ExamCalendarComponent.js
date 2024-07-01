@@ -157,7 +157,7 @@ const ExamCalendarComponent = () => {
   //라디오버튼
   const radioOptions = [
     { label: '전체', value: '' },
-    { label: '기사,산업기사', value: '기사·산업기사' },
+    { label: '기사,산업기사', value: '기사,산업기사' },
     { label: '기능장', value: '기능장' },
     { label: '기능사', value: '기능사' },
     { label: '기술사', value: '기술사' },
