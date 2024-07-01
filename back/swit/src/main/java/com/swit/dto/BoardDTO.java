@@ -22,6 +22,7 @@ public class BoardDTO {
     private String boardContent;
     private String boardCategory;
     private Integer userNo;
+    private String userNick;
     private List<CommentDTO> comments;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")

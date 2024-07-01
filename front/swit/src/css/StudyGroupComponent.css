@@ -159,7 +159,7 @@
   z-index: 10; /* 최상단에 오도록 수정 */
 }
 
-button {
+.button1 {
   margin: 10px 5px;
   padding: 10px 20px;
   font-size: 16px;

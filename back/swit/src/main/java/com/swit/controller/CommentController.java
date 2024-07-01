@@ -37,7 +37,7 @@ public class CommentController {
     // }
 
     @PostMapping("/")
-    public Map<String, Integer> postMethodName(CommentDTO commentDTO) {
+    public Map<String, Integer> postMethodName(@RequestBody CommentDTO commentDTO) {
         Integer commentNo = commentService.register(commentDTO);
         return Map.of("commentNo", commentNo);
     }
