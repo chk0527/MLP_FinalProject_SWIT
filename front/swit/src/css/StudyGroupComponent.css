@@ -1,7 +1,7 @@
 /*=========== 캘린더 스타일 ==============*/
 .rbc-calendar {
-  border: 2px solid #008000;
-  border-radius: 10px;
+  border: 2px solid rgb(199, 199, 199);
+  border-radius: 5px;
 }
 
 .rbc-month-view {
@@ -22,7 +22,7 @@
 }
 
 .rbc-today {
-  background-color: #d9edf7;
+  background-color:rgb(254 249 195);
 }
 
 .rbc-header {
@@ -81,17 +81,19 @@
 
 /*=========== 이벤트 스타일 ==============*/
 .rbc-event {
-  background-color: #000000; /* 기본 색상 검정색 */
+  background-color: rgb(253 224 71); /* 기본 색상 검정색 */
   border: none;
-  border-radius: 10px; /* 둥근 모서리 적용 */
-  color: white;
+  border-radius: 2px; /* 둥근 모서리 적용 */
+  color: black;
   font-size: 0.85em;
-  padding: 2px;
+  padding: 0px;
   text-align: center;
 }
 
 .rbc-event-content {
   text-align: center;
+  background-color: rgb(253 224 71); /* 기본 색상 검정색 */
+  
 }
 
 /*=========== 모달창 스타일 ==============*/
@@ -102,8 +104,7 @@
   width: 25%;
   height: 100%;
   background-color: #fff;
-  border-left: 2px solid orange;
-  box-shadow: -5px 0 5px -5px #333;
+  box-shadow: -1px 0 1px -1px #333;
   z-index: 1000;
   overflow-y: auto;
   padding: 20px;
@@ -139,7 +140,7 @@
 .modal-content h2 {
   font-size: 24px;
   margin-bottom: 10px;
-  background-color: #0092CA;
+  background-color: #0092ca;
   color: white;
   padding: 10px;
   border-radius: 5px;
@@ -202,21 +203,27 @@ button {
 }
 
 .button-delete {
-  background-color: #f44336;
+  background-color: rgb(75 85 99);
   color: white;
   padding: 5px 10px;
   border: none;
   cursor: pointer;
   border-radius: 4px;
 }
+.button-delete {
+  background-color: rgb(55 65 81);
+}
 
 .button-save {
-  background-color: #4CAF50;
+  background-color: rgb(234 179 8);
   color: white;
   padding: 5px 10px;
   border: none;
   cursor: pointer;
   border-radius: 4px;
+}
+.button-save:hover {
+  background-color: rgb(202 138 4);
 }
 
 /*=========== DatePicker(날짜선택) 스타일 ==============*/
@@ -304,22 +311,26 @@ button {
 }
 
 .custom-calendar-header .view-button {
-  background-color: #4CAF50;
+  background-color: rgb(202 138 4);
   color: white;
   border: none;
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 4px;
   margin-left: 10px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   transition: background-color 0.3s ease;
 }
 
-.custom-calendar-header .view-button.active {
-  background-color: #2E8B57;
+.custom-calendar-header .view-button:hover {
+  background-color: rgb(161 98 7);
+}
+.custom-calendar-header .view-button:active {
+  background-color: rgb(115, 70, 6);
 }
 
 .custom-calendar-header .nav-button {
-  background-color: #4CAF50;
+  background-color: rgb(202 138 4);
   color: white;
   border: none;
   padding: 8px 12px;
@@ -327,34 +338,29 @@ button {
   border-radius: 4px;
   margin-right: 10px;
 }
+.custom-calendar-header .nav-button:hover {
+  background-color: rgb(161 98 7);
+}
 
 .custom-calendar-header .today-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
+  background-color: rgb(254 249 195);
+  color: black;
+  font-weight: bold;
+  padding: 10px 10px;
   cursor: pointer;
   border-radius: 50%;
   font-size: 0.8em;
   margin-right: 10px;
+}
+.custom-calendar-header .today-button:hover {
+  background-color: rgb(250 204 21);
+  color: black;
 }
 
 .custom-calendar-header .label {
   font-size: 1.5em;
   font-weight: bold;
   margin-right: 10px;
-}
-
-.custom-calendar-header .nav-button:hover {
-  background-color: #45a049;
-}
-
-.custom-calendar-header .today-button:hover {
-  background-color: #0056b3;
-}
-
-.custom-calendar-header .view-button:hover {
-  background-color: #45a049;
 }
 
 @keyframes fadeIn {

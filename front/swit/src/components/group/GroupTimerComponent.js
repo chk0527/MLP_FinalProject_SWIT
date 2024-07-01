@@ -139,10 +139,6 @@ const GroupTimerComponent = ({ studyNo }) => {
   // 타이머 시작
   const handleStartTimer = () => {
     try {
-      if (!currentTimer.name) {
-        alert("타이머 이름을 입력해주세요.");
-        return;
-      }
       if (currentTimer.time <= 0) {
         alert("시간은 0보다 커야 합니다.");
         return;
