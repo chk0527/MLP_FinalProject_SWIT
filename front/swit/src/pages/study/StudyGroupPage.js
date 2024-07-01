@@ -11,6 +11,7 @@ import StudyTimerPage from "./StudyTimerPage";
 import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
 import StudyListBtnComponent from "../../components/study/StudyListBtnComponent";
 import StudyModifyButtonComponent from "../../components/study/StudyModifyButton";
+import StudyTodoPage from "./StudyTodoPage";
 
 const StudyGroupPage = () => {
   const { studyNo } = useParams();
@@ -65,6 +66,7 @@ const StudyGroupPage = () => {
         <div className="flex flex-col gap-8">
           <StudyChatPage />
           <StudyTimerPage studyNo={studyNo} />
+          <StudyTodoPage studyNo={studyNo}/>
         </div>
       </div>
       {/* 목록으로 돌아가기 */}
