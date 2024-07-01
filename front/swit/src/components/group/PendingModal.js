@@ -28,7 +28,7 @@ const PendingApplicationsModal = ({ isOpen, onRequestClose, pendingApplications 
               <strong>{application.studyTitle}:</strong> {application.pendingCount}건
               <button
                   onClick={() => handleNavigate(application.studyNo)}
-                  className="ml-4 bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-700"
+                  className="ml-4 bg-gray-500 text-white py-1 px-3 rounded hover:bg-gray-700"
                 >
                   이동
                 </button>
