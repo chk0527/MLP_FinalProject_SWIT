@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
-import { getUserIdFromToken } from "../../util/jwtDecode"; // 사용자 ID를 가져오는 함수 가져오기
 import GroupCalendarComponent from "../group/GroupCalendarComponent";
 import GroupJoinConfirmComponent from "../group/GroupJoinConfirmComponent";
-import StudyListBtnComponent from "./StudyListBtnComponent";
 import StudyInquiryListComponent from "./StudyInquiryListComponent";
-import StudyModifyButtonComponent from "./StudyModifyButton";
 import MemberManagementComponent from "../group/MemberManagementComponent";
 import GroupTotalTimerComponent from "../group/GroupTotalTimerComponent";
 import { fetchInquiries } from "../../api/StudyApi";
@@ -41,10 +38,8 @@ const StudyGroupComponent = ({ studyNo }) => {
   };
 
   return (
-    <div className="p-4 flex flex-col items-center font-GSans">
+    <div className="flex flex-col items-center font-GSans">
       {/* 타이머 항목 */}
-      
-      <hr className="border border-black mt-8 mb-8 w-full" />
       <div className="flex justify-center my-3 w-full">
         <span
           onClick={() => setView("calendar")}
@@ -98,12 +93,6 @@ const StudyGroupComponent = ({ studyNo }) => {
         <MemberManagementComponent studyNo={studyNo} />
         </div>
       )}
-
-      {/* 목록으로 돌아가기 */}
-      <div className="flex justify-between w-full">
-        <StudyListBtnComponent />
-        <StudyModifyButtonComponent studyNo={studyNo} isLeader={isLeaderState}/>
-      </div>
     </div>
   );
 };

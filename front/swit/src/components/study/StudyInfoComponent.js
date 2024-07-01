@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../../img/defaultImage.png";
 
@@ -23,9 +24,21 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
   useEffect(() => {
-    getStudy(studyNo).then((data) => {
-      setStudy(data);
-    });
+    const fetchStudyData = async () => {
+      try {
+        const studyData = await getStudy(studyNo);
+        const currentMemberCount = await memberCount(studyNo);
+
+        setStudy({
+          ...studyData,
+          currentMemberCount,
+        });
+      } catch (error) {
+        console.error("Error fetching study data:", error);
+      }
+    };
+
+    fetchStudyData();
   }, [studyNo]);
 
   return (
@@ -71,7 +84,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
           </div>
           <div className="flex gap-20">
             <p className="w-40">
-              <strong>인원: </strong> 명/{study.studyHeadcount}명
+              <strong>인원: </strong> {study.currentMemberCount}명/{study.studyHeadcount}명
             </p>
             <p className="w-40">
               <strong>날짜: </strong>
@@ -83,9 +96,10 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
           </div>
         </div>
       </div>
-      <div className="w-800 h-52 mt-4 p-4 border border-gray-300 bg-yellow-100 text-left">
+      <div className="w-800 h-52 my-4 p-4 border border-gray-300 bg-yellow-100 text-left">
         <p>{study.studyContent}</p>
       </div>
+      <hr className="border border-black my-8 w-full" />
     </div>
   );
 };

@@ -13,7 +13,7 @@ const StudyModifyButtonComponent = ({ studyNo, isLeader }) => {
     }
 
     return (
-    <div className='flex justify-center m-32'>
+    <div className='flex justify-center my-32'>
     <button
         onClick={handleEditClick}
         className="bg-gray-500 w-52 h-12 text-white text-center"
