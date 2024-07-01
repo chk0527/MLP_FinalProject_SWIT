@@ -158,6 +158,7 @@ public class ExamjobController {
         }
     }
 
+    // 즐겨찾기된 시험 목록 가져오기
     @GetMapping("/exam/favorites/{userId}")
     public ResponseEntity<List<ExamDTO>> getFavoriteExams(@PathVariable(name = "userId") String userId) {
     try {
@@ -168,10 +169,15 @@ public class ExamjobController {
     }
 }
 
+ // 즐겨찾기된 채용 목록 가져오기
+ @GetMapping("/job/favorites/{userId}")
+ public ResponseEntity<List<JobDTO>> getFavoriteJobs(@PathVariable(name = "userId") String userId) {
+     try {
+        List<JobDTO> favoriteJobs = service.getFavoriteJobs(userId);
+        return ResponseEntity.ok(favoriteJobs);
+     } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+     }
+ }
  
-    
-      
-
-
-
 }
