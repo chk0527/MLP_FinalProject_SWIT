@@ -59,7 +59,7 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
 
   return (
     <div>
-      <p className="text-xl font-semibold mt-8 p-2 text-gray-900"> 가입 문의</p>
+      <p className="text-xl font-semibold p-2 text-gray-900"> 가입 문의</p>
       <hr className="border-4 border-gray-500 mb-4 w-1/6" />
 
       <div className="flex justify-center">

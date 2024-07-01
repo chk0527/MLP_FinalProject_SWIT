@@ -164,7 +164,7 @@ function StudyChatComponent({ studyNo }) {
         />
         <button
           onClick={sendMessage}
-          className="bg-yellow-300 text-black text-sm rounded-md py-2 px-4 hover:bg-yellow-400 focus:outline-none focus:ring"
+          className="bg-yellow-600 text-white text-sm rounded-md py-2 px-4 hover:bg-yellow-700 focus:outline-none focus:ring"
         >
           전송
         </button>
