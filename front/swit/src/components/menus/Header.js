@@ -5,6 +5,7 @@ import MyMenu from "./MyMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoginContext } from "../../contexts/LoginContextProvider";
 import GroupJoinCheckComponent from "../../components/group/GroupJoinCheckComponent";
+import GroupInquiryCheckComponent from "../group/GroupInquiryCheckComponent";
 
 const items1 = [
   { name: "스터디 그룹", path: "/study", no: 0 },
@@ -84,6 +85,7 @@ const Header = () => {
         <div className="fixed top-0 right-0 z-50 p-6 flex items-center gap-4">
           {isLogin ? (
             <>
+              <GroupInquiryCheckComponent/>
               <GroupJoinCheckComponent />
               <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer" onClick={openModal}>
                 메뉴

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import PendingModal from './PendingModal'; // 모달 컴포넌트 임포트
 
-const GroupJoinCheckComponent = () => {
+const GroupInquiryCheckComponent = () => {
     const [pendingApplications, setPendingApplications] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
     const userId = getUserIdFromToken();
@@ -11,7 +11,7 @@ const GroupJoinCheckComponent = () => {
     useEffect(() => {
         const fetchPendingApplications = async () => {
             try {
-                const response = await axios.get(`/api/group/check/user`, {
+                const response = await axios.get(`/api/group/check/inquiry`, {
                     params: { userId }
                 });
                 setPendingApplications(response.data);
@@ -34,7 +34,7 @@ const GroupJoinCheckComponent = () => {
     return (
         <>
             {pendingApplications.length > 0 && (
-                <button onClick={openModal} className="absolute right-20 top-5 bg-red-400 text-white px-3 rounded hover:bg-red-600 text-lg">
+                <button onClick={openModal} className="absolute right-28 top-5 bg-orange-400 text-white px-3 rounded hover:bg-orange-600 text-lg">
                     !
                 </button>
             )}
@@ -42,10 +42,10 @@ const GroupJoinCheckComponent = () => {
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 pendingApplications={pendingApplications}
-                title={"승인 대기중인 신청 내역"}
+                title="답변 대기중인 문의 내역" // 제목 설정
             />
         </>
     );
 };
 
-export default GroupJoinCheckComponent;
+export default GroupInquiryCheckComponent;

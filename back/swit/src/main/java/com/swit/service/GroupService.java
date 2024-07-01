@@ -201,4 +201,8 @@ public Integer registerWithAnswer(GroupDTO groupDTO, AnswerDTO answerDTO) {
         return groupRepository.findPendingApplicationsByLeaderId(userId);
     }
 
+    public List<PendingApplicationDTO> getPendingInquiryByLeaderId(String userId) {
+      return groupRepository.findPendingInquiries(userId);
+  }
+
 }
