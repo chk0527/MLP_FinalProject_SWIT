@@ -6,14 +6,7 @@ import {
   deleteTimer,
   updateTimer,
 } from "../../api/TimerApi";
-import {
-  FaStopwatch,
-  FaClock,
-  FaBell,
-  FaChevronDown,
-  FaRedo,
-  FaBookReader,
-} from "react-icons/fa";
+import { FaStopwatch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import { isLeader } from "../../api/GroupApi";
@@ -25,10 +18,8 @@ const GroupStopwatchComponent = ({ studyNo }) => {
   const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
   const [currentTimer, setCurrentTimer] = useState(null); // 현재 타이머 값 관리
   const [currentStopwatch, setCurrentStopwatch] = useState(null); // 현재 스톱워치 값 관리
-  const intervalTimerIds = useRef({}); // 각 타이머의 인터벌 ID 관리
   const intervalStopWatchIds = useRef({}); // 각 스톱워치의 인터벌 ID 관리
   const [isEditing, setIsEditing] = useState(false); // 제목 입력창 활성화 상태 관리
-  const [isTimerEditing, setIsTimerEditing] = useState(false); // 제목 입력창 활성화 상태 관리
   const [userIsLeader, setUserIsLeader] = useState(false); // 방장 여부 식별
   const [userNick, setUserNick] = useState(getUserNickFromToken()); // 로그인한 유저의 닉네임 관리
   const [totalStudyTime, setTotalStudyTime] = useState({}); // 그룹원별 총 공부 시간
@@ -36,7 +27,6 @@ const GroupStopwatchComponent = ({ studyNo }) => {
   // 날짜 범위 계산에 필요한 관리(방장 화면)
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [filteredStudyTimes, setFilteredStudyTimes] = useState({});
 
   // 닉네임별로 스탑워치 리스트 구분
   const userStopwatches = stopwatches.filter((sw) => sw.userNick === userNick);
@@ -215,61 +205,6 @@ const GroupStopwatchComponent = ({ studyNo }) => {
     }
   };
 
-  // 타이머를 로컬에서 불러오기(페이지 로드 시)
-  useEffect(() => {
-    const savedTimer = JSON.parse(
-      localStorage.getItem(`currentTimer_${studyNo}_${userNick}`)
-    );
-    if (savedTimer) {
-      setCurrentTimer(savedTimer);
-      if (savedTimer.running) {
-        const remainingTime = (savedTimer.endTime - Date.now()) / 1000;
-        if (remainingTime > 0) {
-          setCurrentTimer((prev) => ({
-            ...prev,
-            time: Math.ceil(remainingTime),
-          }));
-          handleStartTimer(); // 타이머 다시 시작
-        } else {
-          setCurrentTimer({ ...savedTimer, time: 0, running: false });
-          localStorage.setItem(
-            `currentTimer_${studyNo}_${userNick}`,
-            JSON.stringify({ ...savedTimer, time: 0, running: false })
-          );
-        }
-      }
-    }
-  }, []);
-
-  // 타이머 작동 중에 페이지,서버 꺼지면 일시정지한 채로 저장
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (intervalTimerIds.current) {
-        clearInterval(intervalTimerIds.current);
-      }
-      if (currentTimer) {
-        localStorage.setItem(
-          `currentTimer_${studyNo}_${userNick}`,
-          JSON.stringify({ ...currentTimer, running: false })
-        );
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [currentTimer, studyNo, userNick]);
-
-  // ===================== 시간 포맷팅 처리 ==============================
-
-  // 타이머 시간 계산 포맷팅
-  const formatTimerTime = (time) => {
-    const hours = String(Math.floor(time / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((time % 3600) / 60)).padStart(2, "0");
-    const seconds = String(time % 60).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
-  };
-
   // 개인 스톱워치 기록란 포맷팅
   const formatStopWatchTime = (time) => {
     const hours = String(Math.floor(time / 3600000)).padStart(2, "0");
@@ -309,18 +244,7 @@ const GroupStopwatchComponent = ({ studyNo }) => {
     );
   };
 
-  // 그룹원 전체 기록 표시할 때, 그룹원별로 나열해주는 함수
-  const groupByuserNick = (array) => {
-    return array.reduce((result, item) => {
-      const userNick = item.userNick;
-      if (!result[userNick]) {
-        result[userNick] = [];
-      }
-      result[userNick].push(item);
-      return result;
-    }, {});
-  };
-
+  // 공부시간계산함수
   const calculateTotalStudyTime = (stopwatches) => {
     const userTotalTime = {};
     stopwatches.forEach((sw) => {
@@ -378,7 +302,7 @@ const GroupStopwatchComponent = ({ studyNo }) => {
       setCurrentStopwatch(res);
       setIsEditing(true); // 새로운 스톱워치 생성 시 제목 입력창 활성화
     } catch (error) {
-      console.error("타이머 생성 실패 : ", error);
+      console.error("스톱워치 생성 실패 : ", error);
     }
   };
 
@@ -519,134 +443,8 @@ const GroupStopwatchComponent = ({ studyNo }) => {
     }
   };
 
-  // ================== "타이머" 기능 핸들러 =========================
-
-  // 타이머 생성
-  const handleCreateTimer = () => {
-    try {
-      if (currentTimer) {
-        alert("현재 실행 중인 타이머가 있습니다.");
-        return;
-      }
-      const newTimer = { name: "", time: 1800, running: false }; // 기본값 30분
-      setCurrentTimer(newTimer);
-      setIsTimerEditing(true);
-      localStorage.setItem(
-        `currentTimer_${studyNo}_${userNick}`,
-        JSON.stringify(newTimer)
-      );
-    } catch (error) {
-      console.error("타이머 생성 실패 : ", error);
-    }
-  };
-
-  // 타이머 삭제
-  const handleDeleteTimer = () => {
-    try {
-      if (intervalTimerIds.current) {
-        clearInterval(intervalTimerIds.current);
-      }
-      setCurrentTimer(null);
-      localStorage.removeItem("currentTimer");
-    } catch (error) {
-      console.error("타이머 삭제 실패 : ", error);
-    }
-  };
-
-  // 타이머 시작
-  const handleStartTimer = () => {
-    try {
-      if (!currentTimer.name) {
-        alert("타이머 이름을 입력해주세요.");
-        return;
-      }
-      if (currentTimer.time <= 0) {
-        alert("시간은 0보다 커야 합니다.");
-        return;
-      }
-      if (intervalTimerIds.current) {
-        clearInterval(intervalTimerIds.current);
-      }
-      const endTime = Date.now() + currentTimer.time * 1000;
-      setCurrentTimer((prev) => ({ ...prev, running: true }));
-      setIsTimerEditing(false); // 타이머 시작 시 제목 입력란 비활성화
-      localStorage.setItem(
-        `currentTimer_${studyNo}_${userNick}`,
-        JSON.stringify({
-          ...currentTimer,
-          running: true,
-          endTime,
-        })
-      );
-      intervalTimerIds.current = setInterval(() => {
-        const remainingTime = (endTime - Date.now()) / 1000;
-        if (remainingTime <= 0) {
-          clearInterval(intervalTimerIds.current);
-          setCurrentTimer({ ...currentTimer, time: 0, running: false });
-          localStorage.setItem(
-            `currentTimer_${studyNo}_${userNick}`,
-            JSON.stringify({
-              ...currentTimer,
-              time: 0,
-              running: false,
-            })
-          );
-          alert("타이머가 종료되었습니다.");
-        } else {
-          setCurrentTimer((prev) => ({
-            ...prev,
-            time: Math.ceil(remainingTime),
-          }));
-        }
-      }, 1000);
-    } catch (error) {
-      console.error("타이머 시작 실패 : ", error);
-    }
-  };
-
-  // 타이머 일시정지
-  const handlePauseTimer = () => {
-    try {
-      if (intervalTimerIds.current) {
-        clearInterval(intervalTimerIds.current);
-      }
-      setCurrentTimer((prev) => ({ ...prev, running: false }));
-      localStorage.setItem(
-        `currentTimer_${studyNo}_${userNick}`,
-        JSON.stringify({
-          ...currentTimer,
-          running: false,
-        })
-      );
-    } catch (error) {
-      console.error("타이머 일시정지 실패 : ", error);
-    }
-  };
-
-  // 타이머 정지(초기화)
-  const handleStopTimer = () => {
-    try {
-      if (intervalTimerIds.current) {
-        clearInterval(intervalTimerIds.current);
-      }
-      setCurrentTimer((prev) => ({ ...prev, time: 0, running: false }));
-      localStorage.setItem(
-        `currentTimer_${studyNo}_${userNick}`,
-        JSON.stringify({
-          ...currentTimer,
-          time: 0,
-          running: false,
-        })
-      );
-    } catch (error) {
-      console.error("타이머 정지/초기화 실패 : ", error);
-    }
-  };
-
-  // ================== "날짜 범위로 검색" 기능 핸들러 =========================
-
   return (
-    <div className="w-full space-y-4">
+    <div>
       {/* 오늘의 공부 시간 | 누적 공부 시간 */}
       {/* <div className="text-center my-4">
                 {Object.entries(userStudyTimes).map(([userId, times]) => (
@@ -662,152 +460,133 @@ const GroupStopwatchComponent = ({ studyNo }) => {
             </div> */}
 
       {/*스톱워치 개인화면 */}
-      <div className="flex flex-col md:flex-row justify-between w-full space-y-4 md:space-y-0 md:space-x-4 items-stretch">
-        <div className="flex flex-col w-full">
-          {userStopwatches.length === 0 && (
-            <div className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg">
-              <FaStopwatch className="text-4xl mb-2" />
-              <h2 className="text-2xl font-semibold mb-4">스톱워치</h2>
-              <button
-                onClick={() => handleCreateStopwatch(false)}
-                className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
-              >
-                스톱워치 생성
-              </button>
-            </div>
-          )}
-          {userStopwatches.length > 0 && (
-            <div className="bg-yellow-200 p-4 flex flex-col items-center rounded-lg mb-4">
-              {currentStopwatch ? (
-                <>
-                  <FaStopwatch className="text-4xl mb-2" />
-                  <h2 className="text-2xl font-semibold mb-4">
-                    {currentStopwatch.userNick}님의 스톱워치
-                  </h2>
-                  <div className="space-y-4 w-full">
-                    <input
-                      type="text"
-                      placeholder="제목"
-                      value={currentStopwatch.name}
-                      onChange={(e) =>
-                        setCurrentStopwatch({
-                          ...currentStopwatch,
-                          name: e.target.value,
-                        })
-                      }
-                      disabled={!isEditing || currentStopwatch.running}
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                    <div className="text-3xl font-mono text-center">
-                      {formatStopWatchTime(currentStopwatch.time)}
-                    </div>
-                    <div className="flex justify-center space-x-2">
-                      {!currentStopwatch.running ? (
-                        <button
-                          onClick={() => {
-                            if (!currentStopwatch.name) {
-                              alert("제목을 입력하세요.");
-                            } else {
-                              handleStartStopwatch(currentStopwatch);
-                              setIsEditing(false); // 시작 시 제목 입력창 비활성화
-                            }
-                          }}
-                          className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
-                        >
-                          시작
-                        </button>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => {
-                              handlePauseStopwatch(currentStopwatch);
-                            }}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                          >
-                            일시정지
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleStopStopwatch(currentStopwatch)
-                            }
-                            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
-                          >
-                            정지
-                          </button>
-                        </>
-                      )}
-                      {!currentStopwatch.running && (
-                        <>
-                          <button
-                            onClick={() => {
-                              if (!currentStopwatch.name) {
-                                alert("제목을 입력하세요.");
-                              } else {
-                                addRecord(currentStopwatch);
-                                handlePauseStopwatch(currentStopwatch);
-                                handleCreateStopwatch(true);
-                              }
-                            }}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-gray-700"
-                          >
-                            다음
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleDeleteStopwatch(currentStopwatch)
-                            }
-                            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
-                          >
-                            삭제
-                          </button>
-                        </>
-                      )}
-                    </div>
+      {userStopwatches.length === 0 && (
+        <div className="border shadow p-4 flex flex-col items-center rounded">
+          <button
+            onClick={() => handleCreateStopwatch(false)}
+            className="bg-yellow-300 py-2 px-4 rounded hover:bg-yellow-400"
+          >
+            스톱워치 생성
+          </button>
+        </div>
+      )}
+      {userStopwatches.length > 0 && (
+        <div className="border bg-yellow-100 p-4 flex flex-col items-center rounded mb-4">
+          {currentStopwatch ? (
+            <>
+              <div className="space-y-4 w-full">
+                <input
+                  type="text"
+                  placeholder="제목"
+                  value={currentStopwatch.name}
+                  onChange={(e) =>
+                    setCurrentStopwatch({
+                      ...currentStopwatch,
+                      name: e.target.value,
+                    })
+                  }
+                  disabled={!isEditing || currentStopwatch.running}
+                  className="w-full p-2 border border-gray-300 rounded bg-white"
+                />
+                <div className="flex justify-center space-x-2">
+                  <div className="text-3xl font-mono text-center mr-6">
+                    {formatStopWatchTime(currentStopwatch.time)}
                   </div>
-                </>
-              ) : (
-                <p className="text-center">선택된 스톱워치가 없습니다.</p>
-              )}
-              {/* 유저의 스톱워치 기록 남기는 곳 */}
-              <div className="w-full border border-gray-400 p-4 rounded-lg bg-yellow-100 mt-4">
-                {userStopwatches
-                  .filter((sw) => !sw.running)
-                  .map(
-                    (
-                      stopwatch,
-                      index // 유저 본인꺼만 조회
-                    ) => (
+                  {!currentStopwatch.running ? (
+                    <div
+                      onClick={() => {
+                        if (!currentStopwatch.name) {
+                          alert("제목을 입력하세요.");
+                        } else {
+                          handleStartStopwatch(currentStopwatch);
+                          setIsEditing(false); // 시작 시 제목 입력창 비활성화
+                        }
+                      }}
+                      className="cursor-pointer shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
+                    >
+                      시작
+                    </div>
+                  ) : (
+                    <>
                       <div
-                        key={stopwatch.timerNo}
-                        className="flex justify-between items-center mb-2"
+                        onClick={() => {
+                          handlePauseStopwatch(currentStopwatch);
+                        }}
+                        className="cursor-pointer shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
                       >
-                        <div
-                          className="w-1/3 text-center cursor-pointer mr-4"
-                          onClick={() => handleLoadStopwatch(stopwatch.timerNo)}
-                        >
-                          {index + 1}. {stopwatch.name}
-                        </div>
-                        <div className="w-1/3 text-center">
-                          {formatStopWatchTime(stopwatch.time)}
-                        </div>
-                        <button
-                          onClick={() => handleDeleteStopwatch(stopwatch)}
-                          className="w-1/3 text-center text-red-500 hover:text-red-700"
-                        >
-                          X
-                        </button>
+                        일시정지
                       </div>
-                    )
+                      <div
+                        onClick={() => handleStopStopwatch(currentStopwatch)}
+                        className="cursor-pointer shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
+                      >
+                        기록
+                      </div>
+                    </>
                   )}
-                <div className="text-center mb-4 font-semibold">
-                  Total:{" "}
-                  {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                  {!currentStopwatch.running && (
+                    <>
+                      <div
+                        onClick={() => {
+                          if (!currentStopwatch.name) {
+                            alert("제목을 입력하세요.");
+                          } else {
+                            addRecord(currentStopwatch);
+                            handlePauseStopwatch(currentStopwatch);
+                            handleCreateStopwatch(true);
+                          }
+                        }}
+                        className="cursor-pointer shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
+                      >
+                        다음
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            </div>
+            </>
+          ) : (
+            <p className="text-center">선택된 스톱워치가 없습니다.</p>
           )}
+          {/* 유저의 스톱워치 기록 남기는 곳 */}
+          <div className="w-full border border-gray-400 px-4 rounded-lg bg-white mt-4">
+            {userStopwatches
+              .filter((sw) => !sw.running)
+              .map(
+                (
+                  stopwatch,
+                  index // 유저 본인꺼만 조회
+                ) => (
+                  <div
+                    key={stopwatch.timerNo}
+                    className="flex justify-between items-center my-4"
+                  >
+                    <div
+                      className="w-1/3 text-center cursor-pointer"
+                      onClick={() => handleLoadStopwatch(stopwatch.timerNo)}
+                    >
+                      {index + 1}. {stopwatch.name}
+                    </div>
+                    <div className="w-1/3 text-center">
+                      {formatStopWatchTime(stopwatch.time)}
+                    </div>
+                    <div
+                      onClick={() => handleDeleteStopwatch(stopwatch)}
+                      className="w-1/3 text-center text-red-500 hover:text-red-700 cursor-pointer"
+                    >
+                      삭제
+                    </div>
+                  </div>
+                )
+              )}
+            <hr className="border-black my-4" />
+            <div className="text-center my-4">
+              Total:{" "}
+              {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

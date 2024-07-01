@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import defaultImg from "../../img/defaultImage.png";
 import { API_SERVER_HOST } from "../../api/StudyApi";
-import { getUserIdFromToken } from "../../util/jwtDecode";
-import { isLeader, isMember, memberCount } from "../../api/GroupApi";
 const host = API_SERVER_HOST;
 
 const StudyListComponent = ({
@@ -38,7 +35,7 @@ const StudyListComponent = ({
             key={study.studyNo}
             onMouseEnter={() => setCurrentItem(study.studyNo)}
             onMouseLeave={() => setCurrentItem(null)}
-            onClick={() => handleReadStudy(study.studyNo)}
+            onClick={() => handleReadStudy(study.studyNo,study.currentMemberCount)}
             className="relative w-72 h-72 mb-8 rounded"
           >
             <img
