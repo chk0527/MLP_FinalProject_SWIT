@@ -23,7 +23,7 @@ const GroupMeetingComponent = () => {
           {meetingUrl}
         </a>
       </p> */}
-      <button className="rounded p-2 px-3 text-sm bg-blue-700 text-white hover:bg-blue-800" onClick={handleJoinMeeting}>
+      <button className="button1 rounded p-2 px-3 text-sm bg-blue-700 text-white hover:bg-blue-800" onClick={handleJoinMeeting}>
         회의 참가
       </button>
     </div>
