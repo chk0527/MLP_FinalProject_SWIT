@@ -1,4 +1,5 @@
 import GroupTimerComponent from "../../components/group/GroupTimerComponent";
+import GroupStopwatchComponent from "../../components/group/GroupStopwatchComponent";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 const StudyTimerPage = () => {
@@ -24,7 +25,7 @@ const StudyTimerPage = () => {
           타이머
         </p>
       </div>
-      {isStopWatch ? <GroupTimerComponent studyNo={studyNo} /> : <></>}
+      {isStopWatch ? <GroupStopwatchComponent studyNo={studyNo} /> : <></>}
       {isTimer ? <GroupTimerComponent studyNo={studyNo} /> : <></>}
     </div>
   );
