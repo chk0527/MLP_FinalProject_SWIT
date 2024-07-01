@@ -10,7 +10,7 @@ export const postAdd = async (comment) => {
     }
     const header = {
       headers: {
-        "Content-Type": "multipart/form-data",
+        // "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${token}`,
       },
     };

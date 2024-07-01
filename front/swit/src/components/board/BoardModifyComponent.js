@@ -11,8 +11,8 @@ const initState = {
     boardTitle: '추가',
     boardContent: '콘텐츠',
     boardCategory: "스터디",
-    userNo: 1
-}
+    userNo: 0
+};
 
 const BoardModifyComponent = ({boardNo}) => {
     const { userInfo } = useContext(LoginContext)
@@ -20,24 +20,28 @@ const BoardModifyComponent = ({boardNo}) => {
     useEffect(() => {        
         const userId = getUserIdFromToken();
         if (!userId) {
-          alert("로그인이 필요합니다.");
-          navigate("/login");
-        };
-        if (userInfo.userNo != board.userNo) {
-            alert("작성자가 아닙니다.");
-            navigate("/list");
+            alert("로그인이 필요합니다.");
+            navigate("/login");
+            return;
         }
-      }, [navigate]);
+
+        getBoard(boardNo).then(data => {
+            setBoard(data);
+            if (userInfo.userNo !== data.userNo) {
+                alert("작성자가 아닙니다.");
+                navigate(-1);
+            }
+        }).catch(error => {
+            console.error("게시글 정보를 가져오는 중 오류 발생:", error);
+            navigate(-1);
+        });
+    }, [boardNo, userInfo.userNo]);
       
     //유저정보중 userNo를 가져와서 게시글 작성시 유저와 연결
     const [board, setBoard] = useState({ ...initState })
     const [result, setResult] = useState(null)
 
     const { moveToRead, moveToBoardList } = useCustomMove();
-
-    useEffect(() => {
-        getBoard(boardNo).then(data => setBoard(data))
-    }, [boardNo])
 
     const handleChangeBoard = (e) => {
         board[e.target.name] = e.target.value

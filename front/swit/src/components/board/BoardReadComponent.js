@@ -1,8 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { getBoard } from "../../api/BoardApi";
-import { getComments } from "../../api/CommentApi";
-import { useNavigate } from "react-router-dom";
-import { postAdd } from "../../api/CommentApi";
+import { getComments, postAdd } from "../../api/CommentApi";
+import { useNavigate, useLocation } from "react-router-dom";
 import useCustomMove from "../../hooks/useCustomMove";
 import { LoginContext } from "../../contexts/LoginContextProvider";
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,7 +11,7 @@ const initState = {
     boardTitle: '추가',
     boardContent: '콘텐츠',
     boardCategory: "스터디",
-    userNo: 1
+    userNo: 0
 };
 
 const commentInit = {
@@ -20,7 +19,7 @@ const commentInit = {
     userNo: 0,
     boardNo: 0,
     userNick: 'NoName'
-}
+};
 
 const BoardReadComponent = ({ boardNo }) => {
     const { userInfo } = useContext(LoginContext)
@@ -28,6 +27,7 @@ const BoardReadComponent = ({ boardNo }) => {
     const [comment, setComment] = useState({ ...commentInit })
     const [comments, setComments] = useState([]); // 댓글 상태 추가
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleChangeComment = (e) => {
         comment[e.target.name] = e.target.value
@@ -51,9 +51,10 @@ const BoardReadComponent = ({ boardNo }) => {
         comment.userNo = userInfo.userNo
         comment.userNick = userInfo.userNick
         comment.boardNo = boardNo
+        console.log(comment)
         postAdd(comment).then(result => {
             console.log(result)
-            setComment({ ...initState })
+            setComment({ ...commentInit })
             getComments(boardNo).then((data) => {
                 console.log(data);
                 setComments(data);
@@ -64,7 +65,8 @@ const BoardReadComponent = ({ boardNo }) => {
     }
 
     const handleClickModify = () => {
-        navigate("/login");
+        const newPath = location.pathname.replace('read', 'modify');
+        navigate(`${newPath}${location.search}`);
     }
 
     return (
@@ -110,7 +112,7 @@ const BoardReadComponent = ({ boardNo }) => {
                         작성
                     </button>
                 </div>
-                {userInfo.userNo = board.userNo ?
+                {userInfo.userNo === board.userNo ?
                     <div className="mt-10">
                         <button
                             className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -120,39 +122,6 @@ const BoardReadComponent = ({ boardNo }) => {
                     </div> : <></>}
             </div>
         </div>
-        // <div className="isolate bg-white px-6 lg:px-8">
-        //     <div className="mx-auto max-w-xl sm:mt-20">
-        //         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-        //             <div className="sm:col-span-2">
-        //                 [{board.boardCategory}]{board.boardTitle}
-        //             </div>
-        //             <div className="sm:col-span-2">
-        //                 {board.boardContent}
-        //             </div>
-        //         </div>
-        //         <div className="sm:col-span-2">
-        //             <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">댓글</label>
-        //             <div className="mt-2.5">
-        //                 <textarea name="commentContent" id="message" rows="4" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={comment.commentContent} onChange={handleChangeComment}></textarea>
-        //             </div>
-        //         </div>
-        //         <div>
-        //             {comments.map((comment, index) => (
-        //                 <div key={index} className="mb-4 p-4 border rounded-lg bg-gray-50">
-        //                     <div className="text-sm text-gray-600">
-        //                         {comment.userNo} ({comment.userId})
-        //                     </div>
-        //                     <div className="mt-2 text-gray-900">
-        //                         {comment.commentContent}
-        //                     </div>
-        //                 </div>
-        //             ))}
-        //         </div>
-        //         <div className="mt-10">
-        //             <button className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleClickAdd}>작성</button>
-        //         </div>
-        //     </div>
-        // </div>
     );
 }
 
