@@ -4,6 +4,8 @@ import { getUserIdFromToken } from "../../util/jwtDecode";
 const TodoList = () => {
   // userId를 상태 변수로 선언
   const [userId, setUserId] = useState(null);
+  const [today, setToday] = useState(null);
+  const [date, setDate] = useState(null);
   const initialTasks =
     JSON.parse(localStorage.getItem(`tasks_${userId}`)) || [];
   const [tasks, setTasks] = useState(initialTasks);
@@ -15,29 +17,28 @@ const TodoList = () => {
     setUserId(id);
   }, []);
 
-  // 페이지가 처음 로드될 때 localStorage에서 데이터 불러오기
+  // 페이지가 처음 로드될 때 today 설정
   useEffect(() => {
-    const storedTasks =
-      JSON.parse(localStorage.getItem(`tasks_${userId}`)) || [];
-    setTasks(storedTasks);
+    const now = new Date();
+    const currentDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    setToday(currentDate);
+    console.log("Today : " + currentDate)
+  }, []);
 
-    // 자정에 tasks 초기화
-    const resetTasksAtMidnight = () => {
-      const now = new Date();
-      if (now.getHours() === 0 && now.getMinutes() === 0) {
-        localStorage.setItem(`tasks_${userId}`, JSON.stringify([]));
-        setTasks([]);
-      }
-    };
-
-    // 매 분마다 현재 시간을 체크하여 자정인 경우 resetTasksAtMidnight 호출
-    const intervalId = setInterval(() => {
-      resetTasksAtMidnight();
-    }, 60000); // 1분마다 체크
-
-    // 컴포넌트 언마운트 시 interval 정리
-    return () => clearInterval(intervalId);
-  }, [userId]);
+  // 오늘날짜가 변경될 때 localStorage에서 데이터 불러오기 및 초기화
+  useEffect(() => {
+    if (userId && today != date) {
+      localStorage.removeItem(`tasks_${userId}`);
+    } else if (userId && today == date) {
+      const storedTasks =
+        JSON.parse(localStorage.getItem(`tasks_${userId}`)) || [];
+      setTasks(storedTasks);
+    }
+  }, [userId, today]);
 
   // tasks가 변경될 때마다 localStorage에 데이터 저장하기
   useEffect(() => {
@@ -58,6 +59,14 @@ const TodoList = () => {
         JSON.stringify([...tasks, newTask])
       );
     }
+    const now = new Date();
+    const currentDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    setDate(currentDate);
+    console.log("date : " + currentDate)
   };
 
   const removeTask = (taskId) => {

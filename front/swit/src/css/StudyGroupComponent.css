@@ -84,16 +84,14 @@
   background-color: rgb(253 224 71); /* 기본 색상 검정색 */
   border: none;
   border-radius: 2px; /* 둥근 모서리 적용 */
-  color: black;
+  color: white;
   font-size: 0.85em;
   padding: 0px;
   text-align: center;
 }
 
 .rbc-event-content {
-  text-align: center;
-  background-color: rgb(253 224 71); /* 기본 색상 검정색 */
-  
+  text-align: center;  
 }
 
 /*=========== 모달창 스타일 ==============*/
