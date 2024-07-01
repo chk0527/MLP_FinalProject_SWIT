@@ -32,7 +32,7 @@ const MyFavoritesComponent = () => {
             setFavoriteExams(favoriteExams)
             setFavoriteJobs(favoriteJobs)
         } catch (error) {
-            console.error("Failed to fetch favorites:", error)
+            console.error("마이페이지 즐겨찾기 항목 조회 실패: ", error)
         }
     }
 
@@ -42,7 +42,7 @@ const MyFavoritesComponent = () => {
             <div className="grid grid-cols-2 gap-4">
                 {/* 즐겨찾기한 시험 목록 */}
                 <div>
-                    <table className="min-w-full divide-y divide-gray-200 text-center"> {/* 가운데 정렬 클래스 추가 */}
+                    <table className="min-w-full divide-y divide-gray-200 text-center table-fixed">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider">시험</th>
@@ -52,7 +52,7 @@ const MyFavoritesComponent = () => {
                             {favoriteExams.length > 0 ? (
                                 favoriteExams.map(exam => (
                                     <tr key={exam.examNo}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis" style={{ maxWidth: '150px' }}>
                                             <Link to={`/exam/read/${exam.examNo}`} className="text-blue-600 hover:underline">
                                                 {exam.examTitle}
                                             </Link>
@@ -61,7 +61,7 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center">No favorite exams found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite exams found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -70,7 +70,7 @@ const MyFavoritesComponent = () => {
 
                 {/* 즐겨찾기한 채용 목록 */}
                 <div>
-                    <table className="min-w-full divide-y divide-gray-200 text-center"> {/* 가운데 정렬 클래스 추가 */}
+                    <table className="min-w-full divide-y divide-gray-200 text-center table-fixed">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider">채용</th>
@@ -80,7 +80,7 @@ const MyFavoritesComponent = () => {
                             {favoriteJobs.length > 0 ? (
                                 favoriteJobs.map(job => (
                                     <tr key={job.jobNo}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis" style={{ maxWidth: '150px' }}>
                                             <Link to={`/job/read/${job.jobNo}`} className="text-blue-600 hover:underline">
                                                 {job.jobTitle}
                                             </Link>
@@ -89,7 +89,7 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center">No favorite jobs found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite jobs found.</td>
                                 </tr>
                             )}
                         </tbody>

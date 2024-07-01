@@ -123,12 +123,11 @@ const MyProfileComponent = ({ userId }) => {
             <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
                 <div className="flex items-center">
                     <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
-                        <div className="w-36 h-36 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center relative">
+                        <div className="w-36 h-36 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center relative overflow-hidden">
                             <img
-                                // front/swit/public 폴더에 접근하는 절대경로
                                 src={userImage ? userImage : `${process.env.PUBLIC_URL}/user0_blank.png`}
                                 alt="Profile"
-                                className="w-34 h-34 rounded-lg object-cover"
+                                className="w-full h-full object-cover"
                             />
                             <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-2">
                                 <FaPen className="text-white" size={16} />
