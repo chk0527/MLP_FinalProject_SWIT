@@ -34,7 +34,7 @@ const GroupJoinCheckComponent = () => {
     return (
         <>
             {pendingApplications.length > 0 && (
-                <button onClick={openModal} className="absolute right-20 top-5 bg-red-400 text-white px-3 rounded hover:bg-red-600 text-lg">
+                <button onClick={openModal} className="bg-red-400 text-white px-3 rounded hover:bg-red-600 text-lg">
                     !
                 </button>
             )}

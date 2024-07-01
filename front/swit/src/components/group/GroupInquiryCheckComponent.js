@@ -34,7 +34,7 @@ const GroupInquiryCheckComponent = () => {
     return (
         <>
             {pendingApplications.length > 0 && (
-                <button onClick={openModal} className="absolute right-28 top-5 bg-orange-400 text-white px-3 rounded hover:bg-orange-600 text-lg">
+                <button onClick={openModal} className="bg-orange-400 text-white px-3 rounded hover:bg-orange-600 text-lg">
                     !
                 </button>
             )}
