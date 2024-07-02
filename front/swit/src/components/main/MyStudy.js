@@ -466,10 +466,11 @@ const MyStudy = () => {
     dots: true,
     infinite: false,
     speed: 700,
-    slidesToShow: 5,
+    slidesToShow: 4,
     slidesToScroll: 2,
     arrows: false,
     centerMode: false,
+    spaceBetween: 0, // 슬라이드 사이 여백
     appendDots: (dots) => (
       <div
         style={{
@@ -504,7 +505,7 @@ const MyStudy = () => {
             studyList.length > 0 ? (
               //스터디 4개 이상
               studyList.length >= 4 ? (
-                <Slider {...settings} className="slider-container">
+                <Slider {...settings} className="slider-container w-1700">
                   {studyList.map((study) => (
                     <div
                       key={study.studyNo}
