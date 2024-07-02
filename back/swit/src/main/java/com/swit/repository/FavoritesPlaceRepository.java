@@ -1,4 +1,6 @@
 package com.swit.repository;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.swit.domain.FavoritesPlace;
@@ -9,4 +11,5 @@ public interface FavoritesPlaceRepository extends JpaRepository<FavoritesPlace, 
 
     boolean existsByUserAndPlace(User user, Place place);
     void deleteByUserAndPlace(User user, Place place);
+    List<FavoritesPlace> findByUser(User user);
 }
