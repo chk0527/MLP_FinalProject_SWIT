@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { getBoard } from "../../api/BoardApi";
+import { getBoard, deleteOne } from "../../api/BoardApi";
 import { getComments, postAdd } from "../../api/CommentApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import useCustomMove from "../../hooks/useCustomMove";
@@ -61,12 +61,21 @@ const BoardReadComponent = ({ boardNo }) => {
             });
         }).catch(e => {
             console.error(e)
-        })
+        });
     }
 
     const handleClickModify = () => {
         const newPath = location.pathname.replace('read', 'modify');
         navigate(`${newPath}${location.search}`);
+    }
+
+    const handleClickDelete = () => {
+        deleteOne(boardNo).then(result => {
+            console.log(result)
+        }).catch(e => {
+            console.error(e)
+        });
+        // navigate(-1);
     }
 
     return (
@@ -110,6 +119,13 @@ const BoardReadComponent = ({ boardNo }) => {
                         className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={handleClickAdd}>
                         작성
+                    </button>
+                </div>
+                <div className="mt-10">
+                    <button
+                        className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={handleClickDelete}>
+                        삭제
                     </button>
                 </div>
                 {userInfo.userNo === board.userNo ?
