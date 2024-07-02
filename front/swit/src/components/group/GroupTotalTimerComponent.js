@@ -9,15 +9,13 @@ import DetailTimerModal from "./DetailTimerModal";
 const GroupTotalTimerComponent = ({ studyNo }) => {
   const [stopwatches, setStopwatches] = useState([]);
   const [currentStopwatch, setCurrentStopwatch] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [userIsLeader, setUserIsLeader] = useState(false);
   const [userNick, setUserNick] = useState(getUserNickFromToken());
   const [totalStudyTime, setTotalStudyTime] = useState({});
-
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalUserTimers, setModalUserTimers] = useState([]);
 
   useEffect(() => {
     const fetchTimers = async () => {
@@ -31,12 +29,16 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
         const res = isAdmin
           ? await getAllTimers(studyNo)
           : await getUserTimers(studyNo, userNickFromToken);
-        
+
         setStopwatches(res);
 
-        const savedStopwatches = JSON.parse(localStorage.getItem(`stopwatches_${studyNo}_${userNickFromToken}`)) || [];
-        const updatedStopwatches = res.map(timer => {
-          const savedTimer = savedStopwatches.find(t => t.timerNo === timer.timerNo) || {};
+        const savedStopwatches =
+          JSON.parse(
+            localStorage.getItem(`stopwatches_${studyNo}_${userNickFromToken}`)
+          ) || [];
+        const updatedStopwatches = res.map((timer) => {
+          const savedTimer =
+            savedStopwatches.find((t) => t.timerNo === timer.timerNo) || {};
           return {
             ...timer,
             time: savedTimer.time ?? timer.time,
@@ -49,11 +51,18 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
         setTotalStudyTime(calculateTotalStudyTime(updatedStopwatches));
 
         let initialStopwatch = null;
-        updatedStopwatches.forEach(stopwatch => {
-          const savedStopwatch = JSON.parse(localStorage.getItem(`currentStopwatch_${stopwatch.timerNo}`));
+        updatedStopwatches.forEach((stopwatch) => {
+          const savedStopwatch = JSON.parse(
+            localStorage.getItem(`currentStopwatch_${stopwatch.timerNo}`)
+          );
           if (savedStopwatch) {
-            const fetchedStopwatch = updatedStopwatches.find(timer => timer.timerNo === savedStopwatch.timerNo);
-            if (fetchedStopwatch && fetchedStopwatch.userNick === userNickFromToken) {
+            const fetchedStopwatch = updatedStopwatches.find(
+              (timer) => timer.timerNo === savedStopwatch.timerNo
+            );
+            if (
+              fetchedStopwatch &&
+              fetchedStopwatch.userNick === userNickFromToken
+            ) {
               initialStopwatch = {
                 ...fetchedStopwatch,
                 time: savedStopwatch.time,
@@ -65,7 +74,9 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
         });
 
         if (!initialStopwatch && updatedStopwatches.length > 0) {
-          initialStopwatch = updatedStopwatches.find(sw => sw.userNick === userNickFromToken);
+          initialStopwatch = updatedStopwatches.find(
+            (sw) => sw.userNick === userNickFromToken
+          );
         }
 
         setCurrentStopwatch(initialStopwatch);
@@ -78,18 +89,18 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
     fetchTimers();
   }, [studyNo, userNick]);
 
-  const userStopwatches = stopwatches.filter(sw => sw.userNick === userNick);
+  const userStopwatches = stopwatches.filter((sw) => sw.userNick === userNick);
 
   const filterStopwatchesByDateRange = (stopwatches, startDate, endDate) => {
     if (!startDate || !endDate) return [];
 
-    const startOfDay = date => {
+    const startOfDay = (date) => {
       const newDate = new Date(date);
       newDate.setHours(0, 0, 0, 0);
       return newDate;
     };
 
-    const endOfDay = date => {
+    const endOfDay = (date) => {
       const newDate = new Date(date);
       newDate.setHours(23, 59, 59, 999);
       return newDate;
@@ -98,7 +109,7 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
     const start = startOfDay(startDate);
     const end = endOfDay(endDate);
 
-    return stopwatches.filter(stopwatch => {
+    return stopwatches.filter((stopwatch) => {
       const stopwatchStart = new Date(stopwatch.startAt);
       const stopwatchEnd = new Date(stopwatch.stopAt);
       return (
@@ -109,23 +120,30 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
     });
   };
 
-  const filteredStopwatches = filterStopwatchesByDateRange(stopwatches, startDate, endDate);
-  
-  const formatStopWatchTime = time => {
+  const filteredStopwatches = filterStopwatchesByDateRange(
+    stopwatches,
+    startDate,
+    endDate
+  );
+
+  const formatStopWatchTime = (time) => {
     const hours = String(Math.floor(time / 3600000)).padStart(2, "0");
-    const minutes = String(Math.floor((time % 3600000) / 60000)).padStart(2, "0");
+    const minutes = String(Math.floor((time % 3600000) / 60000)).padStart(
+      2,
+      "0"
+    );
     const seconds = String(Math.floor((time % 60000) / 1000)).padStart(2, "0");
     return `${hours}:${minutes}:${seconds}`;
   };
 
-  const formatStopWatchAdmin = time => {
+  const formatStopWatchAdmin = (time) => {
     const hours = Math.floor(time / 3600000);
     const minutes = Math.floor((time % 3600000) / 60000);
     const seconds = Math.floor((time % 60000) / 1000);
     return `${hours}시간 ${minutes}분 ${seconds}초`;
   };
 
-  const groupByuserNick = array => {
+  const groupByuserNick = (array) => {
     return array.reduce((result, item) => {
       const userNick = item.userNick;
       if (!result[userNick]) {
@@ -136,9 +154,9 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
     }, {});
   };
 
-  const calculateTotalStudyTime = stopwatches => {
+  const calculateTotalStudyTime = (stopwatches) => {
     const userTotalTime = {};
-    stopwatches.forEach(sw => {
+    stopwatches.forEach((sw) => {
       if (!userTotalTime[sw.userNick]) {
         userTotalTime[sw.userNick] = 0;
       }
@@ -147,7 +165,8 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
     return userTotalTime;
   };
 
-  const openTotalDetail = () => {
+  const openTotalDetail = (userTimers) => {
+    setModalUserTimers(userTimers);
     setIsModalOpen(true);
   };
 
@@ -166,14 +185,14 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
       <div className="absolute flex gap-4 justify-end -top-1 right-0">
         <DatePicker
           selected={startDate}
-          onChange={date => setStartDate(date)}
+          onChange={(date) => setStartDate(date)}
           className="p-2 border rounded cursor-pointer"
           dateFormat="yyyy-MM-dd"
           placeholderText="시작 날짜"
         />
         <DatePicker
           selected={endDate}
-          onChange={date => setEndDate(date)}
+          onChange={(date) => setEndDate(date)}
           className="p-2 border rounded cursor-pointer"
           dateFormat="yyyy-MM-dd"
           placeholderText="끝 날짜"
@@ -191,7 +210,9 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
           </thead>
           <tbody>
             {Object.entries(groupByuserNick(filteredStopwatches))
-              .sort(([a], [b]) => (a === userNick ? -1 : b === userNick ? 1 : 0))
+              .sort(([a], [b]) =>
+                a === userNick ? -1 : b === userNick ? 1 : 0
+              )
               .map(([userNick, userTimers], index) => (
                 <tr key={userNick}>
                   <td className="py-2 border-b text-center">{userNick}</td>
@@ -200,22 +221,24 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
                   </td>
                   <td
                     className="py-2 border-b text-center cursor-pointer"
-                    onClick={openTotalDetail}
+                    onClick={() => openTotalDetail(userTimers)}
                   >
                     보기
                   </td>
                   <td className="py-2 border-b text-center">
-                    {formatStopWatchTime((totalStudyTime[userNick] || 0) * 1000)}
+                    {formatStopWatchTime(
+                      (totalStudyTime[userNick] || 0) * 1000
+                    )}
                   </td>
-                  <DetailTimerModal
-                    userNick={userNick}
-                    isOpen={isModalOpen}
-                    onClose={closeModal}
-                    userTimers={userTimers}
-                    formatStopWatchAdmin={formatStopWatchAdmin}
-                  />
                 </tr>
               ))}
+            <DetailTimerModal
+              userNick={userNick}
+              userTimers={modalUserTimers}
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              formatStopWatchAdmin={formatStopWatchAdmin}
+            />
           </tbody>
         </table>
       </div>

@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class StudyPageResponseDTO<E> {
+public class BoardPageResponseDTO<E> {
     private List<E> dtoList;
     private List<Integer> pageNumList;
     private StudyPageRequestDTO pageRequestDTO;
@@ -17,7 +17,7 @@ public class StudyPageResponseDTO<E> {
     private int totalCount, prevPage, nextPage, totalPage, current;
 
     @Builder(builderMethodName = "withAll")
-    public StudyPageResponseDTO(List<E> dtoList, StudyPageRequestDTO pageRequestDTO, long totalCount){
+    public BoardPageResponseDTO(List<E> dtoList, StudyPageRequestDTO pageRequestDTO, long totalCount){
         this.dtoList = dtoList;
         this.pageRequestDTO = pageRequestDTO;
         this.totalCount = (int) totalCount;

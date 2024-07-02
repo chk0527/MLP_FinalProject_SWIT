@@ -486,7 +486,11 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                     })
                   }
                   disabled={!isEditing || currentStopwatch.running}
-                  className="w-full p-2 border border-gray-300 rounded bg-white"
+                  className={
+                    isEditing
+                      ? "w-full p-2 border border-gray-300 rounded bg-white"
+                      : "w-full shadow-inner p-2 border border-gray-300 rounded bg-gray-100"
+                  }
                 />
                 <div className="flex justify-center space-x-2">
                   <div className="text-3xl font-mono text-center mr-6">

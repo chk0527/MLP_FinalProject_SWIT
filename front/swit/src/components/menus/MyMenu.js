@@ -96,12 +96,12 @@ const MyMenu = ({ callbackFn }) => {
             {isLogin ? (
               <>
                 <Link to={`/mypage/${userId}`}>
-                  <p className="mt-4 mb-4">내 정보</p>
+                  <p className="mt-4 mb-4 hover:shadow-highlight">내 정보</p>
                 </Link>
                 <Link to={"/study/add"}>
-                  <p className="mt-4 mb-4">스터디 만들기</p>
+                  <p className="mt-4 mb-4 hover:shadow-highlight">스터디 만들기</p>
                 </Link>
-                <p className={`mt-4 mb-4 cursor-pointer hover:bg-yellow-100 ${isClicked ? "bg-yellow-100" : ""}`}
+                <p className={`mt-4 mb-4 cursor-pointer hover:shadow-highlight ${isClicked ? "shadow-highlight" : ""}`}
                 onClick={toggleStudyList}>
                   <span className=" ">내 스터디</span>
                 </p>

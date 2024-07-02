@@ -17,11 +17,11 @@ const StudyTimerPage = () => {
   return (
     <div className="rounded flex flex-col font-GSans">
       <div className="flex">
-        <p onClick={handleStopWatch} className={isStopWatch ? "text-xl m-2 cursor-pointer text-yellow-700" : "text-xl m-2 cursor-pointer"}>
+        <p onClick={handleStopWatch} className={isStopWatch ? "text-xl m-2 cursor-pointer shadow-highlight" : "text-xl m-2 cursor-pointer"}>
           스톱워치
         </p>
         <p className="text-xl m-2">|</p>
-        <p onClick={handleTimer} className={isTimer ? "text-xl m-2 cursor-pointer text-yellow-700" : "text-xl m-2 cursor-pointer"}>
+        <p onClick={handleTimer} className={isTimer ? "text-xl m-2 cursor-pointer shadow-highlight" : "text-xl m-2 cursor-pointer"}>
           타이머
         </p>
       </div>

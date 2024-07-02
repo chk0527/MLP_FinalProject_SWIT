@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { getBoard } from "../../api/BoardApi";
-import { getComments, postAdd } from "../../api/CommentApi";
+import { getBoard, deleteOne } from "../../api/BoardApi";
+import { getComments, postAdd, deleteComment } from "../../api/CommentApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import useCustomMove from "../../hooks/useCustomMove";
 import { LoginContext } from "../../contexts/LoginContextProvider";
@@ -61,12 +61,33 @@ const BoardReadComponent = ({ boardNo }) => {
             });
         }).catch(e => {
             console.error(e)
-        })
+        });
     }
 
     const handleClickModify = () => {
         const newPath = location.pathname.replace('read', 'modify');
         navigate(`${newPath}${location.search}`);
+    }
+
+    const handleClickDelete = () => {
+        deleteOne(boardNo).then(result => {
+            console.log(result)
+        }).catch(e => {
+            console.error(e)
+        });
+        navigate(-1);
+    }
+
+    const handleClickCommentDelete = (commentNo) => {
+        deleteComment(commentNo).then(result => {
+            console.log(result)
+            getComments(boardNo).then((data) => {
+                console.log(data);
+                setComments(data);
+            });
+        }).catch(e => {
+            console.error(e)
+        });
     }
 
     return (
@@ -95,13 +116,21 @@ const BoardReadComponent = ({ boardNo }) => {
                 </div>
                 <div>
                     {comments.map((comment, index) => (
-                        <div key={index} className="mb-4 p-4 border rounded-lg bg-gray-50">
+                        <div key={index} className="mb-4 p-4 border rounded-lg bg-gray-50 relative">
                             <div className="text-sm text-gray-600">
                                 {comment.userNick}
                             </div>
                             <div className="mt-2 text-gray-900">
                                 {comment.commentContent}
                             </div>
+                            {userInfo.userNo === comment.userNo && (
+                                <button
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                    onClick={() => handleClickCommentDelete(comment.commentNo)}
+                                >
+                                    &times;
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -110,6 +139,13 @@ const BoardReadComponent = ({ boardNo }) => {
                         className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={handleClickAdd}>
                         작성
+                    </button>
+                </div>
+                <div className="mt-10">
+                    <button
+                        className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={handleClickDelete}>
+                        삭제
                     </button>
                 </div>
                 {userInfo.userNo === board.userNo ?
