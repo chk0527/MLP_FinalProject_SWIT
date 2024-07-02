@@ -28,7 +28,7 @@ public class Job {
     private String jobTitle;
     @Column(length = 1000)
     private String jobCompany;
-    @Column(length = 100)
+    @Column(length = 200)
     private String jobField;
     @Column(length = 200)
     private String jobLoc;

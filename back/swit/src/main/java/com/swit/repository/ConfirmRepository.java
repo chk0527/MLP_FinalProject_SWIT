@@ -6,7 +6,9 @@ import com.swit.domain.Confirm;
 
 public interface ConfirmRepository extends JpaRepository<Confirm, Integer> {
     
-    Boolean existsByUserIdAndConfirmTargetAndConfirmPath(String UserId, String confirmTarget, String confirmPath);
-    Optional<Confirm> findByUserIdAndConfirmTargetAndConfirmPath(String UserId, String confirmTarget, String confirmPath);
+    // Boolean existsByUserIdAndConfirmPath(String UserId, String confirmPath);
+    // Optional<Confirm> findByUserIdAndConfirmPath(String UserId, String confirmPath);
+    Boolean existsByUserId(String UserId);
+    Optional<Confirm> findByUserId(String UserId);
     
 }

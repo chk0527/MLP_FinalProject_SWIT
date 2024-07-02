@@ -61,10 +61,10 @@ public class CommentController {
     //     return Map.of("RESULT", "SUCCESS");
     // }
 
-    // @DeleteMapping("/{boardNo}")
-    // public Map<String, String> remove(@PathVariable(name="boardNo") Integer boardNo) {
-    //     log.info("Remove:" + boardNo);
-    //     boardService.remove(boardNo);
-    //     return Map.of("RESULT", "SUCCESS");
-    // }
+    @DeleteMapping("/{commentNo}")
+    public Map<String, String> remove(@PathVariable(name="commentNo") Integer commentNo) {
+        log.info("Remove:" + commentNo);
+        commentService.remove(commentNo);
+        return Map.of("RESULT", "SUCCESS");
+    }
 }

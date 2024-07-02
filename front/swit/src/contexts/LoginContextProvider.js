@@ -10,12 +10,34 @@ const LoginContextProvider = ({ children }) => {
     const [isLogin, setLogin] = useState(false);
     const [userInfo, setUserInfo] = useState({});
     const [roles, setRoles] = useState({ isUser: false, isAdmin: false });
+    const [timeLeft, setTimeLeft] = useState(null); // 토큰 만료 시간 상태 추가
 
     useEffect(() => {
         const loginStatus = sessionStorage.getItem("isLogin");
         if (loginStatus) {
             loginCheck();
         }
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const accessToken = Cookies.get("accessToken");
+            if (accessToken) {
+                const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                const exp = payload.exp * 1000;
+                const now = Date.now();
+                const timeLeft = exp - now;
+
+                setTimeLeft(Math.floor(timeLeft / 1000)); // 초 단위로 상태 업데이트
+
+                if (timeLeft < 0) { // Less than 1 minute left but still valid
+                    alert("자동 로그아웃 되었습니다.")
+                    logoutSetting();
+                }
+            }
+        }, 1000); // 매초 시간 체크
+
+        return () => clearInterval(interval);
     }, []);
 
     const loginCheck = async () => {
@@ -150,26 +172,8 @@ const LoginContextProvider = ({ children }) => {
         window.location.href = '/'; //메인페이지로 이동
     };
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const accessToken = Cookies.get("accessToken");
-            if (accessToken) {
-                const payload = JSON.parse(atob(accessToken.split('.')[1]));
-                const exp = payload.exp * 1000;
-                const now = Date.now();
-                const timeLeft = exp - now;
-
-                if (timeLeft < 60 * 1000 && timeLeft > 0) { // Less than 5 seconds left but still valid
-                    refreshAccessToken();
-                }
-            }
-        }, 1000); // Check every second
-
-        return () => clearInterval(interval);
-    }, []);
-
     return (
-        <LoginContext.Provider value={{ isLogin, userInfo, roles, login, logout }}>
+        <LoginContext.Provider value={{ isLogin, userInfo, roles, login, logout, refreshAccessToken, timeLeft }}>
             {children}
         </LoginContext.Provider>
     );

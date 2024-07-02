@@ -1,6 +1,6 @@
 import axios from "axios"
 export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/calendar`
+const prefix = `/api/calendar`
 
 // 스터디의 캘린더(모든 일정) 불러오기
 export const getCalendar = async (studyNo) => {

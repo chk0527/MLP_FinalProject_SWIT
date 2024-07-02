@@ -75,9 +75,9 @@ public class CallExamJobApi {
                 documentInfo = (Document) DocumentBuilderFactory.newInstance().newDocumentBuilder()
                         .parse(urlBuilder.toString());
                 documentInfo.getDocumentElement().normalize();
-                System.out.println("===============================");
-                System.out.println(documentInfo.getDocumentElement().getNodeName()); // response
-                System.out.println("===============================");
+                // System.out.println("===============================");
+                // System.out.println(documentInfo.getDocumentElement().getNodeName()); // response
+                // System.out.println("===============================");
 
                 Element root = documentInfo.getDocumentElement();
                 NodeList nList = root.getElementsByTagName("items").item(0).getChildNodes();
