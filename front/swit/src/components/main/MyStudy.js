@@ -466,7 +466,7 @@ const MyStudy = () => {
     dots: true,
     infinite: false,
     speed: 700,
-    slidesToShow: 4,
+    slidesToShow: 5,
     slidesToScroll: 2,
     arrows: false,
     centerMode: false,
