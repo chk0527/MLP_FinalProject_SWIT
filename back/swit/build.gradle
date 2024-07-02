@@ -68,7 +68,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail
 	implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
 	// https://mvnrepository.com/artifact/javax.mail/mail
-	implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
+	// implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
 
 
   implementation 'org.springframework.boot:spring-boot-starter-websocket'

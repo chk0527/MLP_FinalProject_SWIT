@@ -16,11 +16,8 @@ public class CustomAuditorAware implements AuditorAware<LocalDateTime> {
         LocalDateTime now = LocalDateTime.now();
         if (addFiveMinutes) {
             // 시스템 시간에 5분 추가
-            System.out.println("bef now " + now);
             now = now.plusMinutes(5);
-            System.out.println("aft now " + now);
         }
-        System.out.println("aft222 now " + now);
         return Optional.of(now);
     }
 
