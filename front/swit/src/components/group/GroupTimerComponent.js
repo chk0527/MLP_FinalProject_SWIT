@@ -137,13 +137,13 @@ const GroupTimerComponent = ({ studyNo }) => {
   };
 
   // 타이머 시작
-  const handleStartTimer = () => {
+  const handleStartTimer = (autoStart = false) => {
     try {
-      if (!currentTimer.name) {
+      if (!autoStart && !currentTimer.name) {
         alert("타이머 이름을 입력해주세요.");
         return;
       }
-      if (currentTimer.time <= 0) {
+      if (!autoStart && currentTimer.time <= 0) {
         alert("시간은 0보다 커야 합니다.");
         return;
       }
@@ -235,7 +235,19 @@ const GroupTimerComponent = ({ studyNo }) => {
         <div className="w-full space-y-4">
           {currentTimer ? (
             <>
-              {!currentTimer.running ? (
+              {currentTimer.running ? (
+                <>
+                  {formatTimerTime(currentTimer.time)}
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={handlePauseTimer}
+                      className="bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
+                    >
+                      일시정지
+                    </button>
+                  </div>
+                </>
+              ) : (
                 <>
                   <div className="flex justify-between items-center">
                     <input
@@ -269,7 +281,6 @@ const GroupTimerComponent = ({ studyNo }) => {
                       disabled={currentTimer.running}
                     />
                     <p>분</p>
-
                     <input
                       type="number"
                       value={currentTimer.time % 60}
@@ -279,8 +290,7 @@ const GroupTimerComponent = ({ studyNo }) => {
                           ...prev,
                           time:
                             Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
-                            Math.floor((prev ? prev.time % 3600 : 0) / 60) *
-                              60 +
+                            Math.floor((prev ? prev.time % 3600 : 0) / 60) * 60 +
                             seconds,
                         }));
                       }}
@@ -301,19 +311,6 @@ const GroupTimerComponent = ({ studyNo }) => {
                       className="shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
                     >
                       초기화
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  {formatTimerTime(currentTimer.time)}
-
-                  <div className="flex justify-center space-x-2">
-                    <button
-                      onClick={handlePauseTimer}
-                      className="bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
-                    >
-                      일시정지
                     </button>
                   </div>
                 </>

@@ -22,10 +22,6 @@ const MyMenu = ({ callbackFn }) => {
         try {
           const imageUrl = await getUserImage(userId);
           setUserImage(imageUrl);
-          // 사용자 프로필 이미지가 없으면 기본 이미지로 대체
-          if (!imageUrl) {
-            setUserImage(`${process.env.PUBLIC_URL}/user0_blank.png`);
-          }
         } catch (error) {
           console.error(
             "마이메뉴에서 유저 이미지를 가져올 수 없습니다:",
