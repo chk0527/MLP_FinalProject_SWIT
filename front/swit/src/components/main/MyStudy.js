@@ -1,56 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import Slider from "react-slick";
-
-// //스터디예시
-// import study1 from "../../img/banner2.jpg";
-// import roundGradient from "../../img/Rectangle23.png";
-
-// const MyStudy = () => {
-//   const settings = {
-//     dots: false,
-//     infinite: false,
-//     speed: 500,
-//     slidesToShow: 3,
-//     slidesToScroll: 1,
-//     arrows: false,
-//     centerMode: false,
-//   };
-
-//   return (
-//     <div className="font-GSans">
-//       <div className="flex justify-center">
-//         <div className="overflow-hidden px-10 pt-28 pb-10 w-1900">
-//           <p
-//             className="mx-24 my-5 text-2xl w-56 py-4 text-center bg-mainBg"
-//             style={{ backgroundImage: `url(${roundGradient})` }}
-//           >
-//             나의 스터디
-//           </p>
-//           <Slider {...settings}>
-//             <div>
-//               <div className="">
-//                 <img className="w-450 h-96 object-cover" src={study1}></img>
-//               </div>
-//             </div>
-//             <div>
-//               <div className="">
-//                 <img className="w-450 h-96 object-cover" src={study1}></img>
-//               </div>
-//             </div>
-//             <div>
-//               <div className="">
-//                 <img className="w-450 h-96 object-cover" src={study1}></img>
-//               </div>
-//             </div>
-//           </Slider>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-// export default MyStudy;
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
@@ -58,14 +5,17 @@ import { getAllStudies, getMyStudy, API_SERVER_HOST } from "../../api/StudyApi";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import roundGradient from "../../img/Rectangle23.png";
 import { isMember, isLeader, memberCount } from "../../api/GroupApi";
-import defaultImg from "../../img/defaultImage.png"; // 기본 이미지 import
+import defaultImg from "../../img/defaultImage.png";
+import useCustomMove from "../../hooks/useCustomMove";
+import "./MyStudy.css";
 
 const MyStudy = () => {
+  const { StudyPage, StudySize, moveToStudy } = useCustomMove();
   const [studyList, setStudyList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [hovered, setHovered] = useState(null); // hovered 상태 추가
+  const [hovered, setHovered] = useState(null);
   const navigate = useNavigate();
-  const userId = getUserIdFromToken(); // 사용자 ID 가져오기
+  const userId = getUserIdFromToken();
 
   useEffect(() => {
     const fetchStudies = async () => {
@@ -92,31 +42,30 @@ const MyStudy = () => {
               };
             })
           );
-          // 스터디 정렬: 방장 > 참여중 > 승인대기
+
           studies = studyListWithStatus.sort((a, b) => {
-            if (a.isLeader) return -1;
-            if (b.isLeader) return 1;
-            if (a.isMemberStatus === 1) return -1;
-            if (b.isMemberStatus === 1) return 1;
-            if (a.isMemberStatus === 0) return -1;
-            if (b.isMemberStatus === 0) return 1;
+            if (a.isLeader && !b.isLeader) return -1;
+            if (!a.isLeader && b.isLeader) return 1;
+            if (a.isMemberStatus === 1 && b.isMemberStatus !== 1) return -1;
+            if (a.isMemberStatus !== 1 && b.isMemberStatus === 1) return 1;
+            if (a.isMemberStatus === 0 && b.isMemberStatus !== 0) return -1;
+            if (a.isMemberStatus !== 0 && b.isMemberStatus === 0) return 1;
             return 0;
           });
         } else {
-          const allStudies = await getAllStudies('', '', '', false, null, { StudyPage: 0, StudySize: 10 });
-          studies = allStudies.dtoList.filter(study => study.currentMemberCount < study.studyHeadcount);
-          studies = studies.slice(0, 3);
+          const allStudies = await getAllStudies('', '', '', false, userId, { StudyPage, StudySize });
+          studies = allStudies.dtoList;
         }
         setStudyList(studies);
       } catch (error) {
-        console.error("Failed to fetch studies:", error);
+        console.error("Error fetching studies:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchStudies();
-  }, [userId]);
+  }, [userId, StudyPage, StudySize]);
 
   const getStatusText = (study) => {
     if (study.isLeader) {
@@ -168,10 +117,6 @@ const MyStudy = () => {
       const isMemberStatus = await isMember(userId, studyNo);
       if (isMemberStatus === 1) {
         navigate(`/study/group/${studyNo}`, { state: 0 });
-      } else if (isMemberStatus === 0) {
-        navigate(`/study/read/${studyNo}`, { state: 0 });
-      } else if (isMemberStatus === 2) {
-        navigate(`/study/read/${studyNo}`, { state: 0 });
       } else {
         navigate(`/study/read/${studyNo}`, { state: 0 });
       }
@@ -185,9 +130,9 @@ const MyStudy = () => {
     infinite: false,
     speed: 500,
     slidesToShow: 4,
-    slidesToScroll: 1,
-    arrows: true,
-    centerMode: true, // 가운데 정렬
+    slidesToScroll: 2,
+    arrows: false,
+    centerMode: false,
   };
 
   if (loading) {
@@ -204,17 +149,131 @@ const MyStudy = () => {
           >
             나의 스터디
           </p>
-          {studyList.length > 0 ? (
-            <Slider {...settings} className="study-slider">
+          {userId ? (
+            studyList.length > 0 ? (
+              //스터디 4개 이상
+              studyList.length >= 4 ? (
+                <Slider {...settings} className="slider-container">
+                  {studyList.map((study) => (
+                    <div
+                      key={study.studyNo}
+                      onMouseEnter={() => setHovered(study.studyNo)}
+                      onMouseLeave={() => setHovered(null)}
+                      onClick={() => handleReadStudy(study.studyNo)}
+                      className="relative w-72 h-72 mb-8 rounded"
+                    >
+                      <div className="flex justify-center items-center w-72 h-72">
+                        <img
+                          src={
+                            study.imageList && study.imageList.length > 0
+                              ? `${API_SERVER_HOST}/api/study/display/${study.imageList[0].fileName}`
+                              : defaultImg
+                          }
+                          className="w-72 h-72 bg-cover rounded"
+                          alt={study.studyTitle}
+                        />
+                      </div>
+                      <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded">
+                        <div className="flex justify-between p-8">
+                          <div className="flex gap-4">
+                            <p className={`px-2 rounded pt-1 ${getStatusClass(study)}`}>
+                              {getStatusText(study)}
+                            </p>
+                            <p className="px-2 pt-1 rounded bg-gray-500/50">
+                              {study.studySubject}
+                            </p>
+                          </div>
+                          <p>
+                            {study.currentMemberCount}/{study.studyHeadcount}명
+                          </p>
+                        </div>
+                        <div className="absolute bottom-0 p-8">
+                          <p className="text-xl py-2">
+                            #{study.studyOnline ? "비대면" : "대면"}
+                            <br />#{study.studyAddr}
+                          </p>
+                          <p className="w-60 truncate text-2xl">{study.studyTitle}</p>
+                        </div>
+                      </div>
+                      {hovered === study.studyNo && (
+                        <div className="absolute w-72 h-72 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
+                          <div className="line-clamp-8 text-center text-white">
+                            {study.studyContent}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </Slider>
+              ) : (
+                //스터디 3개 이하
+                <div className="flex flex-wrap justify-start ml-24 mt-10">
+                  {studyList.map((study) => (
+                    <div
+                      key={study.studyNo}
+                      onMouseEnter={() => setHovered(study.studyNo)}
+                      onMouseLeave={() => setHovered(null)}
+                      onClick={() => handleReadStudy(study.studyNo)}
+                      className="relative w-72 h-72 mb-8 mx-4 rounded"
+                    >
+                      <div className="flex justify-center items-center w-72 h-72">
+                        <img
+                          src={
+                            study.imageList && study.imageList.length > 0
+                              ? `${API_SERVER_HOST}/api/study/display/${study.imageList[0].fileName}`
+                              : defaultImg
+                          }
+                          className="w-72 h-72 bg-cover rounded"
+                          alt={study.studyTitle}
+                        />
+                      </div>
+                      <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded">
+                        <div className="flex justify-between p-8">
+                          <div className="flex gap-4">
+                            <p className={`px-2 rounded pt-1 ${getStatusClass(study)}`}>
+                              {getStatusText(study)}
+                            </p>
+                            <p className="px-2 pt-1 rounded bg-gray-500/50">
+                              {study.studySubject}
+                            </p>
+                          </div>
+                          <p>
+                            {study.currentMemberCount}/{study.studyHeadcount}명
+                          </p>
+                        </div>
+                        <div className="absolute bottom-0 p-8">
+                          <p className="text-xl py-2">
+                            #{study.studyOnline ? "비대면" : "대면"}
+                            <br />#{study.studyAddr}
+                          </p>
+                          <p className="w-60 truncate text-2xl">{study.studyTitle}</p>
+                        </div>
+                      </div>
+                      {hovered === study.studyNo && (
+                        <div className="absolute w-72 h-72 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
+                          <div className="line-clamp-8 text-center text-white">
+                            {study.studyContent}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : (
+              <p className="text-center">스터디가 없습니다.</p>
+            )
+          ) : (
+            <Slider {...settings} className="slider-container">
               {studyList.map((study) => (
-                <div 
-                  key={study.studyNo} 
-                  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                <div
+                  key={study.studyNo}
                   onMouseEnter={() => setHovered(study.studyNo)}
                   onMouseLeave={() => setHovered(null)}
                   onClick={() => handleReadStudy(study.studyNo)}
+                  className="relative w-72 h-72 mb-8 rounded"
                 >
-                  <div className="relative w-72 h-72 mb-8 rounded">
+                  <div className="flex justify-center items-center w-72 h-72">
                     <img
                       src={
                         study.imageList && study.imageList.length > 0
@@ -223,42 +282,40 @@ const MyStudy = () => {
                       }
                       className="w-72 h-72 bg-cover rounded"
                       alt={study.studyTitle}
-                    ></img>
-                    <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded">
-                      <div className="flex justify-between p-8">
-                        <div className="flex gap-4">
-                          <p className={`px-2 rounded pt-1 ${getStatusClass(study)}`}>
-                            {getStatusText(study)}
-                          </p>
-                          <p className="px-2 pt-1 rounded bg-gray-500/50">
-                            {study.studySubject}
-                          </p>
-                        </div>
-                        <p>
-                          {study.currentMemberCount}/{study.studyHeadcount}명
+                    />
+                  </div>
+                  <div className="absolute w-72 h-72 top-0 bg-black/50 text-white cursor-pointer rounded">
+                    <div className="flex justify-between p-8">
+                      <div className="flex gap-4">
+                        <p className={`px-2 rounded pt-1 ${getStatusClass(study)}`}>
+                          {getStatusText(study)}
+                        </p>
+                        <p className="px-2 pt-1 rounded bg-gray-500/50">
+                          {study.studySubject}
                         </p>
                       </div>
-                      <div className="absolute bottom-0 p-8">
-                        <p className="text-xl py-2">
-                          #{study.studyOnline ? "비대면" : "대면"}
-                          <br />#{study.studyAddr}
-                        </p>
-                        <p className="w-60 truncate text-2xl">{study.studyTitle}</p>
+                      <p>
+                        {study.currentMemberCount}/{study.studyHeadcount}명
+                      </p>
+                    </div>
+                    <div className="absolute bottom-0 p-8">
+                      <p className="text-xl py-2">
+                        #{study.studyOnline ? "비대면" : "대면"}
+                        <br />#{study.studyAddr}
+                      </p>
+                      <p className="w-60 truncate text-2xl">{study.studyTitle}</p>
+                    </div>
+                  </div>
+                  {hovered === study.studyNo && (
+                    <div className="absolute w-72 h-72 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
+                      <div className="line-clamp-8 text-center text-white">
+                        {study.studyContent}
                       </div>
                     </div>
-                    {hovered === study.studyNo && (
-                      <div className="absolute w-72 h-72 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
-                        <div className="line-clamp-8 text-center text-white">
-                          {study.studyContent}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               ))}
             </Slider>
-          ) : (
-            <p className="text-center">스터디가 없습니다.</p>
           )}
         </div>
       </div>
