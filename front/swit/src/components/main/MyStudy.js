@@ -7,7 +7,7 @@ import roundGradient from "../../img/Rectangle23.png";
 import { isMember, isLeader, memberCount } from "../../api/GroupApi";
 import defaultImg from "../../img/defaultImage.png";
 import useCustomMove from "../../hooks/useCustomMove";
-import "./MyStudy.css";
+
 
 const MyStudy = () => {
   const { StudyPage, StudySize, moveToStudy } = useCustomMove();
