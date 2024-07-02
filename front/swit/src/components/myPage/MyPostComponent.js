@@ -65,7 +65,7 @@ const MyPostComponent = () => {
                         ))
                     ) : (
                         <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-center" colSpan="4">No posts found.</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-center" colSpan="4">작성한 게시글이 없습니다.</td>
                         </tr>
                     )}
                 </tbody>
