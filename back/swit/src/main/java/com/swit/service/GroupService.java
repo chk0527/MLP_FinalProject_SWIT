@@ -18,6 +18,7 @@ import com.swit.dto.AnswerDTO;
 import com.swit.dto.CustomUserDetails;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.GroupRequestDTO;
+import com.swit.dto.PendingApplicationDTO;
 import com.swit.dto.UserDTO;
 import com.swit.repository.AnswerRepository;
 import com.swit.repository.GroupMemberProjection;
@@ -194,6 +195,14 @@ public Integer registerWithAnswer(GroupDTO groupDTO, AnswerDTO answerDTO) {
           return true;
       }
       return false;
+  }
+
+    public List<PendingApplicationDTO> getPendingApplicationsByLeaderId(String userId) {
+        return groupRepository.findPendingApplicationsByLeaderId(userId);
+    }
+
+    public List<PendingApplicationDTO> getPendingInquiryByLeaderId(String userId) {
+      return groupRepository.findPendingInquiries(userId);
   }
 
 }

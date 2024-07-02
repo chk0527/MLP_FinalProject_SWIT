@@ -4,6 +4,8 @@ import logo from "../../img/logoBlack.png";
 import MyMenu from "./MyMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoginContext } from "../../contexts/LoginContextProvider";
+import GroupJoinCheckComponent from "../../components/group/GroupJoinCheckComponent";
+import GroupInquiryCheckComponent from "../group/GroupInquiryCheckComponent";
 
 const items1 = [
   { name: "스터디 그룹", path: "/study", no: 0 },
@@ -20,7 +22,7 @@ const items2 = [
 ];
 
 const Header = () => {
-  const { isLogin } = useContext(LoginContext);
+  const { isLogin, timeLeft, refreshAccessToken } = useContext(LoginContext);
   const navigate = useNavigate(); // navigate 훅 추가
   const [result, setResult] = useState(false);
   const location = useLocation();
@@ -41,6 +43,16 @@ const Header = () => {
     setResult(true);
   };
 
+  // 로그아웃까지 남은 시간을 시, 분, 초로 변환하는 함수
+  const formatTimeLeft = (seconds) => {
+    const totalSeconds = Math.floor(seconds);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const remainingSeconds = totalSeconds % 60;
+
+    return `${hours}시간 ${minutes}분 ${remainingSeconds}초`;
+  };
+
   return (
     <nav id="navbar" className="absolute w-full h-full">
       <div className="relative p-4 flex justify-center bg-white z-50">
@@ -48,7 +60,6 @@ const Header = () => {
           <img className="object-contain size-24" src={logo} alt="이미지"></img>
         </Link>
       </div>
-
       <div className="p-6 flex sticky top-0 z-40 justify-center bg-white border-b-2 border-gray-400 font-GSans">
         <AnimatePresence>
           <ul
@@ -81,23 +92,38 @@ const Header = () => {
       {result ? (
         <MyMenu callbackFn={closeModal} />
       ) : (
-        <div className="fixed top-0 right-0 z-50 p-6">
+        <div className="fixed top-0 right-0 z-50 p-6 flex items-center gap-4">
           {isLogin ? (
-            <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer" onClick={openModal}>
-              메뉴
-            </p>
+            <div className="flex items-center gap-2">
+              {timeLeft !== null && (
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-600 text-xs">로그아웃까지: <span className="text-blue-500">{formatTimeLeft(timeLeft)}</span></p>
+                  <button
+                    onClick={refreshAccessToken}
+                    className="text-gray-600 text-xs bg-yellow-200 px-2 py-1 rounded hover:bg-yellow-300 mr-20"
+                  >
+                    유지
+                  </button>
+                </div>
+              )}
+              <GroupInquiryCheckComponent />
+              <GroupJoinCheckComponent />
+              <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer flex items-center ml-10" onClick={openModal}>
+                메뉴
+              </p>
+            </div>
           ) : (
             <div className="flex gap-4">
               <p
                 onClick={() => navigate('/login')}
-                className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer"
+                className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer flex items-center"
               >
                 로그인
               </p>
-              <p className="text-gray-600 text-xs m-0">|</p>
+              <p className="text-gray-600 text-xs m-0 flex items-center">|</p>
               <p
                 onClick={() => navigate('/join')}
-                className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer"
+                className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer flex items-center"
               >
                 회원가입
               </p>

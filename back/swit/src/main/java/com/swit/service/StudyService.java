@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.swit.domain.Group;
 import com.swit.domain.Question;
 import com.swit.domain.Study;
 import com.swit.domain.StudyImage;
@@ -43,6 +44,7 @@ public class StudyService {
     private final QuestionRepository questionRepository;
     private final HttpSession session;
 
+    // 전체 스터디
     public StudyPageResponseDTO<Study> studyList(String studyTitle,
             String studySubject,
             String studyAddr,
@@ -67,6 +69,11 @@ public class StudyService {
                 .build();
         return responseDTO;
 
+    }
+
+    // 나의 스터디
+    public List<Study> myStudy(String userId) { // 내가 가입되어있는 그룹 리스트
+        return studyRepository.myStudy(userId);
     }
 
     // 스터디별 질문

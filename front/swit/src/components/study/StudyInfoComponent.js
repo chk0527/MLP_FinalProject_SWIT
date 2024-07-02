@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
+import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMember 함수를 가져옴
 import { useNavigate } from "react-router-dom";
+import defaultImg from "../../img/defaultImage.png";
 
 const initState = {
   studyNo: 0,
@@ -14,7 +16,7 @@ const initState = {
   studySubject: "",
   studyComm: "",
   studyHeadcount: 0,
-  uploadFileNames: []
+  uploadFileNames: [],
 };
 const host = API_SERVER_HOST;
 const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
@@ -22,60 +24,82 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
 
   useEffect(() => {
-    getStudy(studyNo).then((data) => {
-      setStudy(data);
-    });
+    const fetchStudyData = async () => {
+      try {
+        const studyData = await getStudy(studyNo);
+        const currentMemberCount = await memberCount(studyNo);
+
+        setStudy({
+          ...studyData,
+          currentMemberCount,
+        });
+      } catch (error) {
+        console.error("Error fetching study data:", error);
+      }
+    };
+
+    fetchStudyData();
   }, [studyNo]);
 
   return (
-    <div className="p-4 flex flex-col items-center">
+    <div className="w-full flex flex-col items-center">
       {/*스터디 정보란*/}
-      <div className="bg-gray-200 p-4 rounded-lg relative max-w-screen-lg w-full">
-        <h1 className="text-2xl font-bold text-center">
-          {study.studyTitle}
-        </h1>
-        <div className="flex items-start mt-4">
-          <div className="w-64 h-64 rounded-lg mr-6 bg-gray-500 border border-none flex items-center justify-center">
-            {study.uploadFileNames.map((imgFile, i) => (
+      <h1 className="text-2xl">{study.studyTitle}</h1>
+      <hr className="border border-black mt-4 mb-8 w-full" />
+
+      <div className="flex gap-20">
+        <div className=" w-64 rounded">
+          {study.uploadFileNames.length > 0 ? (
+            study.uploadFileNames.map((imgFile, i) => (
               <img
                 alt="StudyImage"
                 key={i}
-                className="w-full h-full"
+                className="w-64 h-64 rounded"
                 src={`${host}/api/study/display/${imgFile}`}
               />
-            ))}
-          </div>
-          <div className="text-left flex flex-col justify-center h-64">
-            <p>
-              <strong>소개:</strong> {study.studyTitle}
-            </p>
-            <p>
-              <strong>주제:</strong> {study.studySubject}
-            </p>
-            <p>
-              <strong>진행방식:</strong> {study.studyComm}
-            </p>
-            <p>
-              <strong>최대 인원:</strong> {study.studyHeadcount}
-            </p>
-            <p>
-              <strong>날짜:</strong> {study.studyStartDate} ~{" "}
-              {study.studyEndDate}
-            </p>
-            <p>
-              <strong>방장:</strong> {study.userNick}
-            </p>
+            ))
+          ) : (
+            <img
+              alt="StudyImage"
+              className="w-64 h-64 rounded"
+              src={defaultImg}
+            />
+          )}
+          <div className="flex justify-center">
+            {ActionComponent && <ActionComponent studyUuid={study.studyUuid} />}
           </div>
         </div>
-        <div className="flex justify-start ml-24 mt-4">
-          {ActionComponent && <ActionComponent studyUuid={study.studyUuid} />}
-        </div>
-        <div className="mt-4 p-4 border border-gray-300 bg-yellow-100 text-left">
-          <p>
-            {study.studyContent}
-          </p>
+        <div className="border p-8 text-left flex flex-col gap-8 justify-center gap-2">
+          <div className="w-full text-ellipsis overflow-hidden">
+            <strong>소개: </strong> {study.studyTitle}
+          </div>
+          <div className="flex gap-20">
+            <p className="w-40">
+              <strong>주제: </strong> {study.studySubject}
+            </p>
+            <p className="w-40">
+              <strong>대면/비대면: </strong>
+              {study.studyOnline ? "비대면" : "대면"}
+            </p>
+          </div>
+          <div className="flex gap-20">
+            <p className="w-40">
+              <strong>인원: </strong> {study.currentMemberCount}명/{study.studyHeadcount}명
+            </p>
+            <p className="w-40">
+              <strong>날짜: </strong>
+              {study.studyStartDate} -
+            </p>
+          </div>
+          <div>
+            <strong>방장: </strong> {study.userNick}
+          </div>
         </div>
       </div>
+      <div className="w-800 h-52 my-4 p-4 border border-gray-300 bg-yellow-100 text-left">
+        <p>{study.studyContent}</p>
+      </div>
+      <hr className="border border-black my-8 w-full" />
     </div>
   );
 };

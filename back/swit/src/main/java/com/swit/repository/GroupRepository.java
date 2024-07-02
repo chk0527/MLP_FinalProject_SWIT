@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.swit.domain.Group;
+import com.swit.domain.Inquiry;
+import com.swit.dto.PendingApplicationDTO;
 
 public interface GroupRepository extends JpaRepository<Group, Integer> {
   List<Group> findByStudyStudyNoAndGroupJoin(Integer studyNo, Integer groupJoin); // 새로운 메소드 추가
@@ -26,4 +28,16 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
       +
       "FROM Group g JOIN g.user u WHERE g.study.studyNo = :studyNo")
   List<GroupMemberProjection> findGroupMembersByStudyNo(@Param("studyNo") Integer studyNo);
+
+
+  @Query("SELECT new com.swit.dto.PendingApplicationDTO(g.study.studyNo, g.study.studyTitle, COUNT(g)) " +
+          "FROM Group g WHERE g.study.userId = :userId AND g.groupJoin = 0 " +
+          "GROUP BY g.study.studyNo, g.study.studyTitle")
+    List<PendingApplicationDTO> findPendingApplicationsByLeaderId(@Param("userId") String userId);
+
+    @Query("SELECT new com.swit.dto.PendingApplicationDTO(i.study.studyNo, i.study.studyTitle, COUNT(i)) " +
+           "FROM Inquiry i WHERE i.study.studyNo IN (SELECT s.studyNo FROM Study s WHERE s.userId = :userId) " +
+           "AND i.responseContent IS NULL " +
+           "GROUP BY i.study.studyNo, i.study.studyTitle")
+    List<PendingApplicationDTO> findPendingInquiries(@Param("userId") String userId);
 }

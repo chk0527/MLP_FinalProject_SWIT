@@ -44,14 +44,20 @@ public class StudyController {
     private final CustomFileUtil fileUtil;
 
     @GetMapping("/all")
-    public StudyPageResponseDTO<Study> getAllStudies(@RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
-    @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
-    @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
-    @RequestParam(name = "studyOnline", required = false) Boolean studyOnline,
-    @RequestParam(name = "userId", required = false) String userId,
-    StudyPageRequestDTO pageRequestDTO) {
+    public StudyPageResponseDTO<Study> getAllStudies(
+            @RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
+            @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
+            @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분
+            @RequestParam(name = "studyOnline", required = false) Boolean studyOnline,
+            @RequestParam(name = "userId", required = false) String userId,
+            StudyPageRequestDTO pageRequestDTO) {
         log.info(pageRequestDTO);
         return service.studyList(studyTitle, studySubject, studyAddr, studyOnline, userId, pageRequestDTO);
+    }
+
+    @GetMapping("/myStudy") // 내 스터디 목록
+    public List<Study> myStudy(@RequestParam("userId") String userId) {
+        return service.myStudy(userId);
     }
 
     @GetMapping("/{studyNo}")
@@ -87,19 +93,21 @@ public class StudyController {
     }
 
     @PutMapping("/{studyNo}")
-    public Map<String, String> modify(@PathVariable(name = "studyNo") Integer studyNo, @RequestBody StudyDTO studyDTO, // 수정된
-                                                                                                                       // 부분
-            @RequestParam("questions") List<String> questions) { // 수정된 부분
-        StudyDTO currentStudyDTO = service.get(studyNo);
-        List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
-        List<MultipartFile> newFiles = studyDTO.getFiles();
-        List<String> uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
-        studyDTO.setUploadFileNames(uploadFileNames);
-        studyDTO.setStudyNo(studyNo);
-        log.info("Modify:" + studyDTO);
-        service.modify(studyDTO, questions);
-        return Map.of("RESULT", "SUCCESS");
-    }
+    public Map<String, String> modify(
+        @PathVariable(name = "studyNo") Integer studyNo,
+        @ModelAttribute StudyDTO studyDTO) { // 수정된 부분
+    StudyDTO currentStudyDTO = service.get(studyNo);
+    List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
+    List<MultipartFile> newFiles = studyDTO.getFiles();
+    List<String> uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
+    studyDTO.setUploadFileNames(uploadFileNames);
+    studyDTO.setStudyNo(studyNo);
+    log.info("Modify:" + studyDTO);
+    service.modify(studyDTO, studyDTO.getQuestions());
+    return Map.of("RESULT", "SUCCESS");
+}
+
+
 
     @GetMapping("/display/{fileName}")
     public ResponseEntity<Resource> displayFileGet(@PathVariable(name = "fileName") String fileName) {

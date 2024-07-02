@@ -35,15 +35,13 @@ const StudyListPage = () => {
   const [studyOnline, setStudyOnline] = useState(false);
 
   const [inputText, setInputText] = useState("");
-  const [searchText, setSearchText] = useState("");
 
   const handleInput = (e) => {
     setInputText(e.target.value);
   };
 
   const handleButton = () => {
-    setSearchText(inputText);
-    setStudyTitle(searchText);
+    setStudyTitle(inputText); 
   };
 
   const subjectList = [
@@ -241,7 +239,7 @@ const StudyListPage = () => {
           <div>
             {/* 주제검색 */}
             <div className="text-xl flex justify-end">
-              {subjectList.map((subject) => (
+              {subjectList.map((subject,index) => (
                 <label
                   key={subject.value}
                   className={
@@ -258,7 +256,7 @@ const StudyListPage = () => {
                   >
                     {selectedSubject === subject.value && <span>✔</span>}
                   </span>
-                  {subject.value} ·
+                  {subject.value} {index < subjectList.length - 1 && ' · '}
                 </label>
               ))}
             </div>

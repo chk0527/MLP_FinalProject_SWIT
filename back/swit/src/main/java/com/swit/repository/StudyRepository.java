@@ -1,5 +1,7 @@
 package com.swit.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,4 +57,8 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
                         @Param("studyOnline") Boolean studyOnline,
                         @Param("userId") String userId,
                         Pageable pageable);
+
+        @Query(value = "SELECT s.* FROM study s LEFT JOIN group1 g ON g.study_no = s.study_no WHERE g.user_id = :userId AND g.group_join = 1", nativeQuery = true)
+        List<Study> myStudy(String userId);
+
 }

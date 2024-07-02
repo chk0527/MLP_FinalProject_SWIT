@@ -33,9 +33,13 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentNo;
+
     @Column(nullable = false)
     private String commentContent;
 
+    @Column(nullable = false)
+    private String userNick;
+    
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime commentCreatedDate;

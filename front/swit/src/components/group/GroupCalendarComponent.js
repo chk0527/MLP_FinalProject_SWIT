@@ -29,8 +29,6 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 const GroupCalendarComponent = ({ studyNo }) => {
   const [study, setStudy] = useState([]);                   // 방장 id 추출에 필요한 study 조회
   const [events, setEvents] = useState([]);                 // 캘린더 - 일정 관리
-  const [tasks, setTasks] = useState([]);                   // 캘린더 - 할 일 저장
-  const [taskInput, setTaskInput] = useState('');           // 캘린더 - 할 일 입력
   const [calendarView, setCalendarView] = useState('month');
   const [modalEvent, setModalEvent] = useState(null);       // 모달창 이벤트 설정
   const [modalClass, setModalClass] = useState('modal');    // 모달창 css 클래스값 설정
@@ -81,7 +79,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
           <span className="label">{label}</span>
           <button onClick={() => onNavigate('NEXT')} className="nav-button"><FaChevronRight /></button>
         </div>
-        <button onClick={() => onNavigate('TODAY')} className="today-button">오늘</button>
+        <button onClick={() => onNavigate('TODAY')} className="today-button">Today</button>
         <div className="right-controls">
           <button onClick={() => onView('month')} className="view-button">월</button>
           <button onClick={() => onView('week')} className="view-button">주</button>
@@ -164,7 +162,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const title = getNextTitle()
@@ -202,7 +200,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 삭제
   const handleRemoveEvent = async (eventId) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     try {
@@ -216,7 +214,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 완료 상태 업데이트
   const handleCompleteEvent = async (eventId, completeChk) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     try {
@@ -247,7 +245,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 드래그앤드롭 이벤트
   const handleDragEvent = async ({ event, start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const updatedEvent = {
@@ -266,7 +264,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 바 사이즈 늘리기 이벤트(날짜 범위 변경)
   const handleResizeEvent = async ({ event, start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const updatedEvent = {
@@ -285,7 +283,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 정보 업데이트(모달창)
   const handleUpdateEvent = async () => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
+      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
       return
     }
     const updatedEvent = {
@@ -305,48 +303,9 @@ const GroupCalendarComponent = ({ studyNo }) => {
     }
   }
 
-  // ======================= 캘린더 - 할 일 관리 =========================
-  // ====================================================================
-
-  // 캘린더 - 할 일 추가
-  const handleAddTask = (e) => {
-    if (!isManager) {
-      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
-      return
-    }
-    e.preventDefault()
-    if (taskInput.trim()) {
-      // 새로운 할 일을 state에 추가
-      setTasks([...tasks, { text: taskInput, completed: false }])
-      setTaskInput('') // 입력 필드 초기화
-    }
-  }
-
-  // 캘린더 - 할 일의 완료 상태 토글
-  const handleToggleTask = (index) => {
-    if (!isManager) {
-      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
-      return
-    }
-    const newTasks = tasks.map((task, i) =>
-      i === index ? { ...task, completed: !task.completed } : task
-    )
-    setTasks(newTasks)
-  }
-
-  // 캘린더 - 할 일 제거
-  const handleRemoveTask = (index) => {
-    if (!isManager) {
-      alert("방장만 할 일을 관리할 수 있습니다.\n" + "방장 ID : " + study.userId)
-      return
-    }
-    const newTasks = tasks.filter((_, i) => i !== index)
-    setTasks(newTasks)
-  }
-
   return (
     <div className="flex w-1000">
-      <div className="w-8/12">
+      <div className="w-full">
         <div className="my-4">
           <DragAndDropCalendar
             selectable
@@ -385,58 +344,6 @@ const GroupCalendarComponent = ({ studyNo }) => {
             onView={(newView) => setCalendarView(newView)} // 뷰 변경 핸들러
             onNavigate={handleNavigate}
           />
-        </div>
-      </div>
-      <div className="w-4/12 pl-4">
-        <div className="my-4">
-          <h2 className="text-xl font-bold">일정</h2>
-          <ul>
-            {events.map((event, index) => (
-              <li key={index} className="flex items-center my-2">
-                <input
-                  type="checkbox"
-                  checked={event.completeChk}
-                  // 일정 완료 상태 업데이트
-                  onChange={() => handleCompleteEvent(event.calendarNo, !event.completeChk)}
-                  className="mr-2"
-                />
-                <span className={event.completeChk ? 'line-through' : ''}>
-                  {event.title} - {moment(event.startDate).format('YYYY년 MM월 DD일 HH:mm')}
-                </span>
-                {/*일정 제거 이벤트*/}
-                <button onClick={() => handleRemoveEvent(event.calendarNo)} className="ml-auto bg-red-500 text-white p-1 rounded-lg">X</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="my-4">
-          <h2 className="text-xl font-bold">할 일</h2>
-          <form onSubmit={handleAddTask} className="flex my-2">
-            <input
-              type="text"
-              value={taskInput}
-              onChange={(e) => setTaskInput(e.target.value)}
-              className="flex-grow p-2 border border-gray-300 rounded-l-lg"
-            />
-            <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg">Enter</button>
-          </form>
-          <ul>
-            {tasks.map((task, index) => (
-              <li key={index} className="flex items-center my-2">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => handleToggleTask(index)} // 할 일의 완료 상태 토글
-                  className="mr-2"
-                />
-                <span className={task.completed ? 'line-through' : ''}>
-                  {task.text}
-                </span>
-                <button onClick={() => handleRemoveTask(index)} className="ml-auto bg-red-500 text-white p-1 rounded-lg">X</button>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 

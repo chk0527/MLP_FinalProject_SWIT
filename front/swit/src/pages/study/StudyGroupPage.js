@@ -7,11 +7,27 @@ import { isMember } from "../../api/GroupApi";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import StudyChatPage from "./StudyChatPage";
 import GroupMeetingComponent from "../../components/group/GroupMeetingComponent";
+import StudyTimerPage from "./StudyTimerPage";
+import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
+import StudyListBtnComponent from "../../components/study/StudyListBtnComponent";
+import StudyModifyButtonComponent from "../../components/study/StudyModifyButton";
+import StudyTodoPage from "./StudyTodoPage";
 
 const StudyGroupPage = () => {
   const { studyNo } = useParams();
   const navigate = useNavigate();
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLeaderState, setIsLeaderState] = useState(false); // 방장 여부 상태 추가
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      const isLeaderCheck = await isLeader(studyNo);
+      console.log(isLeaderCheck + "@@@@@@@@@@");
+      setIsLeaderState(isLeaderCheck);
+    };
+
+    checkUserRole();
+  }, [studyNo]);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -39,17 +55,28 @@ const StudyGroupPage = () => {
 
   return (
     <BasicLayout>
-      <div className="font-GSans">
-        <StudyInfoComponent
+      <div className="flex gap-10">
+        <div className="font-GSans">
+          <StudyInfoComponent
+            studyNo={studyNo}
+            ActionComponent={GroupMeetingComponent}
+          />
+          <StudyGroupComponent studyNo={studyNo} />
+        </div>
+        <div className="flex flex-col gap-8">
+          <StudyChatPage />
+          <StudyTimerPage studyNo={studyNo} />
+          <StudyTodoPage studyNo={studyNo}/>
+        </div>
+      </div>
+      {/* 목록으로 돌아가기 */}
+      <div className="flex justify-center w-full">
+        <StudyListBtnComponent />
+        <StudyModifyButtonComponent
           studyNo={studyNo}
-          ActionComponent={GroupMeetingComponent}
+          isLeader={isLeaderState}
         />
       </div>
-      <div className="absolute -right-96 top-80 my-4">
-        <StudyChatPage />
-      </div>
-
-      <StudyGroupComponent studyNo={studyNo} />
     </BasicLayout>
   );
 };
