@@ -119,7 +119,7 @@ const MyStudyComponent = () => {
                         return (
                             <tr key={study.studyNo}>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <Link to={study.isMemberStatus === 'leader' ? `/study/group/${study.studyNo}` : `/study/read/${study.studyNo}`} className="text-blue-600 hover:underline">
+                                    <Link to={study.isMemberStatus === 'leader' || study.isMemberStatus === 1 ? `/study/group/${study.studyNo}` : `/study/read/${study.studyNo}`} className="text-blue-600 hover:underline">
                                         {study.studyTitle} {/* 스터디 제목 */}
                                     </Link>
                                 </td>

@@ -298,7 +298,13 @@ public class ExamjobService {
     }
     
 
-   
-
+    // 즐겨찾기된 채용 목록 가져오기
+    public List<JobDTO> getFavoriteJobs(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("user못찾음"));
+        List<FavoritesJob> favoriteJobs = favoritesJobRepository.findByUser(user);
+        return favoriteJobs.stream()
+            .map(favJob -> modelMapper.map(favJob.getJob(), JobDTO.class))
+            .collect(Collectors.toList());
+    }
 
 }

@@ -30,7 +30,17 @@ export const getBoardList = async (pageParam) => {
 }
 
 export const deleteOne = async (boardNo) => {
-  const res = await axios.delete(`${prefix}/${boardNo}`)
+  const token = sessionStorage.getItem("accessToken");
+  console.log("react sessionStorage Token값:" + token);
+  if (!token) {
+    throw new Error("No access token found");
+  }
+  const header = {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  };
+  const res = await axios.delete(`${prefix}/${boardNo}`, header)
   return res.data;
 }
 

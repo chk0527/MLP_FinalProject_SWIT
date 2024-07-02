@@ -75,7 +75,7 @@ public class CommentService {
     //     boardRepository.save(board);
     // }
 
-    // public void remove(Integer boardNo){
-    //     boardRepository.deleteById(boardNo);
-    // }
+    public void remove(Integer commentNo){
+        commentRepository.deleteById(commentNo);
+    }
 }

@@ -102,9 +102,15 @@ public class GroupController {
   }
 
 
-  @GetMapping("/pending_applications") //승인 대기중인 유저 수 확인
+  @GetMapping("/check/user") //승인 대기중인 유저 수 확인
   public ResponseEntity<List<PendingApplicationDTO>> getPendingApplications(@RequestParam String userId) {
       List<PendingApplicationDTO> pendingApplications = service.getPendingApplicationsByLeaderId(userId);
+      return ResponseEntity.ok(pendingApplications);
+  }
+
+  @GetMapping("/check/inquiry") //답변 대기중인 문의 수 확인
+  public ResponseEntity<List<PendingApplicationDTO>> getPendingInquiry(@RequestParam String userId) {
+      List<PendingApplicationDTO> pendingApplications = service.getPendingInquiryByLeaderId(userId);
       return ResponseEntity.ok(pendingApplications);
   }
 }

@@ -23,7 +23,7 @@ import com.swit.domain.Study;
 import com.swit.dto.GroupDTO;
 import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyPageRequestDTO;
-import com.swit.dto.StudyPageResponseDTO;
+import com.swit.dto.BoardPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.service.GroupService;
 import com.swit.service.StudyService;
@@ -44,7 +44,7 @@ public class StudyController {
     private final CustomFileUtil fileUtil;
 
     @GetMapping("/all")
-    public StudyPageResponseDTO<Study> getAllStudies(
+    public BoardPageResponseDTO<Study> getAllStudies(
             @RequestParam(name = "studyTitle", required = false) String studyTitle, // 수정된 부분
             @RequestParam(name = "studySubject", required = false) String studySubject, // 수정된 부분
             @RequestParam(name = "studyAddr", required = false) String studyAddr, // 수정된 부분

@@ -47,6 +47,9 @@ public class Board {
     @Column(nullable = false)
     private String boardCategory;
 
+    @Column(nullable = false)
+    private String userNick;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime boardCreatedDate;
@@ -58,6 +61,7 @@ public class Board {
     @JoinColumn(name = "userNo", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY
+    , orphanRemoval = true)
     private List<Comment> comments;
 }
