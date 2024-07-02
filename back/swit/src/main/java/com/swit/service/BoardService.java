@@ -98,4 +98,25 @@ public class BoardService {
     public void remove(Integer boardNo){
         boardRepository.deleteById(boardNo);
     }
+
+    // 사용자가 작성한 모든 게시글 조회
+    public PageResponseDTO<BoardDTO> getUserBoards(PageRequestDTO pageRequestDTO, Integer userNo) {
+        Pageable pageable = PageRequest.of(
+            pageRequestDTO.getPage() - 1, // 1페이지가 0
+            pageRequestDTO.getSize(),
+            Sort.by("boardCreatedDate").descending());
+
+        Page<Board> result = boardRepository.findByUserUserNo(userNo, pageable);
+        List<BoardDTO> dtoList = result.getContent().stream()
+                .map(todo -> modelMapper.map(todo, BoardDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<BoardDTO> responseDTO = PageResponseDTO.<BoardDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+    }
 }

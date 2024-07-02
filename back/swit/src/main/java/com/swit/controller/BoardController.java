@@ -71,4 +71,10 @@ public class BoardController {
         boardService.remove(boardNo);
         return Map.of("RESULT", "SUCCESS");
     }
+
+    // 유저가 작성한 게시글 리스트 조회
+    @GetMapping("/list/{userNo}")
+    public PageResponseDTO<BoardDTO> getUserBoards(@PathVariable(name = "userNo") Integer userNo, PageRequestDTO pageRequestDTO) {
+        return boardService.getUserBoards(pageRequestDTO, userNo);
+    }
 }
