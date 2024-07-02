@@ -225,106 +225,157 @@ const GroupTimerComponent = ({ studyNo }) => {
   // ================== "날짜 범위로 검색" 기능 핸들러 =========================
 
   return (
-    <div>
-      {/* 타이머 개인화면 */}
-      <div className="border shadow bg-yellow-100 p-4 flex flex-col items-center rounded">
-        <div className="w-full space-y-4">
-          {currentTimer ? (
-            <>
-              {!currentTimer.running ? (
-                <>
-                  <div className="flex justify-between items-center">
-                    <input
-                      type="number"
-                      value={Math.floor(currentTimer.time / 3600)}
-                      onChange={(e) => {
-                        const hours = Math.max(0, e.target.value);
-                        setCurrentTimer((prev) => ({
-                          ...prev,
-                          time: hours * 3600 + (prev ? prev.time % 3600 : 0),
-                        }));
-                      }}
-                      className="w-20 p-2 border border-gray-300 rounded"
-                      disabled={currentTimer.running}
-                    />
-                    <p>시</p>
-                    <input
-                      type="number"
-                      value={Math.floor((currentTimer.time % 3600) / 60)}
-                      onChange={(e) => {
-                        const minutes = Math.max(0, e.target.value);
-                        setCurrentTimer((prev) => ({
-                          ...prev,
-                          time:
-                            Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
-                            minutes * 60 +
-                            (prev ? prev.time % 60 : 0),
-                        }));
-                      }}
-                      className="w-20 p-2 border border-gray-300 rounded"
-                      disabled={currentTimer.running}
-                    />
-                    <p>분</p>
+    <div className="w-full space-y-4">
+      {/* 오늘의 공부 시간 | 누적 공부 시간 */}
+      {/* <div className="text-center my-4">
+                {Object.entries(userStudyTimes).map(([userId, times]) => (
+                    <div key={userId} className="mb-4">
+                        <h3 className="text-2xl font-semibold">
+                            {getUserNickFromToken(userId)}님의 오늘 공부한 시간: {formatStudyTime(times.today)}
+                        </h3>
+                        <h3 className="text-2xl font-semibold">
+                            {getUserNickFromToken(userId)}님의 누적 공부 시간: {formatTotalStudyTime(times.total)}
+                        </h3>
+                    </div>
+                ))}
+            </div> */}
 
-                    <input
-                      type="number"
-                      value={currentTimer.time % 60}
-                      onChange={(e) => {
-                        const seconds = Math.max(0, e.target.value);
-                        setCurrentTimer((prev) => ({
-                          ...prev,
-                          time:
-                            Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
-                            Math.floor((prev ? prev.time % 3600 : 0) / 60) *
-                              60 +
-                            seconds,
-                        }));
-                      }}
-                      className="w-20 p-2 border border-gray-300 rounded"
-                      disabled={currentTimer.running}
-                    />
-                    <p>초</p>
-                  </div>
-                  <div className="flex justify-center space-x-2">
-                    <button
-                      onClick={handleStartTimer}
-                      className="shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
-                    >
-                      시작
-                    </button>
-                    <button
-                      onClick={handleStopTimer}
-                      className="shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
-                    >
-                      초기화
-                    </button>
-                  </div>
+      {/*스톱워치 개인화면 */}
+      <div className="flex flex-col md:flex-row justify-between w-full space-y-4 md:space-y-0 md:space-x-4 items-stretch">
+        {/* 타이머 개인화면 */}
+        <div className="flex flex-col w-full">
+          <div className="bg-green-200 p-4 flex flex-col items-center rounded-lg">
+            <FaClock className="text-4xl mb-2" />
+            <h2 className="text-2xl font-semibold mb-4">타이머</h2>
+            <div className="space-y-4 w-full">
+              {currentTimer ? (
+                <>
+                  <input
+                    type="text"
+                    placeholder="타이머 이름"
+                    value={currentTimer.name}
+                    onChange={(e) =>
+                      setCurrentTimer((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
+                    className="w-full p-2 border border-gray-300 rounded"
+                    disabled={currentTimer.running}
+                  />
+                  {!currentTimer.running ? (
+                    <>
+                      <div className="grid grid-cols-3 gap-2 justify-center">
+                        <label className="flex flex-col items-center">
+                          시
+                          <input
+                            type="number"
+                            value={Math.floor(currentTimer.time / 3600)}
+                            onChange={(e) => {
+                              const hours = Math.max(0, e.target.value);
+                              setCurrentTimer((prev) => ({
+                                ...prev,
+                                time:
+                                  hours * 3600 + (prev ? prev.time % 3600 : 0),
+                              }));
+                            }}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            disabled={currentTimer.running}
+                          />
+                        </label>
+                        <label className="flex flex-col items-center">
+                          분
+                          <input
+                            type="number"
+                            value={Math.floor((currentTimer.time % 3600) / 60)}
+                            onChange={(e) => {
+                              const minutes = Math.max(0, e.target.value);
+                              setCurrentTimer((prev) => ({
+                                ...prev,
+                                time:
+                                  Math.floor(prev ? prev.time / 3600 : 0) *
+                                    3600 +
+                                  minutes * 60 +
+                                  (prev ? prev.time % 60 : 0),
+                              }));
+                            }}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            disabled={currentTimer.running}
+                          />
+                        </label>
+                        <label className="flex flex-col items-center">
+                          초
+                          <input
+                            type="number"
+                            value={currentTimer.time % 60}
+                            onChange={(e) => {
+                              const seconds = Math.max(0, e.target.value);
+                              setCurrentTimer((prev) => ({
+                                ...prev,
+                                time:
+                                  Math.floor(prev ? prev.time / 3600 : 0) *
+                                    3600 +
+                                  Math.floor(
+                                    (prev ? prev.time % 3600 : 0) / 60
+                                  ) *
+                                    60 +
+                                  seconds,
+                              }));
+                            }}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            disabled={currentTimer.running}
+                          />
+                        </label>
+                      </div>
+                      <div className="flex justify-center space-x-2">
+                        <button
+                          onClick={handleStartTimer}
+                          className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"
+                        >
+                          시작
+                        </button>
+                        <button
+                          onClick={handleStopTimer}
+                          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                        >
+                          초기화
+                        </button>
+                        <button
+                          onClick={handleDeleteTimer}
+                          className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-3xl font-mono text-center">
+                        {formatTimerTime(currentTimer.time)}
+                      </div>
+                      <div className="flex justify-center space-x-2">
+                        <button
+                          onClick={handlePauseTimer}
+                          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                        >
+                          일시정지
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </>
               ) : (
-                <>
-                  {formatTimerTime(currentTimer.time)}
-
-                  <div className="flex justify-center space-x-2">
-                    <button
-                      onClick={handlePauseTimer}
-                      className="bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
-                    >
-                      일시정지
-                    </button>
-                  </div>
-                </>
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleCreateTimer}
+                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                  >
+                    생성하기
+                  </button>
+                </div>
               )}
-            </>
-          ) : (
-            <div className="flex justify-center">
-              <button
-                onClick={handleCreateTimer}
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-              >
-                생성하기
-              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

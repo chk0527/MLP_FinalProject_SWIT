@@ -35,7 +35,7 @@ export const postAdd = async (study) => {
     },
   };
   //수정체크
-  const res = await axios.post(`${prefix2}/`, study, header);
+  const res = await axios.post(`${prefix}/`, study, header);
   return res.data;
 };
 
