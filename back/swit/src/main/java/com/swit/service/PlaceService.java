@@ -2,13 +2,16 @@ package com.swit.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.swit.domain.FavoritesJob;
 import com.swit.domain.FavoritesPlace;
 import com.swit.domain.Place;
 import com.swit.domain.User;
+import com.swit.dto.JobDTO;
 import com.swit.dto.PlaceDTO;
 import com.swit.repository.FavoritesPlaceRepository;
 import com.swit.repository.PlaceRepository;
@@ -86,4 +89,17 @@ public class PlaceService {
                 }
         }
 
+        // 즐겨찾기된 채용 목록 가져오기
+        public List<PlaceDTO> getFavoritePlaces(String userId) throws Exception {
+                try {
+                        User user = userRepository.findByUserId(userId)
+                                        .orElseThrow(() -> new RuntimeException("user못찾음"));
+                        List<FavoritesPlace> favoritePlaces = favoritesPlaceRepository.findByUser(user);
+                        return favoritePlaces.stream()
+                                        .map(favPlace -> modelMapper.map(favPlace.getPlace(), PlaceDTO.class))
+                                        .collect(Collectors.toList());
+                } catch (Exception e) {
+                        throw new Exception("getPlaceFavorite에러", e);
+                }
+        }
 }

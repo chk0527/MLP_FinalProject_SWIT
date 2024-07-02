@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -112,7 +111,8 @@ public class UserService {
 
   // 로그인 확인 처리(네이버 소셜 로그인)
   public UserDTO userCheck(String userName, String userEmail, String userSnsConnect) {
-    Optional<User> result = userRepository.findByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail, userSnsConnect);
+    Optional<User> result = userRepository.findByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail,
+        userSnsConnect);
     User user = result.orElse(new User());
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
     return userDTO;
@@ -120,8 +120,11 @@ public class UserService {
 
   // 로그인 확인 처리(카카오 소셜 로그인)
   public UserDTO userCheck2(String userNick, String userEmail, String userSnsConnect) {
-    // Optional<User> result = userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName, userEmail, userSnsConnect);
-    Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail, userSnsConnect);
+    // Optional<User> result =
+    // userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName,
+    // userEmail, userSnsConnect);
+    Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail,
+        userSnsConnect);
     User user = result.orElse(new User());
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
     return userDTO;
@@ -129,7 +132,6 @@ public class UserService {
 
   // 회원 가입
   public void join(UserDTO userDTO) {
-
     Integer userNo = userDTO.getUserNo();
     String userId = userDTO.getUserId();
     String userName = userDTO.getUserName();
@@ -149,35 +151,33 @@ public class UserService {
     }
 
     User data = new User();
-    
+
     if (isExist) {
       // sns 로그인시 userID update 처리
       if (snsConnect.equals("NAVER") || snsConnect.equals("KAKAO")) {
         data.setUserNo(userNo);
         data.setUserCreateDate(userDTO.getUserCreateDate());
-      }
-      else {
+      } else {
         log.info("가입된 고객입니다.");
         return;
       }
     }
-    // System.out.println("pw [" + password + "] " + bCryptPasswordEncoder.encode(password));
-    // sns 로그인시 없는 경우 존재 
-    Optional<String> optionalUserNick = Optional.ofNullable(userNick);	
-	  if (optionalUserNick.map(String::isEmpty).orElse(true)) {
+    // System.out.println("pw [" + password + "] " +
+    // bCryptPasswordEncoder.encode(password));
+    // sns 로그인시 없는 경우 존재
+    Optional<String> optionalUserNick = Optional.ofNullable(userNick);
+    if (optionalUserNick.map(String::isEmpty).orElse(true)) {
       log.info("userNick1 " + userNick);
       data.setUserNick(userName);
-    }
-    else {
+    } else {
       log.info("userName1 " + userName);
       data.setUserNick(userNick);
     }
-    Optional<String> optionalUserName = Optional.ofNullable(userName);	
-	  if (optionalUserName.map(String::isEmpty).orElse(true)) {
+    Optional<String> optionalUserName = Optional.ofNullable(userName);
+    if (optionalUserName.map(String::isEmpty).orElse(true)) {
       log.info("userNick2 " + userNick);
       data.setUserName(userNick);
-    }
-    else {
+    } else {
       log.info("userName2 " + userName);
       data.setUserName(userName);
     }
@@ -186,10 +186,35 @@ public class UserService {
     data.setUserPassword(bCryptPasswordEncoder.encode(password));
     data.setUserEmail(userDTO.getUserEmail());
     data.setUserPhone(userDTO.getUserPhone());
-    data.setUserSnsConnect(userDTO.getUserSnsConnect());      // "" 홈페이지 가입, "naver" , "kakao"
-    data.setUserImage(userDTO.getUserImage());
+    data.setUserSnsConnect(userDTO.getUserSnsConnect()); // "" 홈페이지 가입, "naver" , "kakao"
+    // data.setUserImage(userDTO.getUserImage());
     data.setUserDeleteChk(userDTO.isUserDeleteChk());
     data.setUserRole("ROLE_USER");
+
+    // 기본 이미지 파일 설정
+    if (userDTO.getUserImage() == null || userDTO.getUserImage().isEmpty()) {
+      Path defaultImagePath = Paths.get("back/swit/upload", "userBlank.png");
+      System.out.println("기본 이미지 파일 경로: " + defaultImagePath);
+
+      if (Files.exists(defaultImagePath)) {
+        // 유저 ID를 포함하여 파일명 생성
+        String defaultImageFileName = userId + "_userBlank.png";
+        Path targetPath = Paths.get("upload", defaultImageFileName);
+
+        try {
+          Files.copy(defaultImagePath, targetPath);
+          data.setUserImage(defaultImageFileName); // 이미지 필드에 파일 이름 설정
+          System.out.println("기본 이미지 설정 완료: " + defaultImageFileName);
+        } catch (IOException e) {
+          System.out.println("기본 이미지 파일 복사 중 오류 발생: " + e.getMessage());
+          data.setUserImage(null);
+        }
+      } else {
+        System.out.println("기본 이미지 파일이 존재하지 않습니다: " + defaultImagePath);
+      }
+    } else {
+      data.setUserImage(userDTO.getUserImage());
+    }
 
     userRepository.save(data);
   }
