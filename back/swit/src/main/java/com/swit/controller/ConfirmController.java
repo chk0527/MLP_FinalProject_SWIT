@@ -1,16 +1,8 @@
 package com.swit.controller;
 
-import net.nurigo.sdk.NurigoApp;
-import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
-import net.nurigo.sdk.message.model.Balance;
-import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.model.StorageType;
-import net.nurigo.sdk.message.request.MessageListRequest;
-import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.MessageListResponse;
-import net.nurigo.sdk.message.response.MultipleDetailMessageSentResponse;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import net.nurigo.sdk.message.service.DefaultMessageService;
+// import javax.mail.MessagingException;
+
+import java.security.SecureRandom;
 
 import org.springframework.beans.factory.annotation.Value;
 // import org.springframework.core.io.ClassPathResource;
@@ -19,36 +11,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 // import org.w3c.dom.UserDataHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.swit.dto.ConfirmDTO;
-import com.swit.dto.ConfirmReqDTO;
 import com.swit.dto.UserDTO;
-import com.swit.service.UserService;
 import com.swit.service.ConfirmService;
-import com.swit.service.MailService;
+import com.swit.service.EmailService;
+import com.swit.service.UserService;
 
-import jakarta.persistence.Column;
-
-import java.util.Map;
-import java.io.File;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Optional;
-
-import javax.mail.MessagingException;
-
-import java.security.SecureRandom;
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
 
 @ResponseBody
 @RestController
@@ -58,73 +37,22 @@ public class ConfirmController {
     final DefaultMessageService messageService;
     final UserService userService;
     final ConfirmService confirmService;
+    final EmailService emailService;
     final String sendPhone;
 
     public ConfirmController(
         @Value("${api.sms.clientKey}") String smsClientKey,
         @Value("${api.sms.secretKey}") String snsClientSecret,
         @Value("${api.sms.sendPhone}") String sendPhone,
-        // UserService userService) {
         UserService userService,
+        EmailService emailService,
         ConfirmService confirmService) {
-            
-        this.messageService = NurigoApp.INSTANCE.initialize(smsClientKey, snsClientSecret, "https://api.coolsms.co.kr");
+            this.messageService = NurigoApp.INSTANCE.initialize(smsClientKey, snsClientSecret, "https://api.coolsms.co.kr");
         this.userService = userService;
         this.confirmService = confirmService;
+        this.emailService = emailService;
         this.sendPhone = sendPhone;
     }
-    
-    // @GetMapping("userCheck")
-    // // public ResponseEntity<?> userCheck(ConfirmReqDTO confirmReqDTO) {
-    // public String userCheck(ConfirmReqDTO confirmReqDTO) {
-    //     System.out.println("userCheck start");
-    //     System.out.println("certifyType  " + confirmReqDTO.getCertifyType());
-    //     System.out.println("id  " + confirmReqDTO.getId());
-    //     System.out.println("name  " + confirmReqDTO.getName());
-    //     System.out.println("email  " + confirmReqDTO.getEmail());
-    //     System.out.println("phone  " + confirmReqDTO.getPhone());
-
-    //     ConfirmDTO confirmDTO = new ConfirmDTO();
-    //     UserDTO userDTO = new UserDTO();
-        
-    //     if (confirmReqDTO.getCertifyType() == "1") {  // 이메일로 회원 확인
-    //         System.out.println("userCheck 2222 start");
-    //         userDTO = confirmService.userCheck3(confirmReqDTO.getId()
-    //                                        ,confirmReqDTO.getName()
-    //                                        ,confirmReqDTO.getEmail()
-    //                                        ,"LOCAL");
-    //     } else if (confirmReqDTO.getCertifyType() == "2") {  // 핸드폰 번호로 회원 확인
-    //         System.out.println("userCheck 3333 start");
-    //         userDTO = confirmService.userCheck4(confirmReqDTO.getId()
-    //                                        ,confirmReqDTO.getName()
-    //                                        ,confirmReqDTO.getPhone()
-    //                                        ,"LOCAL");
-    //     } else {
-    //         System.out.println("userCheck 4444 start");
-    //         // return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
-    //         return "bad1";
-    //     }
-
-    //     if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
-    //         System.out.println("userCheck 5555 start");
-    //         // return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
-    //         return "bad2";
-    //     }
-
-    //     confirmDTO.setUserId(userDTO.getUserId());
-    //     confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
-    //     confirmDTO.setConfirmPath(confirmReqDTO.getCertifyType());         // "1" 이메일, "2", 핸드폰번호
-
-    //     String randomString = generateRandomSixDigitString();
-    //     System.out.println("Generated random string: " + randomString);
-
-    //     confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
-
-    //     confirmService.confirmIns(confirmDTO);
-        
-    //     // return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
-    //     return "OK";
-    // }
 
     @GetMapping("userCheck")
     public ResponseEntity<?> userCheck(@RequestParam ("certifyType") String certifyType
@@ -157,10 +85,11 @@ public class ConfirmController {
             }
 
             confirmDTO.setUserId(userDTO.getUserId());
-            confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
-            confirmDTO.setConfirmPath(certifyType);         // "1" 이메일, "2", 핸드폰번호
+            // confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기 제외
+            // "1" 이메일 id찾기, "2", SMS id찾기, "3" 이메일 pw 찾기, "4" SMS pw 찾기
+            confirmDTO.setConfirmPath(certifyType);         
     
-            String randomString = confirmService.createKey();  // 랜덤 인증번호 생성
+            String randomString = emailService.createKey();  // 랜덤 인증번호 생성
             System.out.println("Generated random string: " + randomString);
     
             confirmDTO.setConfirmNum(randomString);         // 8자리 소문자, 대문자, 숫자 랜덤 생성
@@ -172,7 +101,7 @@ public class ConfirmController {
 
             try {
                 // 이메일 발송
-                String code = confirmService.sendSimpleMessage(userEmail, randomString);
+                String code = emailService.sendSimpleMessage(userEmail, randomString);
                 System.out.println("인증코드 : " + code);
 
             } catch (Exception e) {
@@ -193,8 +122,75 @@ public class ConfirmController {
             }
     
             confirmDTO.setUserId(userDTO.getUserId());
-            confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
-            confirmDTO.setConfirmPath(certifyType);         // "1" 이메일, "2", 핸드폰번호
+            // confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
+            // "1" 이메일 id찾기, "2", SMS id찾기, "3" 이메일 pw 찾기, "4" SMS pw 찾기
+            confirmDTO.setConfirmPath(certifyType);
+    
+            String randomString = generateRandomSixDigitString();
+            System.out.println("Generated random string: " + randomString);
+    
+            confirmDTO.setConfirmNum(randomString);         // 000000~999999 난수
+    
+            // 저장 후 PK(confirmNO)를 객체에 저장 후 front에 return
+            confirmDTO = confirmService.confirmIns(confirmDTO);
+            System.out.println("confirmDTO.getConfirmNo(): " + confirmDTO.getConfirmNo());
+            System.out.println("confirmDTO: " + confirmDTO);
+    
+            // return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
+
+        } else if (certifyType.equals("3")) {  // 이메일로 회원 확인
+            System.out.println("userCheck Email start");
+            userDTO = confirmService.userCheck3(id
+                                           ,userName
+                                           ,userEmail
+                                           ,"");
+
+            // 고객이 존재 여부 확인
+            if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
+                return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+            }
+
+            confirmDTO.setUserId(userDTO.getUserId());
+            // confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
+            // "1" 이메일 id찾기, "2", SMS id찾기, "3" 이메일 pw 찾기, "4" SMS pw 찾기
+            confirmDTO.setConfirmPath(certifyType);
+    
+            String randomString = emailService.createKey();  // 랜덤 인증번호 생성
+            System.out.println("Generated random string: " + randomString);
+    
+            confirmDTO.setConfirmNum(randomString);         // 8자리 소문자, 대문자, 숫자 랜덤 생성
+    
+            // 저장 후 PK(confirmNO)를 객체에 저장 후 front에 return
+            confirmDTO = confirmService.confirmIns(confirmDTO);
+            System.out.println("confirmDTO.getConfirmNo(): " + confirmDTO.getConfirmNo());
+            System.out.println("confirmDTO: " + confirmDTO);
+
+            try {
+                // 이메일 발송
+                String code = emailService.sendSimpleMessage(userEmail, randomString);
+                System.out.println("인증코드 : " + code);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+             }
+            
+        } else if (certifyType.equals("4")) {  // 핸드폰 번호로 회원 확인
+            System.out.println("userCheck Phone start");
+            userDTO = confirmService.userCheck4(id
+                                           ,userName
+                                           ,userPhone
+                                           ,"");
+
+            // 고객이 존재 여부 확인
+            if (userDTO.getUserId() == null || userDTO.getUserId().isEmpty()) {
+                return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
+            }
+    
+            confirmDTO.setUserId(userDTO.getUserId());
+            // confirmDTO.setConfirmTarget("1"); // "1" 아이디 찾기
+            // "1" 이메일 id찾기, "2", SMS id찾기, "3" 이메일 pw 찾기, "4" SMS pw 찾기
+            confirmDTO.setConfirmPath(certifyType);
     
             String randomString = generateRandomSixDigitString();
             System.out.println("Generated random string: " + randomString);
@@ -209,7 +205,7 @@ public class ConfirmController {
             // return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
 
         } else {
-            System.out.println("userCheck5555 start");
+            System.out.println("이메일/핸드폰 인증 구분 에러");
             return new ResponseEntity<>(confirmDTO, HttpStatus.BAD_REQUEST);
         }
 

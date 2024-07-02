@@ -1,7 +1,7 @@
 package com.swit.service;
 
 import java.io.UnsupportedEncodingException;
-import javax.mail.MessagingException;
+// import javax.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 public interface MailServiceInter {
@@ -12,7 +12,7 @@ public interface MailServiceInter {
      * @throws MessagingException
      * @throws UnsupportedEncodingException
      */
-    MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException;
+    MimeMessage createMessage(String to) throws UnsupportedEncodingException;
 
     /**
      * 랜덤 인증 코드 생성
