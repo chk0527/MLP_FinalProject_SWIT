@@ -13,7 +13,8 @@ const initState = {
     boardTitle: '추가',
     boardContent: '콘텐츠',
     boardCategory: "스터디",
-    userNo: 1
+    userNo: 1,
+    userNick: 'NoName'
 }
 
 const BoardAddComponent = () => {
@@ -40,6 +41,7 @@ const BoardAddComponent = () => {
 
     const handleClickAdd = () => {
         board.userNo = userInfo.userNo
+        board.userNick = userInfo.userNick
         postAdd(board).then(result => {
             console.log(result)
             setResult(result.boardNo)

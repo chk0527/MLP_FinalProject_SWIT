@@ -1,6 +1,6 @@
 .meeting-container {
   text-align: center;
-  padding: 20px;
+  padding: 0px;
   font-family: Arial, sans-serif;
 }
 
@@ -13,9 +13,7 @@
   text-decoration: none;
   display: inline-block;
   font-size: 16px; /* 글자 크기 */
-  margin: 4px 2px;
   cursor: pointer;
-  border-radius: 12px; /* 둥근 모서리 */
   transition: background-color 0.3s ease;
   margin-left: -40px; /* 왼쪽으로 이동 */
 }

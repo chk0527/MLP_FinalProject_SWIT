@@ -6,7 +6,7 @@ const StudyCard = ({ study, handleReadStudy }) => {
     navigate("/study");
   };
     return (
-      <div className="flex justify-center m-32">
+      <div className="flex justify-center my-32">
         <button
           className="bg-yellow-500 w-52 h-12 text-white text-center"
           onClick={goToStudyListPage}

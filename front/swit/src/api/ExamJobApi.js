@@ -95,11 +95,22 @@ export const isJobFavorite = async (userId, jobNo) => {
 //캘린더 -> 즐겨찾기만
 export const getFavoriteExams = async (userId) => {
     try {
-      const response = await axios.get(`/api/examjob/exam/favorites/${userId}`);
+      const response = await axios.get(`${API_SERVER_HOST}/api/examjob/exam/favorites/${userId}`);
       return response.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
+
+// 즐겨찾기된 채용 목록 가져오기
+export const getFavoriteJobs = async (userId) => {
+    try {
+        const response = await axios.get(`${API_SERVER_HOST}/api/examjob/job/favorites/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch favorite jobs:', error);
+        throw error;
+    }
+};
 

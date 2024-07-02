@@ -58,7 +58,7 @@ const BoardListComponent = () => {
                         <td className="py-4 px-6 text-center border-b tracking-wider">{board.boardNo}</td>
                         <td className="py-4 px-6 text-center border-b tracking-wider">{board.boardCategory}</td>
                         <td className="py-4 px-6 border-b tracking-wider">{board.boardTitle}</td>
-                        <td className="py-4 px-6 text-center border-b tracking-wider">{board.userNo}</td>
+                        <td className="py-4 px-6 text-center border-b tracking-wider">{board.userNick}</td>
                         <td className="py-4 px-6 text-center border-b tracking-wider">{board.boardCreatedDate}</td>
                     </tr>
                 ))}

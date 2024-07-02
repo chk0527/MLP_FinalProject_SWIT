@@ -47,6 +47,9 @@ public class Board {
     @Column(nullable = false)
     private String boardCategory;
 
+    @Column(nullable = false)
+    private String userNick;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime boardCreatedDate;

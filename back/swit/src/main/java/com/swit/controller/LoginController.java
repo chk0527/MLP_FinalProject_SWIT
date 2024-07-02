@@ -179,7 +179,7 @@ public class LoginController {
             String userId = JWTUtil.getUserId(refreshToken);
             String userNick = JWTUtil.getNick(refreshToken);
             String userRole = JWTUtil.getRole(refreshToken);
-            String newAccessToken = JWTUtil.createJwt(userNo, userId, userNick, userRole, 60 * 60 * 1000L); // 10초 유효
+            String newAccessToken = JWTUtil.createJwt(userNo, userId, userNick, userRole, 3 * 60 * 60 * 1000L); // 3시간 유효
 
             return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken).body("New token generated");
         } catch (Exception e) {

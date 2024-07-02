@@ -65,7 +65,7 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
     System.out.println("successfulAuthentication userNick : " + userNick);
     System.out.println("successfulAuthentication userRole : " + userRole);
 
-    String token = jwtUtil.createJwt(userNo, userId, userNick, userRole, 60 * 60 * 1000L); // 1시간 유효
+    String token = jwtUtil.createJwt(userNo, userId, userNick, userRole, 3 * 60 * 60 * 1000L); // 3시간 유효
     String refreshToken = jwtUtil.createRefreshToken(userNo, userId, userNick,userRole, 7 * 24 * 60 * 60 * 1000L); // 7일 유효
     System.out.println("successfulAuthentication token : " + token);
     System.out.println("successfulAuthentication refreshToken : " + refreshToken);

@@ -200,7 +200,7 @@ const MapListComponent = () => {
     getMyStudy(userId).then((data) => {
       setMyStudyData(data);
     });
-    console.log(myStudyData);}
+    }
     else{
       setMyStudyData([])
     }

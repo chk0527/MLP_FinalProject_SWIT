@@ -56,6 +56,9 @@ export const putOne = async (studyNo, study) => {
   return res.data;
 };
 
+
+
+
 export const fetchInquiries = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
