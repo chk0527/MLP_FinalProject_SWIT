@@ -12,11 +12,11 @@
     background-color: rgb(255, 255, 255,0);
     color: rgb(179, 179, 179);
     text-align: center;
-    padding: 5px;
+    padding: 0px;
     border-radius: 4px;
 
     /* 아래에 위치하게 */
-    bottom: -110%;
+    bottom: 90%;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;

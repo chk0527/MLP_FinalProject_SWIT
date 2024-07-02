@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  updateTimer,
-} from "../../api/TimerApi";
+import { updateTimer } from "../../api/TimerApi";
 import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -227,10 +225,11 @@ const GroupTimerComponent = ({ studyNo }) => {
   return (
     <div>
       {/* 타이머 개인화면 */}
-      <div className="border shadow bg-yellow-100 p-4 flex flex-col items-center rounded">
-        <div className="w-full space-y-4">
-          {currentTimer ? (
-            <>
+
+      {currentTimer ? (
+        <>
+          <div className="border shadow bg-yellow-100 p-4 flex flex-col items-center rounded">
+            <div className="w-full space-y-4">
               {!currentTimer.running ? (
                 <>
                   <div className="flex justify-between items-center">
@@ -314,19 +313,19 @@ const GroupTimerComponent = ({ studyNo }) => {
                   </div>
                 </>
               )}
-            </>
-          ) : (
-            <div className="flex justify-center">
-              <button
-                onClick={handleCreateTimer}
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-              >
-                생성하기
-              </button>
             </div>
-          )}
+          </div>
+        </>
+      ) : (
+        <div className="border shadow p-4 flex flex-col items-center rounded">
+          <button
+            onClick={handleCreateTimer}
+            className="bg-yellow-300 py-2 px-4 rounded hover:bg-yellow-400"
+          >
+            타이머 생성
+          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
