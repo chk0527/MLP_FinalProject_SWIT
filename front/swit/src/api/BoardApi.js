@@ -59,3 +59,9 @@ export const putOne = async (board) => {
   const res = await axios.put(`${prefix}/${board.boardNo}`, board, header)
   return res.data;
 }
+
+export const getUserBoardList = async (userNo, pageParam) => {
+  const { page, size } = pageParam
+  const res = await axios.get(`${prefix}/list/${userNo}`, { params: { page: page, size: size } })
+  return res.data;
+}

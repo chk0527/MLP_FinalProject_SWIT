@@ -69,7 +69,7 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite exams found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>즐겨찾기한 시험이 없습니다.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -97,19 +97,20 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite jobs found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>즐겨찾기한 채용이 없습니다.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
-
+            </div>
+            <div className="grid grid-cols-1 gap-4">
                 {/* 즐겨찾기한 장소 목록 */}
                 <div>
                     <table className="min-w-full divide-y divide-gray-200 text-center table-fixed">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider">장소</th>
+                                <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider">스터디 장소</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -125,14 +126,14 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite places found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>즐겨찾기한 장소가 없습니다.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
