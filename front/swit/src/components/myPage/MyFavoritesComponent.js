@@ -45,7 +45,7 @@ const MyFavoritesComponent = () => {
     }
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full mb-8">
             <h2 className="text-lg font-bold mb-4">My 즐겨찾기(★)</h2>
             <div className="grid grid-cols-2 gap-4">
                 {/* 즐겨찾기한 시험 목록 */}

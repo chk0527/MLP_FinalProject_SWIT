@@ -120,7 +120,7 @@ const MyProfileComponent = ({ userId }) => {
     return (
         <>
             {/* 프로필 정보 디자인 */}
-            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
+            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full mb-8">
                 <div className="flex items-center">
                     <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
                         <div className="w-36 h-36 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center relative overflow-hidden">
@@ -176,11 +176,6 @@ const MyProfileComponent = ({ userId }) => {
                             <label className="block mb-1">이름:</label>
                             <input className="w-full border border-gray-300 p-2 rounded"
                                 name="userName" type="text" value={modalUser.userName} onChange={handleTextChange} />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block mb-1">닉네임:</label>
-                            <input className="w-full border border-gray-300 p-2 rounded"
-                                name="userNick" type="text" value={modalUser.userNick} onChange={handleTextChange} />
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1">전화번호:</label>

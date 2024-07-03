@@ -2,7 +2,7 @@ import { useRef, useState, useContext, useEffect } from "react";
 import { postAdd } from "../../api/BoardApi";
 
 import { useNavigate } from "react-router-dom";
-import { getUserIdFromToken } from "../../util/jwtDecode";
+import { getUserIdFromToken ,getUserNickFromToken } from "../../util/jwtDecode";
 import "react-datepicker/dist/react-datepicker.css";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
@@ -19,6 +19,7 @@ const initState = {
 
 const BoardAddComponent = () => {
   const navigate = useNavigate();
+  const userNick = getUserNickFromToken();
   useEffect(() => {
     const userId = getUserIdFromToken();
     if (!userId) {
@@ -113,7 +114,7 @@ const BoardAddComponent = () => {
             <option value="자유">자유</option>
           </select>
           <p className="w-24 py-2">닉네임</p>
-          <input type="text" readOnly className={inputStyle3} value="1234" />
+          <input type="text" readOnly className={inputStyle3} value={userNick} />
         </div>
 
         {/* 내용 */}
