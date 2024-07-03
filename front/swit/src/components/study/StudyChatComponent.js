@@ -157,14 +157,15 @@ function StudyChatComponent({ studyNo }) {
       <div className="flex items-center border-t border-gray-300 bg-white py-2 px-4 rounded">
         <textarea
           onKeyDown={(e) => pressEnter(e)}
+          rows="1"
           value={inputValue}
           onChange={handleInputChange}
-          className="flex-grow resize-none border border-gray-300 rounded-md py-2 px-4 mr-2 focus:outline-none focus:ring focus:border-yellow-300"
+          className="flex-grow resize-none border border-gray-300 rounded py-2 px-4 mr-2 focus:outline-none focus:ring focus:border-yellow-300"
           placeholder="메시지를 입력하세요..."
         />
         <button
           onClick={sendMessage}
-          className="bg-yellow-600 text-white text-sm rounded-md py-2 px-4 hover:bg-yellow-700 focus:outline-none focus:ring"
+          className="bg-yellow-600 text-white rounded shadow p-2 hover:bg-yellow-700 focus:outline-none focus:ring"
         >
           전송
         </button>
