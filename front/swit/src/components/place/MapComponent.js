@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const MapComponent = ({ placeAddr }) => {
-  const apiKey = "312e4647a38431cd979b5ac0e76d0051";
+  const apiKey = "b0eff766121570e5d6bb6985397aed73";
 
   useEffect(() => {
     if (!placeAddr || placeAddr.trim() === "") {

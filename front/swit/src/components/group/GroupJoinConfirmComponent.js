@@ -131,8 +131,7 @@ const GroupJoinConfirmComponent = () => {
                       가입 신청서
                     </button>
                   </div>
-                  <span>-----------------------------------------------</span>
-                  <div>
+                  <div className="flex gap-2">
                     <button
                       className="bg-white shadow text-gray-500 px-4 py-2 rounded hover:bg-green-700 hover:text-white transition duration-300"
                       onClick={() => handleConfirm(request.groupNo, true)}

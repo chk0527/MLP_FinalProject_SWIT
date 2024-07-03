@@ -74,8 +74,7 @@ const BoardAddComponent = () => {
     <div className="flex justify-center font-GSans">
       {result ? (
         <ResultModal
-          title={"Add Result"}
-          content={`New ${result} Added`}
+          content={"작성"}
           callbackFn={closeModal}
         />
       ) : (
