@@ -1,7 +1,7 @@
 package com.swit.service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +54,7 @@ public class UserService {
     Optional<User> result = userRepository.findByUserId(userDTO.getUserId());
     User user = result.orElseThrow();
     user.setUserName(userDTO.getUserName());
-    user.setUserNick(userDTO.getUserNick());
+    //user.setUserNick(userDTO.getUserNick());  //userNick은 이제 수정하면 안되는 고윳값
     user.setUserPhone(userDTO.getUserPhone());
     user.setUserEmail(userDTO.getUserEmail());
     userRepository.save(user);
