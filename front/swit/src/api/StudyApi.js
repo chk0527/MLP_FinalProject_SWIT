@@ -1,6 +1,6 @@
 import axios from "axios";
 export const API_SERVER_HOST = "http://localhost:8181";
-const prefix = `${API_SERVER_HOST}/api/study`;
+const prefix = `/api/study`;
 // 로컬 스토리지에서 토큰 가져오기
 
 export const getStudy = async (studyNo) => {
