@@ -120,7 +120,7 @@ const MyProfileComponent = ({ userId }) => {
     return (
         <>
             {/* 프로필 정보 디자인 */}
-            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
+            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full mb-8">
                 <div className="flex items-center">
                     <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
                         <div className="w-36 h-36 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center relative overflow-hidden">

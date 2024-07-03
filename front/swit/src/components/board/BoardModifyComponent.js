@@ -1,7 +1,7 @@
 import { useRef, useState, useContext, useEffect } from "react";
 import { getBoard, putOne, deleteOne } from "../../api/BoardApi";
 import { useNavigate } from "react-router-dom";
-import { getUserIdFromToken } from "../../util/jwtDecode";
+import { getUserNickFromToken,getUserIdFromToken } from "../../util/jwtDecode";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
 import { LoginContext } from "../../contexts/LoginContextProvider";
@@ -15,10 +15,11 @@ const initState = {
 };
 
 const BoardModifyComponent = ({ boardNo }) => {
+  const userNick = getUserNickFromToken()
   const { userInfo } = useContext(LoginContext);
   const navigate = useNavigate();
   useEffect(() => {
-    const userId = getUserIdFromToken();
+    const userId = getUserNickFromToken();
     if (!userId) {
       alert("로그인이 필요합니다.");
       navigate("/login");
@@ -122,7 +123,7 @@ const BoardModifyComponent = ({ boardNo }) => {
             <option value="자유">자유</option>
           </select>
           <p className="w-24 py-2">닉네임</p>
-          <input type="text" readOnly className={inputStyle3} value="1234" />
+          <input type="text" readOnly className={inputStyle3} value={userNick} />
         </div>
 
         {/* 내용 */}
