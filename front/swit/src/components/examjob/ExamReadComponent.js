@@ -62,7 +62,7 @@ const ExamReadComponent = ({ examNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            <div className="p-6 rounded w-full max-w-6xl">
+            <div className="py-6 rounded w-full max-w-6xl">
                 <div className="flex justify-center border-gray-700 border-b-2">
                     <h1 className="text-3xl font-bold mb-4">{exam.examTitle}</h1>
                     <button onClick={handleFavorite} className="m-0 ml-3 p-0 -mt-7">
