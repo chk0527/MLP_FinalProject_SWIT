@@ -30,7 +30,17 @@ export const getBoardList = async (pageParam) => {
 }
 
 export const deleteOne = async (boardNo) => {
-  const res = await axios.delete(`${prefix}/${boardNo}`)
+  const token = sessionStorage.getItem("accessToken");
+  console.log("react sessionStorage Token값:" + token);
+  if (!token) {
+    throw new Error("No access token found");
+  }
+  const header = {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  };
+  const res = await axios.delete(`${prefix}/${boardNo}`, header)
   return res.data;
 }
 
@@ -47,5 +57,11 @@ export const putOne = async (board) => {
     },
   };
   const res = await axios.put(`${prefix}/${board.boardNo}`, board, header)
+  return res.data;
+}
+
+export const getUserBoardList = async (userNo, pageParam) => {
+  const { page, size } = pageParam
+  const res = await axios.get(`${prefix}/list/${userNo}`, { params: { page: page, size: size } })
   return res.data;
 }

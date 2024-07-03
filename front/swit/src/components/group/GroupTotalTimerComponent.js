@@ -176,11 +176,11 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
 
   return (
     <div className="relative w-full space-y-4">
-      <div className="w-1000">
+      <div className="">
         <p className="text-xl font-semibold mt-8 p-2 text-gray-900">
           회원별 공부 시간
         </p>
-        <hr className="border-4 border-gray-500 mb-4 w-1/6" />
+        <hr className="border-4 border-gray-500 mb-4 w-40" />
       </div>
       <div className="absolute flex gap-4 justify-end -top-1 right-0">
         <DatePicker

@@ -47,7 +47,9 @@ const PlaceDetailComponent = ({ placeNo }) => {
   const handleFavorite = async (placeNo) => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      if (window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
+      if (
+        window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")
+      ) {
         navigate("/login");
       }
       return;
@@ -68,11 +70,13 @@ const PlaceDetailComponent = ({ placeNo }) => {
 
   return (
     <div className="font-GSans">
-      <div className="w-1000 font-bold text-3xl text-center">
-        [{place.placeAddr.substring(0, 2)}] {place.placeName}
+      <div className="flex justify-center border-gray-700 border-b-2">
+        <h1 className="text-3xl font-bold mb-4">
+          [{place.placeAddr.substring(0, 2)}] {place.placeName}
+        </h1>
         <button
           onClick={() => handleFavorite(place.placeNo)}
-          className="absolute top-72 mt-7 ml-4"
+          className="m-0 ml-3 p-0 -mt-7"
         >
           {favoriteStatus[place.placeNo] ? (
             <FaStar size={30} color="#FFF06B" />
@@ -81,9 +85,8 @@ const PlaceDetailComponent = ({ placeNo }) => {
           )}
         </button>
       </div>
-      <hr className="border border-black mt-4 mb-8 w-full" />
-      <div className="flex justify-between">
-        <div className="md:flex flex-col gap-20">
+      <div className="flex justify-center mt-20 gap-20">
+        <div className="flex flex-col gap-20">
           <img
             className="object-cover rounded shadow w-450 h-450"
             src={place.placeImg}
@@ -94,43 +97,42 @@ const PlaceDetailComponent = ({ placeNo }) => {
             <p>주소 정보가 없습니다.</p>
           )}
         </div>
-        <div className="w-450">
-          <div className="text-xl whitespace-pre-line flex flex-col gap-10 ">
-            <div>
-              <p className="text-2xl py-2">위치</p>
-              <div className="flex">
-                - <div className="ml-4">{place.placeAddr}</div>
-              </div>
-            </div>
-            <div>
-              <p className="text-2xl py-2">전화번호</p>
-              <div className="flex">
-                -
-                <div className="ml-4">
-                  {place.placeTel || "전화번호 정보가 없습니다."}
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-2xl py-2">운영시간</p>
-              <div className="flex">
-                -
-                <div className="ml-4">
-                  {place.placeTime || "시간 정보가 없습니다."}
-                </div>
-              </div>
-            </div>
-            <div className=" text-xl whitespace-pre-line">
-              <p className="text-2xl py-2">메뉴</p>
-              <div className="flex">
-                -
-                <div className="ml-4">
-                  {place.placeDetail || "메뉴 정보가 없습니다."}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <table className="h-full w-450">
+          <tbody>
+            <tr>
+              <th className="text-2xl p-2 pr-4">· 위치</th>
+            </tr>
+            <tr>
+              <td align="center" className="text-xl p-2">
+                {place.placeAddr}
+              </td>
+            </tr>
+            <tr>
+              <th className="text-2xl p-2 pt-10 pr-4">· 전화번호</th>
+            </tr>
+            <tr>
+              <td align="center" className="text-xl  p-2">
+                {place.placeTel || "전화번호 정보가 없습니다."}
+              </td>
+            </tr>
+            <tr>
+              <th className="text-2xl p-2 pt-10 pr-4">· 운영시간</th>
+            </tr>
+            <tr>
+              <td align="center" className="text-xl  p-2">
+                {place.placeTime || "시간 정보가 없습니다."}
+              </td>
+            </tr>
+            <tr>
+              <th className="text-2xl p-2 pt-10 pr-4">· 메뉴</th>
+            </tr>
+            <tr>
+              <td align="center" className="text-xl  whitespace-pre-line p-2">
+                {place.placeDetail || "메뉴 정보가 없습니다."}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div className="flex justify-center my-24">
         <Link to={{ pathname: "/place/list" }} state={1}>

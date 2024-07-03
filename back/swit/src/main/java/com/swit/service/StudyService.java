@@ -23,7 +23,7 @@ import com.swit.dto.CustomUserDetails;
 import com.swit.dto.QuestionDTO;
 import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyPageRequestDTO;
-import com.swit.dto.StudyPageResponseDTO;
+import com.swit.dto.BoardPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
@@ -45,7 +45,7 @@ public class StudyService {
     private final HttpSession session;
 
     // 전체 스터디
-    public StudyPageResponseDTO<Study> studyList(String studyTitle,
+    public BoardPageResponseDTO<Study> studyList(String studyTitle,
             String studySubject,
             String studyAddr,
             Boolean studyOnline, String userId, StudyPageRequestDTO pageRequestDTO) {
@@ -62,7 +62,7 @@ public class StudyService {
                 .collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();
-        StudyPageResponseDTO<Study> responseDTO = StudyPageResponseDTO.<Study>withAll()
+        BoardPageResponseDTO<Study> responseDTO = BoardPageResponseDTO.<Study>withAll()
                 .dtoList(studyList)
                 .pageRequestDTO(pageRequestDTO)
                 .totalCount(totalCount)

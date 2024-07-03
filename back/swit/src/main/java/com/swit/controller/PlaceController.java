@@ -80,5 +80,17 @@ public class PlaceController {
         }
     }
 
+    // 모든 즐겨찾기 리스트 조회
+    @GetMapping("/place/favorites/{userId}")
+    public ResponseEntity<List<PlaceDTO>> getFavoritePlaces(@PathVariable(name = "userId") String userId) {
+        try {
+            List<PlaceDTO> favoritePlace = service.getFavoritePlaces(userId);
+            return ResponseEntity.ok(favoritePlace);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    
+
 
 }

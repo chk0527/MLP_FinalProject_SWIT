@@ -23,8 +23,11 @@ public class MailConfig {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
         javaMailSender.setHost(fromHost); // 메인 도메인 서버 주소 => 정확히는 smtp 서버 주소
-        javaMailSender.setUsername(fromEmail); // 네이버 아이디
-        javaMailSender.setPassword(fromPassword); // 네이버 비밀번호
+        // javaMailSender.setUsername(fromEmail); // 네이버 아이디
+        // javaMailSender.setPassword(fromPassword); // 네이버 비밀번호
+        javaMailSender.setUsername("fullstack21@naver.com"); // 네이버 아이디
+        javaMailSender.setPassword("A1s2d3f4"); // 네이버 비밀번호
+
 
         javaMailSender.setPort(465); // 메일 인증서버 포트
 

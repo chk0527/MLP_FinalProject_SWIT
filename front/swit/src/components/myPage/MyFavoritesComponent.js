@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { getFavoriteExams, getFavoriteJobs } from '../../api/ExamJobApi';
+import { getFavoritePlaces } from '../../api/PlaceApi';
 import { getUserIdFromToken } from '../../util/jwtDecode';
 
 const MyFavoritesComponent = () => {
     const [favoriteExams, setFavoriteExams] = useState([]); // 즐겨찾기한 시험정보
     const [favoriteJobs, setFavoriteJobs] = useState([]); // 즐겨찾기한 채용정보
+    const [favoritePlaces, setFavoritePlaces] = useState([]); // 즐겨찾기한 장소정보
     const userId = getUserIdFromToken(); // 로그인한 사용자의 ID
 
     useEffect(() => {
@@ -16,7 +18,7 @@ const MyFavoritesComponent = () => {
         }
     }, [userId])
 
-    // 즐겨찾기한 시험, 채용정보 조회
+    // 즐겨찾기한 시험,채용,장소 정보 조회
     const fetchFavorites = async () => {
         try {
             // 즐겨찾기한 시험 목록 가져오기
@@ -29,8 +31,14 @@ const MyFavoritesComponent = () => {
             const favoriteJobs = jobRes.dtoList || jobRes || [] // 즐겨찾기한게 없으면 빈 목록[] 반환
             console.log("즐겨찾기한 채용 목록:", favoriteJobs)
 
+            // 즐겨찾기한 장소 목록 가져오기
+            const placeRes = await getFavoritePlaces(userId);
+            const favoritePlaces = placeRes.dtoList || placeRes || [] // 즐겨찾기한게 없으면 빈 목록[] 반환
+            console.log("즐겨찾기한 장소 목록:", favoritePlaces)
+
             setFavoriteExams(favoriteExams)
             setFavoriteJobs(favoriteJobs)
+            setFavoritePlaces(favoritePlaces)
         } catch (error) {
             console.error("마이페이지 즐겨찾기 항목 조회 실패: ", error)
         }
@@ -61,7 +69,7 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite exams found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>즐겨찾기한 시험이 없습니다.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -89,14 +97,43 @@ const MyFavoritesComponent = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>No favorite jobs found.</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>즐겨찾기한 채용이 없습니다.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+            <div className="grid grid-cols-1 gap-4">
+                {/* 즐겨찾기한 장소 목록 */}
+                <div>
+                    <table className="min-w-full divide-y divide-gray-200 text-center table-fixed">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider">스터디 장소</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {favoritePlaces.length > 0 ? (
+                                favoritePlaces.map(place => (
+                                    <tr key={place.placeNo}>
+                                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis" style={{ maxWidth: '150px' }}>
+                                            <Link to={`/place/read/${place.placeNo}`} className="text-blue-600 hover:underline">
+                                                {place.placeName}
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center" style={{ maxWidth: '150px' }}>즐겨찾기한 장소가 없습니다.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div >
     );
 };
 

@@ -98,7 +98,7 @@ function StudyChatComponent({ studyNo }) {
   };
 
   return (
-    <div className="flex text-sm flex-col border border-gray-300 w-96 rounded-lg shadow">
+    <div className="flex text-sm flex-col border border-gray-300 max-w-96 rounded-lg shadow">
       {/* 채팅 메시지 컨테이너 */}
       <div className="p-4 bg-yellow-100 rounded-t-lg">
         <div
@@ -133,7 +133,7 @@ function StudyChatComponent({ studyNo }) {
                     }`}
                   >
                     <div
-                      className={`p-2 rounded-lg shadow whitespace-pre-line ${
+                      className={`p-2 rounded shadow whitespace-pre-line max-w-48 break-all ${
                         item.userNick === getUserNickFromToken()
                           ? "bg-yellow-200"
                           : "bg-white"
@@ -141,7 +141,7 @@ function StudyChatComponent({ studyNo }) {
                     >
                       {item.message}
                     </div>
-                    <div className="text-2xs text-gray-500 ml-2 mr-2">
+                    <div className="text-2xs text-gray-500 ml-1 mr-1">
                       {new Date(item.createdDate).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",

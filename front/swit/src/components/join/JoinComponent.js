@@ -105,7 +105,7 @@ const JoinComponent =() => {
     }
 
     return (
-      <>
+      <div className="flex flex-col items-center ">
         <div className="text-5xl pb-16 font-blackHans text-center">
           <div>회원 가입</div>
         </div>
@@ -229,7 +229,7 @@ const JoinComponent =() => {
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
     
 

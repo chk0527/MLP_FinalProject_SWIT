@@ -72,10 +72,10 @@ const MyProfileComponent = ({ userId }) => {
     };
 
     const handleImageUpload = async (e) => {
-        if (isSocialLogin) {
-            alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
-            return;
-        }
+        // if (isSocialLogin) {
+        //     alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
+        //     return;
+        // }
         const img = e.target.files[0];
         if (img) {
             const reader = new FileReader();

@@ -12,10 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.swit.domain.Board;
+import com.swit.domain.Study;
 import com.swit.domain.Todo;
 import com.swit.dto.BoardDTO;
 import com.swit.dto.PageRequestDTO;
 import com.swit.dto.PageResponseDTO;
+import com.swit.dto.BoardPageResponseDTO;
 import com.swit.repository.BoardRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,33 @@ public class BoardService {
         BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
         return boardDTO;
     }
+
+        // 전체 스터디
+    // public BoardPageResponseDTO<Board> boardList(String studyTitle,
+    //         String studySubject,
+    //         String studyAddr,
+    //         BoardPageResponseDTO pageRequestDTO) {
+    //     Pageable pageable = PageRequest.of(
+    //             pageRequestDTO.getStudyPage() - 1, // 1페이지가 0
+    //             pageRequestDTO.getStudySize());
+
+    //     Page<Board> result = boardRepository.list(studyTitle,
+    //             studySubject,
+    //             studyAddr,
+    //             pageable);
+    //     List<Board> boardList = result.getContent().stream()
+    //             .map(Board -> modelMapper.map(Board, Board.class))
+    //             .collect(Collectors.toList());
+
+    //     long totalCount = result.getTotalElements();
+    //     BoardPageResponseDTO<Board> responseDTO = BoardPageResponseDTO.<Board>withAll()
+    //             .dtoList(boardList)
+    //             .pageRequestDTO(pageRequestDTO)
+    //             .totalCount(totalCount)
+    //             .build();
+    //     return responseDTO;
+
+    // }
 
     public PageResponseDTO<BoardDTO> list(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
@@ -68,5 +97,26 @@ public class BoardService {
 
     public void remove(Integer boardNo){
         boardRepository.deleteById(boardNo);
+    }
+
+    // 사용자가 작성한 모든 게시글 조회
+    public PageResponseDTO<BoardDTO> getUserBoards(PageRequestDTO pageRequestDTO, Integer userNo) {
+        Pageable pageable = PageRequest.of(
+            pageRequestDTO.getPage() - 1, // 1페이지가 0
+            pageRequestDTO.getSize(),
+            Sort.by("boardCreatedDate").descending());
+
+        Page<Board> result = boardRepository.findByUserUserNo(userNo, pageable);
+        List<BoardDTO> dtoList = result.getContent().stream()
+                .map(todo -> modelMapper.map(todo, BoardDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<BoardDTO> responseDTO = PageResponseDTO.<BoardDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
     }
 }
