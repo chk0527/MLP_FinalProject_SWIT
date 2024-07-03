@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swit.domain.Inquiry;
 import com.swit.dto.InquiryDTO;
+import com.swit.dto.PageRequestDTO;
+import com.swit.dto.PageResponseDTO;
 import com.swit.dto.ResponseDTO;
 import com.swit.service.InquiryService;
 
@@ -57,5 +59,10 @@ public class InquiryController {
     public ResponseEntity<Void> deleteInquiry(@PathVariable("inquiryNo") Integer inquiryNo) {
         inquiryService.deleteInquiry(inquiryNo);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/list/{userId}/inquiries")
+    public PageResponseDTO<InquiryDTO> getUserInquiries(PageRequestDTO pageRequestDTO, @PathVariable(name="userId") String userId) {
+        return inquiryService.getUserInquiries(pageRequestDTO, userId);
     }
 }
