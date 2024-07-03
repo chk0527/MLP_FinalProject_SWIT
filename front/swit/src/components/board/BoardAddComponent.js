@@ -92,7 +92,7 @@ const BoardAddComponent = () => {
           <p className="w-24 py-2">제목</p>
           <input
             type="text"
-            name="studyTitle"
+            name="boardTitle"
             className={inputStyle1}
             value={board.boardTitle}
             placeholder="제목"
