@@ -102,4 +102,7 @@ public class PlaceService {
                         throw new Exception("getPlaceFavorite에러", e);
                 }
         }
+
+        //메인 -> 장소추천
+       
 }
