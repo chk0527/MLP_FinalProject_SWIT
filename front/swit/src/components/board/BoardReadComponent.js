@@ -164,12 +164,12 @@ const BoardReadComponent = ({ boardNo }) => {
           name="commentContent"
           id="commentContent"
           rows="1"
-          className="grow mx-4 resize-none rounded border border-gray-300 p-3.5 text-gray-900 shadow"
+          className="grow mx-2 resize-none rounded border border-gray-300 p-3.5 text-gray-900 shadow"
           value={comment.commentContent}
           onChange={handleChangeComment}
         ></textarea>
         <button
-          className="rounded bg-yellow-600 text-white px-3.5 py-2.5 text-center"
+          className="rounded bg-yellow-600 text-white px-3.5 py-2.5 text-center mx-2"
           onClick={handleClickAdd}
         >
           작성

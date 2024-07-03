@@ -79,13 +79,15 @@ const BoardListComponent = () => {
             </tr>
           </thead>
           <tbody>
-            {serverData.dtoList.map((board) => (
+            {serverData.dtoList.map((board, index) => (
               <tr
                 key={board.boardNo}
                 onClick={() => moveToBoardRead(board.boardNo)}
                 className="hover:bg-gray-100 cursor-pointer"
               >
-                <td className="py-4 text-center border-b  ">{board.boardNo}</td>
+                <td className="py-4 text-center border-b  ">
+                  {serverData.dtoList.length - index}
+                </td>
                 <td className="py-4 text-center border-b  ">
                   {board.boardCategory}
                 </td>
