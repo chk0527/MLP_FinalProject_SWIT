@@ -70,7 +70,7 @@ const PlaceDetailComponent = ({ placeNo }) => {
 
   return (
     <div className="font-GSans">
-      <div className="flex justify-center border-gray-700 border-b-2">
+      <div className="py-6 flex justify-center border-gray-700 border-b-2">
         <h1 className="text-3xl font-bold mb-4">
           [{place.placeAddr.substring(0, 2)}] {place.placeName}
         </h1>
