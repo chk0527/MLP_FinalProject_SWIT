@@ -46,9 +46,20 @@ const LoginComponent =() => {
 
     const onLogin = (e) => {
 
-        console.info(`${user.username} ${user.password}`) 
+        console.info(`${user.username}`) 
+
+        if (!user.username.trim()) {
+          alert('아이디를 입력해 주세요.');
+          return;
+        }
+        if (!user.password.trim()) {
+          alert('패스워드를 입력해 주세요.');
+          return;
+        }
 
         login(user.username, user.password)
+
+        
         
     }
 

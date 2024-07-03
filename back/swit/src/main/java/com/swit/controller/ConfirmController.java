@@ -3,6 +3,7 @@ package com.swit.controller;
 // import javax.mail.MessagingException;
 
 import java.security.SecureRandom;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 // import org.springframework.core.io.ClassPathResource;
@@ -269,6 +270,25 @@ public class ConfirmController {
         }
         
         return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("changeInfo")
+    public ResponseEntity<?> changeInfo(@RequestBody UserDTO userDTO) {
+        String userId = userDTO.getUserId();
+        String userPassword = userDTO.getUserPassword();
+        Integer ret = userService.changePw(userId, userPassword);
+        System.out.println("changeInfo " + userPassword);
+
+        if (ret == 0) {
+            System.out.println("changeInfo OK");
+        } else {
+            System.out.println("changeInfo ERROR");
+
+            return new ResponseEntity<>(userDTO, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+
     }
 
 

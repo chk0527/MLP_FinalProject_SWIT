@@ -96,6 +96,7 @@ const JoinComponent =() => {
             const userInfo = { ...user, userPhone: user.userPhone.replace(/\-/g, "") };
             console.log(userInfo)
             join(userInfo).then(result => {
+                alert('회원 가입 되셨습니다. 로그인 하시기 바랍니다.');
                 console.log(result)
                 navigate({pathname:'../../login'})
             }).catch(e=>{

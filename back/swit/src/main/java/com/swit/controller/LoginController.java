@@ -342,9 +342,9 @@ public class LoginController {
 	    rttr.addFlashAttribute("tok", password);
         rttr.addFlashAttribute("name", userId);
 		// log.info("Transferred data: user={}, msg={}", user, "naver계정으로 로그인 성공!!!");
-
+		// 원복KYW
 		return new RedirectView("http://swit.kro.kr:15270/callback?tok=" + access_token + "&name=" + userId);
-		// return new RedirectView("http://localhost:3000/callback");
+		// return new RedirectView("http://localhost:3000/callback?tok=" + access_token + "&name=" + userId);
 
 	}
 
@@ -542,9 +542,9 @@ public class LoginController {
 	    rttr.addFlashAttribute("tok", password);
         rttr.addFlashAttribute("name", userId);
 		// log.info("Transferred data: user={}, msg={}", user, "naver계정으로 로그인 성공!!!");
-
+		// 원복KYW
 		return new RedirectView("http://swit.kro.kr:15270/callback?tok=" + access_token + "&name=" + userId);
-		// return new RedirectView("http://localhost:3000/callback");
+		// return new RedirectView("http://localhost:3000/callback?tok=" + access_token + "&name=" + userId);
 
 	}
 

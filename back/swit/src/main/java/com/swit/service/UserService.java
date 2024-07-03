@@ -194,4 +194,32 @@ public class UserService {
     userRepository.save(data);
   }
 
+  // 비밀번호 찾기화면에서 비밀번호 변경 처리
+  public Integer changePw(String userId, String userPassword) {
+
+
+    Optional<User> result = userRepository.findByUserId(userId);
+    User user = result.orElseThrow();
+
+    Integer userNo = user.getUserNo();
+    
+    // 고객은 반드시 존재해야 한다.
+    if (userNo.equals(null) || userNo <= 0) {
+      return 1;   // 고객 미존재
+    }
+    System.out.println(userPassword);
+    user.setUserPassword(bCryptPasswordEncoder.encode(userPassword));
+
+    System.out.println(user.getUserNo());
+    System.out.println(user.getUserId());
+    System.out.println(user.getUserEmail());
+    System.out.println(user.getUserPhone());
+    System.out.println(user.getUserPassword());
+
+    userRepository.save(user);
+
+    return 0;   // 정상
+  }
+
+
 }
