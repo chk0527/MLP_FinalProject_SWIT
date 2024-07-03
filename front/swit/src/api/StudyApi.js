@@ -1,6 +1,6 @@
 import axios from "axios";
 export const API_SERVER_HOST = "http://localhost:8181";
-const prefix = `/api/study`;
+const prefix = `${API_SERVER_HOST}/api/study`;
 // 로컬 스토리지에서 토큰 가져오기
 
 export const getStudy = async (studyNo) => {
@@ -10,7 +10,7 @@ export const getStudy = async (studyNo) => {
 
 export const getMyStudy = async (userId) => { //내가 가입한 스터디 목록
   const res = await axios.get(`${prefix}/myStudy`, {
-    params: {userId }
+    params: { userId }
   });
   return res.data;
 };
@@ -36,9 +36,9 @@ export const postAdd = async (study) => {
   return res.data;
 };
 
-export const getAllStudies = async (studyTitle,studySubject,studyAddr,studyOnline,userId,pageParam) => {
-  const {StudyPage,StudySize} = pageParam
-  const res = await axios.get(`${prefix}/all`,{params:{studyTitle:studyTitle,studySubject:studySubject,studyAddr:studyAddr,studyOnline:studyOnline,userId:userId,StudyPage:StudyPage,StudySize:StudySize}});
+export const getAllStudies = async (studyTitle, studySubject, studyAddr, studyOnline, userId, pageParam) => {
+  const { StudyPage, StudySize } = pageParam
+  const res = await axios.get(`${prefix}/all`, { params: { studyTitle: studyTitle, studySubject: studySubject, studyAddr: studyAddr, studyOnline: studyOnline, userId: userId, StudyPage: StudyPage, StudySize: StudySize } });
   return res.data;
 };
 
@@ -50,7 +50,7 @@ export const deleteOne = async (studyNo) => {
 };
 
 export const putOne = async (studyNo, study) => {
-    const res = await axios.put(`${prefix}/${studyNo}`, study, {
+  const res = await axios.put(`${prefix}/${studyNo}`, study, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -64,13 +64,13 @@ export const putOne = async (studyNo, study) => {
 export const fetchInquiries = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  
+
   const res = await axios.get(`${prefix}/${studyNo}/inquiries`, { headers });
   return res.data;
 };
 
 export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등록
-  console.log(inquiryContent+"!!!!");
+  console.log(inquiryContent + "!!!!");
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
     throw new Error('No access token found');
@@ -86,12 +86,12 @@ export const inquirySubmit = async (studyNo, inquiryContent) => { //문의 등�
 export const deleteInquiry = async (inquiryNo) => {
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
-      throw new Error('No access token found');
+    throw new Error('No access token found');
   }
-  const res = await axios.delete(`${API_SERVER_HOST}/api/study/inquiries/${inquiryNo}`, {
-      headers: {
-          Authorization: `Bearer ${token}`,
-      },
+  const res = await axios.delete(`${prefix}/inquiries/${inquiryNo}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return res.data;
 };
@@ -107,4 +107,21 @@ export const responseSubmit = async (inquiryNo, responseContent) => { //답변 �
     }
   });
   return res.data;
+};
+
+// 사용자가 작성한 문의글 조회
+export const getUserInquiries = async (userId, pageParam) => {
+  const token = sessionStorage.getItem('accessToken');
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const { page, size } = pageParam;
+  try {
+    const res = await axios.get(`${prefix}/list/${userId}/inquiries`, {
+      headers,
+      params: { page: page, size: size }
+    });
+    return res.data;
+  } catch (error) {
+    console.error('사용자가 작성한 문의글 조회 실패:', error);
+    throw error;
+  }
 };
