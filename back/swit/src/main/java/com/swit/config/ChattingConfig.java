@@ -6,16 +6,21 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import lombok.extern.log4j.Log4j2;
+
 @Configuration
 @EnableWebSocketMessageBroker //WebSocket을 사용하고 메시지 브로커를 활성화하는 어노테이션
+@Log4j2
 public class ChattingConfig implements WebSocketMessageBrokerConfigurer {
 //WebSocketMessageBrokerConfigurer: WebSocket 및 메시지 브로커를 구성하는 메소드를 재정의할 수 있도록 하는 인터페이스
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url = ws://localhost:8080/ws, 프로토콜이 http가 아니고 ws
         // http: ws, https: wss
+        log.info("백엔드 채팅 confing호출 성공@@@@@@@@@@@@@");
         registry.addEndpoint("/ws") // 연결될 엔드포인트
-            .setAllowedOrigins("*"); //모든 출처 허용(특정 origin만 허용하는것이 보안적인 측면에서 맞음)
+            .setAllowedOrigins("*") //모든 출처 허용(특정 origin만 허용하는것이 보안적인 측면에서 맞음)
+            .withSockJS(); //SockJS지원 추가
     }
 
     @Override

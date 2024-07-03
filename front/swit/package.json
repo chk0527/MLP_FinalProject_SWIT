@@ -30,6 +30,7 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
+    "sockjs-client": "^1.6.1",
     "sweetalert2": "^11.10.1",
     "sweetalert2-react-content": "^5.0.7",
     "typeit-react": "^2.7.1",
@@ -62,5 +63,5 @@
   "devDependencies": {
     "tailwindcss": "^3.4.3"
   },
-  "proxy": "http://223.130.157.92:10527/"
+  "proxy": "https://223.130.157.92:10527/"
 }

@@ -38,7 +38,7 @@ public class ChatController {
   private UserRepository userRepository;
 
   // 채팅 리스트 반환
-  @GetMapping("/chat/{studyNo}")
+  @GetMapping("api/chat/{studyNo}")
   public ResponseEntity<List<ChatMessage>> getChatMessages(@PathVariable(name = "studyNo") Integer studyNo) {
     // 여기서 스터디 번호를 기반으로 채팅 내용을 가져옴
     // Ex) studyNo를 사용하여 해당 스터디의 채팅 내용을 DB에서 가져옴.

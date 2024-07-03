@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import api from "../api/Api"
 import * as auth from "../api/LoginApi"
+import axios from "axios";
 
 export const LoginContext = createContext();
 LoginContext.displayName = "LoginContextName";
@@ -80,7 +81,7 @@ const LoginContextProvider = ({ children }) => {
         }
 
         try {
-            const response = await api.post('/api/refresh', null, {
+            const response = await api.post('/refresh', null, {
                 headers: {
                     'RefreshToken': refreshToken
                 }

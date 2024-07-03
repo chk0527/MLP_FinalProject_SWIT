@@ -2,7 +2,7 @@ import axios from "axios";
 import { getUserIdFromToken } from "../util/jwtDecode";
 
 export const API_SERVER_HOST = 'http://223.130.157.92:10527';
-const prefix = `${API_SERVER_HOST}/api/group`;
+const prefix = `/api/group`;
 
 // export const addGroup = async (studyObj) => {
 //   const token = sessionStorage.getItem('accessToken');
@@ -24,7 +24,7 @@ export const addGroup = async (groupData, answerData) => {
       throw new Error('No access token found');
   }
 
-  const res = await axios.post(`${API_SERVER_HOST}/api/group/join`, 
+  const res = await axios.post(`/api/group/join`, 
       { group: groupData, answer: answerData },
       {
           headers: {
@@ -37,7 +37,7 @@ export const addGroup = async (groupData, answerData) => {
 };
 
 export const isMember = async (userId, studyNo) => {
-  const res = await axios.get(`${API_SERVER_HOST}/api/group/isMember`, {
+  const res = await axios.get(`${prefix}/isMember`, {
     params: {userId, studyNo }
   });
   return res.data; // 여기서 승인 상태를 반환합니다
@@ -59,14 +59,14 @@ export const isLeader = async (studyNo) => {
 };
 
 export const fetchGroupRequests = async (studyNo) => {
-  const res = await axios.get(`${API_SERVER_HOST}/api/group/requests`, {
+  const res = await axios.get(`/api/group/requests`, {
       params: { studyNo }
   });
   return res.data;
 };
 
 export const confirmGroupJoin = async (groupNo, approve) => {
-  await axios.put(`${API_SERVER_HOST}/api/group/confirm`, null, {
+  await axios.put(`/api/group/confirm`, null, {
       params: {
           groupNo,
           approve

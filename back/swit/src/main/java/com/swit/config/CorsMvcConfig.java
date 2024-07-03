@@ -11,7 +11,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry corsRegistry) {
         
         corsRegistry.addMapping("/**")
-                .allowedOrigins("http://223.130.157.92:15270")
-                .allowedOrigins("http://swit.kro.kr:15270");
+                .allowedOrigins("https://223.130.157.92:15270")
+                .allowedOrigins("https://swit.kro.kr:15270");
     }
 }

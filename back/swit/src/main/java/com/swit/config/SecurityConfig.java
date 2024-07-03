@@ -63,7 +63,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Arrays.asList("http://swit.kro.kr:15270"));
+                        configuration.setAllowedOrigins(Arrays.asList("https://swit.kro.kr:15270"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "RefreshToken"));
@@ -86,7 +86,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/","/api/snslogin","/api/join","/api/login","/api/login/", "/api/login/*","/api/login/**", "/api/join/**","/api/calendar/**","/api/calendar/*", "/api/examjob/**", "/api/timer/**", "/api/confirm/**"
-                        , "/api/place/**","/api/login_user", "/api/user/**", "/api/study/", "/api/study/**","/api/group/isLeader/","/api/group/**","/snslogin/**","/snslogin","/api/snslogin/*", "/login/info","ws/**","/chat/**","/api/questions/","/api/answers","/api/refresh","/api/timer/*","/api/timer/**").permitAll()
+                        , "/api/place/**","/api/login_user", "/api/user/**", "/api/study/", "/api/study/**","/api/group/isLeader/","/api/group/**","/snslogin/**","/snslogin","/api/snslogin/*", "/login/info","ws/**","wss/**","/chat/**","api/chat/**", "/api/questions/","/api/answers","/api/refresh","/api/timer/*","/api/timer/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/**","/api/*").permitAll()    // GET 호출 인증 제외
                         .requestMatchers("/api/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());

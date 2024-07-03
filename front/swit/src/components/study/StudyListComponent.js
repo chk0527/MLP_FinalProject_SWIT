@@ -41,7 +41,7 @@ const StudyListComponent = ({
             <img
               src={
                 study.imageList && study.imageList.length > 0
-                  ? `${host}/api/study/display/${study.imageList[0].fileName}`
+                  ? `/api/study/display/${study.imageList[0].fileName}`
                   : defaultImg
               }
               className="w-72 h-72 bg-cover rounded"

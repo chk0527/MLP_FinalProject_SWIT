@@ -55,7 +55,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
                 alt="StudyImage"
                 key={i}
                 className="w-64 h-64 rounded"
-                src={`${host}/api/study/display/${imgFile}`}
+                src={`/api/study/display/${imgFile}`}
               />
             ))
           ) : (

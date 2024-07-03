@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client"
 import "../../css/CustomScroll.css"; // 커스텀 스크롤바 스타일을 위한 CSS 파일 임포트
 import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코드 유틸리티
 
@@ -26,7 +27,7 @@ function StudyChatComponent({ studyNo }) {
 
   // WebSocket 연결을 설정하는 함수
   const connect = () => {
-    const socket = new WebSocket(`ws://223.130.157.92:10527/ws`); // WebSocket 연결을 생성
+    const socket = new SockJS(`https://swit.kro.kr:15270/ws`);
     stompClient.current = Stomp.over(socket); // STOMP 프로토콜을 사용하는 클라이언트로 WebSocket 래핑
     stompClient.current.connect({}, () => {
       // 연결이 성공적으로 이루어지면 특정 채팅룸을 구독
@@ -49,7 +50,7 @@ function StudyChatComponent({ studyNo }) {
   // 서버로부터 초기 메시지를 가져오는 함수
   const fetchMessages = () => {
     return axios
-      .get(`http://223.130.157.92:10527/chat/${studyNo}`)
+      .get(`/api/chat/${studyNo}`)
       .then((response) => {
         setMessages(response.data); // 서버로부터 받은 메시지를 상태에 설정
       })
