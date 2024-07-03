@@ -78,7 +78,7 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 문의 및 신청내역 항목 */}
       {view === "chat" && (
-        <div className="">
+        <div className="w-full">
           <StudyInquiryListComponent studyNo={studyNo}
           inquiries={inquiries}
           setInquiries={setInquiries} />
@@ -88,7 +88,7 @@ const StudyGroupComponent = ({ studyNo }) => {
 
       {/* 뷰 - 회원 관리 항목 (방장만 볼 수 있음) */}
       {view === "memberManagement" && isLeaderState && (
-        <div>
+        <div className="w-full">
         <GroupTotalTimerComponent studyNo={studyNo}/>
         <MemberManagementComponent studyNo={studyNo} />
         </div>

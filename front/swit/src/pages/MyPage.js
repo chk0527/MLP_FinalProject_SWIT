@@ -6,18 +6,18 @@ import MyPostComponent from "../components/myPage/MyPostComponent";
 import { useParams } from "react-router-dom";
 
 const MyPage = () => {
-    const { userId } = useParams();
-    return (
-        <BasicLayout>
-            <div className="text-3xl">
-                <div>마이페이지</div>
-            </div>
-            <MyProfileComponent userId={userId} />
-            <MyStudyComponent/>
-            <MyFavoritesComponent/>
-            <MyPostComponent/>
-        </BasicLayout>       
-    )
-}
+  const { userId } = useParams();
+  return (
+    <BasicLayout>
+      <div className="flex flex-col items-center">
+        <div className="w-full pr-2 font-GSans">마이페이지</div>
+        <MyProfileComponent userId={userId} />
+        <MyStudyComponent />
+        <MyFavoritesComponent />
+        <MyPostComponent />
+      </div>
+    </BasicLayout>
+  );
+};
 
 export default MyPage;

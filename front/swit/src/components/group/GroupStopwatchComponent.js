@@ -493,7 +493,7 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                   }
                 />
                 <div className="flex justify-center space-x-2">
-                  <div className="text-3xl font-mono text-center mr-6">
+                  <div className="text-3xl font-mono text-center mr-2">
                     {formatStopWatchTime(currentStopwatch.time)}
                   </div>
                   {!currentStopwatch.running ? (
@@ -506,7 +506,7 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                           setIsEditing(false); // 시작 시 제목 입력창 비활성화
                         }
                       }}
-                      className="cursor-pointer shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
+                      className="cursor-pointer shadow bg-yellow-300 text-white p-2 rounded hover:bg-yellow-400"
                     >
                       시작
                     </div>
@@ -516,13 +516,13 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                         onClick={() => {
                           handlePauseStopwatch(currentStopwatch);
                         }}
-                        className="cursor-pointer shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
+                        className="cursor-pointer shadow bg-yellow-300 text-white p-2 rounded hover:bg-yellow-400"
                       >
                         일시정지
                       </div>
                       <div
                         onClick={() => handleStopStopwatch(currentStopwatch)}
-                        className="cursor-pointer shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
+                        className="cursor-pointer shadow bg-yellow-600 text-white p-2 rounded hover:bg-yellow-700"
                       >
                         기록
                       </div>
@@ -540,7 +540,7 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                             handleCreateStopwatch(true);
                           }
                         }}
-                        className="cursor-pointer shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
+                        className="cursor-pointer shadow bg-yellow-600 text-white p-2 rounded hover:bg-yellow-700"
                       >
                         다음
                       </div>

@@ -55,8 +55,8 @@ const StudyGroupPage = () => {
 
   return (
     <BasicLayout>
-      <div className="flex gap-10">
-        <div className="font-GSans">
+      <div className="relative flex gap-10">
+        <div className="grow font-GSans">
           <StudyInfoComponent
             studyNo={studyNo}
             ActionComponent={GroupMeetingComponent}
@@ -70,7 +70,7 @@ const StudyGroupPage = () => {
         </div>
       </div>
       {/* 목록으로 돌아가기 */}
-      <div className="flex justify-center w-full">
+      <div className="flex justify-center gap-4">
         <StudyListBtnComponent />
         <StudyModifyButtonComponent
           studyNo={studyNo}

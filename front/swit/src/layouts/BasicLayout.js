@@ -9,8 +9,8 @@ const BasicLayout = ({children}) => {
                 <h1 className="text-2xl md:text-4xl">Header</h1>
             </header> */}
             <BasicMenu></BasicMenu>
-            <div className=" bg-white w-full flex justify-center flex-col space-y-1 md:flex-row md:space-x-1 md:space-y-0">
-                <main className=" relative min-h-dvh px-5 pt-80 pb-5 ">{children}</main>
+            <div className=" bg-white w-full flex justify-center flex-row space-x-1 space-y-0">
+                <main className=" relative w-2/3 max-w-1300 min-h-dvh mx-5 pt-80 pb-5 ">{children}</main>
                 {/* <aside className="bg-green-300 md:w-1/5 lg:w-1/4 px-5 flex py-5">
 
                     <h1 className="text-2xl md:text-4xl">Sidebar</h1>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { searchId, searchId2, send_sms } from "../../api/LoginApi"
+import React, { navigate, useState, useEffect } from 'react';
+import { changePw, searchId, searchId2, send_sms } from "../../api/LoginApi"
 
 const initState = { 
   confirmNo:'',
@@ -8,6 +8,22 @@ const initState = {
   confirmPath:'',
   confirmNum:'',
   confirmLimitDate:''
+}
+
+const initState2 = { 
+  userNo:'',
+  userId:'',
+  userName:'',
+  userPassword:'',
+  userEmail:'',
+  userPhone:'',
+  userNick:'',
+  userSnsConnect:'',
+  userCreateDate:'',
+  userDeleteChk:'',
+  userDeleteDate:'',
+  userImage:'',
+  userRole:'',
 }
 
 function SearcPwComponent() {
@@ -37,6 +53,7 @@ function SearcPwComponent() {
   const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(300); // 5분 (300초)
   const [verificationTimeout, setVerificationTimeout] = useState('');
+  const [user, setUser] = useState({...initState2})
 
   useEffect(() => {
     if (emailDetail.trim()) {
@@ -115,7 +132,7 @@ function SearcPwComponent() {
   const handlePasswordConfirmChange = (e) => {
     setPasswordConfirm(e.target.value);
   }
-  
+
   const handleSendVerificationCode = (e) => {
     // 실제 인증 코드 전송 로직 작성
     // console.log('인증 코드 전송 timeRemaining' + timeRemaining);
@@ -123,7 +140,6 @@ function SearcPwComponent() {
     setIsVerified(false);
     setIsNotVerified(false);
     
-
     if (!id.trim()) {
         alert('아이디를 입력해 주세요.');
         return;
@@ -164,11 +180,10 @@ function SearcPwComponent() {
       // 임시 처리
       setConfirm(response.data);
       console.log(`setConfirm ${confirm.confirmNo}`);
-      console.log(`setConfirm ${confirm.userId}`);
       console.log(`setConfirm ${confirm.confirmTarget}`);
       console.log(`setConfirm ${confirm.confirmPath}`);
       console.log(`setConfirm ${confirm.confirmNum}`);
-      console.log(`setConfirm ${confirm.confirmLimitDate}`);
+
       if (certifyType === '3' ) {
         console.log("이메일 인증번호 발송이 성공하였습니다.");
             
@@ -178,6 +193,7 @@ function SearcPwComponent() {
       }
       // 고객정보 확인, 인증번호 얻기, sms 발송
       if (certifyType === '4' ) {
+        // 원복KYW
         send_sms(response.data)
         .then((result) => {
             console.log("SMS 인증번호 발송이 성공하였습니다.");
@@ -310,17 +326,17 @@ function SearcPwComponent() {
         }
 
 
-        searchId(certifyType, id, name, userEmail, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
-        .then((response) => {
+        // searchId(certifyType, id, name, userEmail, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+        // .then((response) => {
 
-          console.log("이메일 검증 nework에서 확인" + response.data);
-          // 고객정보 확인, 이메일 발송
-          // send_email(response.data)
-        })
-        .catch((error) => {
-          console.log("아이디, 회원명, 이메일을 확인해 주세요.");
-          return;
-        });
+        //   console.log("이메일 검증 nework에서 확인" + response.data);
+        //   // 고객정보 확인, 이메일 발송
+        //   // send_email(response.data)
+        // })
+        // .catch((error) => {
+        //   console.log("아이디, 회원명, 이메일을 확인해 주세요.");
+        //   return;
+        // });
 
         if (`${confirm.confirmPath}` == '1' || `${confirm.confirmPath}` == '3') {  
             console.log("이메일 인증번호 검증")
@@ -330,7 +346,8 @@ function SearcPwComponent() {
             return;
         }
 
-    } else {
+    } else if (certifyType == '4') {
+
         if (!confirm.userId.trim()) {
             alert('SMS 인증 하시기 바랍니다.');
             return;
@@ -359,8 +376,38 @@ function SearcPwComponent() {
             return;
         }
     }
+    
     setResultType("2");
   };
+
+  // 비밀번호 변경
+  const handleChangePw = (e) => {
+    if (password !== passwordConfirm) {
+      alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
+
+    // 아이디와 패스워드로만 비밀번호 변경
+    // changePw(confirm.userId.trim(), password)
+    // userId와 userPassword 값 설정
+    const updatedUser = {
+      ...user,
+      userId: confirm.userId.trim(),
+      userPassword: password
+    };
+
+    try {
+      changePw(updatedUser);
+
+      alert('비밀번호가 변경되었습니다.');
+      console.log("비밀번호 변경 ");
+    } catch (error) {
+      console.log("아이디, 회원명, 이메일을 확인해 주세요.");
+      return;
+    }
+
+    window.location.href = '/login'; // 로그인 페이지로 이동
+  }
 
   return (
     <>
@@ -369,7 +416,7 @@ function SearcPwComponent() {
     </div>
       <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8 border-t-2 border-slate-200">
         <form name="pageForm" method="post" onSubmit={handleSubmit}>
-          <input type="hidden" id="Certifytype" name="Certifytype" value="2" />
+          <input type="hidden" id="Certifytype" name="Certifytype" value="3" />
           <input type="hidden" id="resultType" name="resultType" value="1" />
           {resultType === '1' && (
             <>
@@ -380,7 +427,7 @@ function SearcPwComponent() {
                       type="radio"
                       id="lb_certifytype_email"
                       name="lb_certifytype"
-                      value="1"
+                      value="3"
                       checked={certifyType === '3'}
                       onChange={handleCertifyTypeChange}
                       className="mr-2"
@@ -391,7 +438,7 @@ function SearcPwComponent() {
                       type="radio"
                       id="lb_certifytype_mobile"
                       name="lb_certifytype"
-                      value="2"
+                      value="4"
                       checked={certifyType === '4'}
                       onChange={handleCertifyTypeChange}
                       className="mr-2"
@@ -468,7 +515,7 @@ function SearcPwComponent() {
                       </select>
                       <button
                         type="button"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 w-1/4 px-4 rounded-md ml-2"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 w-1/4 px-4 rounded-md ml-2"
                         onClick={handleSendVerificationCode}
                       >
                         이메일 발송
@@ -519,7 +566,7 @@ function SearcPwComponent() {
                         />
                         <button
                           type="button"
-                          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 w-1/4 rounded-md ml-2"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 w-1/4 rounded-md ml-2"
                           onClick={handleSendVerificationCode}
                         >
                           SMS 발송
@@ -541,7 +588,7 @@ function SearcPwComponent() {
                       />
                       <button
                         type="button"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
                         onClick={handleVerifyCode}
                       >
                         확인
@@ -566,7 +613,7 @@ function SearcPwComponent() {
                 <span className="mbrBtn mbrBtnSearch_4">
                    <button
                      type="submit"
-                     className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                     className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
                    >
                      <span>비밀번호 변경</span>
                    </button>
@@ -577,45 +624,56 @@ function SearcPwComponent() {
           )}
           {resultType === '2' && (
             <>
-              <div>
-                <label htmlFor="lb_password" className="block font-medium mb-2">
-                  새 비밀번호
-                </label>
+            <div className="flex items-center mt-4">
+              <label htmlFor="lb_password" className="block font-medium w-1/2 mb-2">
+                새 비밀번호
+              </label>
+              <div className="flex items-center">
                 <input
                   type="password"
                   name="lb_password"
                   id="lb_password"
                   maxLength={20}
-                  className="border border-gray-300 rounded-md px-4 py-2 w-full"
+                  className="border border-gray-300 rounded-md px-4 py-2 w-1/2 w-full"
                   value={password}
                   onChange={handlePasswordChange}
                 />
               </div>
-              <div>
-                <label htmlFor="lb_password_confirm" className="block font-medium mb-2">
-                  비밀번호 확인
-                </label>
+            </div>
+            <div className="flex items-center mt-4">
+              <label htmlFor="lb_password_confirm" className="block font-medium w-1/2 mb-2">
+                비밀번호 확인
+              </label>
+              <div className="flex items-center">
                 <input
                   type="password"
                   name="lb_password_confirm"
                   id="lb_password_confirm"
                   maxLength={20}
-                  className="border border-gray-300 rounded-md px-4 py-2 w-full"
+                  className="border border-gray-300 rounded-md px-4 py-2 w-1/2 w-full"
                   value={passwordConfirm}
                   onChange={handlePasswordConfirmChange}
                 />
               </div>
+            </div>
+            {/* {password !== passwordConfirm && (
+              <div className="text-red-500">비밀번호와 비밀번호 확인이 일치하지 않습니다.</div>
+            )} */}
+            <div className="flex items-center mt-4">
               <p className="mbrBtnFunc">
                 <span className="mbrBtn mbrBtnSearch_4">
                   <button
                     type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
+                    onClick={handleChangePw}
                   >
                     <span>비밀번호 변경</span>
                   </button>
                 </span>
               </p>
-            </>
+            </div>
+          </>
+            
           )}
         </form>
       </div>

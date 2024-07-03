@@ -38,7 +38,7 @@ const MyPostComponent = () => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full mb-8">
             <h2 className="text-lg font-bold mb-4">My 작성한 글</h2>
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">

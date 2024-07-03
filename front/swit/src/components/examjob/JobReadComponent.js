@@ -60,15 +60,15 @@ const JobReadComponent = ({ jobNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            <div className="p-6 rounded-lg w-full max-w-6xl">
-                <div className="flex justify-center border-soild border-gray-400 border-b-4">
-                    <h1 className="text-3xl font-bold mb-5">{job.jobTitle}</h1>
-                    <button onClick={handleFavorite} className="m-0 ml-3 p-0 mb-6">
+            <div className="py-6 rounded-lg w-full ">
+                <div className="flex justify-center border-soild border-gray-700 border-b-2">
+                    <h1 className="text-3xl font-bold mb-4">{job.jobTitle}</h1>
+                    <button onClick={handleFavorite} className="m-0 ml-3 p-0 -mt-7">
                         {isFavorite ? <FaStar size={35} color="#FFF06B" /> : <FaRegStar size={35} color="#FFF06B" />}
                     </button>
                 </div>
 
-                <div className="flex-wrap w-1000 font-GSans bg-white p-6 border border-white rounded-lg mb-5">
+                <div className="flex-wrap w-full max-w-1300 font-GSans bg-white border border-white rounded-lg mt-20">
                     <h2 className="text-lg mb-2 font-semibold ml-4">{job.jobCompany}</h2>
 
                     <div className="flex justify-between mt-4">
@@ -99,7 +99,7 @@ const JobReadComponent = ({ jobNo }) => {
                 <div className="flex justify-center">
                 <button
           type="button"
-          className="rounded p-3 m-2 text-xl w-28 text-white bg-gray-500"
+          className="rounded p-3 m-40 text-xl w-28 text-white bg-gray-500"
           onClick={() => window.history.back()}
         >
           목록

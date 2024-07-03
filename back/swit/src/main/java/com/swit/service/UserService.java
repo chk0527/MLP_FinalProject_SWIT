@@ -1,16 +1,16 @@
 package com.swit.service;
 
 import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.swit.domain.User;
 import com.swit.dto.UserDTO;
@@ -54,7 +54,7 @@ public class UserService {
     Optional<User> result = userRepository.findByUserId(userDTO.getUserId());
     User user = result.orElseThrow();
     user.setUserName(userDTO.getUserName());
-    user.setUserNick(userDTO.getUserNick());
+    //user.setUserNick(userDTO.getUserNick());  //userNick은 이제 수정하면 안되는 고윳값
     user.setUserPhone(userDTO.getUserPhone());
     user.setUserEmail(userDTO.getUserEmail());
     userRepository.save(user);
@@ -193,24 +193,25 @@ public class UserService {
 
     // 기본 이미지 파일 설정
     if (userDTO.getUserImage() == null || userDTO.getUserImage().isEmpty()) {
-      Path defaultImagePath = Paths.get("back/swit/upload", "userBlank.png");
-      System.out.println("기본 이미지 파일 경로: " + defaultImagePath);
+      // 현재 클래스 파일의 절대 경로를 기반으로 프로젝트 루트 경로를 가져옴
+      String projectRootPath = new File("").getAbsolutePath();
+      Path defaultImagePath = Paths.get(projectRootPath, "upload", "userBlank.png");
+      System.out.println("기본 이미지 파일 경로: " + defaultImagePath.toAbsolutePath());
 
-      if (Files.exists(defaultImagePath)) {
-        // 유저 ID를 포함하여 파일명 생성
-        String defaultImageFileName = userId + "_userBlank.png";
-        Path targetPath = Paths.get("upload", defaultImageFileName);
+      try {
+        if (Files.exists(defaultImagePath)) {
+          // 유저 ID를 포함하여 파일명 생성
+          String defaultImageFileName = userId + "_userBlank.png";
+          Path targetPath = Paths.get("upload", defaultImageFileName);
 
-        try {
           Files.copy(defaultImagePath, targetPath);
           data.setUserImage(defaultImageFileName); // 이미지 필드에 파일 이름 설정
           System.out.println("기본 이미지 설정 완료: " + defaultImageFileName);
-        } catch (IOException e) {
-          System.out.println("기본 이미지 파일 복사 중 오류 발생: " + e.getMessage());
-          data.setUserImage(null);
+        } else {
+          System.out.println("기본 이미지 파일이 존재하지 않습니다: " + defaultImagePath.toAbsolutePath());
         }
-      } else {
-        System.out.println("기본 이미지 파일이 존재하지 않습니다: " + defaultImagePath);
+      } catch (IOException e) {
+        System.out.println("기본 이미지 파일 접근 중 오류 발생: " + e.getMessage());
       }
     } else {
       data.setUserImage(userDTO.getUserImage());
@@ -218,5 +219,33 @@ public class UserService {
 
     userRepository.save(data);
   }
+
+  // 비밀번호 찾기화면에서 비밀번호 변경 처리
+  public Integer changePw(String userId, String userPassword) {
+
+
+    Optional<User> result = userRepository.findByUserId(userId);
+    User user = result.orElseThrow();
+
+    Integer userNo = user.getUserNo();
+    
+    // 고객은 반드시 존재해야 한다.
+    if (userNo.equals(null) || userNo <= 0) {
+      return 1;   // 고객 미존재
+    }
+    System.out.println(userPassword);
+    user.setUserPassword(bCryptPasswordEncoder.encode(userPassword));
+
+    System.out.println(user.getUserNo());
+    System.out.println(user.getUserId());
+    System.out.println(user.getUserEmail());
+    System.out.println(user.getUserPhone());
+    System.out.println(user.getUserPassword());
+
+    userRepository.save(user);
+
+    return 0;   // 정상
+  }
+
 
 }

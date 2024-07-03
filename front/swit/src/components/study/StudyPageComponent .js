@@ -3,25 +3,25 @@
 
 const StudyPageComponent = ({ serverData, movePage }) => {
     return (
-      <div className="m-6 flex justify-center">
+      <div className="m-6 flex justify-center items-center">
         {serverData.prev ?
-          <div className="m-2 p-2 w-16 cursor-pointer text-center font-bold text-blue-400"
+          <div className="m-2 p-2 cursor-pointer font-bold text-black"
             onClick={() => movePage({ StudyPage: serverData.prevPage })}>
-            &lt;</div> : <></>}
+            &lt;</div> : <div className="m-2 p-2 font-bold text-gray-300">&lt;</div>}
             
         {serverData.pageNumList?.map(pageNum =>
           <div key={pageNum}
-            className={`m-1 p-2 w-8 cursor-pointer text-center rounded text-black font-bold
-                ${serverData.current === pageNum ? 'border-inherit border-2' : ''}`}
+            className={`m-2 p-2 cursor-pointer text-center text-black
+                ${serverData.current === pageNum ? 'border-b-2 border-black font-bold': 'font-normal'}`}
             onClick={() => movePage({ StudyPage: pageNum })}>
             {pageNum}
           </div>
         )}
   
         {serverData.next ?
-          <div className="m-2 p-2 w-16 cursor-pointer text-center font-bold text-blue-400"
+          <div className="m-2 p-2 cursor-pointer font-bold text-black"
             onClick={() => movePage({ StudyPage: serverData.nextPage })}>
-            &gt;</div> : <></>}
+            &gt;</div> : <div className="m-2 p-2 font-bold text-gray-300">&gt;</div>}
       </div>
     )
   }

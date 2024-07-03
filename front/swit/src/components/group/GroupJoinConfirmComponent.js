@@ -109,7 +109,7 @@ const GroupJoinConfirmComponent = () => {
       <p className="text-xl font-semibold mt-8 p-2 text-gray-900">
         가입 신청 내역
       </p>
-      <hr className="border-4 border-gray-500 mb-4 w-1/6" />
+      <hr className="border-4 border-gray-500 mb-4 w-40" />
       <div className="border border-gray-200 rounded overflow-auto custom-scrollbar h-80">
         {groupRequests.length === 0 ? (
           <p className="text-center mt-36">신청 내역이 없습니다.</p>
@@ -131,8 +131,7 @@ const GroupJoinConfirmComponent = () => {
                       가입 신청서
                     </button>
                   </div>
-                  <span>-----------------------------------------------</span>
-                  <div>
+                  <div className="flex gap-2">
                     <button
                       className="bg-white shadow text-gray-500 px-4 py-2 rounded hover:bg-green-700 hover:text-white transition duration-300"
                       onClick={() => handleConfirm(request.groupNo, true)}
