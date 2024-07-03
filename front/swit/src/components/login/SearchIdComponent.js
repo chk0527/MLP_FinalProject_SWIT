@@ -227,22 +227,21 @@ function SearcIdComponent() {
         confirmLimitDate: confirm.confirmLimitDate
       })
       .then((response) => {
-        console.log("인증번호가 일치입니다.");
         setConfirm(response.data);
         setIsVerificationCodeSent(false);
-        alert("인증번호가 일치입니다.");
+        alert("인증번호가 확인 되었습니다.");
         // 인증 성공 시
         // setTimeRemaining(300); // 남은 시간 5분으로 초기화
         // clearVerificationTimer();
         setIsVerified(true);
       })
       .catch((error) => {
-        alert("인증번호 불일치 합니다. 다시 입력해 주세요");
+        alert("인증번호가 불일치 합니다. 다시 입력해 주세요");
         setIsNotVerified(true);
         return;
       });
     } catch (error) {
-      alert("인증번호 불일치 합니다. 다시 입력해 주세요");
+      alert("인증번호가 불일치 합니다. 다시 입력해 주세요");
       setIsNotVerified(true);
     }
     

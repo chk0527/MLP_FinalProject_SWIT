@@ -104,10 +104,14 @@ const StudyModifyComponent = ({ studyNo }) => {
     }
 
     const handleClickDelete = () => {
-        deleteOne(studyNo).then(result => {
-            setResult('Deleted')
-        })
-    }
+      deleteOne(studyNo).then(result => {
+        alert('삭제 되었습니다.');
+        navigate('/study');
+      }).catch(error => {
+        console.error('삭제 중 오류가 발생했습니다:', error);
+        alert('삭제 중 오류가 발생했습니다.');
+      });
+    };
 
     const closeModal = () => {
         if (result == 'Deleted')
@@ -402,7 +406,7 @@ const StudyModifyComponent = ({ studyNo }) => {
                             className=" rounded bg-red-200 px-28 py-4 text-center font-semibold shadow-sm hover:bg-red-400"
                             onClick={handleClickDelete}
                         >
-                            삭제(연관된 테이블 삭제 미구현으로 미동작)
+                            삭제
                         </button>
                     </div>
                 </div>
