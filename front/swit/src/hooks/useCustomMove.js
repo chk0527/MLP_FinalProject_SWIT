@@ -12,11 +12,13 @@ const getNum = (param, defaultValue) => {
   return parseInt(param);
 };
 
-const useCustomMove = () => {
+const useCustomMove = (options = {}) => {
   const navigate = useNavigate()
   const [queryParams] = useSearchParams()
   const page = getNum(queryParams.get('page'), 1)
-  const size = getNum(queryParams.get('size'), 10)
+  const size = getNum(queryParams.get('size'), 10)  
+
+  const { setPage, setSize } = options;
 
   const StudyPage = getNum(queryParams.get("StudyPage"), 1);
   const StudySize = getNum(queryParams.get("StudySize"), 16);
@@ -112,6 +114,35 @@ const useCustomMove = () => {
     navigate({ pathname: `../board/read/${num}`, search: queryDefault }); //조회시에 기존의 쿼리문자열을 유지하기 위해
   };
 
+
+  // 마이페이지 - 작성한 게시글 모음 페이징 처리
+  // 페이지 url 뒤에 파라미터 붙이지 않고 페이징 처리
+  const moveToUserBoardList = (pageParam) => {
+    const size = 5; 
+    if (pageParam) {
+      const pageNum = getNum(pageParam.page, 1);
+      if (setPage) setPage(pageNum);
+      if (setSize) setSize(size);
+    } else {
+      if (setPage) setPage(1);
+      if (setSize) setSize(size);
+    }
+  };
+
+  // 마이페이지 - 작성한 문의글 모음 페이징 처리
+  // 페이지 url 뒤에 파라미터 붙이지 않고 페이징 처리
+  const moveToUserInquiryList = (pageParam) => {
+    const size = 5; 
+    if (pageParam) {
+      const pageNum = getNum(pageParam.page, 1);
+      if (setPage) setPage(pageNum);
+      if (setSize) setSize(size);
+    } else {
+      if (setPage) setPage(1);
+      if (setSize) setSize(size);
+    }
+  };
+
   return {
     moveToExamList,
     page,
@@ -127,6 +158,8 @@ const useCustomMove = () => {
     moveToList,
     moveToBoardList,
     moveToBoardRead,
+    moveToUserBoardList,
+    moveToUserInquiryList
   };
 };
 
