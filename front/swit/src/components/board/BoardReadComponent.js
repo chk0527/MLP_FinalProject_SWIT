@@ -126,7 +126,17 @@ const BoardReadComponent = ({ boardNo }) => {
           cancelFn={handleDeleteCancel}
         />
       )}
-      <div className="absolute text-sm top-0 right-0 flex gap-2">
+
+      <div className="flex py-6 justify-between border-gray-700 border-b-2">
+        <h1 className="text-3xl font-bold mb-4">
+          [{board.boardCategory}] {board.boardTitle}
+        </h1>
+        <div className="flex flex-col items-end text-gray-600">
+          <span>작성자: {board.userNick}</span>
+          <span>게시일: {board.boardCreatedDate}</span>
+        </div>
+      </div>
+      <div className="absolute text-sm top-28 right-4 flex gap-4">
         {userInfo.userNo === board.userNo ? (
           <>
             <button
@@ -146,20 +156,11 @@ const BoardReadComponent = ({ boardNo }) => {
           <></>
         )}
       </div>
-      <div className="flex py-6 justify-between border-gray-700 border-b-2">
-        <h1 className="text-3xl font-bold mb-4">
-          [{board.boardCategory}] {board.boardTitle}
-        </h1>
-        <div className="flex flex-col items-end text-sm text-gray-600">
-          <span>닉네임: {board.userNick}</span>
-          <span>게시일: {board.boardCreatedDate}</span>
-        </div>
+      <div className="text-xl py-10 px-2 min-h-450 whitespace-pre-line  border-gray-700 border-b-2">
+        {board.boardContent}
       </div>
 
-      <div className="py-4 min-h-450">{board.boardContent}</div>
-      <p className="my-2">댓글</p>
-      <hr></hr>
-      <div className="flex items-center my-2">
+      <div className="flex items-center my-6">
         <textarea
           name="commentContent"
           id="commentContent"
@@ -169,34 +170,40 @@ const BoardReadComponent = ({ boardNo }) => {
           onChange={handleChangeComment}
         ></textarea>
         <button
-          className="rounded bg-yellow-600 text-white px-3.5 py-2.5 text-center mx-2"
+          className="rounded bg-yellow-200 shadow px-3.5 py-2.5 text-center mx-2"
           onClick={handleClickAdd}
         >
           작성
         </button>
       </div>
       <div>
+        <p className="my-2">댓글</p>
+        <hr></hr>
         {comments
           .slice()
           .reverse()
           .map((comment, index) => (
-            <div
-              key={index}
-              className="mb-4 p-4 border rounded-lg bg-gray-50 relative"
-            >
-              <div className="text-sm text-gray-600">{comment.userNick} 님</div>
-              <div className="mt-2 text-gray-900 whitespace-pre-line">
-                {comment.commentContent}
+            <>
+              <div key={index} className="my-4 p-4 rounded relative">
+                <div className="flex justify-between">
+                  <div>{comment.userNick} 님</div>
+                  {userInfo.userNo === comment.userNo && (
+                    <button
+                      className="text-sm text-red-600"
+                      onClick={() =>
+                        handleClickCommentDelete(comment.commentNo)
+                      }
+                    >
+                      삭제
+                    </button>
+                  )}
+                </div>
+                <div className="mt-2 text-gray-900 whitespace-pre-line">
+                  {comment.commentContent}
+                </div>
               </div>
-              {userInfo.userNo === comment.userNo && (
-                <button
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                  onClick={() => handleClickCommentDelete(comment.commentNo)}
-                >
-                  &times;
-                </button>
-              )}
-            </div>
+              <hr />
+            </>
           ))}
       </div>
     </div>
