@@ -12,7 +12,7 @@ const initState = {
     boardNo: 0,
     boardTitle: '추가',
     boardContent: '콘텐츠',
-    boardCategory: "스터디",
+    boardCategory: "질문",
     userNo: 1,
     userNick: 'NoName'
 }

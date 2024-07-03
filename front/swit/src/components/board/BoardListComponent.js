@@ -37,18 +37,18 @@ const BoardListComponent = () => {
     });
   }, [page, size]);
 
-  const handleSearch = () => {
-    const { searchType, searchText, boardCategory } = searchParams;
-    const params = {
+  const handleSearch = (params = searchParams) => {
+    const { searchType, searchText, boardCategory } = params;
+    const searchParams = {
       [searchType]: searchText,
-      boardCategory,
+      boardCategory: boardCategory || "",  // 카테고리가 없으면 전체 가져오기
     };
-    getBoardSearch(params, { page, size }).then((data) => {
+    console.log(searchParams)
+    getBoardSearch(searchParams, { page, size }).then((data) => {
       console.log(data);
       setServerData(data);
     });
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchParams((prevParams) => ({
@@ -56,14 +56,16 @@ const BoardListComponent = () => {
       [name]: value,
     }));
   };
-
   const handleCategoryChange = (category) => {
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      boardCategory: category,
-    }));
+    setSearchParams((prevParams) => {
+      const newCategory = prevParams.boardCategory === category ? "" : category;
+      const newParams = { ...prevParams, boardCategory: newCategory };
+      
+      handleSearch(newParams);  // 카테고리를 변경하자마자 검색 수행
+      
+      return newParams;
+    });
   };
-
   const handleAddBoard = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
