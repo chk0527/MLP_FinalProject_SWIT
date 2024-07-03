@@ -304,7 +304,7 @@ const GroupCalendarComponent = ({ studyNo }) => {
   }
 
   return (
-    <div className="flex w-1000">
+    <div className="flex w-full max-w-1000">
       <div className="w-full">
         <div className="my-4">
           <DragAndDropCalendar

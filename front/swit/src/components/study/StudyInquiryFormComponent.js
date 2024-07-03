@@ -14,7 +14,7 @@ const StudyInquiryFormComponent = ({ studyNo, setInquiries }) => {
       navigate("/login");
       return;
     }
-    
+
     await inquirySubmit(studyNo, inquiryContent);
     setInquiryContent("");
     const inquiriesData = await fetchInquiries(studyNo);
@@ -35,20 +35,22 @@ const StudyInquiryFormComponent = ({ studyNo, setInquiries }) => {
   };
 
   return (
-    <div className="flex border border-gray-200 justify-center items-center py-4 gap-8">
-      <textarea
-        className="resize-none  w-750 h-10 py-1.5 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
-        value={inquiryContent}
-        onKeyDown={(e) => pressEnter(e)}
-        onChange={(e) => setInquiryContent(e.target.value)}
-        placeholder="질문을 입력하세요."
-      />
-      <button
-        className="text-gray-500 border-2 border-solid border-gray-400 bg-white px-6 py-2 rounded hover:border-black hover:text-black transition duration-300"
-        onClick={handleInquirySubmit}
-      >
-        등록
-      </button>
+    <div className="flex justify-center ">
+      <div className="flex items-center py-4 px-20 gap-8 w-full max-w-1000  border border-gray-200 ">
+        <textarea
+          className="resize-none w-full h-10 py-1.5 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+          value={inquiryContent}
+          onKeyDown={(e) => pressEnter(e)}
+          onChange={(e) => setInquiryContent(e.target.value)}
+          placeholder="질문을 입력하세요."
+        />
+        <button
+          className="text-gray-500 w-20 border-2 border-solid border-gray-400 bg-white py-2 rounded hover:border-black hover:text-black transition duration-300"
+          onClick={handleInquirySubmit}
+        >
+          등록
+        </button>
+      </div>
     </div>
   );
 };

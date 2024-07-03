@@ -68,7 +68,7 @@ const BoardListComponent = () => {
         </div>
       </div>
       <div className="h-650">
-        <table className="w-1300 bg-white border-y border-gray-200">
+        <table className="w-full bg-white border-y border-gray-200">
           <thead>
             <tr className="bg-yellow-100">
               <th className="w-32 py-4 border-b-2 border-gray-200">No</th>

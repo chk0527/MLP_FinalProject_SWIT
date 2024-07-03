@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { responseSubmit, fetchInquiries, deleteInquiry } from "../../api/StudyApi";
+import {
+  responseSubmit,
+  fetchInquiries,
+  deleteInquiry,
+} from "../../api/StudyApi";
 import { isLeader } from "../../api/GroupApi";
 import reply from "../../img/reply.png";
 
@@ -58,12 +62,14 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
   };
 
   return (
-    <div>
-      <p className="text-xl font-semibold p-2 text-gray-900"> 가입 문의</p>
-      <hr className="border-4 border-gray-500 mb-4 w-1/6" />
+    <div className="flex flex-col items-center w-full">
+      <div className="w-full max-w-1000">
+        <p className="text-xl font-semibold p-2 text-gray-900"> 가입 문의</p>
+        <hr className="border-4 border-gray-500 mb-4 w-40" />
+      </div>
 
-      <div className="flex justify-center">
-        <div className="px-4 w-1000 h-fit max-h-450 bg-white rounded border border-gray-200 overflow-auto custom-scrollbar">
+      <div className="flex justify-center w-full">
+        <div className="px-4 w-full max-w-1000 h-fit max-h-450 bg-white rounded border border-gray-200 overflow-auto custom-scrollbar">
           {inquiries == "" ? (
             <p className="text-center my-44">문의 내역이 없습니다</p>
           ) : (
@@ -134,7 +140,9 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
                                   [inquiry.inquiryNo]: e.target.value,
                                 }))
                               }
-                              onKeyDown={(e) => pressEnter(e, inquiry.inquiryNo)}
+                              onKeyDown={(e) =>
+                                pressEnter(e, inquiry.inquiryNo)
+                              }
                               placeholder="답변을 입력하세요."
                             />
                             <button
