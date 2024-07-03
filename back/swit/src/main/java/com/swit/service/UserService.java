@@ -1,6 +1,7 @@
 package com.swit.service;
 
 import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -193,7 +194,8 @@ public class UserService {
 
     // 기본 이미지 파일 설정
     if (userDTO.getUserImage() == null || userDTO.getUserImage().isEmpty()) {
-      Path defaultImagePath = Paths.get("back/swit/upload", "userBlank.png");
+      String projectRootPath = new File("").getAbsolutePath();
+      Path defaultImagePath = Paths.get(projectRootPath, "upload", "userBlank.png");
       System.out.println("기본 이미지 파일 경로: " + defaultImagePath.toAbsolutePath());
 
       try {
