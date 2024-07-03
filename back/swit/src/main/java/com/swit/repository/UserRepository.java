@@ -1,12 +1,9 @@
 package com.swit.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Query;
-// import org.springframework.data.repository.query.Param;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.swit.domain.User;
 // import com.swit.dto.UserDTO;
@@ -42,7 +39,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserNickAndUserEmailAndUserSnsConnect(String userNick, String userEmail, String userSnsConnect);
     Boolean existsByUserNickAndUserEmailAndUserSnsConnect(String userNick, String userEmail, String userSnsConnect);
 
-
-
+    //수정 시 중복 체크
+    List<User> findUsersByUserNick(String userNick);
+    List<User> findUsersByUserPhone(String userPhone);
+    List<User> findUsersByUserEmail(String userEmail);
 
 }
