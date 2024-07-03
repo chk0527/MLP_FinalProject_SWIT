@@ -98,7 +98,7 @@ const StudyReadComponent = ({ studyNo }) => {
   return (
     <div>
       {/* 스터디정보 */}
-      <div className="flex justify-center ">
+      <div className="flex justify-center">
         <StudyInfoComponent studyNo={studyNo} ActionComponent={ApplyButton} />
       </div>
 

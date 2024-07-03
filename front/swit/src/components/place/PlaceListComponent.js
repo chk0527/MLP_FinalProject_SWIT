@@ -10,7 +10,7 @@ const PlaceListComponent = ({
   handleFavorite,
 }) => {
   return (
-    <div className="flex-wrap w-1300 font-GSans mb-20">
+    <div className="flex-wrap max-w-1300 font-GSans mb-20">
       <div className="md:grid place-items-center gap-16 md:grid-cols-3 ">
         {currentPlaces.map((place, index) => (
           <div

@@ -109,7 +109,7 @@ const GroupJoinConfirmComponent = () => {
       <p className="text-xl font-semibold mt-8 p-2 text-gray-900">
         가입 신청 내역
       </p>
-      <hr className="border-4 border-gray-500 mb-4 w-1/6" />
+      <hr className="border-4 border-gray-500 mb-4 w-40" />
       <div className="border border-gray-200 rounded overflow-auto custom-scrollbar h-80">
         {groupRequests.length === 0 ? (
           <p className="text-center mt-36">신청 내역이 없습니다.</p>

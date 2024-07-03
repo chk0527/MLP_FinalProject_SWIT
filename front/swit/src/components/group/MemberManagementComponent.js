@@ -27,9 +27,9 @@ const MemberManagementComponent = ({ studyNo }) => {
   };
 
   return (
-    <div className="w-1000">
+    <div className="">
       <p className="text-xl font-semibold mt-8 p-2 text-gray-900"> 회원 관리</p>
-      <hr className="border-4 border-gray-500 mb-4 w-1/6" />
+      <hr className="border-4 border-gray-500 mb-4 w-40" />
       <table className="w-full bg-white border border-gray-200">
         <thead>
           <tr>
