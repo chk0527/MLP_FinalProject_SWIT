@@ -178,11 +178,6 @@ const MyProfileComponent = ({ userId }) => {
                                 name="userName" type="text" value={modalUser.userName} onChange={handleTextChange} />
                         </div>
                         <div className="mb-4">
-                            <label className="block mb-1">닉네임:</label>
-                            <input className="w-full border border-gray-300 p-2 rounded"
-                                name="userNick" type="text" value={modalUser.userNick} onChange={handleTextChange} />
-                        </div>
-                        <div className="mb-4">
                             <label className="block mb-1">전화번호:</label>
                             <input className="w-full border border-gray-300 p-2 rounded"
                                 name="userPhone" type="text" value={modalUser.userPhone} onChange={handleTextChange} />

@@ -54,7 +54,7 @@ public class UserService {
     Optional<User> result = userRepository.findByUserId(userDTO.getUserId());
     User user = result.orElseThrow();
     user.setUserName(userDTO.getUserName());
-    user.setUserNick(userDTO.getUserNick());
+    //user.setUserNick(userDTO.getUserNick());  //userNick은 이제 수정하면 안되는 고윳값
     user.setUserPhone(userDTO.getUserPhone());
     user.setUserEmail(userDTO.getUserEmail());
     userRepository.save(user);
@@ -194,23 +194,22 @@ public class UserService {
     // 기본 이미지 파일 설정
     if (userDTO.getUserImage() == null || userDTO.getUserImage().isEmpty()) {
       Path defaultImagePath = Paths.get("back/swit/upload", "userBlank.png");
-      System.out.println("기본 이미지 파일 경로: " + defaultImagePath);
+      System.out.println("기본 이미지 파일 경로: " + defaultImagePath.toAbsolutePath());
 
-      if (Files.exists(defaultImagePath)) {
-        // 유저 ID를 포함하여 파일명 생성
-        String defaultImageFileName = userId + "_userBlank.png";
-        Path targetPath = Paths.get("upload", defaultImageFileName);
+      try {
+        if (Files.exists(defaultImagePath)) {
+          // 유저 ID를 포함하여 파일명 생성
+          String defaultImageFileName = userId + "_userBlank.png";
+          Path targetPath = Paths.get("upload", defaultImageFileName);
 
-        try {
           Files.copy(defaultImagePath, targetPath);
           data.setUserImage(defaultImageFileName); // 이미지 필드에 파일 이름 설정
           System.out.println("기본 이미지 설정 완료: " + defaultImageFileName);
-        } catch (IOException e) {
-          System.out.println("기본 이미지 파일 복사 중 오류 발생: " + e.getMessage());
-          data.setUserImage(null);
+        } else {
+          System.out.println("기본 이미지 파일이 존재하지 않습니다: " + defaultImagePath.toAbsolutePath());
         }
-      } else {
-        System.out.println("기본 이미지 파일이 존재하지 않습니다: " + defaultImagePath);
+      } catch (IOException e) {
+        System.out.println("기본 이미지 파일 접근 중 오류 발생: " + e.getMessage());
       }
     } else {
       data.setUserImage(userDTO.getUserImage());
