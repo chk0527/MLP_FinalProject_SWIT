@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBoardList } from "../../api/BoardApi";
+import { getBoardList, getBoardSearch } from "../../api/BoardApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PageComponent from "../common/PageComponent";
 import { getUserIdFromToken } from "../../util/jwtDecode";
@@ -22,8 +22,12 @@ const initState = {
 
 const BoardListComponent = () => {
   const { page, size, moveToBoardList, moveToBoardRead } = useCustomMove();
-  //
   const [serverData, setServerData] = useState(initState);
+  const [searchParams, setSearchParams] = useState({
+    searchType: "boardTitle",
+    searchText: "",
+    boardCategory: "",
+  });
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -32,6 +36,33 @@ const BoardListComponent = () => {
       setServerData(data);
     });
   }, [page, size]);
+
+  const handleSearch = () => {
+    const { searchType, searchText, boardCategory } = searchParams;
+    const params = {
+      [searchType]: searchText,
+      boardCategory,
+    };
+    getBoardSearch(params, { page, size }).then((data) => {
+      console.log(data);
+      setServerData(data);
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      [name]: value,
+    }));
+  };
+
+  const handleCategoryChange = (category) => {
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      boardCategory: category,
+    }));
+  };
 
   const handleAddBoard = () => {
     const userId = getUserIdFromToken();
@@ -49,21 +80,52 @@ const BoardListComponent = () => {
         <div className="text-5xl pb-16 font-blackHans">게시판</div>
         <div className="text-2xl -m-4 pb-10">
           <div className="text-right flex justify-end pb-4">
-            {/* 제목검색 */}
+            {/* 검색 유형 선택 */}
+            <select
+              name="searchType"
+              className="focus:outline-none mx-2"
+              onChange={handleInputChange}
+              value={searchParams.searchType}
+            >
+              <option value="boardTitle">제목</option>
+              <option value="boardContent">내용</option>
+              <option value="userNick">작성자</option>
+            </select>
+            {/* 검색 입력 */}
             <input
               className="focus:outline-none"
               type="text"
-              placeholder="제목 검색"
+              placeholder="검색"
+              name="searchText"
+              value={searchParams.searchText}
+              onChange={handleInputChange}
             />
-            <button type="button">
-              <img className="size-6" src={searchIcon}></img>
+            <button type="button" onClick={handleSearch}>
+              <img className="size-6" src={searchIcon} alt="검색" />
             </button>
           </div>
           <div className="flex justify-end pb-4">
-            {/* 대면비대면 */}
-            <div className={"mx-4 cursor-pointer text-gray-500"}>질문</div>|
-            <div className={"mx-4 cursor-pointer text-gray-500"}>정보공유</div>|
-            <div className={"mx-4 cursor-pointer text-gray-500"}>자유</div>
+            {/* 카테고리 선택 */}
+            <div
+              className={`mx-4 cursor-pointer ${searchParams.boardCategory === "질문" ? "font-bold text-black" : "text-gray-500"}`}
+              onClick={() => handleCategoryChange("질문")}
+            >
+              질문
+            </div>
+            |
+            <div
+              className={`mx-4 cursor-pointer ${searchParams.boardCategory === "정보공유" ? "font-bold text-black" : "text-gray-500"}`}
+              onClick={() => handleCategoryChange("정보공유")}
+            >
+              정보공유
+            </div>
+            |
+            <div
+              className={`mx-4 cursor-pointer ${searchParams.boardCategory === "자유" ? "font-bold text-black" : "text-gray-500"}`}
+              onClick={() => handleCategoryChange("자유")}
+            >
+              자유
+            </div>
           </div>
         </div>
       </div>
@@ -85,19 +147,11 @@ const BoardListComponent = () => {
                 onClick={() => moveToBoardRead(board.boardNo)}
                 className="hover:bg-gray-100 cursor-pointer"
               >
-                <td className="py-4 text-center border-b  ">{board.boardNo}</td>
-                <td className="py-4 text-center border-b  ">
-                  {board.boardCategory}
-                </td>
-                <td className="py-4 text-center border-b  ">
-                  {board.boardTitle}
-                </td>
-                <td className="py-4 text-center border-b  ">
-                  {board.userNick}
-                </td>
-                <td className="py-4 text-center border-b  ">
-                  {board.boardCreatedDate.substring(0, 10)}
-                </td>
+                <td className="py-4 text-center border-b">{board.boardNo}</td>
+                <td className="py-4 text-center border-b">{board.boardCategory}</td>
+                <td className="py-4 text-center border-b">{board.boardTitle}</td>
+                <td className="py-4 text-center border-b">{board.userNick}</td>
+                <td className="py-4 text-center border-b">{board.boardCreatedDate.substring(0, 10)}</td>
               </tr>
             ))}
           </tbody>
@@ -106,7 +160,7 @@ const BoardListComponent = () => {
       <div className="flex justify-end mt-4">
         <button
           onClick={handleAddBoard}
-          className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
+          className="hover:bg-yellow-200 border-2 border-solid border-black py-2 px-4 rounded mt-4"
         >
           글쓰기
         </button>
@@ -115,4 +169,5 @@ const BoardListComponent = () => {
     </div>
   );
 };
+
 export default BoardListComponent;
