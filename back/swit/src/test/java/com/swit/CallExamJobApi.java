@@ -70,11 +70,11 @@
 //             urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + key); /* Service Key */
 //             apiExplorer(urlBuilder);
 
-            try {
-                Document documentInfo = null;
-                documentInfo = (Document) DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .parse(urlBuilder.toString());
-                documentInfo.getDocumentElement().normalize();
+            // try {
+            //     Document documentInfo = null;
+            //     documentInfo = (Document) DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            //             .parse(urlBuilder.toString());
+            //     documentInfo.getDocumentElement().normalize();
                 // System.out.println("===============================");
                 // System.out.println(documentInfo.getDocumentElement().getNodeName()); // response
                 // System.out.println("===============================");
