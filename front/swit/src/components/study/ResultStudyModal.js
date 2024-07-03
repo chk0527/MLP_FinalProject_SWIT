@@ -8,7 +8,7 @@ const ResultStudyModal = ({ callbackFn }) => {
           }
         }}
       >
-        <div className="bg-white shadow-lg rounded-lg p-6 max-w-sm mx-auto">
+        <div className="bg-white shadow-lg rounded-lg p-10">
           <div className="flex flex-col items-center">
             <div className="text-yellow-600 text-3xl font-semibold mb-4">
               스터디가 만들어졌습니다.

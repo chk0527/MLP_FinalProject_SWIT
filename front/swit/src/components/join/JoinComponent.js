@@ -96,6 +96,7 @@ const JoinComponent =() => {
             const userInfo = { ...user, userPhone: user.userPhone.replace(/\-/g, "") };
             console.log(userInfo)
             join(userInfo).then(result => {
+                alert('회원 가입 되셨습니다. 로그인 하시기 바랍니다.');
                 console.log(result)
                 navigate({pathname:'../../login'})
             }).catch(e=>{
@@ -105,7 +106,7 @@ const JoinComponent =() => {
     }
 
     return (
-      <>
+      <div className="flex flex-col items-center ">
         <div className="text-5xl pb-16 font-blackHans text-center">
           <div>회원 가입</div>
         </div>
@@ -229,7 +230,7 @@ const JoinComponent =() => {
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
     
 

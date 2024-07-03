@@ -1,6 +1,6 @@
 import axios from "axios"
 export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/user`
+const prefix = `/api/user`
 
 // 프로필 정보 조회 - 마이페이지 
 export const getUserProfile = async (userId) => {

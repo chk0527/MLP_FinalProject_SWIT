@@ -42,7 +42,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
   }, [studyNo]);
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full max-w-1000 flex flex-col items-center">
       {/*스터디 정보란*/}
       <h1 className="text-2xl">{study.studyTitle}</h1>
       <hr className="border border-black mt-4 mb-8 w-full" />
@@ -54,14 +54,14 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
               <img
                 alt="StudyImage"
                 key={i}
-                className="w-64 h-64 rounded"
+                className="max-w-64 h-64 rounded"
                 src={`${host}/api/study/display/${imgFile}`}
               />
             ))
           ) : (
             <img
               alt="StudyImage"
-              className="w-64 h-64 rounded"
+              className="max-w-64 h-64 rounded"
               src={defaultImg}
             />
           )}
@@ -74,19 +74,19 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
             <strong>소개: </strong> {study.studyTitle}
           </div>
           <div className="flex gap-20">
-            <p className="w-40">
+            <p className="max-w-40">
               <strong>주제: </strong> {study.studySubject}
             </p>
-            <p className="w-40">
+            <p className="max-w-40">
               <strong>대면/비대면: </strong>
               {study.studyOnline ? "비대면" : "대면"}
             </p>
           </div>
           <div className="flex gap-20">
-            <p className="w-40">
+            <p className="max-w-40">
               <strong>인원: </strong> {study.currentMemberCount}명/{study.studyHeadcount}명
             </p>
-            <p className="w-40">
+            <p className="max-w-40">
               <strong>날짜: </strong>
               {study.studyStartDate} -
             </p>
@@ -96,7 +96,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
           </div>
         </div>
       </div>
-      <div className="w-800 h-52 my-4 p-4 border border-gray-300 bg-yellow-100 text-left">
+      <div className="w-full h-52 my-4 p-4 border border-gray-300 bg-yellow-100 text-left">
         <p>{study.studyContent}</p>
       </div>
       <hr className="border border-black my-8 w-full" />

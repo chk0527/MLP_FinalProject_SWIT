@@ -62,14 +62,14 @@ const ExamReadComponent = ({ examNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            <div className="p-6 rounded-lg w-full max-w-6xl">
-                <div className="flex justify-center border-gray-400 border-b-4">
-                    <h1 className="text-3xl font-bold mb-5">{exam.examTitle}</h1>
-                    <button onClick={handleFavorite} className="m-0 ml-3 p-0 mb-6">
+            <div className="py-6 rounded w-full max-w-6xl">
+                <div className="flex justify-center border-gray-700 border-b-2">
+                    <h1 className="text-3xl font-bold mb-4">{exam.examTitle}</h1>
+                    <button onClick={handleFavorite} className="m-0 ml-3 p-0 -mt-7">
                         {isFavorite ? <FaStar size={35} color="#FFF06B" /> : <FaRegStar size={35} color="#FFF06B" />}
                     </button>
                 </div>
-                <table className="flex-wrap w-1000 font-GSans border-collapse border border-gray-300 mt-6">
+                <table className="flex-wrap w-full max-w-1300 font-GSans border-collapse border border-gray-300 mt-20">
                     <thead>
                         <tr className="bg-gray-100">
                             <th className="border border-gray-300 p-5">필기접수기간</th>
@@ -94,7 +94,7 @@ const ExamReadComponent = ({ examNo }) => {
                 <div className="flex justify-center">
                     <button
                         type="button"
-                        className="rounded p-3 m-2 text-xl w-28 text-white bg-gray-500"
+                        className="rounded p-3 m-52 text-xl w-28 text-white bg-gray-500"
                         onClick={() => window.history.back()}
                     >
                         목록
