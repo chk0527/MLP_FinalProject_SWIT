@@ -44,7 +44,8 @@ const MyPostComponent = () => {
             // 댓글 갯수를 계산하여 boards에 포함
             const boardsWithCommentCount = boardList.dtoList.map(board => ({
                 ...board,
-                commentCount: board.comments ? board.comments.length : 0
+                commentCount: board.comments ? board.comments.length : 0,
+                boardCreatedDate: formatDate(new Date(board.boardCreatedDate)) // 날짜 형식 변경
             }));
             setBoards({ ...boardList, dtoList: boardsWithCommentCount });
             console.log("사용자의 게시글 목록:", boardsWithCommentCount);
@@ -61,13 +62,31 @@ const MyPostComponent = () => {
             // 답변 유무를 판단하여 inquiries에 포함
             const inquiriesWithResponse = inquiryList.dtoList.map(inquiry => ({
                 ...inquiry,
-                responseStatus: inquiry.responseContent != null ? "O" : "X"
+                responseStatus: inquiry.responseContent != null ? "O" : "X",
+                inquiryTime: formatDate(new Date(inquiry.inquiryTime)) // 날짜 형식 변경
             }));
             setInquiries({ ...inquiryList, dtoList: inquiriesWithResponse });
             console.log("사용자의 문의글 목록:", inquiriesWithResponse);
         } catch (error) {
             console.error("사용자의 문의글 목록 조회 실패: ", error);
         }
+    };
+
+    // 날짜 형식 변환
+    const formatDate = (date) => {
+        const dateString = date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).replace(/\./g, '-').replace(/ /g, '').slice(0, -1);
+
+        const timeString = date.toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        return `${dateString} ${timeString}`;
     };
 
     // 뷰 변경 핸들러
@@ -96,6 +115,7 @@ const MyPostComponent = () => {
 
             {view === 'boards' ? (
                 <div>
+                    {/*작성한 게시글 모음*/}
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
@@ -130,6 +150,7 @@ const MyPostComponent = () => {
                 </div>
             ) : (
                 <div>
+                    {/*작성한 문의글 모음*/}
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
@@ -145,7 +166,7 @@ const MyPostComponent = () => {
                                         <td className="px-6 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis" style={{ maxWidth: '150px' }}>
                                             {inquiry.inquiryContent}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{inquiry.inquiryCreatedDate}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{inquiry.inquiryTime}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{inquiry.responseStatus}</td>
                                     </tr>
                                 ))
