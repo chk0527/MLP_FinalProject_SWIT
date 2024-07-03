@@ -106,7 +106,7 @@ const MyStudyComponent = () => {
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">스터디 제목</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">유형</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">신청일자</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">장소</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
                     </tr>
                 </thead>
@@ -124,7 +124,7 @@ const MyStudyComponent = () => {
                                     </Link>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">{study.studyType}</td> {/* 스터디 유형 */}
-                                <td className="px-6 py-4 whitespace-nowrap">{study.studyAddr}</td> {/* 신청 일자 */}
+                                <td className="px-6 py-4 whitespace-nowrap">{study.studyAddr}</td> {/* 스터디 장소 */}
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusInfo.className}`}>
                                         {statusInfo.text} {/* 신청 상태 */}
