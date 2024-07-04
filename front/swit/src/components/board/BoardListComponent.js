@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBoardList } from "../../api/BoardApi";
+import { getBoardList, getBoardSearch } from "../../api/BoardApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PageComponent from "../common/PageComponent";
 import { getUserIdFromToken } from "../../util/jwtDecode";
@@ -22,8 +22,12 @@ const initState = {
 
 const BoardListComponent = () => {
   const { page, size, moveToBoardList, moveToBoardRead } = useCustomMove();
-  //
   const [serverData, setServerData] = useState(initState);
+  const [searchParams, setSearchParams] = useState({
+    searchType: "boardTitle",
+    searchText: "",
+    boardCategory: "",
+  });
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -33,6 +37,54 @@ const BoardListComponent = () => {
     });
   }, [page, size]);
 
+const handleSearch = (params = searchParams) => {
+  const { searchType, searchText, boardCategory } = params;
+
+  if (!searchText && !boardCategory) {
+    // 검색 텍스트와 카테고리가 모두 없으면 전체 리스트 불러오기
+    getBoardList({ page, size }).then((data) => {
+      console.log(data);
+      setServerData(data);
+    });
+    return; // 이후 코드는 실행하지 않도록 리턴
+  }
+
+  // searchParams 객체를 직접 수정하지 않고 params 객체를 사용
+  const searchParams = {
+    boardTitle: searchType === 'boardTitle' ? searchText : '',
+    boardContent: searchType === 'boardContent' ? searchText : '',
+    userNick: searchType === 'userNick' ? searchText : '',
+    boardCategory: boardCategory || "",  // 카테고리가 없으면 전체 가져오기
+  };
+
+  console.log("검색 파라미터:");
+  console.log(searchParams);
+  getBoardSearch(searchParams, { page, size }).then((data) => {
+    console.log(data);
+    setServerData(data);
+  });
+};
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      [name]: value,
+    }));
+    console.log("검색어 입력")
+    console.log(searchParams)
+  };
+
+  const handleCategoryChange = (category) => {
+    setSearchParams((prevParams) => {
+      const newCategory = prevParams.boardCategory === category ? "" : category;
+      const newParams = { ...prevParams, boardCategory: newCategory };
+
+      handleSearch(newParams);  // 카테고리를 변경하자마자 검색 수행
+
+      return newParams;
+    });
+  };
   const handleAddBoard = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
@@ -49,21 +101,52 @@ const BoardListComponent = () => {
         <div className="text-5xl pb-16 font-blackHans">게시판</div>
         <div className="text-2xl -m-4 pb-10">
           <div className="text-right flex justify-end pb-4">
-            {/* 제목검색 */}
+            {/* 검색 유형 선택 */}
+            <select
+              name="searchType"
+              className="focus:outline-none mx-2"
+              onChange={handleInputChange}
+              value={searchParams.searchType}
+            >
+              <option value="boardTitle">제목</option>
+              <option value="boardContent">내용</option>
+              <option value="userNick">작성자</option>
+            </select>
+            {/* 검색 입력 */}
             <input
               className="focus:outline-none"
               type="text"
-              placeholder="제목 검색"
+              placeholder="검색"
+              name="searchText"
+              value={searchParams.searchText}
+              onChange={handleInputChange}
             />
-            <button type="button">
-              <img className="size-6" src={searchIcon}></img>
+            <button type="button" onClick={() => handleSearch(searchParams)}>
+              <img className="size-6" src={searchIcon} alt="검색" />
             </button>
           </div>
           <div className="flex justify-end pb-4">
-            {/* 대면비대면 */}
-            <div className={"mx-4 cursor-pointer text-gray-500"}>질문</div>|
-            <div className={"mx-4 cursor-pointer text-gray-500"}>정보공유</div>|
-            <div className={"mx-4 cursor-pointer text-gray-500"}>자유</div>
+            {/* 카테고리 선택 */}
+            <div
+              className={`mx-4 cursor-pointer ${searchParams.boardCategory === "질문" ? "font-bold text-black" : "text-gray-500"}`}
+              onClick={() => handleCategoryChange("질문")}
+            >
+              질문
+            </div>
+            |
+            <div
+              className={`mx-4 cursor-pointer ${searchParams.boardCategory === "정보공유" ? "font-bold text-black" : "text-gray-500"}`}
+              onClick={() => handleCategoryChange("정보공유")}
+            >
+              정보공유
+            </div>
+            |
+            <div
+              className={`mx-4 cursor-pointer ${searchParams.boardCategory === "자유" ? "font-bold text-black" : "text-gray-500"}`}
+              onClick={() => handleCategoryChange("자유")}
+            >
+              자유
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +191,7 @@ const BoardListComponent = () => {
       <div className="flex justify-end mt-4">
         <button
           onClick={handleAddBoard}
-          className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
+          className="hover:bg-yellow-200 border-2 border-solid border-black py-2 px-4 rounded mt-4"
         >
           글쓰기
         </button>
@@ -117,4 +200,5 @@ const BoardListComponent = () => {
     </div>
   );
 };
+
 export default BoardListComponent;

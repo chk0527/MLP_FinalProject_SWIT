@@ -39,33 +39,6 @@ public class BoardService {
         return boardDTO;
     }
 
-        // 전체 스터디
-    // public BoardPageResponseDTO<Board> boardList(String studyTitle,
-    //         String studySubject,
-    //         String studyAddr,
-    //         BoardPageResponseDTO pageRequestDTO) {
-    //     Pageable pageable = PageRequest.of(
-    //             pageRequestDTO.getStudyPage() - 1, // 1페이지가 0
-    //             pageRequestDTO.getStudySize());
-
-    //     Page<Board> result = boardRepository.list(studyTitle,
-    //             studySubject,
-    //             studyAddr,
-    //             pageable);
-    //     List<Board> boardList = result.getContent().stream()
-    //             .map(Board -> modelMapper.map(Board, Board.class))
-    //             .collect(Collectors.toList());
-
-    //     long totalCount = result.getTotalElements();
-    //     BoardPageResponseDTO<Board> responseDTO = BoardPageResponseDTO.<Board>withAll()
-    //             .dtoList(boardList)
-    //             .pageRequestDTO(pageRequestDTO)
-    //             .totalCount(totalCount)
-    //             .build();
-    //     return responseDTO;
-
-    // }
-
     public PageResponseDTO<BoardDTO> list(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(
                 pageRequestDTO.getPage() - 1, // 1페이지가 0
@@ -104,11 +77,32 @@ public class BoardService {
         Pageable pageable = PageRequest.of(
             pageRequestDTO.getPage() - 1, // 1페이지가 0
             pageRequestDTO.getSize(),
-            Sort.by("boardCreatedDate").descending());
+            Sort.by("boardNo").descending());
 
         Page<Board> result = boardRepository.findByUserUserNo(userNo, pageable);
         List<BoardDTO> dtoList = result.getContent().stream()
                 .map(todo -> modelMapper.map(todo, BoardDTO.class))
+                .collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+        PageResponseDTO<BoardDTO> responseDTO = PageResponseDTO.<BoardDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
+        return responseDTO;
+    }
+
+    // 게시글 검색
+    public PageResponseDTO<BoardDTO> searchBoards(PageRequestDTO pageRequestDTO, String boardTitle, String boardContent, String userNick, String boardCategory) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPage() - 1,
+                pageRequestDTO.getSize(),
+                Sort.by("boardNo").descending());
+
+        Page<Board> result = boardRepository.searchBoards(boardTitle, boardContent, userNick, boardCategory, pageable);
+        List<BoardDTO> dtoList = result.getContent().stream()
+                .map(board -> modelMapper.map(board, BoardDTO.class))
                 .collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();

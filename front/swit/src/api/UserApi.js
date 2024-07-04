@@ -28,3 +28,16 @@ export const getUserImage = async(userId) => {
     const res = await axios.get(`${prefix}/${userId}/image`, { responseType: 'blob' });
     return URL.createObjectURL(res.data);
 }
+
+// 수정 중복 체크
+export const checkDuplicate = async ({ userNick, userPhone, userEmail, currentUserId }) => {
+  const response = await axios.get(`/api/user/check_duplicate`, {
+      params: {
+          userNick,
+          userPhone,
+          userEmail,
+          currentUserId,
+      },
+  });
+  return response.data;
+};
