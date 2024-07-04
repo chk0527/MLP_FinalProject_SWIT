@@ -44,11 +44,15 @@ public class ChatMessage {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    public ChatMessage(Study study, String userNick, String message, User user) {
+    @Column
+    private String userImage;
+
+    public ChatMessage(Study study, String userNick, String userImage , String message, User user) {
         this.study = study;
         this.userNick = userNick;
         this.message = message;
         this.user = user;
+        this.userImage = userImage;
         this.createdDate = LocalDateTime.now();  // createdDate를 현재 시간으로 설정
     }
 }

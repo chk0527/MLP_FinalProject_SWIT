@@ -9,7 +9,7 @@ const StudyReadPage = () => {
     return (      
         <BasicLayout>
             <div className="flex">
-                <div className="w-full pr-2 font-GSans">
+                <div className="w-full font-GSans">
                     <StudyReadComponent studyNo={studyNo} />
                 </div>
                 {/* <div className="w-1/4 pl-2 ">
