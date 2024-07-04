@@ -1,7 +1,7 @@
 import axios from "axios";
 export const API_SERVER_HOST = 'http://223.130.157.92:10527'
 const prefix2 = `${API_SERVER_HOST}/api/study`
-const prefix = `api/study`;
+const prefix = `/api/study`;
 // 로컬 스토리지에서 토큰 가져오기
 
 export const getStudy = async (studyNo) => {
@@ -11,7 +11,7 @@ export const getStudy = async (studyNo) => {
 }
 
 export const getMyStudy = async (userId) => { //내가 가입한 스터디 목록
-  const res = await axios.get(`${prefix}/myStudy`, {
+  const res = await axios.get(`/api/study/myStudy`, {
     params: { userId }
   });
   return res.data;
@@ -41,7 +41,7 @@ export const postAdd = async (study) => {
 
 export const getAllStudies = async (studyTitle, studySubject, studyAddr, studyOnline, userId, pageParam) => {
   const { StudyPage, StudySize } = pageParam
-  const res = await axios.get(`${prefix}/all`, { params: { studyTitle: studyTitle, studySubject: studySubject, studyAddr: studyAddr, studyOnline: studyOnline, userId: userId, StudyPage: StudyPage, StudySize: StudySize } });
+  const res = await axios.get(`/api/study/all`, { params: { studyTitle: studyTitle, studySubject: studySubject, studyAddr: studyAddr, studyOnline: studyOnline, userId: userId, StudyPage: StudyPage, StudySize: StudySize } });
   return res.data;
 };
 
@@ -68,7 +68,8 @@ export const fetchInquiries = async (studyNo) => {
   const token = sessionStorage.getItem('accessToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-  const res = await axios.get(`${prefix}/${studyNo}/inquiries`, { headers });
+  const res = await axios.get(`/api/study/${studyNo}/inquiries`, { headers });
+  console.log(res.data+"@@");
   return res.data;
 };
 
@@ -91,7 +92,7 @@ export const deleteInquiry = async (inquiryNo) => {
   if (!token) {
     throw new Error('No access token found');
   }
-  const res = await axios.delete(`${prefix}/inquiries/${inquiryNo}`, {
+  const res = await axios.delete(`/api/study/inquiries/${inquiryNo}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
