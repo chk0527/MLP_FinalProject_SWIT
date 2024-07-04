@@ -45,7 +45,7 @@ const MapComponent = ({ placeAddr }) => {
     };
   }, [placeAddr]);
 
-  return <div id="map" className="w-450 h-450 rounded shadow"></div>;
+  return <div id="map" className="w-750 h-450 rounded shadow"></div>;
 };
 
 export default MapComponent;

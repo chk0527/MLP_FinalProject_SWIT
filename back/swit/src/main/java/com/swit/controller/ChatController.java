@@ -55,7 +55,7 @@ public class ChatController {
     Study study = studyRepository.findById(studyNo).orElseThrow(() -> new RuntimeException("Study not found"));
     User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
-    ChatMessage chatMessage = new ChatMessage(study, user.getUserNick(), messageContent, user);
+    ChatMessage chatMessage = new ChatMessage(study, user.getUserNick(),user.getUserImage() , messageContent, user);
     chatService.saveChatMessage(chatMessage);
 
     ChatMessageDTO chatMessageDTO = chatService.convertToDTO(chatMessage);

@@ -1,19 +1,27 @@
 package com.swit.service;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.swit.domain.User;
 import com.swit.dto.UserDTO;
+import com.swit.repository.BoardRepository;
+import com.swit.repository.ChatMessageRepository;
+import com.swit.repository.CommentRepository;
+import com.swit.repository.TimerRepository;
 import com.swit.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -27,8 +35,16 @@ import lombok.extern.log4j.Log4j2;
 public class UserService {
   // 자동 주입 대상은 final로 설정
   private final ModelMapper modelMapper;
+
   private final UserRepository userRepository;
+  private final TimerRepository timerRepository;
+  private final BoardRepository boardRepository;
+  private final ChatMessageRepository chatMessageRepository;
+  private final CommentRepository commentRepository;
+  
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+  private final JdbcTemplate jdbcTemplate;
 
   // 프로필 정보 조회(마이페이지)
   public UserDTO get(String userId) {
@@ -48,16 +64,36 @@ public class UserService {
     return userDTO;
   }
 
-  // 프로필 수정(모달창)
+  @Transactional
   public void modify(UserDTO userDTO, MultipartFile userImage) throws IOException {
-    // Optional<User> result = userRepository.findById(userDTO.getUserId());
-    Optional<User> result = userRepository.findByUserId(userDTO.getUserId());
-    User user = result.orElseThrow();
-    user.setUserName(userDTO.getUserName());
-    //user.setUserNick(userDTO.getUserNick());  //userNick은 이제 수정하면 안되는 고윳값
-    user.setUserPhone(userDTO.getUserPhone());
-    user.setUserEmail(userDTO.getUserEmail());
-    userRepository.save(user);
+      Optional<User> result = userRepository.findByUserId(userDTO.getUserId());
+      User user = result.orElseThrow();
+
+      // 수정 전 닉네임
+      String oldUserNick = user.getUserNick();
+      String newUserNick = userDTO.getUserNick();
+
+      // 외래 키 제약 조건 비활성화
+      jdbcTemplate.execute("SET foreign_key_checks = 0");
+
+      try {
+          // 부모 테이블(user)의 userNick 업데이트
+          user.setUserName(userDTO.getUserName());
+          user.setUserNick(newUserNick);  // userNick 변경
+          user.setUserPhone(userDTO.getUserPhone());
+          user.setUserEmail(userDTO.getUserEmail());
+          userRepository.save(user);
+
+          // 자식 테이블(timer)의 userNick 업데이트
+          timerRepository.updateUserNick(oldUserNick, newUserNick);
+          boardRepository.updateUserNick(oldUserNick, newUserNick);
+          chatMessageRepository.updateUserNick(oldUserNick, newUserNick);
+          commentRepository.updateUserNick(oldUserNick, newUserNick);
+
+      } finally {
+          // 외래 키 제약 조건 다시 활성화
+          jdbcTemplate.execute("SET foreign_key_checks = 1");
+      }
   }
 
   // 프로필 이미지 수정(모달창)
@@ -247,5 +283,23 @@ public class UserService {
     return 0;   // 정상
   }
 
+  //수정 시 중복 체크
+  public Map<String, Boolean> checkDuplicate(String userNick, String userPhone, String userEmail, String currentUserId) {
+    Map<String, Boolean> duplicates = new HashMap<>();
+
+    List<User> nickResults = userRepository.findUsersByUserNick(userNick);
+    List<User> phoneResults = userRepository.findUsersByUserPhone(userPhone);
+    List<User> emailResults = userRepository.findUsersByUserEmail(userEmail);
+
+    boolean isNickDuplicate = nickResults.stream().anyMatch(user -> !user.getUserId().equals(currentUserId));
+    boolean isPhoneDuplicate = phoneResults.stream().anyMatch(user -> !user.getUserId().equals(currentUserId));
+    boolean isEmailDuplicate = emailResults.stream().anyMatch(user -> !user.getUserId().equals(currentUserId));
+
+    duplicates.put("userNick", isNickDuplicate);
+    duplicates.put("userPhone", isPhoneDuplicate);
+    duplicates.put("userEmail", isEmailDuplicate);
+
+    return duplicates;
+}
 
 }
