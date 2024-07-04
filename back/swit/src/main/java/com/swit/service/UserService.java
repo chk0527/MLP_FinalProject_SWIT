@@ -146,26 +146,25 @@ public class UserService {
     }
   }
 
-  // 로그인 확인 처리(네이버 소셜 로그인)
-  public UserDTO userCheck(String userName, String userEmail, String userSnsConnect) {
-    Optional<User> result = userRepository.findByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail,
-        userSnsConnect);
+  // 로그인 확인 처리(네이버/카카오 소셜 로그인)
+  public UserDTO userCheck(String userEmail) {
+    Optional<User> result = userRepository.findByUserEmail(userEmail);
     User user = result.orElse(new User());
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
     return userDTO;
   }
 
-  // 로그인 확인 처리(카카오 소셜 로그인)
-  public UserDTO userCheck2(String userNick, String userEmail, String userSnsConnect) {
-    // Optional<User> result =
-    // userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName,
-    // userEmail, userSnsConnect);
-    Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail,
-        userSnsConnect);
-    User user = result.orElse(new User());
-    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-    return userDTO;
-  }
+  // // 로그인 확인 처리(카카오 소셜 로그인)
+  // public UserDTO userCheck2(String userNick, String userEmail, String userSnsConnect) {
+  //   // Optional<User> result =
+  //   // userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName,
+  //   // userEmail, userSnsConnect);
+  //   Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail,
+  //       userSnsConnect);
+  //   User user = result.orElse(new User());
+  //   UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+  //   return userDTO;
+  // }
 
   // 회원 가입
   public void join(UserDTO userDTO) {
@@ -334,6 +333,11 @@ public Map<String, Boolean> checkDuplicate2(String userId, String userNick, Stri
   duplicates.put("userNick" , isNickDuplicate);
   duplicates.put("userEmail", isEmailDuplicate);
   duplicates.put("userPhone", isPhoneDuplicate);
+
+  log.info("userId  " + isIdDuplicate);
+  log.info("userNick  " + isNickDuplicate);
+  log.info("userEmail  " + isEmailDuplicate);
+  log.info("userPhone  " + isPhoneDuplicate);
   
   return duplicates;
 }
