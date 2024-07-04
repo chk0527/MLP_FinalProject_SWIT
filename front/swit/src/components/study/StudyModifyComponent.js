@@ -99,18 +99,18 @@ const StudyModifyComponent = ({ studyNo }) => {
         });
 
         putOne(studyNo, formData).then(result => {
-            setResult('Modified')
+            setResult({ action: '수정' })
         })
     }
 
     const handleClickDelete = () => {
         deleteOne(studyNo).then(result => {
-            setResult('Deleted')
+            setResult({ action: '삭제' })
         })
     }
 
     const closeModal = () => {
-        if (result == 'Deleted')
+        if (result && result.action === 'Deleted')
             moveToList()
         else
             moveToGroup(studyNo)
@@ -221,7 +221,7 @@ const StudyModifyComponent = ({ studyNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            {result && <ResultModal callbackFn={closeModal} />}
+            {result && <ResultModal content={result.action} callbackFn={closeModal} />}
             <div className="w-full max-w-1000 ">
                 <div className="text-3xl mb-16 pb-4 border-soild border-gray-200 border-b-2">
                     <div className="w-64 py-7">
@@ -402,7 +402,7 @@ const StudyModifyComponent = ({ studyNo }) => {
                             className=" rounded bg-red-200 px-28 py-4 text-center font-semibold shadow-sm hover:bg-red-400"
                             onClick={handleClickDelete}
                         >
-                            삭제(연관된 테이블 삭제 미구현으로 미동작)
+                            삭제
                         </button>
                     </div>
                 </div>
