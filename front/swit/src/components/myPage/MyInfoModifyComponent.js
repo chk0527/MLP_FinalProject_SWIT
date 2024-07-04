@@ -1,163 +1,159 @@
-import { useState, useEffect, useContext } from "react";
-import {
-  getUserProfile,
-  putUserProfile,
-  postUserImage,
-  getUserImage,
-  checkDuplicate,
-} from "../../api/UserApi";
-import { FaPen } from "react-icons/fa";
-import { LoginContext } from "../../contexts/LoginContextProvider";
-import Cookies from "js-cookie";
-import debounce from "lodash/debounce";
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage, checkDuplicate } from '../../api/UserApi';
+import { FaPen } from 'react-icons/fa';
+import { LoginContext } from '../../contexts/LoginContextProvider';
+import Cookies from 'js-cookie';
+import debounce from 'lodash/debounce';
 
 const initState = {
-  userName: "",
-  userNick: "",
-  userPhone: "",
-  userEmail: "",
-  userPassword: "",
-  userImage: "",
+    userName: '',
+    userNick: '',
+    userPhone: '',
+    userEmail: '',
+    userPassword: '',
+    userImage: ''
 };
 
 const MyInfoModifyComponent = ({ userId }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState(initState);
-  const [modalUser, setModalUser] = useState(initState);
-  const [userImage, setUserImage] = useState(null);
-  const [isSocialLogin, setIsSocialLogin] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [validationErrors, setValidationErrors] = useState({
-    userNick: null,
-    userPhone: null,
-    userEmail: null,
-  });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [user, setUser] = useState(initState);
+    const [modalUser, setModalUser] = useState(initState);
+    const [userImage, setUserImage] = useState(null);
+    const [isSocialLogin, setIsSocialLogin] = useState(false);
+    const [errors, setErrors] = useState({});
 
-  const { refreshAccessToken } = useContext(LoginContext);
+    const { refreshAccessToken } = useContext(LoginContext);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userData = await getUserProfile(userId);
-        setUser(userData);
-        setModalUser({ ...userData });
-        const imageUrl = await getUserImage(userId);
-        setUserImage(imageUrl);
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const userData = await getUserProfile(userId);
+                setUser(userData);
+                setModalUser({ ...userData });
+                const imageUrl = await getUserImage(userId);
+                setUserImage(imageUrl);
 
-        if (
-          userData &&
-          (userData.userSnsConnect === "NAVER" ||
-            userData.userSnsConnect === "KAKAO")
-        ) {
-          setIsSocialLogin(true);
+                if (userData && (userData.userSnsConnect === 'NAVER' || userData.userSnsConnect === 'KAKAO')) {
+                    setIsSocialLogin(true);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchUserInfo();
+    }, [userId]);
+
+    const openModal = async () => {
+        if (isSocialLogin) {
+            alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
+            return;
         }
-      } catch (error) {
-        console.error(error);
-      }
+        setModalUser({ ...user });
+        setIsModalOpen(true);
+        await validate(modalUser);
     };
-    fetchUserInfo();
-  }, [userId]);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
-  const handleTextChange = (e) => {
-    const { name, value } = e.target;
-    setModalUser((prev) => ({ ...prev, [name]: value }));
-    // Validation for the changed field
-    validateField(name, value);
-  };
+    const closeModalOptionX = () => {
+        setIsModalOpen(false);
+    };
 
-  const validateField = async (fieldName, value) => {
-    const userInfo = { ...modalUser, [fieldName]: value };
-    const { userNick, userPhone, userEmail } = userInfo;
-    const response = await checkDuplicate({
-      userNick,
-      userPhone,
-      userEmail,
-      currentUserId: userId,
-    });
+    const handleTextChange = (e) => {
+        const { name, value } = e.target;
+        setModalUser((prev) => ({ ...prev, [name]: value }));
+        debounceValidate({ ...modalUser, [name]: value });
+    };
 
-    const newErrors = { ...validationErrors };
-    if (fieldName === "userNick") {
-      newErrors.userNick = response.userNick
-        ? "닉네임이 이미 존재합니다."
-        : "사용 가능한 닉네임입니다.";
-    } else if (fieldName === "userPhone") {
-      newErrors.userPhone = response.userPhone
-        ? "전화번호가 이미 존재합니다."
-        : "사용 가능한 전화번호입니다.";
-    } else if (fieldName === "userEmail") {
-      newErrors.userEmail = response.userEmail
-        ? "이메일이 이미 존재합니다."
-        : "사용 가능한 이메일입니다.";
-    }
-
-    setValidationErrors(newErrors);
-  };
-
-  const handleImageUpload = async (e) => {
-    const img = e.target.files[0];
-    if (img) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUserImage(reader.result);
-      };
-      reader.readAsDataURL(img);
-
-      const formData = new FormData();
-      formData.append("userImage", img);
-      try {
-        await postUserImage(userId, formData);
-        const imageUrl = await getUserImage(userId);
-        setUserImage(imageUrl);
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
-    }
-  };
-
-  const handleClickModify = async () => {
-    if (isSocialLogin) {
-      alert("소셜 로그인 계정은 프로필 수정을 할 수 없습니다.");
-      return;
-    }
-
-    // Check if there are validation errors
-    const hasValidationErrors = Object.values(validationErrors).some(
-      (error) =>
-        error !== "사용 가능한 닉네임입니다." &&
-        error !== "사용 가능한 전화번호입니다." &&
-        error !== "사용 가능한 이메일입니다."
+    const debounceValidate = useCallback(
+        debounce(async (userInfo) => {
+            await validate(userInfo);
+        }, 500),
+        [user]
     );
 
-    if (hasValidationErrors) {
-      alert("수정할 수 없는 정보가 존재합니다.");
-      return;
-    }
+    const validate = async (userInfo) => {
+        const { userNick, userPhone, userEmail } = userInfo;
+        const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
 
-    try {
-      const response = await putUserProfile(modalUser);
-      const { accessToken, refreshToken, RESULT } = response;
+        const newErrors = {};
+        if (response.userNick && response.userNick !== user.userNick) {
+            newErrors.userNick = '닉네임이 이미 존재합니다.';
+        } else {
+            newErrors.userNick = '사용 가능한 닉네임입니다.';
+        }
 
-      if (RESULT === "SUCCESS") {
-        Cookies.set("accessToken", accessToken);
-        Cookies.set("refreshToken", refreshToken);
+        if (response.userPhone && response.userPhone !== user.userPhone) {
+            newErrors.userPhone = '전화번호가 이미 존재합니다.';
+        } else {
+            newErrors.userPhone = '사용 가능한 전화번호입니다.';
+        }
 
-        await refreshAccessToken();
+        if (response.userEmail && response.userEmail !== user.userEmail) {
+            newErrors.userEmail = '이메일이 이미 존재합니다.';
+        } else {
+            newErrors.userEmail = '사용 가능한 이메일입니다.';
+        }
 
-        const updatedProfile = await getUserProfile(userId);
-        setUser(updatedProfile);
-        alert("정보가 수정 되었습니다.");
-        closeModal();
-      } else {
-        console.error("프로필 수정 실패");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    }
-  };
+        setErrors(newErrors);
+    };
+
+    const handleImageUpload = async (e) => {
+        const img = e.target.files[0];
+        if (img) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setUserImage(reader.result);
+            };
+            reader.readAsDataURL(img);
+
+            const formData = new FormData();
+            formData.append("userImage", img);
+            try {
+                await postUserImage(userId, formData);
+                const imageUrl = await getUserImage(userId);
+                setUserImage(imageUrl);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        }
+    };
+
+    const handleClickModify = async () => {
+        if (isSocialLogin) {
+            alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
+            return;
+        }
+
+        const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한'));
+        if (hasErrors) {
+            alert("수정할 수 없는 정보가 존재합니다");
+            return;
+        }
+
+        try {
+            const response = await putUserProfile(modalUser);
+            const { accessToken, refreshToken, RESULT } = response;
+
+            if (RESULT === 'SUCCESS') {
+                Cookies.set('accessToken', accessToken);
+                Cookies.set('refreshToken', refreshToken);
+
+                await refreshAccessToken();
+
+                const updatedProfile = await getUserProfile(userId);
+                setUser(updatedProfile);
+                alert("정보가 수정 되었습니다.");
+                closeModal();
+            } else {
+                console.error('프로필 수정 실패');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        }
+    };
 
   return (
     <div className="flex flex-col justify-center items-center gap-10 bg-white p-6 rounded shadow relative">
@@ -248,15 +244,15 @@ const MyInfoModifyComponent = ({ userId }) => {
                 onChange={handleTextChange}
               />
             </label>
-            {validationErrors.userNick && (
+            {errors.userNick && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${
-                  validationErrors.userNick.includes("사용 가능한")
+                  errors.userNick.includes("사용 가능한")
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
               >
-                {validationErrors.userNick}
+                {errors.userNick}
               </p>
             )}
           </div>
@@ -271,15 +267,15 @@ const MyInfoModifyComponent = ({ userId }) => {
                 onChange={handleTextChange}
               />
             </label>
-            {validationErrors.userPhone && (
+            {errors.userPhone && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${
-                  validationErrors.userPhone.includes("사용 가능한")
+                  errors.userPhone.includes("사용 가능한")
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
               >
-                {validationErrors.userPhone}
+                {errors.userPhone}
               </p>
             )}
           </div>
@@ -294,15 +290,15 @@ const MyInfoModifyComponent = ({ userId }) => {
                 onChange={handleTextChange}
               />
             </label>
-            {validationErrors.userEmail && (
+            {errors.userEmail && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${
-                  validationErrors.userEmail.includes("사용 가능한")
+                  errors.userEmail.includes("사용 가능한")
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
               >
-                {validationErrors.userEmail}
+                {errors.userEmail}
               </p>
             )}
           </div>
