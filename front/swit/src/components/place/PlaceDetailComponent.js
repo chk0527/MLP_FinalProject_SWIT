@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import MapComponent from "./MapComponent";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { getUserIdFromToken } from "../../util/jwtDecode";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const initState = {
   placeNo: 0,
@@ -24,6 +25,7 @@ const PlaceDetailComponent = ({ placeNo }) => {
   const [place, setPlace] = useState(initState);
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     getPlaceDetail(placeNo).then((data) => {
@@ -47,11 +49,7 @@ const PlaceDetailComponent = ({ placeNo }) => {
   const handleFavorite = async (placeNo) => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      if (
-        window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")
-      ) {
-        navigate("/login");
-      }
+      setShowLoginModal(true);
       return;
     }
 
@@ -70,6 +68,9 @@ const PlaceDetailComponent = ({ placeNo }) => {
 
   return (
     <div className="font-GSans min-h-screen bg-white">
+      {showLoginModal && (
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
       <div className="py-6 flex justify-center items-center bg-yellow-100 shadow-md">
         <h1 className="text-4xl font-bold text-gray-800">
           [{place.placeAddr.substring(0, 2)}] {place.placeName}

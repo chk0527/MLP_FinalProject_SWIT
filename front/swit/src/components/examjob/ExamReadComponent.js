@@ -3,6 +3,7 @@ import { FaStar, FaRegStar } from 'react-icons/fa';
 import { getExamRead, isExamFavorite, addExamFavorite, removeExamFavorite } from '../../api/ExamJobApi';
 import { getUserIdFromToken } from "../../util/jwtDecode"; //userId 받아옴
 import { useNavigate } from 'react-router-dom';
+import LoginRequireModal from '../common/LoginRequireModal';
 
 const initState = {
     examNo: 0,
@@ -24,6 +25,7 @@ const ExamReadComponent = ({ examNo }) => {
     const [exam, setExam] = useState(initState);
     const [isFavorite, setIsFavorite] = useState(false);
     const navigate = useNavigate();
+    const [showLoginModal, setShowLoginModal] = useState(false);
 
     useEffect(() => {
         getExamRead(examNo).then(data => {
@@ -44,9 +46,7 @@ const ExamReadComponent = ({ examNo }) => {
         // 로그인안한상태 -> alert 확인누르면 로그인창으로이동
         const userId = getUserIdFromToken();
         if (!userId) {
-            if (window.confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
-                navigate('/login');
-            }
+            setShowLoginModal(true);
             return;
         }
 
@@ -62,6 +62,9 @@ const ExamReadComponent = ({ examNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
+            {showLoginModal && (
+                <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+            )}
             <div className="py-6 rounded w-full max-w-6xl">
                 <div className="flex justify-center border-gray-700 border-b-2">
                     <h1 className="text-3xl font-bold mb-4">{exam.examTitle}</h1>
@@ -102,7 +105,7 @@ const ExamReadComponent = ({ examNo }) => {
                 </div>
             </div>
 
-           
+
         </div>
     );
 };

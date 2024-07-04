@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { inquirySubmit, fetchInquiries } from "../../api/StudyApi";
 import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const StudyInquiryFormComponent = ({ studyNo, setInquiries }) => {
   const [inquiryContent, setInquiryContent] = useState("");
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleInquirySubmit = async () => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      alert("로그인이 필요합니다.");
-      navigate("/login");
+      setShowLoginModal(true);
       return;
     }
 
@@ -51,6 +52,9 @@ const StudyInquiryFormComponent = ({ studyNo, setInquiries }) => {
           등록
         </button>
       </div>
+      {showLoginModal && ( 
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} /> //////////////수정시작////////////
+      )} 
     </div>
   );
 };
