@@ -98,7 +98,7 @@ const LoginContextProvider = ({ children }) => {
 
     const login = async (username, password) => {
         console.log(`username : ${username}`);
-        console.log(`password : ${password}`);
+        // console.log(`password : ${password}`);
 
         try {
             const response = await auth.login(username, password);

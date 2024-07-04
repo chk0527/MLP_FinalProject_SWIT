@@ -133,7 +133,7 @@ const BoardListComponent = () => {
         </div>
       </div>
       <div className="h-650">
-        <table className="w-1300 bg-white border-y border-gray-200">
+        <table className="w-full bg-white border-y border-gray-200">
           <thead>
             <tr className="bg-yellow-100">
               <th className="w-32 py-4 border-b-2 border-gray-200">No</th>
@@ -144,17 +144,27 @@ const BoardListComponent = () => {
             </tr>
           </thead>
           <tbody>
-            {serverData.dtoList.map((board) => (
+            {serverData.dtoList.map((board, index) => (
               <tr
                 key={board.boardNo}
                 onClick={() => moveToBoardRead(board.boardNo)}
                 className="hover:bg-gray-100 cursor-pointer"
               >
-                <td className="py-4 text-center border-b">{board.boardNo}</td>
-                <td className="py-4 text-center border-b">{board.boardCategory}</td>
-                <td className="py-4 text-center border-b">{board.boardTitle}</td>
-                <td className="py-4 text-center border-b">{board.userNick}</td>
-                <td className="py-4 text-center border-b">{board.boardCreatedDate.substring(0, 10)}</td>
+                <td className="py-4 text-center border-b  ">
+                  {serverData.dtoList.length - index}
+                </td>
+                <td className="py-4 text-center border-b  ">
+                  {board.boardCategory}
+                </td>
+                <td className="py-4 text-center border-b  ">
+                  {board.boardTitle}
+                </td>
+                <td className="py-4 text-center border-b  ">
+                  {board.userNick}
+                </td>
+                <td className="py-4 text-center border-b  ">
+                  {board.boardCreatedDate.substring(0, 10)}
+                </td>
               </tr>
             ))}
           </tbody>

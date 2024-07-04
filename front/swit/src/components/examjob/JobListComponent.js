@@ -182,7 +182,7 @@ const ListComponent = () => {
         </div>
       </div>
 
-      <div className="flex-wrap w-1300 font-GSans text-xl">
+      <div className="flex-wrap  font-GSans text-xl">
         <ul className="divide-y divide-slate-200">
           {serverData.dtoList.map((job) => (
             <article key={job.jobNo} className="flex items-start space-x-6 p-6">
@@ -245,8 +245,9 @@ const ListComponent = () => {
         </ul>
       </div>
       <div className="border-t-2 border-slate-200 mt-4"></div>
-
-      <PageComponent serverData={serverData} movePage={moveToJobList} />
+      <div className="my-20">
+        <PageComponent serverData={serverData} movePage={moveToJobList} />
+      </div>
     </div>
   );
 };

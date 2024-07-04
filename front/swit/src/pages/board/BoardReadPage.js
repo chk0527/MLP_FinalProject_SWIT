@@ -7,14 +7,9 @@ const BoardReadPage = () => {
 
     return (      
         <BasicLayout>
-            <div className="text-3xl">
-                {/* <div>게시판</div> */}
-            </div>
-            <div className="flex">
-                <div className="w-full pr-2">
+                <div className="w-full font-GSans">
                     <BoardReadComponent boardNo={boardNo}/>
                 </div>
-            </div>
         </BasicLayout>       
     );
 };

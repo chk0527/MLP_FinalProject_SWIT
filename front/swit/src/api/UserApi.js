@@ -1,6 +1,6 @@
 import axios from "axios"
 export const API_SERVER_HOST = 'http://localhost:8181'
-const prefix = `${API_SERVER_HOST}/api/user`
+const prefix = `/api/user`
 
 // 프로필 정보 조회 - 마이페이지 
 export const getUserProfile = async (userId) => {
@@ -28,3 +28,16 @@ export const getUserImage = async(userId) => {
     const res = await axios.get(`${prefix}/${userId}/image`, { responseType: 'blob' });
     return URL.createObjectURL(res.data);
 }
+
+// 수정 중복 체크
+export const checkDuplicate = async ({ userNick, userPhone, userEmail, currentUserId }) => {
+  const response = await axios.get(`/api/user/check_duplicate`, {
+      params: {
+          userNick,
+          userPhone,
+          userEmail,
+          currentUserId,
+      },
+  });
+  return response.data;
+};

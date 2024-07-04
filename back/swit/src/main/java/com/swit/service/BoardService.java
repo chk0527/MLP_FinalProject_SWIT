@@ -77,7 +77,7 @@ public class BoardService {
         Pageable pageable = PageRequest.of(
             pageRequestDTO.getPage() - 1, // 1페이지가 0
             pageRequestDTO.getSize(),
-            Sort.by("boardCreatedDate").descending());
+            Sort.by("boardNo").descending());
 
         Page<Board> result = boardRepository.findByUserUserNo(userNo, pageable);
         List<BoardDTO> dtoList = result.getContent().stream()

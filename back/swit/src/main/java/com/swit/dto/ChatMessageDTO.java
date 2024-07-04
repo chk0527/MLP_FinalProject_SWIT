@@ -19,4 +19,5 @@ public class ChatMessageDTO {
     private String message;
     private String userNick;
     private LocalDateTime createdDate;
+    private String userImage;
 }

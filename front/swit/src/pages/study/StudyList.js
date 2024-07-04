@@ -41,7 +41,7 @@ const StudyListPage = () => {
   };
 
   const handleButton = () => {
-    setStudyTitle(inputText); 
+    setStudyTitle(inputText);
   };
 
   const subjectList = [
@@ -195,7 +195,7 @@ const StudyListPage = () => {
       {/* 검색창 */}
       <div className="flex justify-between font-GSans == px-8 pb-8">
         <div className="text-5xl font-blackHans">스터디 그룹</div>
-        <div className="text-2xl -m-4 pb-10">
+        <div className="text-2xl -m-4">
           <div className="text-right flex justify-end pb-4">
             {/* 제목검색 */}
             <input
@@ -239,7 +239,7 @@ const StudyListPage = () => {
           <div>
             {/* 주제검색 */}
             <div className="text-xl flex justify-end">
-              {subjectList.map((subject,index) => (
+              {subjectList.map((subject, index) => (
                 <label
                   key={subject.value}
                   className={
@@ -256,7 +256,7 @@ const StudyListPage = () => {
                   >
                     {selectedSubject === subject.value && <span>✔</span>}
                   </span>
-                  {subject.value} {index < subjectList.length - 1 && ' · '}
+                  {subject.value} {index < subjectList.length - 1 && " · "}
                 </label>
               ))}
             </div>
@@ -264,7 +264,7 @@ const StudyListPage = () => {
         </div>
       </div>
 
-      <div className="flex-wrap w-1300 font-GSans">
+      <div className="flex-wrap font-GSans min-h-650">
         <StudyListComponent
           handleReadStudy={handleReadStudy}
           getStatusText={getStatusText}
@@ -272,16 +272,16 @@ const StudyListPage = () => {
           studyList={studyList}
           loading={loading}
         />
-        <div className="grid place-items-end">
-          <button
-            onClick={handleAddStudy}
-            className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
-          >
-            스터디 만들기
-          </button>
-        </div>
-        <StudyPageComponent serverData={studyList} movePage={moveToStudy} />
       </div>
+      <div className="grid place-items-end">
+        <button
+          onClick={handleAddStudy}
+          className=" hover:bg-yellow-200 border-2 border-solid border-black  py-2 px-4 rounded mt-4"
+        >
+          스터디 만들기
+        </button>
+      </div>
+      <StudyPageComponent serverData={studyList} movePage={moveToStudy} />
     </BasicLayout>
   );
 };

@@ -156,6 +156,7 @@ function SearcIdComponent() {
       }
       // 고객정보 확인, 인증번호 얻기, sms 발송
       if (certifyType === '2' ) {
+        // 원복KYW
         send_sms(response.data)
         .then((result) => {
             console.log("SMS 인증번호 발송이 성공하였습니다.");
@@ -267,6 +268,11 @@ function SearcIdComponent() {
     if (certifyType == '1') {
         console.log("이메일 검증")
 
+        if (!confirm.userId.trim()) {
+          alert('이메일 인증 하시기 바랍니다.');
+          return;
+        }
+
         // 이름 필수 입력 체크
         if (!name.trim()) {
           alert('이름을 입력해 주세요.');
@@ -282,17 +288,17 @@ function SearcIdComponent() {
         }
 
 
-        searchId(certifyType, "", name, userEmail, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
-        .then((response) => {
+        // searchId(certifyType, "", name, userEmail, `${mobilePrefix}${mobile1.trim()}${mobile2.trim()}` )
+        // .then((response) => {
 
-          console.log("이메일 검증 nework에서 확인" + response.data);
-          // 고객정보 확인, 이메일 발송
-          // send_email(response.data)
-        })
-        .catch((error) => {
-          console.log("회원명, 이메일을 확인해 주세요.");
-          return;
-        });
+        //   console.log("이메일 검증 nework에서 확인" + response.data);
+        //   // 고객정보 확인, 이메일 발송
+        //   // send_email(response.data)
+        // })
+        // .catch((error) => {
+        //   console.log("회원명, 이메일을 확인해 주세요.");
+        //   return;
+        // });
 
         if (`${confirm.confirmPath}` == '1') {  
           console.log("이메일 인증번호 검증")
@@ -422,7 +428,7 @@ function SearcIdComponent() {
                       </select>
                       <button
                         type="button"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 w-1/4 px-4 rounded-md ml-2"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 w-1/4 px-4 rounded-md ml-2"
                         onClick={handleSendVerificationCode}
                       >
                         이메일 발송
@@ -473,7 +479,7 @@ function SearcIdComponent() {
                         />
                         <button
                           type="button"
-                          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 w-1/4 rounded-md ml-2"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 w-1/4 rounded-md ml-2"
                           onClick={handleSendVerificationCode}
                         >
                           SMS 발송
@@ -495,7 +501,7 @@ function SearcIdComponent() {
                       />
                       <button
                         type="button"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
                         onClick={handleVerifyCode}
                       >
                         확인
@@ -520,7 +526,7 @@ function SearcIdComponent() {
                 <span className="mbrBtn mbrBtnSearch_4">
                    <button
                      type="submit"
-                     className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+                     className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
                    >
                      <span>아이디찾기</span>
                    </button>

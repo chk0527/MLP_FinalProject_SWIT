@@ -47,7 +47,9 @@ const PlaceDetailComponent = ({ placeNo }) => {
   const handleFavorite = async (placeNo) => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      if (window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
+      if (
+        window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")
+      ) {
         navigate("/login");
       }
       return;
@@ -67,80 +69,71 @@ const PlaceDetailComponent = ({ placeNo }) => {
   };
 
   return (
-    <div className="font-GSans">
-      <div className="w-1000 font-bold text-3xl text-center">
-        [{place.placeAddr.substring(0, 2)}] {place.placeName}
-        <button
-          onClick={() => handleFavorite(place.placeNo)}
-          className="absolute top-72 mt-7 ml-4"
-        >
+    <div className="font-GSans min-h-screen bg-white">
+      <div className="py-6 flex justify-center items-center bg-yellow-100 shadow-md">
+        <h1 className="text-4xl font-bold text-gray-800">
+          [{place.placeAddr.substring(0, 2)}] {place.placeName}
+        </h1>
+        <button onClick={() => handleFavorite(place.placeNo)} className="ml-4">
           {favoriteStatus[place.placeNo] ? (
-            <FaStar size={30} color="#FFF06B" />
+            <FaStar size={30} color="#FFD700" />
           ) : (
-            <FaRegStar size={30} color="#FFF06B" />
+            <FaRegStar size={30} color="#FFD700" />
           )}
         </button>
       </div>
-      <hr className="border border-black mt-4 mb-8 w-full" />
-      <div className="flex justify-between">
-        <div className="md:flex flex-col gap-20">
-          <img
-            className="object-cover rounded shadow w-450 h-450"
-            src={place.placeImg}
-          ></img>
+      <div className="container mx-auto p-6 flex flex-col items-center gap-12 mt-10">
+        <img
+          className="object-cover rounded shadow-md w-650 h-96 transition-transform duration-300 transform hover:scale-105"
+          src={place.placeImg}
+          alt={place.placeName}
+        />
+        <div className="bg-white rounded  p-8 w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">🏢 위치</h2>
+            <p className="text-xl">{place.placeAddr}</p>
+          </div>
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">📞 전화번호</h2>
+            <p className="text-xl">
+              {place.placeTel || "전화번호 정보가 없습니다."}
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">🕖 운영시간</h2>
+            <p className="text-xl">
+              {place.placeTime || "시간 정보가 없습니다."}
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">📄 상세 정보</h2>
+            <p className="text-xl whitespace-pre-line">
+              {place.placeDetail || "메뉴 정보가 없습니다."}
+            </p>
+          </div>
+        </div>
+        <div className="w-full md:w-3/4 mt-8">
+          <h2 className="text-2xl text-start text-gray-800 py-4 border-b-2 border-gray-400 ">
+            상세 위치
+          </h2>
           {place.placeAddr && place.placeAddr.trim() !== "" ? (
-            <MapComponent placeAddr={place.placeAddr} />
+            <div className="flex justify-center mt-4">
+              <MapComponent placeAddr={place.placeAddr} />
+            </div>
           ) : (
             <p>주소 정보가 없습니다.</p>
           )}
         </div>
-        <div className="w-450">
-          <div className="text-xl whitespace-pre-line flex flex-col gap-10 ">
-            <div>
-              <p className="text-2xl py-2">위치</p>
-              <div className="flex">
-                - <div className="ml-4">{place.placeAddr}</div>
-              </div>
-            </div>
-            <div>
-              <p className="text-2xl py-2">전화번호</p>
-              <div className="flex">
-                -
-                <div className="ml-4">
-                  {place.placeTel || "전화번호 정보가 없습니다."}
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-2xl py-2">운영시간</p>
-              <div className="flex">
-                -
-                <div className="ml-4">
-                  {place.placeTime || "시간 정보가 없습니다."}
-                </div>
-              </div>
-            </div>
-            <div className=" text-xl whitespace-pre-line">
-              <p className="text-2xl py-2">메뉴</p>
-              <div className="flex">
-                -
-                <div className="ml-4">
-                  {place.placeDetail || "메뉴 정보가 없습니다."}
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="flex justify-center my-12 w-full md:w-3/4">
+          <Link to={{ pathname: "/place/list" }} state={1}>
+            <button
+              type="button"
+              className="rounded p-3 m-2 text-xl w-32 text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
+            >
+              목록
+            </button>
+          </Link>
         </div>
-      </div>
-      <div className="flex justify-center my-24">
-        <Link to={{ pathname: "/place/list" }} state={1}>
-          <button
-            type="button"
-            className="rounded p-3 m-2 text-xl w-28 text-white bg-gray-500"
-          >
-            목록
-          </button>
-        </Link>
       </div>
     </div>
   );

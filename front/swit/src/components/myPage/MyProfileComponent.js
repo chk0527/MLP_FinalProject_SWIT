@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
-import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage } from '../../api/UserApi';
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage, checkDuplicate } from '../../api/UserApi';
 import { FaPen } from 'react-icons/fa';
+import { LoginContext } from '../../contexts/LoginContextProvider';
+import Cookies from 'js-cookie';
+import debounce from 'lodash/debounce';
 
 const initState = {
     userName: '',
@@ -9,33 +12,28 @@ const initState = {
     userEmail: '',
     userPassword: '',
     userImage: ''
-}
-
-const host = API_SERVER_HOST
+};
 
 const MyProfileComponent = ({ userId }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [user, setUser] = useState(initState)             // 최종 반영된 마이페이지 프로필
-    const [modalUser, setModalUser] = useState(initState)   // 모달창에서만 보이는 임시 프로필 정보
-    const [userImage, setUserImage] = useState(null)        // 이미지 관리
-    const [isSocialLogin, setIsSocialLogin] = useState(false); // 소셜 로그인 여부 확인
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [user, setUser] = useState(initState);
+    const [modalUser, setModalUser] = useState(initState);
+    const [userImage, setUserImage] = useState(null);
+    const [isSocialLogin, setIsSocialLogin] = useState(false);
+    const [errors, setErrors] = useState({});
 
-    // 최초로 페이지 로드될 때 사용자 정보 가져오기
+    const { refreshAccessToken } = useContext(LoginContext);
+
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                // const data = await info();
                 const userData = await getUserProfile(userId);
                 setUser(userData);
                 setModalUser({ ...userData });
                 const imageUrl = await getUserImage(userId);
                 setUserImage(imageUrl);
 
-                console.log(userId + '님의 상태는 ' + userData.userSnsConnect);
-
-                // 소셜 로그인 여부 확인
                 if (userData && (userData.userSnsConnect === 'NAVER' || userData.userSnsConnect === 'KAKAO')) {
-                    console.log(userId + '님은 소셜 로그인 유저입니다.');
                     setIsSocialLogin(true);
                 }
             } catch (error) {
@@ -45,51 +43,76 @@ const MyProfileComponent = ({ userId }) => {
         fetchUserInfo();
     }, [userId]);
 
-    const openModal = () => {
+    const openModal = async () => {
         if (isSocialLogin) {
-            console.log(userId + '님은 프로필 수정을 할 수 없습니다.');
             alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
             return;
         }
-        setModalUser({ ...user }); // 모달창을 열 때 현재 프로필 데이터 복사
+        setModalUser({ ...user });
         setIsModalOpen(true);
+        await validate(modalUser);
     };
 
-    // 수정하기 버튼으로 모달창 닫을 때 이벤트
     const closeModal = () => {
         setIsModalOpen(false);
     };
 
-    // x 버튼으로 모달창 닫을 때 이벤트
     const closeModalOptionX = () => {
         setIsModalOpen(false);
-        // setUserImage(null); // 모달이 닫힐 때 새 이미지 state 초기화
     };
 
     const handleTextChange = (e) => {
         const { name, value } = e.target;
         setModalUser((prev) => ({ ...prev, [name]: value }));
+        debounceValidate({ ...modalUser, [name]: value });
+    };
+
+    const debounceValidate = useCallback(
+        debounce(async (userInfo) => {
+            await validate(userInfo);
+        }, 500),
+        [user]
+    );
+
+    const validate = async (userInfo) => {
+        const { userNick, userPhone, userEmail } = userInfo;
+        const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+
+        const newErrors = {};
+        if (response.userNick && response.userNick !== user.userNick) {
+            newErrors.userNick = '닉네임이 이미 존재합니다.';
+        } else {
+            newErrors.userNick = '사용 가능한 닉네임입니다.';
+        }
+
+        if (response.userPhone && response.userPhone !== user.userPhone) {
+            newErrors.userPhone = '전화번호가 이미 존재합니다.';
+        } else {
+            newErrors.userPhone = '사용 가능한 전화번호입니다.';
+        }
+
+        if (response.userEmail && response.userEmail !== user.userEmail) {
+            newErrors.userEmail = '이메일이 이미 존재합니다.';
+        } else {
+            newErrors.userEmail = '사용 가능한 이메일입니다.';
+        }
+
+        setErrors(newErrors);
     };
 
     const handleImageUpload = async (e) => {
-        // if (isSocialLogin) {
-        //     alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
-        //     return;
-        // }
         const img = e.target.files[0];
         if (img) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setUserImage(reader.result); // 이미지 미리보기 설정
+                setUserImage(reader.result);
             };
             reader.readAsDataURL(img);
 
-            // 이미지 업로드 처리
             const formData = new FormData();
             formData.append("userImage", img);
             try {
                 await postUserImage(userId, formData);
-                // 프로필 이미지 정보 갱신(url로 관리)
                 const imageUrl = await getUserImage(userId);
                 setUserImage(imageUrl);
             } catch (error) {
@@ -103,15 +126,30 @@ const MyProfileComponent = ({ userId }) => {
             alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
             return;
         }
+
+        const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한'));
+        if (hasErrors) {
+            alert("수정할 수 없는 정보가 존재합니다");
+            return;
+        }
+
         try {
-            // 텍스트 수정 처리
-            await putUserProfile(modalUser);
+            const response = await putUserProfile(modalUser);
+            const { accessToken, refreshToken, RESULT } = response;
 
-            // 프로필 텍스트 정보 갱신
-            const updatedProfile = await getUserProfile(userId);
-            setUser(updatedProfile);
+            if (RESULT === 'SUCCESS') {
+                Cookies.set('accessToken', accessToken);
+                Cookies.set('refreshToken', refreshToken);
 
-            closeModal();
+                await refreshAccessToken();
+
+                const updatedProfile = await getUserProfile(userId);
+                setUser(updatedProfile);
+                alert("정보가 수정 되었습니다.");
+                closeModal();
+            } else {
+                console.error('프로필 수정 실패');
+            }
         } catch (error) {
             console.error('Error updating profile:', error);
         }
@@ -119,8 +157,7 @@ const MyProfileComponent = ({ userId }) => {
 
     return (
         <>
-            {/* 프로필 정보 디자인 */}
-            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full max-w-4xl mb-8">
+            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-full mb-8">
                 <div className="flex items-center">
                     <label htmlFor="fileInput" className="block mb-4 cursor-pointer">
                         <div className="w-36 h-36 rounded-lg bg-gray-500 border border-gray-800 flex items-center justify-center relative overflow-hidden">
@@ -167,7 +204,6 @@ const MyProfileComponent = ({ userId }) => {
                 </div>
             </div>
 
-            {/* 모달창 디자인 */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative">
@@ -181,16 +217,31 @@ const MyProfileComponent = ({ userId }) => {
                             <label className="block mb-1">닉네임:</label>
                             <input className="w-full border border-gray-300 p-2 rounded"
                                 name="userNick" type="text" value={modalUser.userNick} onChange={handleTextChange} />
+                            {errors.userNick && (
+                                <p className={`text-sm ${errors.userNick.includes('사용 가능한') ? 'text-green-500' : 'text-red-500'}`}>
+                                    {errors.userNick}
+                                </p>
+                            )}
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1">전화번호:</label>
                             <input className="w-full border border-gray-300 p-2 rounded"
                                 name="userPhone" type="text" value={modalUser.userPhone} onChange={handleTextChange} />
+                            {errors.userPhone && (
+                                <p className={`text-sm ${errors.userPhone.includes('사용 가능한') ? 'text-green-500' : 'text-red-500'}`}>
+                                    {errors.userPhone}
+                                </p>
+                            )}
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1">이메일:</label>
                             <input className="w-full border border-gray-300 p-2 rounded"
                                 name="userEmail" type="text" value={modalUser.userEmail} onChange={handleTextChange} />
+                            {errors.userEmail && (
+                                <p className={`text-sm ${errors.userEmail.includes('사용 가능한') ? 'text-green-500' : 'text-red-500'}`}>
+                                    {errors.userEmail}
+                                </p>
+                            )}
                         </div>
                         <button className="bg-red-500 text-white px-4 py-2 rounded w-full" onClick={handleClickModify}>수정하기</button>
                     </div>

@@ -77,3 +77,10 @@ export const searchId2   = (confirmDTO) => {
   const { confirmNo, userId, confirmTarget, confirmPath, confirmNum, confirmLimitDate } = confirmDTO;
   return api.post(`/api/confirm/userCheck2`, confirmDTO);
 }
+
+// 비밀번호 찾기 --> 비밀번호 변경 처리 
+export const changePw   = (user) => {
+  return axios.post(`/api/confirm/changeInfo`, user);
+}  
+
+

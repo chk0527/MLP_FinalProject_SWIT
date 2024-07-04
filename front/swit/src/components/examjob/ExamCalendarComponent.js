@@ -225,7 +225,7 @@ const ExamCalendarComponent = () => {
         </div>
         {/* 채용/시험/검색 끝 */}
       </div>
-      <div className="relative flex-wrap w-1300 font-GSans">
+      <div className="relative flex-wrap w-full font-GSans">
         <div className="absolute top-0 left-44 flex order-last">
           <Link
             to={{ pathname: "/exam/list/calendar" }}

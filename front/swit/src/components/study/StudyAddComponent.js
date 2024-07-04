@@ -205,7 +205,7 @@ const StudyAddComponent = () => {
 
   //css
   const inputStyle1 =
-    "w-full rounded border-0 px-3.5 py-2 mb-20 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300";
+    "w-full rounded border-0 px-3.5 py-2 mb-20 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 resize-none";
   const inputStyle2 =
     "w-52 rounded text-center border-0 py-2 mb-20 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300";
   const inputStyle3 =
@@ -214,9 +214,9 @@ const StudyAddComponent = () => {
     "w-52 rounded text-center border-0 py-2 mb-4 -ml-2 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300";
 
   return (
-    <div className="flex justify-center font-GSans w-1300">
+    <div className="flex justify-center font-GSans">
       {result && <ResultModal callbackFn={closeModal} />}
-      <div className="w-2/3">
+      <div className="w-full max-w-1000">
         <div className="text-3xl mb-16 pb-4 border-soild border-gray-200 border-b-2">
           <div className="w-64 py-7">
             <span className="shadow-highlight">스터디 만들기</span>
