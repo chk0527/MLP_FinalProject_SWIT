@@ -47,6 +47,7 @@ export const getAllStudies = async (studyTitle, studySubject, studyAddr, studyOn
 
 
 
+
 export const deleteOne = async (studyNo) => {
   const res = await axios.delete(`/api/study/${studyNo}`);
   return res.data;
