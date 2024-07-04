@@ -38,9 +38,9 @@ const StudyGroupComponent = ({ studyNo }) => {
   };
 
   return (
-    <div className="flex flex-col items-center font-GSans">
+    <div className="flex flex-col items-center font-GSans w-full max-w-1000">
       {/* 타이머 항목 */}
-      <div className="flex justify-center my-3 w-full">
+      <div className="flex justify-center my-3">
         <span
           onClick={() => setView("calendar")}
           className={`mx-2 px-4 cursor-pointer ${

@@ -1,6 +1,6 @@
 import StudyGroupComponent from "../../components/study/StudyGroupComponent";
 import StudyInfoComponent from "../../components/study/StudyInfoComponent";
-import BasicLayout from "../../layouts/BasicLayout";
+import StudyLayout from "../../layouts/StudyLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { isMember } from "../../api/GroupApi";
@@ -54,16 +54,16 @@ const StudyGroupPage = () => {
   }
 
   return (
-    <BasicLayout>
-      <div className="relative flex gap-10">
-        <div className="grow font-GSans">
+    <StudyLayout>
+      <div className="relative flex gap-10 justify-center">
+        <div className="grow font-GSans max-w-1000">
           <StudyInfoComponent
             studyNo={studyNo}
             ActionComponent={GroupMeetingComponent}
           />
           <StudyGroupComponent studyNo={studyNo} />
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="grow flex flex-col max-w-96 gap-8">
           <StudyChatPage />
           <StudyTimerPage studyNo={studyNo} />
           <StudyTodoPage studyNo={studyNo}/>
@@ -77,7 +77,7 @@ const StudyGroupPage = () => {
           isLeader={isLeaderState}
         />
       </div>
-    </BasicLayout>
+    </StudyLayout>
   );
 };
 

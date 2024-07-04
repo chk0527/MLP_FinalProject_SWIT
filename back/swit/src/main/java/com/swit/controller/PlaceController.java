@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.swit.domain.Place;
 import com.swit.dto.FavoritesPlaceDTO;
 import com.swit.dto.PlaceDTO;
+import com.swit.repository.PlaceRepository;
 import com.swit.service.PlaceService;
 
 import lombok.RequiredArgsConstructor;
@@ -91,6 +93,6 @@ public class PlaceController {
         }
     }
     
-
+  
 
 }
