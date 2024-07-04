@@ -207,6 +207,15 @@ const BoardReadComponent = ({ boardNo }) => {
                 <hr />
               </div>
             ))}
+          <div className="flex justify-center">
+            <button
+              type="button"
+              className="rounded p-3 my-40 text-xl w-28 text-white bg-yellow-500"
+              onClick={() => window.history.back()}
+            >
+              목록
+            </button>
+          </div>
         </div>
       </div>
     </div>

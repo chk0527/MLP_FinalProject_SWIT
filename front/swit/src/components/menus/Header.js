@@ -60,7 +60,7 @@ const Header = () => {
           <img className="object-contain size-24" src={logo} alt="이미지"></img>
         </Link>
       </div>
-      <div className="p-6 flex sticky top-0 z-40 justify-center bg-white border-b-2 border-gray-400 font-GSans">
+      <div className="p-6 flex sticky top-0 z-40 justify-center bg-gray-50 border-y-2 border-gray-200 font-GSans">
         <AnimatePresence>
           <ul
             className="flex space-x-32 text-xl"
@@ -78,7 +78,7 @@ const Header = () => {
                   {index === currentItem && (
                     <motion.div
                       layoutId="underline"
-                      style={{ height: "4px" }}
+                      style={{ height: "6px" }}
                       className="absolute bottom-0 w-full bg-yellow-200"
                     />
                   )}

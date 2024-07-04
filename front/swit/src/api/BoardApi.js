@@ -65,3 +65,9 @@ export const getUserBoardList = async (userNo, pageParam) => {
   const res = await axios.get(`${prefix}/list/${userNo}`, { params: { page: page, size: size } })
   return res.data;
 }
+
+export const getBoardSearch = async (searchParams, pageParam) => {
+  const { page, size } = pageParam;
+  const res = await axios.get(`${prefix}/search`, { params: { ...searchParams, page: page, size: size } });
+  return res.data;
+}
