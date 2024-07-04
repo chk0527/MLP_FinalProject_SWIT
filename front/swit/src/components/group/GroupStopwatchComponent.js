@@ -12,6 +12,7 @@ import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 �
 import { isLeader } from "../../api/GroupApi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import CommonModal from "../common/CommonModal";
 
 const GroupStopwatchComponent = ({ studyNo }) => {
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
@@ -23,7 +24,7 @@ const GroupStopwatchComponent = ({ studyNo }) => {
   const [userIsLeader, setUserIsLeader] = useState(false); // 방장 여부 식별
   const [userNick, setUserNick] = useState(getUserNickFromToken()); // 로그인한 유저의 닉네임 관리
   const [totalStudyTime, setTotalStudyTime] = useState({}); // 그룹원별 총 공부 시간
-
+  const [showModal, setShowModal] = useState(false);
   // 날짜 범위 계산에 필요한 관리(방장 화면)
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -500,7 +501,8 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                     <div
                       onClick={() => {
                         if (!currentStopwatch.name) {
-                          alert("제목을 입력하세요.");
+                          // alert("제목을 입력하세요.");
+                          setShowModal(true);
                         } else {
                           handleStartStopwatch(currentStopwatch);
                           setIsEditing(false); // 시작 시 제목 입력창 비활성화
@@ -533,7 +535,8 @@ const GroupStopwatchComponent = ({ studyNo }) => {
                       <div
                         onClick={() => {
                           if (!currentStopwatch.name) {
-                            alert("제목을 입력하세요.");
+                            // alert("제목을 입력하세요.");
+                            setShowModal(true);
                           } else {
                             addRecord(currentStopwatch);
                             handlePauseStopwatch(currentStopwatch);
@@ -590,6 +593,14 @@ const GroupStopwatchComponent = ({ studyNo }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {showModal && (
+        <CommonModal
+          modalMessage="제목을 입력하세요"
+          closeMessage="확인"
+          callbackFn={() => setShowModal(false)}
+        />
       )}
     </div>
   );
