@@ -21,9 +21,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // @Modifying
     // @Query("UPDATE User u SET u.userName = :userName, u.userNick = :userNick, u.userPhone = :userPhone, u.userEmail = :userEmail WHERE u.userId = :userId")
     // Optional<User> updateOne(@Param("userId") String userId, @Param("userName") String userName, @Param("userNick") String userNick, @Param("userPhone") String userPhone, @Param("userEmail") String userEmail);
-
+    
+    // 회원 가입시 아이디, 닉네임, 이메일, 연락처 존재 여부 확인 
     Boolean existsByUserId(String userId);
-
+    Boolean existsByUserNick(String userNick);
+    Boolean existsByUserEmail(String userEmail);
+    Boolean existsByUserPhone(String userPhone);
+    
     Optional<User> findByUserId(String userId);
     Optional<User> findByUserNick(String userNick);
 
