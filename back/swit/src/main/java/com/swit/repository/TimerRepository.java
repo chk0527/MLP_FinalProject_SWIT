@@ -24,4 +24,8 @@ public interface TimerRepository extends JpaRepository<Timer, Integer> {
     @Transactional
     @Query("UPDATE Timer t SET t.user.userNick = :newUserNick WHERE t.user.userNick = :oldUserNick")
     void updateUserNick(@Param("oldUserNick") String oldUserNick, @Param("newUserNick") String newUserNick);
+
+    @Modifying
+    @Query("DELETE FROM Timer t WHERE t.study.studyNo = :studyNo")
+    void deleteByStudyNo(@Param("studyNo") Integer studyNo);
 }

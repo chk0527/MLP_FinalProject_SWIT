@@ -19,4 +19,9 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
   @Transactional
   @Query("UPDATE ChatMessage c SET c.userNick = :newUserNick WHERE c.userNick = :oldUserNick")
   void updateUserNick(@Param("oldUserNick") String oldUserNick, @Param("newUserNick") String newUserNick);
+
+
+  @Modifying
+  @Query("DELETE FROM ChatMessage c WHERE c.study.studyNo = :studyNo")
+  void deleteByStudyNo(@Param("studyNo") Integer studyNo);
 }

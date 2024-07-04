@@ -99,22 +99,18 @@ const StudyModifyComponent = ({ studyNo }) => {
         });
 
         putOne(studyNo, formData).then(result => {
-            setResult('Modified')
+            setResult({ action: '수정' })
         })
     }
 
     const handleClickDelete = () => {
-      deleteOne(studyNo).then(result => {
-        alert('삭제 되었습니다.');
-        navigate('/study');
-      }).catch(error => {
-        console.error('삭제 중 오류가 발생했습니다:', error);
-        alert('삭제 중 오류가 발생했습니다.');
-      });
-    };
+        deleteOne(studyNo).then(result => {
+            setResult({ action: '삭제' })
+        })
+    }
 
     const closeModal = () => {
-        if (result == 'Deleted')
+        if (result && result.action === 'Deleted')
             moveToList()
         else
             moveToGroup(studyNo)
@@ -225,7 +221,7 @@ const StudyModifyComponent = ({ studyNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            {result && <ResultModal callbackFn={closeModal} />}
+            {result && <ResultModal content={result.action} callbackFn={closeModal} />}
             <div className="w-full max-w-1000 ">
                 <div className="text-3xl mb-16 pb-4 border-soild border-gray-200 border-b-2">
                     <div className="w-64 py-7">
