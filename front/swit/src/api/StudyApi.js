@@ -44,6 +44,7 @@ export const getAllStudies = async (studyTitle, studySubject, studyAddr, studyOn
 
 
 
+
 export const deleteOne = async (studyNo) => {
   const res = await axios.delete(`${prefix}/${studyNo}`);
   return res.data;
