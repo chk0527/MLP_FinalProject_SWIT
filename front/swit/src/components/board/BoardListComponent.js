@@ -49,6 +49,7 @@ const BoardListComponent = () => {
       setServerData(data);
     });
   };
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchParams((prevParams) => ({

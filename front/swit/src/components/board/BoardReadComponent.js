@@ -141,13 +141,14 @@ const BoardReadComponent = ({ boardNo }) => {
                         작성
                     </button>
                 </div>
-                <div className="mt-10">
-                    <button
-                        className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={handleClickDelete}>
-                        삭제
-                    </button>
-                </div>
+                {userInfo.userNo === board.userNo ?
+                    <div className="mt-10">
+                        <button
+                            className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            onClick={handleClickDelete}>
+                            삭제
+                        </button>
+                    </div> : <></>}
                 {userInfo.userNo === board.userNo ?
                     <div className="mt-10">
                         <button
