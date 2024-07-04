@@ -12,8 +12,6 @@ const BannerComponent = () => {
     instance
       .options({ lifeLike: false, nextStringDelay: 3000, loop: false })
       .pause(1500)
-      .delete(50)
-      .pause(1000);
     return instance;
   };
 
@@ -23,7 +21,7 @@ const BannerComponent = () => {
   };
 
   return (
-    <div className="w-full overflow-hidden font-GSans">
+    <div className="w-full overflow-hidden font-blackHans">
       <div>
         <div
           className="relative w-full h-dvh bg-cover after:content-['*'] after:absolute after:top-0 after:right-0 after:w-full after:h-full after:bg-black after:opacity-80 after:block after:z-10"
@@ -31,10 +29,10 @@ const BannerComponent = () => {
         >
           <div className="absolute p-20 flex justify-center items-center z-20 text-white w-full h-full">
             <TypeIt getBeforeInit={getBeforeInit}>
-              <span className="text-7xl text-white">세상의 모든 스터디</span>
+              <span className="text-8xl text-white">세상의 모든 스터디</span>
             </TypeIt>
             {/* <div className="absolute text-9xl text-yellow-200">fasdfasdf</div> */}
-            <motion.svg
+            {/* <motion.svg
               className="absolute"
               xmlns="http://www.w3.org/2000/svg"
               width="1000px"
@@ -138,7 +136,7 @@ c86 5 119 18 119 46 0 11 -20 14 -86 14 -84 0 -85 0 -79 23 14 45 81 164 127
                   
                 }}
               />
-            </motion.svg>
+            </motion.svg> */}
           </div>
         </div>
       </div>

@@ -243,7 +243,7 @@ const MapListComponent = () => {
   };
 
   return (
-    <div className="relative w-full font-GSans">
+    <div className="relative w-full font-GSans z-0">
       <div className="flex w-full justify-between px-8">
         <div className="text-5xl pb-16 font-blackHans">
           <div>스터디 장소</div>
