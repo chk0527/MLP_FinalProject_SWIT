@@ -7,7 +7,7 @@ import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMembe
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import StudyListComponent from "../../components/study/StudyListComponent";
 import StudyPageComponent from "../../components/study/StudyPageComponent ";
-
+import LoginRequireModal from "../../components/common/LoginRequireModal";
 //아이콘
 import searchIcon from "../../img/search-icon.png";
 
@@ -35,6 +35,8 @@ const StudyListPage = () => {
   const [studyOnline, setStudyOnline] = useState(false);
 
   const [inputText, setInputText] = useState("");
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleInput = (e) => {
     setInputText(e.target.value);
@@ -183,8 +185,9 @@ const StudyListPage = () => {
   const handleAddStudy = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      alert("로그인이 필요합니다.");
-      navigate("/login");
+      setShowLoginModal(true);
+      // alert("로그인이 필요합니다.");
+      // navigate("/login");
       return;
     }
     navigate("/study/add", { state: 0 });
@@ -192,6 +195,11 @@ const StudyListPage = () => {
 
   return (
     <BasicLayout>
+
+      {showLoginModal && ( 
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} /> 
+      )} 
+
       {/* 검색창 */}
       <div className="flex justify-between font-GSans == px-8 pb-8">
         <div className="text-5xl font-blackHans">스터디 그룹</div>

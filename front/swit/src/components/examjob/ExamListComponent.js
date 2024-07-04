@@ -8,6 +8,7 @@ import { FaStar, FaRegStar } from 'react-icons/fa';
 import { CiCalendarDate, CiBoxList } from "react-icons/ci";
 import "./ExamListComponent.css";
 import { getUserIdFromToken } from "../../util/jwtDecode";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const initState = {
   dtoList: [],
@@ -28,6 +29,7 @@ const ListComponent = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // 검색
   const fetchExam = async () => {
@@ -59,9 +61,7 @@ const ListComponent = () => {
     //로그인x
     const userId = getUserIdFromToken();
     if (!userId) {
-      if (window.confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
-        navigate('/login');
-      }
+      setShowLoginModal(true);
       return;
     }
 
@@ -92,6 +92,11 @@ const ListComponent = () => {
   return (
     <div>
       <div className="relative w-full font-GSans">
+
+        {showLoginModal && (
+          <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+        )}
+
         {/* 채용/시험/검색 */}
         <div className="flex-col space-y-2">
           <div className="flex w-full justify-between items-center">

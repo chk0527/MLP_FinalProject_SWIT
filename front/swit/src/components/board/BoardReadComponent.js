@@ -7,6 +7,7 @@ import useCustomMove from "../../hooks/useCustomMove";
 import { LoginContext } from "../../contexts/LoginContextProvider";
 import "react-datepicker/dist/react-datepicker.css";
 import BoardDeleteModal from "./BoardDeleteModal";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const initState = {
   boardNo: 0,
@@ -32,6 +33,7 @@ const BoardReadComponent = ({ boardNo }) => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleChangeComment = (e) => {
     comment[e.target.name] = e.target.value;
@@ -55,8 +57,7 @@ const BoardReadComponent = ({ boardNo }) => {
   const handleClickAdd = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      alert("로그인이 필요합니다.");
-      navigate("/login");
+      setShowLoginModal(true);
     }
     comment.userNo = userInfo.userNo;
     comment.userNick = userInfo.userNick;
@@ -125,6 +126,9 @@ const BoardReadComponent = ({ boardNo }) => {
 
   return (
     <div className="flex justify-center font-GSans">
+       {showLoginModal && (
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
       <div className="relative w-full max-w-1000">
         {showDeleteModal && (
           <BoardDeleteModal
