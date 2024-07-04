@@ -110,7 +110,7 @@ const StudyModifyComponent = ({ studyNo }) => {
     }
 
     const closeModal = () => {
-        if (result && result.action === 'Deleted')
+        if (result && result.action === '삭제')
             moveToList()
         else
             moveToGroup(studyNo)
