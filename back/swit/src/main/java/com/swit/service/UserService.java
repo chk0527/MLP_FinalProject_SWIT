@@ -82,8 +82,7 @@ public class UserService {
           user.setUserNick(newUserNick);  // userNick 변경
           user.setUserPhone(userDTO.getUserPhone());
           user.setUserEmail(userDTO.getUserEmail());
-          // user.setUserPassword(userDTO.getUserPassword());
-          // user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
+          user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
           userRepository.save(user);
 
           // 자식 테이블(timer)의 userNick 업데이트
