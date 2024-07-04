@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  updateTimer,
-} from "../../api/TimerApi";
+import { updateTimer } from "../../api/TimerApi";
 import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -231,103 +229,101 @@ const GroupTimerComponent = ({ studyNo }) => {
   return (
     <div>
       {/* 타이머 개인화면 */}
-      <div className="border shadow bg-yellow-100 p-4 flex flex-col items-center rounded">
-        <div className="w-full space-y-4">
-          {currentTimer ? (
-            <>
-              {currentTimer.running ? (
-                <>
-                  {formatTimerTime(currentTimer.time)}
-                  <div className="flex justify-center space-x-2">
-                    <button
-                      onClick={handlePauseTimer}
-                      className="bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
-                    >
-                      일시정지
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-between items-center">
-                    <input
-                      type="number"
-                      value={Math.floor(currentTimer.time / 3600)}
-                      onChange={(e) => {
-                        const hours = Math.max(0, e.target.value);
-                        setCurrentTimer((prev) => ({
-                          ...prev,
-                          time: hours * 3600 + (prev ? prev.time % 3600 : 0),
-                        }));
-                      }}
-                      className="w-20 p-2 border border-gray-300 rounded"
-                      disabled={currentTimer.running}
-                    />
-                    <p>시</p>
-                    <input
-                      type="number"
-                      value={Math.floor((currentTimer.time % 3600) / 60)}
-                      onChange={(e) => {
-                        const minutes = Math.max(0, e.target.value);
-                        setCurrentTimer((prev) => ({
-                          ...prev,
-                          time:
-                            Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
-                            minutes * 60 +
-                            (prev ? prev.time % 60 : 0),
-                        }));
-                      }}
-                      className="w-20 p-2 border border-gray-300 rounded"
-                      disabled={currentTimer.running}
-                    />
-                    <p>분</p>
-                    <input
-                      type="number"
-                      value={currentTimer.time % 60}
-                      onChange={(e) => {
-                        const seconds = Math.max(0, e.target.value);
-                        setCurrentTimer((prev) => ({
-                          ...prev,
-                          time:
-                            Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
-                            Math.floor((prev ? prev.time % 3600 : 0) / 60) * 60 +
-                            seconds,
-                        }));
-                      }}
-                      className="w-20 p-2 border border-gray-300 rounded"
-                      disabled={currentTimer.running}
-                    />
-                    <p>초</p>
-                  </div>
-                  <div className="flex justify-center space-x-2">
-                    <button
-                      onClick={handleStartTimer}
-                      className="shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
-                    >
-                      시작
-                    </button>
-                    <button
-                      onClick={handleStopTimer}
-                      className="shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
-                    >
-                      초기화
-                    </button>
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <div className="flex justify-center">
-              <button
-                onClick={handleCreateTimer}
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-              >
-                생성하기
-              </button>
-            </div>
-          )}
+      {currentTimer ? (
+        <div className="border shadow bg-yellow-100 p-4 flex flex-col items-center rounded">
+          <div className="w-full space-y-4">
+            {currentTimer.running ? (
+              <>
+                {formatTimerTime(currentTimer.time)}
+                <div className="flex justify-center space-x-2">
+                  <button
+                    onClick={handlePauseTimer}
+                    className="bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
+                  >
+                    일시정지
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between items-center">
+                  <input
+                    type="number"
+                    value={Math.floor(currentTimer.time / 3600)}
+                    onChange={(e) => {
+                      const hours = Math.max(0, e.target.value);
+                      setCurrentTimer((prev) => ({
+                        ...prev,
+                        time: hours * 3600 + (prev ? prev.time % 3600 : 0),
+                      }));
+                    }}
+                    className="w-20 p-2 border border-gray-300 rounded"
+                    disabled={currentTimer.running}
+                  />
+                  <p>시</p>
+                  <input
+                    type="number"
+                    value={Math.floor((currentTimer.time % 3600) / 60)}
+                    onChange={(e) => {
+                      const minutes = Math.max(0, e.target.value);
+                      setCurrentTimer((prev) => ({
+                        ...prev,
+                        time:
+                          Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
+                          minutes * 60 +
+                          (prev ? prev.time % 60 : 0),
+                      }));
+                    }}
+                    className="w-20 p-2 border border-gray-300 rounded"
+                    disabled={currentTimer.running}
+                  />
+                  <p>분</p>
+                  <input
+                    type="number"
+                    value={currentTimer.time % 60}
+                    onChange={(e) => {
+                      const seconds = Math.max(0, e.target.value);
+                      setCurrentTimer((prev) => ({
+                        ...prev,
+                        time:
+                          Math.floor(prev ? prev.time / 3600 : 0) * 3600 +
+                          Math.floor((prev ? prev.time % 3600 : 0) / 60) * 60 +
+                          seconds,
+                      }));
+                    }}
+                    className="w-20 p-2 border border-gray-300 rounded"
+                    disabled={currentTimer.running}
+                  />
+                  <p>초</p>
+                </div>
+                <div className="flex justify-center space-x-2">
+                  <button
+                    onClick={handleStartTimer}
+                    className="shadow bg-yellow-300 text-white py-2 px-4 rounded hover:bg-yellow-400"
+                  >
+                    시작
+                  </button>
+                  <button
+                    onClick={handleStopTimer}
+                    className="shadow bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
+                  >
+                    초기화
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="border shadow p-4 flex flex-col items-center rounded">
+          <button
+            onClick={handleCreateTimer}
+            className="bg-yellow-300 py-2 px-4 rounded hover:bg-yellow-400"
+          >
+            스톱워치 생성
+          </button>
+        </div>
+      )}
     </div>
   );
 };

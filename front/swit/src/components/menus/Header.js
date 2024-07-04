@@ -55,12 +55,12 @@ const Header = () => {
 
   return (
     <nav id="navbar" className="absolute w-full h-full">
-      <div className="relative p-4 flex justify-center bg-white z-50">
+      <div className="relative flex justify-center bg-white z-50">
         <Link to={"/"}>
-          <img className="object-contain size-24" src={logo} alt="이미지"></img>
+          <img className="object-contain size-28" src={logo} alt="이미지"></img>
         </Link>
       </div>
-      <div className="p-6 flex sticky top-0 z-40 justify-center bg-gray-50 border-y-2 border-gray-200 font-GSans">
+      <div className="p-6 flex sticky top-0 z-40 justify-center bg-gray-50 border shadow border-gray-200 font-GSans">
         <AnimatePresence>
           <ul
             className="flex space-x-32 text-xl"

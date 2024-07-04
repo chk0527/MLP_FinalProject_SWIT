@@ -55,9 +55,9 @@ const Header = () => {
 
   return (
     <nav id="navbar" className="absolute w-full h-full">
-      <div className="relative p-4 flex justify-center z-50">
+      <div className="relative flex justify-center z-50">
         <Link to={"/"}>
-          <img className="object-contain size-24" src={logo} alt="이미지"></img>
+          <img className="object-contain size-28" src={logo} alt="이미지"></img>
         </Link>
       </div>
 

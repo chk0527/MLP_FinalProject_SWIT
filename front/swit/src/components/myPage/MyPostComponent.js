@@ -98,19 +98,22 @@ const MyPostComponent = () => {
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg w-full mb-8">
             <h2 className="text-lg font-bold mb-4">My 작성한 글</h2>
-            <div className="flex mb-4">
-                <button
+            <div className="flex justify-center my-2 w-full">
+                <span
                     onClick={() => handleViewChange('boards')}
-                    className={`px-4 py-2 rounded ${view === 'boards' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                    className={`mx-2 px-4 cursor-pointer ${view === "boards" ? "font-bold text-red-500" : "text-gray-500"
+                        }`}
                 >
                     게시글
-                </button>
-                <button
+                </span>
+                <span className="mx-5">|</span>
+                <span
                     onClick={() => handleViewChange('inquiries')}
-                    className={`ml-2 px-4 py-2 rounded ${view === 'inquiries' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                    className={`mx-2 px-4 cursor-pointer ${view === "inquiries" ? "font-bold text-red-500" : "text-gray-500"
+                        }`}
                 >
                     문의글
-                </button>
+                </span>
             </div>
 
             {view === 'boards' ? (
