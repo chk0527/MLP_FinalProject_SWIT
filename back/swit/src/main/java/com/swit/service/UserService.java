@@ -82,8 +82,7 @@ public class UserService {
           user.setUserNick(newUserNick);  // userNick 변경
           user.setUserPhone(userDTO.getUserPhone());
           user.setUserEmail(userDTO.getUserEmail());
-          // user.setUserPassword(userDTO.getUserPassword());
-          // user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
+          user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
           userRepository.save(user);
 
           // 자식 테이블(timer)의 userNick 업데이트
@@ -302,6 +301,13 @@ public class UserService {
     duplicates.put("userEmail", isEmailDuplicate);
 
     return duplicates;
+}
+
+// 패스워드 확인
+public boolean validateCurrentPassword(String userId, String currentPassword) {
+  Optional<User> result = userRepository.findByUserId(userId);
+  User user = result.orElseThrow();
+  return bCryptPasswordEncoder.matches(currentPassword, user.getUserPassword());
 }
 
 }

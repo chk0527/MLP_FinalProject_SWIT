@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage, checkDuplicate } from '../../api/UserApi';
+import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage, checkDuplicate, validatePassword } from '../../api/UserApi';
 import { FaPen } from 'react-icons/fa';
 import { LoginContext } from '../../contexts/LoginContextProvider';
 import Cookies from 'js-cookie';
@@ -22,6 +22,10 @@ const MyInfoModifyComponent = ({ userId }) => {
   const [isSocialLogin, setIsSocialLogin] = useState(false);
   const [errors, setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [currentPasswordErrors, setCurrentPasswordErrors] = useState({});
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmPasswordErrors, setConfirmPasswordErrors] = useState({});
 
   const { refreshAccessToken } = useContext(LoginContext);
 
@@ -35,7 +39,7 @@ const MyInfoModifyComponent = ({ userId }) => {
         setModalUser({ ...userData });
         setModalUser(prevState => ({
           ...prevState,
-          userPassword: 'Qwer1234*'
+          userPassword: ''
         }));
         const imageUrl = await getUserImage(userId);
         setUserImage(imageUrl);
@@ -68,6 +72,111 @@ const MyInfoModifyComponent = ({ userId }) => {
     setIsModalOpen(false);
   };
 
+  const handleCurrentPasswordChange = (e) => {
+    setCurrentPassword(e.target.value);
+  };
+
+  const handleCurrentPasswordBlur = async () => {
+    const passwordValid = await validatePassword({ userId: userId, currentPassword });
+    const newCurrentPasswordErrors = {};
+
+    if (!passwordValid) {
+      newCurrentPasswordErrors.currentPassword = '현재 비밀번호가 일치하지 않습니다.';
+    } else {
+      newCurrentPasswordErrors.currentPassword = '비밀번호가 일치합니다.';
+    }
+
+    setCurrentPasswordErrors(newCurrentPasswordErrors);
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const handleConfirmPasswordBlur = () => {
+    const newConfirmPasswordErrors = {};
+  
+    // 비밀번호 규칙을 확인하는 함수 재사용
+    const validatePasswordRules = (password) => {
+      if (!password.trim()) {
+        return '비밀번호는 필수 입력 항목입니다.';
+      } else if (!/[A-Z]/.test(password)) {
+        return '비밀번호에 대문자(영문자)를 포함해야 합니다.'; 
+      } else if (!/[a-z]/.test(password)) {
+        return '비밀번호에 소문자(영문자)를 포함해야 합니다.';
+      } else if (!/\d/.test(password)) {
+        return '비밀번호에 숫자를 포함해야 합니다.'; 
+      } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\-]/.test(password)) {
+        return '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.'; 
+      } else if (password.length < 8) {
+        return '비밀번호는 8자 이상이어야 합니다.'; 
+      } else {
+        return '사용 가능한 비밀번호입니다.';
+      }
+    };
+  
+    // 비밀번호 일치 여부 확인
+    if (confirmPassword !== modalUser.userPassword) {
+      newConfirmPasswordErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
+    } else {
+      // 비밀번호 규칙 확인
+      const passwordValidationResult = validatePasswordRules(confirmPassword);
+      if (passwordValidationResult !== '사용 가능한 비밀번호입니다.') {
+        newConfirmPasswordErrors.confirmPassword = passwordValidationResult;
+      } else {
+        newConfirmPasswordErrors.confirmPassword = '비밀번호가 일치합니다.';
+      }
+    }
+  
+    setConfirmPasswordErrors(newConfirmPasswordErrors);
+  };
+
+// 닉네임 블러 핸들러
+const handleUserNickBlur = async (userInfo) => {
+  const newErrors = { ...errors };
+  const { userNick, userPhone, userEmail } = userInfo;
+  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+
+  if (response.userNick && response.userNick !== user.userNick) {
+    newErrors.userNick = '닉네임이 이미 존재합니다.';
+  } else {
+    newErrors.userNick = '사용 가능한 닉네임입니다.';
+  }
+
+  setErrors(newErrors);
+};
+
+// 전화번호 블러 핸들러
+const handleUserPhoneBlur = async (userInfo) => {
+  const newErrors = { ...errors };
+  const { userNick, userPhone, userEmail } = userInfo;
+  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+
+  if (response.userPhone && response.userPhone !== user.userPhone) {
+    newErrors.userPhone = '전화번호가 이미 존재합니다.';
+  } else {
+    newErrors.userPhone = '사용 가능한 전화번호입니다.';
+  }
+
+  setErrors(newErrors);
+};
+
+// 이메일 블러 핸들러
+const handleUserEmailBlur = async (userInfo) => {
+  const newErrors = { ...errors };
+  const { userNick, userPhone, userEmail } = userInfo;
+  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+
+  if (response.userEmail && response.userEmail !== user.userEmail) {
+    newErrors.userEmail = '이메일이 이미 존재합니다.';
+  } else {
+    newErrors.userEmail = '사용 가능한 이메일입니다.';
+  }
+
+  setErrors(newErrors);
+};
+
+
   const handleTextChange = (e) => {
     const { name, value } = e.target;
     setModalUser((prev) => ({ ...prev, [name]: value }));
@@ -76,10 +185,27 @@ const MyInfoModifyComponent = ({ userId }) => {
 
   const handleTextBlur = (e) => {
     const { name, value } = e.target;
-    console.log(modalUser.userPassword)
-    setModalUser((prev) => ({ ...prev, [name]: value }));
-    debounceValidate({ ...modalUser, [name]: value });
-    passwordValidate();
+    if (name === "currentPassword") {
+      setCurrentPassword(value);
+    } else if (name === "confirmPassword") {
+      setConfirmPassword(value);
+    } else {
+      setModalUser((prev) => ({ ...prev, [name]: value }));
+    }
+  
+    if (name === "currentPassword") {
+      handleCurrentPasswordBlur();
+    } else if (name === "confirmPassword") {
+      handleConfirmPasswordBlur();
+    } else if (name === "userPassword") {
+      passwordValidate();
+    } else if (name === "userNick") {
+      handleUserNickBlur(modalUser); // userInfo 인수를 전달
+    } else if (name === "userPhone") {
+      handleUserPhoneBlur(modalUser); // userInfo 인수를 전달
+    } else if (name === "userEmail") {
+      handleUserEmailBlur(modalUser); // userInfo 인수를 전달
+    } 
   };
 
   const debounceValidate = useCallback(
@@ -168,7 +294,17 @@ const MyInfoModifyComponent = ({ userId }) => {
       return;
     }
 
-    const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한'));
+    const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한')) ||
+      Object.keys(passwordErrors).some((key) => !passwordErrors[key].includes('사용 가능한')) ||
+      Object.keys(currentPasswordErrors).some((key) => !currentPasswordErrors[key].includes('합니다')) ||
+      Object.keys(confirmPasswordErrors).some((key) => !confirmPasswordErrors[key].includes('합니다')) ||
+      !modalUser.userNick.trim() || 
+      !modalUser.userPhone.trim() || 
+      !modalUser.userEmail.trim() || 
+      !modalUser.userPassword.trim() || 
+      !currentPassword.trim() || 
+      !confirmPassword.trim();
+      
     if (hasErrors) {
       alert("수정할 수 없는 정보가 존재합니다");
       return;
@@ -240,9 +376,22 @@ const MyInfoModifyComponent = ({ userId }) => {
               <p className="w-32">현재 비밀번호:</p>
               <input
                 className="grow border border-gray-300 p-2 rounded"
+                name="currentPassword"
                 type="password"
+                onChange={handleCurrentPasswordChange}
+                onBlur={handleTextBlur}
               />
             </label>
+            {currentPasswordErrors.currentPassword && (
+              <p
+                className={`absolute text-sm ml-32 mt-1 ${currentPasswordErrors.currentPassword.includes("합니다")
+                  ? "text-green-500"
+                  : "text-red-500"
+                  }`}
+              >
+                {currentPasswordErrors.currentPassword}
+              </p>
+            )}
           </div>
           <div>
             <label className="flex items-center">
@@ -257,11 +406,10 @@ const MyInfoModifyComponent = ({ userId }) => {
             </label>
             {passwordErrors.userPassword && (
               <p
-                className={`absolute text-sm ml-32 mt-1 ${
-                  passwordErrors.userPassword.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
+                className={`absolute text-sm ml-32 mt-1 ${passwordErrors.userPassword.includes("사용 가능한")
+                  ? "text-green-500"
+                  : "text-red-500"
+                  }`}
               >
                 {passwordErrors.userPassword}
               </p>
@@ -272,9 +420,22 @@ const MyInfoModifyComponent = ({ userId }) => {
               <p className="w-32">비밀번호 확인:</p>
               <input
                 className="grow border border-gray-300 p-2 rounded"
+                name="confirmPassword"
                 type="password"
+                onChange={handleConfirmPasswordChange}
+                onBlur={handleTextBlur}
               />
             </label>
+            {confirmPasswordErrors.confirmPassword && (
+              <p
+                className={`absolute text-sm ml-32 mt-1 ${confirmPasswordErrors.confirmPassword.includes("일치합니다")
+                  ? "text-green-500"
+                  : "text-red-500"
+                  }`}
+              >
+                {confirmPasswordErrors.confirmPassword}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-8">
@@ -304,8 +465,8 @@ const MyInfoModifyComponent = ({ userId }) => {
             {errors.userNick && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${errors.userNick.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  ? "text-green-500"
+                  : "text-red-500"
                   }`}
               >
                 {errors.userNick}
@@ -327,8 +488,8 @@ const MyInfoModifyComponent = ({ userId }) => {
             {errors.userPhone && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${errors.userPhone.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  ? "text-green-500"
+                  : "text-red-500"
                   }`}
               >
                 {errors.userPhone}
@@ -350,8 +511,8 @@ const MyInfoModifyComponent = ({ userId }) => {
             {errors.userEmail && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${errors.userEmail.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  ? "text-green-500"
+                  : "text-red-500"
                   }`}
               >
                 {errors.userEmail}

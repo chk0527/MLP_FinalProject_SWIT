@@ -122,6 +122,16 @@ public ResponseEntity<Map<String, String>> modify(
             @RequestParam String currentUserId) {
         return service.checkDuplicate(userNick, userPhone, userEmail, currentUserId);
     }
+
+    // 패스워드 확인
+    @PostMapping("/validate_password")
+    public ResponseEntity<Boolean> validatePassword(
+            @RequestParam String userId,
+            @RequestParam String currentPassword) {
+        boolean isValid = service.validateCurrentPassword(userId, currentPassword);
+        return ResponseEntity.ok(isValid);
+    }
+
   
 
 }
