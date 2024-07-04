@@ -15,7 +15,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             "(:boardTitle IS NULL OR b.boardTitle LIKE %:boardTitle%) AND " +
             "(:boardContent IS NULL OR b.boardContent LIKE %:boardContent%) AND " +
             "(:userNick IS NULL OR b.userNick LIKE %:userNick%) AND " +
-            "(:boardCategory IS NULL OR b.boardCategory = :boardCategory)")
+            "(COALESCE(:boardCategory, '') = '' OR b.boardCategory = :boardCategory)")
     Page<Board> searchBoards(@Param("boardTitle") String boardTitle, 
                              @Param("boardContent") String boardContent,
                              @Param("userNick") String userNick,

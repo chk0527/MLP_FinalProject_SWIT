@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { getBoard, deleteOne } from "../../api/BoardApi";
 import { getComments, postAdd, deleteComment } from "../../api/CommentApi";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getUserIdFromToken } from "../../util/jwtDecode";
 import useCustomMove from "../../hooks/useCustomMove";
 import { LoginContext } from "../../contexts/LoginContextProvider";
 import "react-datepicker/dist/react-datepicker.css";
@@ -52,6 +53,11 @@ const BoardReadComponent = ({ boardNo }) => {
   }, [boardNo]);
 
   const handleClickAdd = () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+    }
     comment.userNo = userInfo.userNo;
     comment.userNick = userInfo.userNick;
     comment.boardNo = boardNo;
