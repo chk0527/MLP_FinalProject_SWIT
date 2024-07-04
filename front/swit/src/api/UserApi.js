@@ -41,3 +41,19 @@ export const checkDuplicate = async ({ userNick, userPhone, userEmail, currentUs
   });
   return response.data;
 };
+
+// 패스워드 확인
+export const validatePassword = async ({ userId, currentPassword }) => {
+    const token = sessionStorage.getItem("accessToken");
+    console.log("react sessionStorage Token값:" + token);
+    const response = await axios.post(`${prefix}/validate_password`, null, {
+      params: {
+        userId,
+        currentPassword,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
