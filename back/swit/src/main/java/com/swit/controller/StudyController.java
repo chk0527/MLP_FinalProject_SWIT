@@ -120,4 +120,5 @@ public class StudyController {
         service.remove(studyNo);
         return Map.of("RESULT", "SUCCESS");
     }
+
 }
