@@ -304,7 +304,7 @@ const MyInfoModifyComponent = ({ userId }) => {
           </div>
         </div>
       </div>
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center my-8">
         <button
           onClick={handleClickModify}
           className="bg-yellow-500 rounded w-52 h-12 text-white text-center"
