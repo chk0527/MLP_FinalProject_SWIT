@@ -304,4 +304,11 @@ public class UserService {
     return duplicates;
 }
 
+// 패스워드 확인
+public boolean validateCurrentPassword(String userId, String currentPassword) {
+  Optional<User> result = userRepository.findByUserId(userId);
+  User user = result.orElseThrow();
+  return bCryptPasswordEncoder.matches(currentPassword, user.getUserPassword());
+}
+
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage, checkDuplicate } from '../../api/UserApi';
+import { API_SERVER_HOST, getUserProfile, putUserProfile, postUserImage, getUserImage, checkDuplicate, validatePassword } from '../../api/UserApi';
 import { FaPen } from 'react-icons/fa';
 import { LoginContext } from '../../contexts/LoginContextProvider';
 import Cookies from 'js-cookie';
@@ -22,6 +22,8 @@ const MyInfoModifyComponent = ({ userId }) => {
   const [isSocialLogin, setIsSocialLogin] = useState(false);
   const [errors, setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [currentPasswordErrors, setCurrentPasswordErrors] = useState({});
 
   const { refreshAccessToken } = useContext(LoginContext);
 
@@ -35,7 +37,7 @@ const MyInfoModifyComponent = ({ userId }) => {
         setModalUser({ ...userData });
         setModalUser(prevState => ({
           ...prevState,
-          userPassword: 'Qwer1234*'
+          userPassword: ''
         }));
         const imageUrl = await getUserImage(userId);
         setUserImage(imageUrl);
@@ -68,6 +70,23 @@ const MyInfoModifyComponent = ({ userId }) => {
     setIsModalOpen(false);
   };
 
+  const handleCurrentPasswordChange = (e) => {
+    setCurrentPassword(e.target.value);
+  };
+
+  const handleCurrentPasswordBlur = async () => {
+    const passwordValid = await validatePassword({ userId: userId, currentPassword });
+    const newCurrentPasswordErrors = {};
+
+    if (!passwordValid) {
+      newCurrentPasswordErrors.currentPassword = '현재 비밀번호가 일치하지 않습니다.';
+    } else {
+      newCurrentPasswordErrors.currentPassword = '비밀번호가 일치합니다.';
+    }
+
+    setCurrentPasswordErrors(newCurrentPasswordErrors);
+};
+
   const handleTextChange = (e) => {
     const { name, value } = e.target;
     setModalUser((prev) => ({ ...prev, [name]: value }));
@@ -76,11 +95,19 @@ const MyInfoModifyComponent = ({ userId }) => {
 
   const handleTextBlur = (e) => {
     const { name, value } = e.target;
-    console.log(modalUser.userPassword)
-    setModalUser((prev) => ({ ...prev, [name]: value }));
+    if (name === "currentPassword") {
+      setCurrentPassword(value);
+    } else {
+      setModalUser((prev) => ({ ...prev, [name]: value }));
+    }
     debounceValidate({ ...modalUser, [name]: value });
-    passwordValidate();
-  };
+
+    if (name === "currentPassword") {
+      handleCurrentPasswordBlur();
+    } else {
+      passwordValidate();
+    }
+};
 
   const debounceValidate = useCallback(
     debounce(async (userInfo) => {
@@ -168,7 +195,9 @@ const MyInfoModifyComponent = ({ userId }) => {
       return;
     }
 
-    const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한'));
+    const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한')) || 
+                      Object.keys(passwordErrors).some((key) => !passwordErrors[key].includes('사용 가능한')) || 
+                      Object.keys(currentPasswordErrors).some((key) => !currentPasswordErrors[key].includes('합니다'));
     if (hasErrors) {
       alert("수정할 수 없는 정보가 존재합니다");
       return;
@@ -195,7 +224,7 @@ const MyInfoModifyComponent = ({ userId }) => {
     } catch (error) {
       console.error('Error updating profile:', error);
     }
-  };
+};
 
   return (
     <div className="flex flex-col justify-center items-center gap-10 bg-white p-6 rounded shadow relative">
@@ -240,9 +269,22 @@ const MyInfoModifyComponent = ({ userId }) => {
               <p className="w-32">현재 비밀번호:</p>
               <input
                 className="grow border border-gray-300 p-2 rounded"
+                name="currentPassword"
                 type="password"
+                onChange={handleCurrentPasswordChange}
+                onBlur={handleTextBlur}
               />
             </label>
+            {currentPasswordErrors.currentPassword && (
+              <p
+                className={`absolute text-sm ml-32 mt-1 ${currentPasswordErrors.currentPassword.includes("합니다")
+                  ? "text-green-500"
+                  : "text-red-500"
+                  }`}
+              >
+                {currentPasswordErrors.currentPassword}
+              </p>
+            )}
           </div>
           <div>
             <label className="flex items-center">
@@ -257,11 +299,10 @@ const MyInfoModifyComponent = ({ userId }) => {
             </label>
             {passwordErrors.userPassword && (
               <p
-                className={`absolute text-sm ml-32 mt-1 ${
-                  passwordErrors.userPassword.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
+                className={`absolute text-sm ml-32 mt-1 ${passwordErrors.userPassword.includes("사용 가능한")
+                  ? "text-green-500"
+                  : "text-red-500"
+                  }`}
               >
                 {passwordErrors.userPassword}
               </p>
@@ -304,8 +345,8 @@ const MyInfoModifyComponent = ({ userId }) => {
             {errors.userNick && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${errors.userNick.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  ? "text-green-500"
+                  : "text-red-500"
                   }`}
               >
                 {errors.userNick}
@@ -327,8 +368,8 @@ const MyInfoModifyComponent = ({ userId }) => {
             {errors.userPhone && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${errors.userPhone.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  ? "text-green-500"
+                  : "text-red-500"
                   }`}
               >
                 {errors.userPhone}
@@ -350,8 +391,8 @@ const MyInfoModifyComponent = ({ userId }) => {
             {errors.userEmail && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${errors.userEmail.includes("사용 가능한")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  ? "text-green-500"
+                  : "text-red-500"
                   }`}
               >
                 {errors.userEmail}
