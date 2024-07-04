@@ -50,6 +50,7 @@ public class ChatService {
     dto.setStudyNo(chatMessage.getStudy().getStudyNo());
     dto.setMessage(chatMessage.getMessage());
     dto.setUserNick(chatMessage.getUser().getUserNick());
+    dto.setUserImage(chatMessage.getUser().getUserImage());
     dto.setCreatedDate(chatMessage.getCreatedDate());
     return dto;
   }

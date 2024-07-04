@@ -69,80 +69,71 @@ const PlaceDetailComponent = ({ placeNo }) => {
   };
 
   return (
-    <div className="font-GSans">
-      <div className="py-6 flex justify-center border-gray-700 border-b-2">
-        <h1 className="text-3xl font-bold mb-4">
+    <div className="font-GSans min-h-screen bg-white">
+      <div className="py-6 flex justify-center items-center bg-yellow-100 shadow-md">
+        <h1 className="text-4xl font-bold text-gray-800">
           [{place.placeAddr.substring(0, 2)}] {place.placeName}
         </h1>
-        <button
-          onClick={() => handleFavorite(place.placeNo)}
-          className="m-0 ml-3 p-0 -mt-7"
-        >
+        <button onClick={() => handleFavorite(place.placeNo)} className="ml-4">
           {favoriteStatus[place.placeNo] ? (
-            <FaStar size={30} color="#FFF06B" />
+            <FaStar size={30} color="#FFD700" />
           ) : (
-            <FaRegStar size={30} color="#FFF06B" />
+            <FaRegStar size={30} color="#FFD700" />
           )}
         </button>
       </div>
-      <div className="flex justify-center mt-20 gap-20">
-        <div className="flex flex-col gap-20">
-          <img
-            className="object-cover rounded shadow w-450 h-450"
-            src={place.placeImg}
-          ></img>
+      <div className="container mx-auto p-6 flex flex-col items-center gap-12 mt-10">
+        <img
+          className="object-cover rounded shadow-md w-650 h-96 transition-transform duration-300 transform hover:scale-105"
+          src={place.placeImg}
+          alt={place.placeName}
+        />
+        <div className="bg-white rounded  p-8 w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">🏢 위치</h2>
+            <p className="text-xl">{place.placeAddr}</p>
+          </div>
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">📞 전화번호</h2>
+            <p className="text-xl">
+              {place.placeTel || "전화번호 정보가 없습니다."}
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">🕖 운영시간</h2>
+            <p className="text-xl">
+              {place.placeTime || "시간 정보가 없습니다."}
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2">📄 상세 정보</h2>
+            <p className="text-xl whitespace-pre-line">
+              {place.placeDetail || "메뉴 정보가 없습니다."}
+            </p>
+          </div>
+        </div>
+        <div className="w-full md:w-3/4 mt-8">
+          <h2 className="text-2xl text-start text-gray-800 py-4 border-b-2 border-gray-400 ">
+            상세 위치
+          </h2>
           {place.placeAddr && place.placeAddr.trim() !== "" ? (
-            <MapComponent placeAddr={place.placeAddr} />
+            <div className="flex justify-center mt-4">
+              <MapComponent placeAddr={place.placeAddr} />
+            </div>
           ) : (
             <p>주소 정보가 없습니다.</p>
           )}
         </div>
-        <table className="h-full w-450">
-          <tbody>
-            <tr>
-              <th className="text-2xl p-2 pr-4">· 위치</th>
-            </tr>
-            <tr>
-              <td align="center" className="text-xl p-2">
-                {place.placeAddr}
-              </td>
-            </tr>
-            <tr>
-              <th className="text-2xl p-2 pt-10 pr-4">· 전화번호</th>
-            </tr>
-            <tr>
-              <td align="center" className="text-xl  p-2">
-                {place.placeTel || "전화번호 정보가 없습니다."}
-              </td>
-            </tr>
-            <tr>
-              <th className="text-2xl p-2 pt-10 pr-4">· 운영시간</th>
-            </tr>
-            <tr>
-              <td align="center" className="text-xl  p-2">
-                {place.placeTime || "시간 정보가 없습니다."}
-              </td>
-            </tr>
-            <tr>
-              <th className="text-2xl p-2 pt-10 pr-4">· 메뉴</th>
-            </tr>
-            <tr>
-              <td align="center" className="text-xl  whitespace-pre-line p-2">
-                {place.placeDetail || "메뉴 정보가 없습니다."}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div className="flex justify-center my-24">
-        <Link to={{ pathname: "/place/list" }} state={1}>
-          <button
-            type="button"
-            className="rounded p-3 m-2 text-xl w-28 text-white bg-gray-500"
-          >
-            목록
-          </button>
-        </Link>
+        <div className="flex justify-center my-12 w-full md:w-3/4">
+          <Link to={{ pathname: "/place/list" }} state={1}>
+            <button
+              type="button"
+              className="rounded p-3 m-2 text-xl w-32 text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
+            >
+              목록
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
