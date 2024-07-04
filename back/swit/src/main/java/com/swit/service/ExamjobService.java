@@ -3,11 +3,18 @@ package com.swit.service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.net.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.modelmapper.ModelMapper;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -305,6 +312,84 @@ public class ExamjobService {
         return favoriteJobs.stream()
             .map(favJob -> modelMapper.map(favJob.getJob(), JobDTO.class))
             .collect(Collectors.toList());
+    }
+
+    //주기적으로 api 불러오기
+    @Value("${apiKey.saramin_KEY}")
+    private String saraminKey;
+
+    @Scheduled(fixedRate = 86400000) // 24시간마다
+    public void fetchAndSaveJobData() throws Exception {
+        String accessKey = saraminKey;
+        String text = URLEncoder.encode("", "UTF-8");
+        String apiURL = 
+        "https://oapi.saramin.co.kr/job-search?access-key="+accessKey+"&stock=kospi+kosdaq+konex&sr=directhire&job_type=1&edu_lv=3%2C8&fields=posting-date+expiration-date+keyword-code+count&start=1&count=10"+"&keyword="+ text;
+       
+        try {
+            URL url = new URL(apiURL);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "application/json");
+
+            int responseCode = con.getResponseCode();
+            BufferedReader br;
+
+            if (responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+            } else { // 에러 발생
+                br = new BufferedReader(new InputStreamReader(con.getErrorStream(), StandardCharsets.UTF_8));
+            }
+
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                response.append(inputLine);
+            }
+            br.close();
+
+
+            //////////////
+            log.info("API Response: {}", response.toString());
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(response.toString());
+            JSONObject jobs = (JSONObject) jsonObject.get("jobs");
+
+            JSONArray job = (JSONArray) jobs.get("job");
+
+            for (int i = 0; i < job.size(); i++) {
+                JSONObject tmp = (JSONObject) job.get(i);
+                JSONObject companyObject = (JSONObject) jsonParser.parse(tmp.get("company").toString());
+                JSONObject companyDetail = (JSONObject) companyObject.get("detail");
+                JSONObject positionObject = (JSONObject) jsonParser.parse(tmp.get("position").toString());
+
+                String loc = (((JSONObject) jsonParser.parse(positionObject.get("location").toString())).get("name")).toString();
+                loc = loc.replace(" &gt; ", " "); // 근무지
+
+                String expirationDate = (tmp.get("expiration-date")).toString();
+                expirationDate = expirationDate.substring(0, 10); // 마감날짜
+
+                Job aJob = Job.builder()
+                        .jobTitle((positionObject.get("title")).toString())
+                        .jobCompany((companyDetail.get("name")).toString())
+                        .jobField((((JSONObject) jsonParser.parse(positionObject.get("job-mid-code").toString())).get("name")).toString())
+                        .jobLoc(loc)
+                        .jobDeadline(LocalDate.parse(expirationDate, DateTimeFormatter.ISO_DATE))
+                        .jobActive(Integer.parseInt((tmp.get("active")).toString()))
+                        .jobExperience((((JSONObject) jsonParser.parse(positionObject.get("experience-level").toString())).get("name")).toString())
+                        .jobType((((JSONObject) jsonParser.parse(positionObject.get("job-type").toString())).get("name")).toString())
+                        .jobUrl((companyDetail.get("href")).toString())
+                        .build();
+
+                        //////////
+                        // log.info("Saving job: {}", aJob);
+
+
+                jobRepository.save(aJob);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

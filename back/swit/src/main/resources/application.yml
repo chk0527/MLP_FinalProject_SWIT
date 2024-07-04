@@ -3,6 +3,8 @@ server:
 
 spring:
   profiles.include: login
+  config:
+    import: classpath:application-apiKey.yml
   datasource:
     url: jdbc:mysql://localhost:3306/switdb
     username: swit
