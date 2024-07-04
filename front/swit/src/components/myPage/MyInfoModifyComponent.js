@@ -21,6 +21,7 @@ const MyInfoModifyComponent = ({ userId }) => {
   const [userImage, setUserImage] = useState(null);
   const [isSocialLogin, setIsSocialLogin] = useState(false);
   const [errors, setErrors] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState({});
 
   const { refreshAccessToken } = useContext(LoginContext);
 
@@ -34,7 +35,7 @@ const MyInfoModifyComponent = ({ userId }) => {
         setModalUser({ ...userData });
         setModalUser(prevState => ({
           ...prevState,
-          userPassword: ''
+          userPassword: 'Qwer1234*'
         }));
         const imageUrl = await getUserImage(userId);
         setUserImage(imageUrl);
@@ -78,6 +79,7 @@ const MyInfoModifyComponent = ({ userId }) => {
     console.log(modalUser.userPassword)
     setModalUser((prev) => ({ ...prev, [name]: value }));
     debounceValidate({ ...modalUser, [name]: value });
+    passwordValidate();
   };
 
   const debounceValidate = useCallback(
@@ -86,6 +88,31 @@ const MyInfoModifyComponent = ({ userId }) => {
     }, 500),
     [user]
   );
+
+  const passwordValidate = () => {
+    const newErrors = {};
+    const value = modalUser.userPassword;
+    console.log(modalUser.userPassword)
+    console.log("에러확인")
+    console.log(value)
+    if (!value.trim()) {
+      newErrors.userPassword = '비밀번호는 필수 입력 항목입니다.';
+    } else if (!/[A-Z]/.test(value)) {
+      newErrors.userPassword = '비밀번호에 대문자(영문자)를 포함해야 합니다.'; // 대문자 미포함 메시지 추가
+    } else if (!/[a-z]/.test(value)) {
+      newErrors.userPassword = '비밀번호에 소문자(영문자)를 포함해야 합니다.'; // 소문자 미포함 메시지 추가
+    } else if (!/\d/.test(value)) {
+      newErrors.userPassword = '비밀번호에 숫자를 포함해야 합니다.'; // 숫자 미포함 메시지 추가
+    } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\-]/.test(value)) {
+      newErrors.userPassword = '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.'; // 특수문자 미포함 메시지 추가
+    } else if (value.length < 8) {
+      newErrors.userPassword = '비밀번호는 8자 이상이어야 합니다.'; // 8자 미만인 경우 메시지 추가
+    } else {
+      newErrors.userPassword = '사용 가능한 비밀번호입니다.'; // 모든 조건을 만족하는 경우 오류 메시지 삭제
+    }
+
+    setPasswordErrors(newErrors)
+  }
 
   const validate = async (userInfo) => {
     const { userNick, userPhone, userEmail } = userInfo;
@@ -108,27 +135,6 @@ const MyInfoModifyComponent = ({ userId }) => {
       newErrors.userEmail = '이메일이 이미 존재합니다.';
     } else {
       newErrors.userEmail = '사용 가능한 이메일입니다.';
-    }
-
-
-    const value = modalUser.userPassword;
-    console.log(modalUser.userPassword)
-    console.log("에러확인")
-    console.log(value)
-    if (!value.trim()) {
-      newErrors.userPassword = '비밀번호는 필수 입력 항목입니다.';
-    } else if (!/[A-Z]/.test(value)) {
-      newErrors.userPassword = '비밀번호에 대문자(영문자)를 포함해야 합니다.'; // 대문자 미포함 메시지 추가
-    } else if (!/[a-z]/.test(value)) {
-      newErrors.userPassword = '비밀번호에 소문자(영문자)를 포함해야 합니다.'; // 소문자 미포함 메시지 추가
-    } else if (!/\d/.test(value)) {
-      newErrors.userPassword = '비밀번호에 숫자를 포함해야 합니다.'; // 숫자 미포함 메시지 추가
-    } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\-]/.test(value)) {
-      newErrors.userPassword = '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.'; // 특수문자 미포함 메시지 추가
-    } else if (value.length < 8) {
-      newErrors.userPassword = '비밀번호는 8자 이상이어야 합니다.'; // 8자 미만인 경우 메시지 추가
-    } else {
-      delete newErrors.userPassword; // 모든 조건을 만족하는 경우 오류 메시지 삭제
     }
 
     setErrors(newErrors);
@@ -246,17 +252,18 @@ const MyInfoModifyComponent = ({ userId }) => {
                 name="userPassword"
                 type="password"
                 onChange={handleTextChange}
+                onBlur={handleTextBlur}
               />
             </label>
-            {errors.userPassword && (
+            {passwordErrors.userPassword && (
               <p
                 className={`absolute text-sm ml-32 mt-1 ${
-                  errors.userPassword.includes("사용 가능한")
+                  passwordErrors.userPassword.includes("사용 가능한")
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
               >
-                {errors.userPassword}
+                {passwordErrors.userPassword}
               </p>
             )}
           </div>
