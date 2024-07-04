@@ -34,16 +34,16 @@ public class BoardController {
         return boardService.get(boardNo);
     }
 
-    // @GetMapping("/all")
-    // public BoardPageResponseDTO<Board> getAllStudies(
-    //         @RequestParam(name = "boardTitle", required = false) String boardTitle, // 수정된 부분
-    //         @RequestParam(name = "boardCategory", required = false) String boardCategory, // 수정된 부분
-    //         @RequestParam(name = "boardContent", required = false) String boardContent, // 수정된 부분
-    //         @RequestParam(name = "userNick", required = false) String userNick, // 수정된 부분
-    //         BoardPageResponseDTO pageRequestDTO) {
-    //     log.info(pageRequestDTO);
-    //     return boardService.boardList(boardTitle, boardContent, userNick, pageRequestDTO);
-    // }
+    @GetMapping("/search")
+    public PageResponseDTO<BoardDTO> searchBoards(
+            @RequestParam(name = "boardTitle", required = false) String boardTitle,
+            @RequestParam(name = "boardContent", required = false) String boardContent,
+            @RequestParam(name = "userNick", required = false) String userNick,
+            @RequestParam(name = "boardCategory", required = false) String boardCategory,
+            PageRequestDTO pageRequestDTO) {
+        log.info("Search Request: boardTitle = " + boardTitle + ", boardContent = " + boardContent + ", userNick = " + userNick + ", boardCategory = " + boardCategory);
+        return boardService.searchBoards(pageRequestDTO, boardTitle, boardContent, userNick, boardCategory);
+    }
 
     @PostMapping("/")
     public Map<String, Integer> postMethodName(BoardDTO boardDTO) {
