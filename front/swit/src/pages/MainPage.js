@@ -4,96 +4,35 @@ import BannerComponent from "../components/main/BannerComponent";
 import PlaceRecommend from "../components/main/PlaceRecommend";
 import BoardRecommend from "../components/main/BoardRecommend";
 import MyStudy from "../components/main/MyStudy";
+import "../components/main/Banner.css";
+import arrow from "../img/thearrow.png"
 
 const MainPage = () => {
-  const [scrollDisabled, setScrollDisabled] = useState(true);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // 페이지가 스크롤될 때 호출되는 함수
+  const toggleVisibility = () => {
+    if (window.pageYOffset > 300) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  };
+
+  // 맨 위로 스크롤하는 함수
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   useEffect(() => {
-    const enableScroll = () => {
-      setScrollDisabled(false);
-    };
-
-    setTimeout(enableScroll, 1000); // 1초 후에 스크롤 활성화
-
+    window.addEventListener("scroll", toggleVisibility);
     return () => {
-      window.removeEventListener("scroll", disableScroll);
+      window.removeEventListener("scroll", toggleVisibility);
     };
   }, []);
-
-  const disableScroll = () => {
-    window.scrollTo(0, 0);
-  };
-  const handleWheel = (event) => {
-    if (scrollDisabled) {
-      event.preventDefault(); // 스크롤 막기
-    }
-  };
-  useEffect(() => {
-    window.addEventListener("wheel", handleWheel);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-    };
-  }, [scrollDisabled]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const position = window.pageYOffset;
-      const windowHeight = window.innerHeight;
-      const defaultHeight = (2.3 * windowHeight) / 5;
-      setScrollPosition(position);
-
-      if (position > lastScrollTop) {
-        // 스크롤을 내릴 때
-        if (position > 2 * windowHeight - defaultHeight) {
-          window.scrollTo({
-            top: 3 * windowHeight - defaultHeight,
-            behavior: "smooth",
-          });
-        } else if (position > 1 * windowHeight - defaultHeight) {
-          window.scrollTo({
-            top: 2 * windowHeight - defaultHeight,
-            behavior: "smooth",
-          });
-        } else if (position > 0) {
-          window.scrollTo({
-            top: windowHeight - defaultHeight,
-            behavior: "smooth",
-          });
-        }
-      } else {
-        // 스크롤을 올릴 때
-        if (position < 1 * windowHeight - defaultHeight) {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
-        } else if (position < 2 * windowHeight - defaultHeight) {
-          window.scrollTo({
-            top: windowHeight - defaultHeight,
-            behavior: "smooth",
-          });
-        } else if (position < 3 * windowHeight - defaultHeight) {
-          window.scrollTo({
-            top: 2 * windowHeight - defaultHeight,
-            behavior: "smooth",
-          });
-        }
-      }
-
-      setLastScrollTop(position);
-    };
-
-    if (!scrollDisabled) {
-      window.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollDisabled, lastScrollTop]);
 
   return (
     <BasicLayout>
@@ -101,8 +40,15 @@ const MainPage = () => {
       <MyStudy />
       <PlaceRecommend />
       <BoardRecommend />
+      {isVisible && (
+        <button onClick={scrollToTop} className="z-20 w-20 font-blackHans bg-white rounded-full fixed bottom-16 right-16">
+          <img src={arrow}/>
+        </button>
+      )}
     </BasicLayout>
   );
 };
+
+
 
 export default MainPage;

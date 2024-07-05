@@ -38,7 +38,7 @@ const BoardRecommend = () => {
     const handleScroll = () => {
       const position = window.pageYOffset;
       const windowHeight = window.innerHeight;
-      const defaultHeight = (2.6 * windowHeight) / 5;
+      const defaultHeight = (4.5 * windowHeight) / 5;
 
       if (position > 3 * windowHeight - defaultHeight) {
         // 스크롤 위치가 특정 지점에 도달하면 애니메이션 실행
@@ -65,12 +65,12 @@ const BoardRecommend = () => {
   return (
     <div className="font-GSans bg-gray-200 w-full h-dvh relative">
       <div className="flex flex-col items-center justify-center">
-        <p className="text-5xl text-center font-blackHans mb-16">최근 게시물</p>
-        <div className="absolute top-20 text-3xl text-center">
+        <p className="text-5xl text-center font-blackHans mt-40 mb-14">최근 게시물</p>
+        <div className="absolute top-56 text-3xl text-center">
           다양한 주제와 관심사를 공유하고 토론할 수 있는 <br />
           SWit 에서 자유롭게 이야기를 나누세요.
         </div>
-        <img src={bg} className="absolute top-44 z-0 w-1300" />
+        <img src={bg} className="absolute top-80 z-0 w-1000" />
         <motion.div // Framer Motion의 motion.div로 감싸서 애니메이션을 적용
           className="grid grid-cols-2 gap-x-650 gap-y-20"
           initial={{ opacity: 0 }} // 초기 상태 설정
@@ -80,13 +80,13 @@ const BoardRecommend = () => {
             <motion.div
               key={board.boardNo}
               onClick={() => moveToBoardRead(board.boardNo)}
-              className="flex flex-col gap-4 p-8 w-96 h-96 bg-white shadow rounded-lg z-10"
+              className="flex flex-col gap-2 p-3 w-80 h-80 bg-white shadow rounded-lg z-10"
               whileHover={{ scale: 1.05 }} // 호버 시 애니메이션
               whileTap={{ scale: 0.95 }} // 탭 시 애니메이션
             >
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-4">
                 <img
-                  className="w-24 h-24 rounded-full shadow border"
+                  className="w-20 h-20 rounded-full shadow border"
                   src={defaultImg}
                   alt="user avatar"
                 />
