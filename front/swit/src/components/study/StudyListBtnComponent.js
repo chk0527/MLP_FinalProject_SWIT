@@ -8,7 +8,8 @@ const StudyCard = ({ study, handleReadStudy }) => {
     return (
       <div className="flex justify-center my-32">
         <button
-          className="bg-yellow-500 w-52 h-12 text-white text-center"
+        
+          className="rounded p-3 m-2 text-xl w-32 text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
           onClick={goToStudyListPage}
         >
           목록

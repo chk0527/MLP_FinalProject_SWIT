@@ -10,7 +10,6 @@ import GroupMeetingComponent from "../../components/group/GroupMeetingComponent"
 import StudyTimerPage from "./StudyTimerPage";
 import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
 import StudyListBtnComponent from "../../components/study/StudyListBtnComponent";
-import StudyModifyButtonComponent from "../../components/study/StudyModifyButton";
 import StudyTodoPage from "./StudyTodoPage";
 
 const StudyGroupPage = () => {
@@ -72,10 +71,6 @@ const StudyGroupPage = () => {
       {/* 목록으로 돌아가기 */}
       <div className="flex justify-center gap-4">
         <StudyListBtnComponent />
-        <StudyModifyButtonComponent
-          studyNo={studyNo}
-          isLeader={isLeaderState}
-        />
       </div>
     </StudyLayout>
   );

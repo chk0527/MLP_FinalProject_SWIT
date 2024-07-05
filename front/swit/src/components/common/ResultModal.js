@@ -11,7 +11,7 @@ const ResultModal = ({ content, callbackFn }) => {
       <div className="bg-white shadow-lg rounded-lg p-10">
         <div className="flex flex-col items-center">
           <div className="text-yellow-600 text-3xl font-semibold mb-10">
-            게시글 {content}이 완료되었습니다.
+            게시글 {content} {content === "삭제" ? "가" : "이"} 완료되었습니다.
           </div>
           <button
             className="rounded bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 text-lg"

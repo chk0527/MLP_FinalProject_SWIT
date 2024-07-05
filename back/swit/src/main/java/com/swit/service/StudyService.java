@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,11 @@ import com.swit.dto.StudyDTO;
 import com.swit.dto.StudyPageRequestDTO;
 import com.swit.dto.BoardPageResponseDTO;
 import com.swit.dto.StudyWithQuestionDTO;
+import com.swit.repository.CalendarRepository;
+import com.swit.repository.ChatMessageRepository;
 import com.swit.repository.QuestionRepository;
 import com.swit.repository.StudyRepository;
+import com.swit.repository.TimerRepository;
 import com.swit.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -42,7 +46,11 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final CalendarRepository calendarRepository;
+    private final TimerRepository timerRepository;
     private final HttpSession session;
+    private final JdbcTemplate jdbcTemplate;
 
     // 전체 스터디
     public BoardPageResponseDTO<Study> studyList(String studyTitle,
@@ -160,8 +168,24 @@ public class StudyService {
         questionRepository.save(question);
     }
 
+    @Transactional
     public void remove(Integer studyNo) {
+        // 외래 키 제약 조건 비활성화
+        jdbcTemplate.execute("SET foreign_key_checks = 0");
+        try{
+
+        // chat_message 테이블의 관련 데이터를 먼저 삭제
+        chatMessageRepository.deleteByStudyNo(studyNo);
+        calendarRepository.deleteByStudyNo(studyNo);
+        timerRepository.deleteByStudyNo(studyNo);
+
+        // study 테이블의 데이터를 삭제
         studyRepository.deleteById(studyNo);
+      } finally{
+
+        // 외래 키 제약 조건 활성화
+        jdbcTemplate.execute("SET foreign_key_checks = 1");
+      }
     }
 
     private String generateStudyUuid() {

@@ -7,6 +7,8 @@ import { getUserIdFromToken } from "../../util/jwtDecode";
 import { getMyStudy } from "../../api/StudyApi"; // isMember 함수를 가져옴
 import PostComponent from "./PostComponent";
 import { FaStar, FaRegStar } from "react-icons/fa";
+import CommonModal from "../common/CommonModal";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const MapListComponent = () => {
   const [placeList, setPlaceList] = useState([]);
@@ -20,6 +22,10 @@ const MapListComponent = () => {
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const apiKey = "b0eff766121570e5d6bb6985397aed73";
   const navigate = useNavigate(); // Initialize navigate
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
 
   useEffect(() => {
     // 장소 목록 가져오기
@@ -196,12 +202,12 @@ const MapListComponent = () => {
   // 내 스터디 검색
   useEffect(() => {
     const userId = getUserIdFromToken();
-    if(userId){
-    getMyStudy(userId).then((data) => {
-      setMyStudyData(data);
-    });
+    if (userId) {
+      getMyStudy(userId).then((data) => {
+        setMyStudyData(data);
+      });
     }
-    else{
+    else {
       setMyStudyData([])
     }
   }, []);
@@ -221,11 +227,7 @@ const MapListComponent = () => {
   const handleFavorite = async (placeNo) => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      if (
-        window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")
-      ) {
-        navigate("/login");
-      }
+      setShowLoginModal(true);
       return;
     }
 
@@ -236,7 +238,10 @@ const MapListComponent = () => {
       setFavoriteStatus({
         ...favoriteStatus,
         [placeNo]: !isFavorite,
+
       });
+      setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+      setShowModal(true);
     } catch (error) {
       console.error(error);
     }
@@ -244,6 +249,19 @@ const MapListComponent = () => {
 
   return (
     <div className="relative w-full font-GSans z-0">
+
+      {showLoginModal && (
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
+
+      {showModal && (
+        <CommonModal
+          modalMessage={modalMessage}
+          callbackFn={() => setShowModal(false)}
+          closeMessage="확인"
+        />
+      )}
+
       <div className="flex w-full justify-between px-8">
         <div className="text-5xl pb-16 font-blackHans">
           <div>스터디 장소</div>

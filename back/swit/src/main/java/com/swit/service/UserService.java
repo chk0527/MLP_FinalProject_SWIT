@@ -146,26 +146,25 @@ public class UserService {
     }
   }
 
-  // 로그인 확인 처리(네이버 소셜 로그인)
-  public UserDTO userCheck(String userName, String userEmail, String userSnsConnect) {
-    Optional<User> result = userRepository.findByUserNameAndUserEmailAndUserSnsConnect(userName, userEmail,
-        userSnsConnect);
+  // 로그인 확인 처리(네이버/카카오 소셜 로그인)
+  public UserDTO userCheck(String userEmail) {
+    Optional<User> result = userRepository.findByUserEmail(userEmail);
     User user = result.orElse(new User());
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
     return userDTO;
   }
 
-  // 로그인 확인 처리(카카오 소셜 로그인)
-  public UserDTO userCheck2(String userNick, String userEmail, String userSnsConnect) {
-    // Optional<User> result =
-    // userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName,
-    // userEmail, userSnsConnect);
-    Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail,
-        userSnsConnect);
-    User user = result.orElse(new User());
-    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-    return userDTO;
-  }
+  // // 로그인 확인 처리(카카오 소셜 로그인)
+  // public UserDTO userCheck2(String userNick, String userEmail, String userSnsConnect) {
+  //   // Optional<User> result =
+  //   // userRepository.findByUserNickNameAndUserEmailAndUserSnsConnect(userNickName,
+  //   // userEmail, userSnsConnect);
+  //   Optional<User> result = userRepository.findByUserNickAndUserEmailAndUserSnsConnect(userNick, userEmail,
+  //       userSnsConnect);
+  //   User user = result.orElse(new User());
+  //   UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+  //   return userDTO;
+  // }
 
   // 회원 가입
   public void join(UserDTO userDTO) {
@@ -308,6 +307,39 @@ public boolean validateCurrentPassword(String userId, String currentPassword) {
   Optional<User> result = userRepository.findByUserId(userId);
   User user = result.orElseThrow();
   return bCryptPasswordEncoder.matches(currentPassword, user.getUserPassword());
+}
+
+// 회원 가입시 아이디, 닉네임, 이메일, 연락처 중복 체크
+public Map<String, Boolean> checkDuplicate2(String userId, String userNick, String userEmail, String userPhone) {
+  Map<String, Boolean> duplicates = new HashMap<>();
+  boolean isIdDuplicate = false;
+  boolean isNickDuplicate = false;
+  boolean isEmailDuplicate = false;
+  boolean isPhoneDuplicate = false;
+
+  if (!(userId.equals(null) || userId.isEmpty())) 
+    isIdDuplicate = userRepository.existsByUserId(userId);
+
+  if (!(userNick.equals(null) || userNick.isEmpty())) 
+    isNickDuplicate = userRepository.existsByUserNick(userNick);
+
+  if (!(userEmail.equals(null) || userEmail.isEmpty())) 
+    isEmailDuplicate = userRepository.existsByUserEmail(userEmail);
+  
+  if (!(userPhone.equals(null) || userPhone.isEmpty())) 
+    isPhoneDuplicate = userRepository.existsByUserPhone(userPhone);
+
+  duplicates.put("userId", isIdDuplicate);
+  duplicates.put("userNick" , isNickDuplicate);
+  duplicates.put("userEmail", isEmailDuplicate);
+  duplicates.put("userPhone", isPhoneDuplicate);
+
+  log.info("userId  " + isIdDuplicate);
+  log.info("userNick  " + isNickDuplicate);
+  log.info("userEmail  " + isEmailDuplicate);
+  log.info("userPhone  " + isPhoneDuplicate);
+  
+  return duplicates;
 }
 
 }

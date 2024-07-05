@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { updateTimer } from "../../api/TimerApi";
 import { getUserNickFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import "react-datepicker/dist/react-datepicker.css";
+import CommonModal from "../common/CommonModal";
 
 const GroupTimerComponent = ({ studyNo }) => {
   const [stopwatches, setStopwatches] = useState([]); // 스톱워치 객체 관리
@@ -10,6 +11,7 @@ const GroupTimerComponent = ({ studyNo }) => {
   const intervalTimerIds = useRef({}); // 각 타이머의 인터벌 ID 관리
   const [isTimerEditing, setIsTimerEditing] = useState(false); // 제목 입력창 활성화 상태 관리
   const [userNick, setUserNick] = useState(getUserNickFromToken()); // 로그인한 유저의 닉네임 관리
+  const [showModal, setShowModal] = useState(false);
 
   // 서버 끄거나 페이지 나갈 때 일시정지 처리 기능함수
   const handleBeforeUnload = async () => {
@@ -172,7 +174,8 @@ const GroupTimerComponent = ({ studyNo }) => {
               running: false,
             })
           );
-          alert("타이머가 종료되었습니다.");
+          // alert("타이머가 종료되었습니다.");
+          setShowModal(true);
         } else {
           setCurrentTimer((prev) => ({
             ...prev,
@@ -320,9 +323,17 @@ const GroupTimerComponent = ({ studyNo }) => {
             onClick={handleCreateTimer}
             className="bg-yellow-300 py-2 px-4 rounded hover:bg-yellow-400"
           >
-            스톱워치 생성
+            타이머 생성
           </button>
         </div>
+      )}
+
+      {showModal && (
+        <CommonModal
+          modalMessage="타이머가 종료되었습니다"
+          closeMessage="확인"
+          callbackFn={() => setShowModal(false)}
+        />
       )}
     </div>
   );

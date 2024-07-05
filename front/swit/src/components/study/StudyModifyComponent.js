@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import ResultModal from "../common/ResultModal";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import { useNavigate } from "react-router-dom";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
     studyNo: 0,
@@ -33,6 +34,7 @@ const StudyModifyComponent = ({ studyNo }) => {
     const [startDate, setStartDate] = useState(new Date());
     const uploadRef = useRef()
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
 
     const { moveToRead, moveToList, moveToGroup } = useCustomMove();
 
@@ -99,18 +101,12 @@ const StudyModifyComponent = ({ studyNo }) => {
         });
 
         putOne(studyNo, formData).then(result => {
-            setResult('Modified')
-        })
-    }
-
-    const handleClickDelete = () => {
-        deleteOne(studyNo).then(result => {
-            setResult('Deleted')
+            setResult({ action: '수정' })
         })
     }
 
     const closeModal = () => {
-        if (result == 'Deleted')
+        if (result && result.action === 'Deleted')
             moveToList()
         else
             moveToGroup(studyNo)
@@ -221,7 +217,7 @@ const StudyModifyComponent = ({ studyNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            {result && <ResultModal callbackFn={closeModal} />}
+            {result && <ResultModal content={result.action} callbackFn={closeModal} />}
             <div className="w-full max-w-1000 ">
                 <div className="text-3xl mb-16 pb-4 border-soild border-gray-200 border-b-2">
                     <div className="w-64 py-7">
@@ -395,14 +391,6 @@ const StudyModifyComponent = ({ studyNo }) => {
                             onClick={handleClickModify}
                         >
                             수정
-                        </button>
-                    </div>
-                    <div className="my-20 flex justify-center">
-                        <button
-                            className=" rounded bg-red-200 px-28 py-4 text-center font-semibold shadow-sm hover:bg-red-400"
-                            onClick={handleClickDelete}
-                        >
-                            삭제(연관된 테이블 삭제 미구현으로 미동작)
                         </button>
                     </div>
                 </div>

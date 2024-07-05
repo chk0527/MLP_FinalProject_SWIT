@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PulseLoader } from "react-spinners";
 import defaultImg from "../../img/defaultImage.png";
 import { API_SERVER_HOST } from "../../api/StudyApi";
+
 const host = API_SERVER_HOST;
 
 const StudyListComponent = ({
@@ -24,8 +26,13 @@ const StudyListComponent = ({
   }, [currentItem]);
 
   if (loading) {
-    return <div>로딩</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <PulseLoader size={20} color={"#F4CE14"} loading={loading} />
+      </div>
+    );
   }
+
   return (
     <div className="grid place-items-center grid-cols-4">
       {/* 스터디 목록을 카드 형식으로 출력 */}
@@ -35,7 +42,9 @@ const StudyListComponent = ({
             key={study.studyNo}
             onMouseEnter={() => setCurrentItem(study.studyNo)}
             onMouseLeave={() => setCurrentItem(null)}
-            onClick={() => handleReadStudy(study.studyNo,study.currentMemberCount)}
+            onClick={() =>
+              handleReadStudy(study.studyNo, study.currentMemberCount)
+            }
             className="relative w-full max-w-72 h-72 mb-8 rounded"
           >
             <img
@@ -73,7 +82,9 @@ const StudyListComponent = ({
                     #{study.studyOnline ? "비대면" : "대면"}
                     <br />#{study.studyAddr}
                   </p>
-                  <p className="w-full max-w-60 truncate text-2xl text-ellipsis overflow-hidden">{study.studyTitle}</p>
+                  <p className="w-full max-w-60 truncate text-2xl text-ellipsis overflow-hidden">
+                    {study.studyTitle}
+                  </p>
                 </div>
               </motion.div>
             </div>

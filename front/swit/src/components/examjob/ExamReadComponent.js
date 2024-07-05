@@ -3,6 +3,8 @@ import { FaStar, FaRegStar } from 'react-icons/fa';
 import { getExamRead, isExamFavorite, addExamFavorite, removeExamFavorite } from '../../api/ExamJobApi';
 import { getUserIdFromToken } from "../../util/jwtDecode"; //userId 받아옴
 import { useNavigate } from 'react-router-dom';
+import LoginRequireModal from '../common/LoginRequireModal';
+import CommonModal from '../common/CommonModal';
 
 const initState = {
     examNo: 0,
@@ -24,6 +26,9 @@ const ExamReadComponent = ({ examNo }) => {
     const [exam, setExam] = useState(initState);
     const [isFavorite, setIsFavorite] = useState(false);
     const navigate = useNavigate();
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
 
     useEffect(() => {
         getExamRead(examNo).then(data => {
@@ -44,9 +49,7 @@ const ExamReadComponent = ({ examNo }) => {
         // 로그인안한상태 -> alert 확인누르면 로그인창으로이동
         const userId = getUserIdFromToken();
         if (!userId) {
-            if (window.confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
-                navigate('/login');
-            }
+            setShowLoginModal(true);
             return;
         }
 
@@ -55,13 +58,26 @@ const ExamReadComponent = ({ examNo }) => {
         request(userId, examNo)
             .then(() => {
                 setIsFavorite(!isFavorite);
-                alert(isFavorite ? '즐겨찾기에서 삭제되었습니다.' : '즐겨찾기에 추가되었습니다.');
+                setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+                setShowModal(true); //
             })
             .catch(error => console.error(error));
     };
 
     return (
         <div className="flex justify-center font-GSans">
+            {showLoginModal && (
+                <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+            )}
+
+            {showModal && (
+                <CommonModal
+                    modalMessage={modalMessage}
+                    callbackFn={() => setShowModal(false)}
+                    closeMessage="확인"
+                />
+            )}
+
             <div className="py-6 rounded w-full max-w-6xl">
                 <div className="flex justify-center border-gray-700 border-b-2">
                     <h1 className="text-3xl font-bold mb-4">{exam.examTitle}</h1>
@@ -94,7 +110,7 @@ const ExamReadComponent = ({ examNo }) => {
                 <div className="flex justify-center">
                     <button
                         type="button"
-                        className="rounded p-3 m-52 text-xl w-28 text-white bg-gray-500"
+                        className="rounded p-3 my-40 text-xl w-28 text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
                         onClick={() => window.history.back()}
                     >
                         목록
@@ -102,7 +118,7 @@ const ExamReadComponent = ({ examNo }) => {
                 </div>
             </div>
 
-           
+
         </div>
     );
 };
