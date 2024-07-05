@@ -246,6 +246,7 @@ public class LoginController {
         UserDTO user = new UserDTO();
 		String access_token = "";
 		String password = "";
+		String userNo = "";
 
 	    try {
 		    String clientId = naverClientKey;
@@ -288,9 +289,7 @@ public class LoginController {
 
 			System.out.println("user="+profile.get("userName") + profile.get("userEmail") + profile.get("userSnsConnect"));
 		
-			user = userService.userCheck((String)profile.get("userName")
-			                           , (String)profile.get("userEmail")
-									   , (String)profile.get("userSnsConnect")); 
+			user = userService.userCheck((String)profile.get("userEmail")); 
 			
 			password = access_token.substring(12, 29);
 
@@ -302,7 +301,7 @@ public class LoginController {
 			// if (user.getUserId() == null || user.getUserId().isEmpty()) {      		// 문자일때 방법 2
 			Optional<String> optionalUserId = Optional.ofNullable(user.getUserId());	// 문자일때 방법 3
 			if (optionalUserId.map(String::isEmpty).orElse(true)) {
-
+				
 				System.out.println("user2222="+user);
 				user.setUserName((String)profile.get("userName"));
 				user.setUserEmail((String)profile.get("userEmail"));
@@ -314,9 +313,7 @@ public class LoginController {
 				userService.join(user);
 				System.out.println("user4444="+user);
 				// 저장 후 다시 조회
-				user = userService.userCheck((String)profile.get("userName")
-										   , (String)profile.get("userEmail")
-										   , (String)profile.get("userSnsConnect")); 
+				user = userService.userCheck((String)profile.get("userEmail")); 
 				System.out.println("user5555="+user);						   
 				// userId 를 update 한다.
 				user.setUserId(user.getUserNo().toString());
@@ -488,9 +485,7 @@ public class LoginController {
 
 			System.out.println("userNick="+profile.get("userNick") + profile.get("userEmail") + profile.get("userSnsConnect"));
 		
-			user = userService.userCheck2((String)profile.get("userNick")
-			                            , (String)profile.get("userEmail")
-									    , (String)profile.get("userSnsConnect")); 
+			user = userService.userCheck((String)profile.get("userEmail")); 
 			
 			password = access_token.substring(12, 29);
 
@@ -514,9 +509,7 @@ public class LoginController {
 				userService.join(user);
 				System.out.println("user4444="+user);
 				// 저장 후 다시 조회
-				user = userService.userCheck2((String)profile.get("userNick")
-										    , (String)profile.get("userEmail")
-										    , (String)profile.get("userSnsConnect")); 
+				user = userService.userCheck((String)profile.get("userEmail")); 
 				System.out.println("user5555="+user);						   
 				// userId 를 update 한다.
 				user.setUserId(user.getUserNo().toString());

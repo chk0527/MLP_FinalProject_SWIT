@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
-import { API_SERVER_HOST, getStudy } from "../../api/StudyApi";
-import { isMember, isLeader, memberCount } from "../../api/GroupApi"; // isMember 함수를 가져옴
+import { API_SERVER_HOST, getStudy, deleteOne } from "../../api/StudyApi";
+import { isMember, isLeader, memberCount } from "../../api/GroupApi"; 
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../../img/defaultImage.png";
+import StudyRemoveButtonComponent from "./StudyRemoveButtonComponent";
+import StudyModifyButtonComponent from "../../components/study/StudyModifyButton";
+import StudyDeleteConfirmModal from "./StudyDeleteConfirmModal"; //삭제 확인 컴포넌트
+
 
 const initState = {
   studyNo: 0,
@@ -21,7 +25,10 @@ const initState = {
 const host = API_SERVER_HOST;
 const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
   const [study, setStudy] = useState(initState);
+  const [result, setResult] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달의 표시 여부를 관리하는 상태
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
+  const [isLeaderState, setIsLeaderState] = useState(false); // 방장 여부 상태 추가
 
   useEffect(() => {
     const fetchStudyData = async () => {
@@ -34,17 +41,56 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
           currentMemberCount,
         });
       } catch (error) {
-        console.error("Error fetching study data:", error);
+        console.error("스터디 데이터를 가져오는 중 오류 발생:", error);
       }
     };
-
+    const checkUserRole = async () => {
+      const isLeaderCheck = await isLeader(studyNo);
+      console.log(isLeaderCheck + "@@@@@@@@@@");
+      setIsLeaderState(isLeaderCheck);
+    };
     fetchStudyData();
+    checkUserRole();
   }, [studyNo]);
+
+  const handleDeleteClick = () => {
+    setIsModalOpen(true); // 삭제 버튼 클릭 시 모달 열기
+  };
+
+  const moveToList = () => {
+    navigate({ pathname: `/study` });
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteOne(studyNo);
+      setResult({ action: "삭제" });
+      setIsModalOpen(false); // 삭제 후 모달을 닫고
+      moveToList() //리스트로 이동
+    } catch (error) {
+      console.error("스터디 삭제 중 오류 발생:", error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false); // 삭제 취소 시 모달을 닫기
+  };
 
   return (
     <div className="w-full max-w-1000 flex flex-col items-center">
       {/*스터디 정보란*/}
-      <h1 className="text-2xl">{study.studyTitle}</h1>
+      <div className="flex w-full items-center">
+        <h1 className="text-2xl flex-grow text-center">{study.studyTitle}</h1>
+        <div className="flex justify-end">
+          <div className="mr-5">
+          <StudyModifyButtonComponent
+          studyNo={studyNo}
+          isLeader={isLeaderState}
+        />
+        </div>
+          <StudyRemoveButtonComponent onClick={handleDeleteClick} isLeader={isLeaderState} />
+        </div>
+      </div>
       <hr className="border border-black mt-4 mb-8 w-full" />
 
       <div className="flex gap-20">
@@ -84,7 +130,8 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
           </div>
           <div className="flex gap-20">
             <p className="max-w-40">
-              <strong>인원: </strong> {study.currentMemberCount}명/{study.studyHeadcount}명
+              <strong>인원: </strong> {study.currentMemberCount}명/
+              {study.studyHeadcount}명
             </p>
             <p className="max-w-40">
               <strong>날짜: </strong>
@@ -100,6 +147,13 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
         <p>{study.studyContent}</p>
       </div>
       <hr className="border border-black my-8 w-full" />
+      {isModalOpen && (
+        <StudyDeleteConfirmModal
+          content="삭제"
+          callbackFn={handleConfirmDelete}
+          cancelFn={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };
