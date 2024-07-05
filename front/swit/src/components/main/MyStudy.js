@@ -153,7 +153,7 @@ const MyStudy = () => {
     speed: 700,
     slidesToShow: 4,
     slidesToScroll: 2,
-    arrows: true,  
+    arrows: true,
     centerMode: false,
     draggable: false,
     spaceBetween: 0, // 슬라이드 사이 여백
@@ -178,8 +178,8 @@ const MyStudy = () => {
   }
 
   return (
-    <div className="font-GSans -my-52 h-dvh bg-gray-200">
-      <div className="flex justify-center">
+    <div className="font-GSans -mt-550 h-dvh bg-gray-200 flex flex-col justify-center itmes-center">
+      <div className="flex justify-center itmes-center">
         <div className="w-full z-0">
           {userId ? (
             studyList.length > 0 ? (
@@ -192,20 +192,20 @@ const MyStudy = () => {
                       onMouseEnter={() => setHovered(study.studyNo)}
                       onMouseLeave={() => setHovered(null)}
                       onClick={() => handleReadStudy(study.studyNo)}
-                      className="relative w-550 h-550 mb-8 rounded StudySlide"
+                      className="relative w-400 h-400 rounded StudySlide"
                     >
-                      <div className="flex justify-center items-center w-550 h-550">
+                      <div className="flex justify-center items-center w-400 h-400">
                         <img
                           src={
                             study.imageList && study.imageList.length > 0
                               ? `${API_SERVER_HOST}/api/study/display/${study.imageList[0].fileName}`
                               : defaultImg
                           }
-                          className="w-550 h-550 bg-cover rounded"
+                          className="w-400 h-400 bg-cover rounded"
                           alt={study.studyTitle}
                         />
                       </div>
-                      <div className="absolute w-550 h-550 top-0 bg-black/50 text-white cursor-pointer rounded">
+                      <div className="absolute w-400 h-400 top-0 bg-black/50 text-white cursor-pointer rounded">
                         <motion.div
                           initial={{ opacity: 1 }}
                           animate={{
@@ -245,7 +245,7 @@ const MyStudy = () => {
                         </motion.div>
                       </div>
                       {hovered === study.studyNo && (
-                        <div className="absolute w-550 h-550 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
+                        <div className="absolute w-400 h-400 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
                           <div className="line-clamp-8 text-center text-white">
                             {study.studyContent}
                           </div>
@@ -256,27 +256,27 @@ const MyStudy = () => {
                 </Slider>
               ) : (
                 //스터디 3개 이하
-                <div className="flex flex-wrap justify-start ml-24 mt-10">
+                <div className="grid grid-cols-4">
                   {studyList.map((study) => (
                     <div
                       key={study.studyNo}
-                      onMouseEnter={() => setCurrentItem(study.studyNo)}
+                      onMouseEnter={() => setHovered(study.studyNo)}
                       onMouseLeave={() => setHovered(null)}
                       onClick={() => handleReadStudy(study.studyNo)}
-                      className="relative w-550 h-550 mb-8 mx-4 rounded"
+                      className="relative flex justify-center items-center rounded StudySlide"
                     >
-                      <div className="flex justify-center items-center w-550 h-550">
+                      <div className="flex justify-center items-center w-400 h-400">
                         <img
                           src={
                             study.imageList && study.imageList.length > 0
                               ? `${API_SERVER_HOST}/api/study/display/${study.imageList[0].fileName}`
                               : defaultImg
                           }
-                          className="w-550 h-550 bg-cover rounded"
+                          className="w-400 h-400 bg-cover rounded"
                           alt={study.studyTitle}
                         />
                       </div>
-                      <div className="absolute w-550 h-550 top-0 bg-black/50 text-white cursor-pointer rounded">
+                      <div className="absolute w-400 h-400 top-0 bg-black/50 text-white cursor-pointer rounded">
                         <motion.div
                           initial={{ opacity: 1 }}
                           animate={{
@@ -316,7 +316,7 @@ const MyStudy = () => {
                         </motion.div>
                       </div>
                       {hovered === study.studyNo && (
-                        <div className="absolute w-550 h-550 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
+                        <div className="absolute w-400 h-400 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75">
                           <div className="line-clamp-8 text-center text-white">
                             {study.studyContent}
                           </div>
@@ -337,20 +337,20 @@ const MyStudy = () => {
                   onMouseEnter={() => setCurrentItem(study.studyNo)}
                   onMouseLeave={() => setCurrentItem(null)}
                   onClick={() => handleReadStudy(study.studyNo)}
-                  className="relative w-550 h-550 mb-8 mx-1 rounded"
+                  className="relative w-400 h-400 mx-1 rounded"
                 >
-                  <div className="flex justify-center items-center w-550 h-550">
+                  <div className="flex justify-center items-center w-400 h-400">
                     <img
                       src={
                         study.imageList && study.imageList.length > 0
                           ? `${API_SERVER_HOST}/api/study/display/${study.imageList[0].fileName}`
                           : defaultImg
                       }
-                      className="w-550 h-550 bg-cover rounded"
+                      className="w-400 h-400 bg-cover rounded"
                       alt={study.studyTitle}
                     />
                   </div>
-                  <div className="absolute w-550 h-550 top-0 bg-black/50 text-white cursor-pointer rounded">
+                  <div className="absolute w-400 h-400 top-0 bg-black/50 text-white cursor-pointer rounded">
                     <motion.div
                       initial={{ opacity: 1 }}
                       animate={{
@@ -394,7 +394,7 @@ const MyStudy = () => {
                       border: "4px solid rgb(253 230 138)",
                       scale: 0.8,
                     }}
-                    className="absolute w-550 h-550 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75"
+                    className="absolute w-400 h-400 bottom-0 p-10 cursor-pointer border-4 border-yellow-200 scale-75"
                   >
                     <div className="line-clamp-8 text-center text-white">
                       {study.studyContent}
@@ -402,7 +402,6 @@ const MyStudy = () => {
                   </motion.div>
                 </div>
               ))}
-              
             </Slider>
           )}
         </div>
