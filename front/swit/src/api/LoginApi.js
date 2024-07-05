@@ -73,13 +73,13 @@ export const searchId   = (certifyType, userId, userName, userEmail, userPhone) 
 // export const send_sms   = (confirmDTO) => axios.get(`/api/confirm/send`, confirmDTO)
 export const send_sms = (confirmDTO) => {
   const { certifyType, userId, userName, userEmail, userPhone } = confirmDTO;
-  return api.post(`/api/confirm/send`, confirmDTO);
+  return api.post(`/confirm/send`, confirmDTO);
 };
 
 // 아이디 찾기 : 핸드폰 번호 검증 -> 인증번호 확인
 export const searchId2   = (confirmDTO) => {
   const { confirmNo, userId, confirmTarget, confirmPath, confirmNum, confirmLimitDate } = confirmDTO;
-  return api.post(`/api/confirm/userCheck2`, confirmDTO);
+  return api.post(`/confirm/userCheck2`, confirmDTO);
 }
 
 // 비밀번호 찾기 --> 비밀번호 변경 처리 
