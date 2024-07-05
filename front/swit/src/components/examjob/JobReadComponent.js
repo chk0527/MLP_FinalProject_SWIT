@@ -4,6 +4,7 @@ import { getUserIdFromToken } from "../../util/jwtDecode"; //userId 받아옴
 import { useNavigate } from 'react-router-dom';
 import { getJobRead, isJobFavorite, addJobFavorite, removeJobFavorite } from '../../api/ExamJobApi';
 import LoginRequireModal from "../common/LoginRequireModal";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
     jobNo: 0,
@@ -23,6 +24,8 @@ const JobReadComponent = ({ jobNo }) => {
     const [isFavorite, setIsFavorite] = useState(false);
     const navigate = useNavigate();
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
 
     useEffect(() => {
         getJobRead(jobNo).then(data => {
@@ -52,7 +55,8 @@ const JobReadComponent = ({ jobNo }) => {
         request(userId, jobNo)
             .then(() => {
                 setIsFavorite(!isFavorite);
-                alert(isFavorite ? '즐겨찾기에서 삭제되었습니다.' : '즐겨찾기에 추가되었습니다.');
+                setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+                setShowModal(true);
             })
             .catch(error => console.error(error));
     };
@@ -63,6 +67,15 @@ const JobReadComponent = ({ jobNo }) => {
             {showLoginModal && (
                 <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
             )}
+
+            {showModal && (
+                <CommonModal
+                    modalMessage={modalMessage}
+                    callbackFn={() => setShowModal(false)}
+                    closeMessage="확인"
+                />
+            )}
+
             <div className="py-6 rounded-lg w-full ">
                 <div className="flex justify-center border-soild border-gray-700 border-b-2">
                     <h1 className="text-3xl font-bold mb-4">{job.jobTitle}</h1>

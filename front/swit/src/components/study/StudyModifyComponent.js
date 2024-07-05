@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import ResultModal from "../common/ResultModal";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import { useNavigate } from "react-router-dom";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
     studyNo: 0,
@@ -33,6 +34,7 @@ const StudyModifyComponent = ({ studyNo }) => {
     const [startDate, setStartDate] = useState(new Date());
     const uploadRef = useRef()
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
 
     const { moveToRead, moveToList, moveToGroup } = useCustomMove();
 
@@ -99,7 +101,8 @@ const StudyModifyComponent = ({ studyNo }) => {
         });
 
         putOne(studyNo, formData).then(result => {
-            setResult('Modified')
+            setResult('Modified');
+            setShowModal(true);
         })
     }
 
@@ -221,7 +224,16 @@ const StudyModifyComponent = ({ studyNo }) => {
 
     return (
         <div className="flex justify-center font-GSans">
-            {result && <ResultModal callbackFn={closeModal} />}
+            {/* {result && <ResultModal callbackFn={closeModal} />} */}
+
+            {showModal && (
+                <CommonModal
+                    modalMessage="수정되었습니다."
+                    callbackFn={closeModal}
+                    closeMessage="확인"
+                />
+            )}
+
             <div className="w-full max-w-1000 ">
                 <div className="text-3xl mb-16 pb-4 border-soild border-gray-200 border-b-2">
                     <div className="w-64 py-7">
