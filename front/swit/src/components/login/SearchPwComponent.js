@@ -581,7 +581,7 @@ function SearcPwComponent() {
                         name="lb_confirmNum"
                         id="lb_confirmNum"
                         maxLength={certifyType === '3' ? 8 : 6}
-                        placeholder="인증 코드 입력"
+                        placeholder="인증 번호"
                         className="border border-gray-300 rounded-md px-4 py-2 w-1/2 mr-2"
                         value={confirmNum}
                         onChange={handleConfirmNumChange}

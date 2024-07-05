@@ -83,4 +83,15 @@ export const changePw   = (user) => {
   return axios.post(`/api/confirm/changeInfo`, user);
 }  
 
-
+// 회원 가입시, 아이디, 닉네임, 이메일, 연락처 중복 체크
+export const checkDuplicate2 = async ({ userId, userNick, userEmail, userPhone }) => {
+  const response = await axios.get(`/api/join/check_duplicate2`, {
+      params: {
+          userId,
+          userNick,
+          userEmail,
+          userPhone,
+      },
+  });
+  return response.data;
+};

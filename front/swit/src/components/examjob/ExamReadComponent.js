@@ -110,7 +110,7 @@ const ExamReadComponent = ({ examNo }) => {
                 <div className="flex justify-center">
                     <button
                         type="button"
-                        className="rounded p-3 m-52 text-xl w-28 text-white bg-gray-500"
+                        className="rounded p-3 my-40 text-xl w-28 text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
                         onClick={() => window.history.back()}
                     >
                         목록
