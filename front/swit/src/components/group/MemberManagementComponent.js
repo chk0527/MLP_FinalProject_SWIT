@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { fetchGroupMembers, expelMember } from "../../api/GroupApi";
+import CommonModal from "../common/CommonModal";
 
 const MemberManagementComponent = ({ studyNo }) => {
   const [members, setMembers] = useState([]);
+  const [showExpelModal, setShowExpelModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,14 +20,21 @@ const MemberManagementComponent = ({ studyNo }) => {
   const handleExpel = async (userId, userNick) => {
     try {
       await expelMember(userId, studyNo);
-      setMembers(members.map(member => 
+      setMembers(members.map(member =>
         member.userId === userId ? { ...member, groupJoin: 3 } : member
       ));
-      alert(`"${userNick}"님을 추방했습니다.`);
+      setShowExpelModal(false);
+      setShowConfirmModal(true);
     } catch (error) {
       console.error("Failed to expel member:", error);
+      setShowExpelModal(false);
       alert("추방에 실패했습니다.");
     }
+  };
+
+  const confirmExpel = (member) => {
+    setSelectedMember(member);
+    setShowExpelModal(true);
   };
 
   return (
@@ -51,7 +62,7 @@ const MemberManagementComponent = ({ studyNo }) => {
                 {member.groupLeader !== 1 && (
                   <button
                     className="text-red-500 hover:text-red-700"
-                    onClick={() => handleExpel(member.userId, member.userNick)}
+                    onClick={() => confirmExpel(member)}
                   >
                     추방
                   </button>
@@ -61,6 +72,26 @@ const MemberManagementComponent = ({ studyNo }) => {
           ))}
         </tbody>
       </table>
+
+   
+      {showExpelModal && selectedMember && (
+        <CommonModal
+          modalMessage={`"${selectedMember.userNick}" 님을 추방하시겠습니까?`}
+          callbackFn={() => setShowExpelModal(false)}
+          closeMessage="취소"
+          navigateFn={() => handleExpel(selectedMember.userId, selectedMember.userNick)}
+          navigateMessage="추방"
+        />
+      )}
+
+  
+      {showConfirmModal && selectedMember && (
+        <CommonModal
+          modalMessage={`"${selectedMember.userNick}" 님이 추방되었습니다.`}
+          callbackFn={() => setShowConfirmModal(false)}
+          closeMessage="확인"
+        />
+      )}
     </div>
   );
 };

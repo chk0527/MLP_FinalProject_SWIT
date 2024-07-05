@@ -12,6 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import LoginRequireModal from "../common/LoginRequireModal";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
   dtoList: [],
@@ -35,6 +36,8 @@ const ListComponent = () => {
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const handleClickExamList = useCallback(() => {
     navigate({ pathname: "../../exam" });
@@ -104,11 +107,8 @@ const ListComponent = () => {
         ...favoriteStatus,
         [jobNo]: !isFavorite,
       });
-      alert(
-        isFavorite
-          ? "즐겨찾기에서 삭제되었습니다."
-          : "즐겨찾기에 추가되었습니다."
-      );
+      setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+      setShowModal(true);
     } catch (error) {
       console.error(error);
     }
@@ -119,6 +119,15 @@ const ListComponent = () => {
       {showLoginModal && (
         <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
       )}
+
+      {showModal && (
+        <CommonModal
+          modalMessage={modalMessage}
+          callbackFn={() => setShowModal(false)}
+          closeMessage="확인"
+        />
+      )}
+
       <div className="flex w-full justify-between px-8">
         <div className="flex space-x-4">
           <div className="text-5xl pb-16 font-blackHans">채용</div>

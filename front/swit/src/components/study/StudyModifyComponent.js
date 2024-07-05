@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import ResultModal from "../common/ResultModal";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import { useNavigate } from "react-router-dom";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
     studyNo: 0,
@@ -33,6 +34,7 @@ const StudyModifyComponent = ({ studyNo }) => {
     const [startDate, setStartDate] = useState(new Date());
     const uploadRef = useRef()
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
 
     const { moveToRead, moveToList, moveToGroup } = useCustomMove();
 
