@@ -103,12 +103,6 @@ const StudyModifyComponent = ({ studyNo }) => {
         })
     }
 
-    const handleClickDelete = () => {
-        deleteOne(studyNo).then(result => {
-            setResult({ action: '삭제' })
-        })
-    }
-
     const closeModal = () => {
         if (result && result.action === 'Deleted')
             moveToList()
@@ -395,14 +389,6 @@ const StudyModifyComponent = ({ studyNo }) => {
                             onClick={handleClickModify}
                         >
                             수정
-                        </button>
-                    </div>
-                    <div className="my-20 flex justify-center">
-                        <button
-                            className=" rounded bg-red-200 px-28 py-4 text-center font-semibold shadow-sm hover:bg-red-400"
-                            onClick={handleClickDelete}
-                        >
-                            삭제
                         </button>
                     </div>
                 </div>

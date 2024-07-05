@@ -71,11 +71,11 @@ const PlaceDetailComponent = ({ placeNo }) => {
       {showLoginModal && (
         <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
       )}
-      <div className="py-6 flex justify-center items-center bg-yellow-100 shadow-md">
+      <div className="py-6 flex justify-center items-center border-gray-400 border-b-4">
         <h1 className="text-4xl font-bold text-gray-800">
           [{place.placeAddr.substring(0, 2)}] {place.placeName}
         </h1>
-        <button onClick={() => handleFavorite(place.placeNo)} className="ml-4">
+        <button onClick={() => handleFavorite(place.placeNo)} className="ml-4 mb-2">
           {favoriteStatus[place.placeNo] ? (
             <FaStar size={30} color="#FFD700" />
           ) : (
@@ -91,30 +91,59 @@ const PlaceDetailComponent = ({ placeNo }) => {
         />
         <div className="bg-white rounded  p-8 w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="p-4 rounded">
-            <h2 className="text-2xl font-semibold shadow-highlight mb-2">🏢 위치</h2>
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2 flex items-center">
+              <img
+                src={`${process.env.PUBLIC_URL}/icon_map.png`}
+                className="w-7 mr-2 relative bottom-1"
+                alt="• "
+              />
+              위치
+            </h2>
             <p className="text-xl">{place.placeAddr}</p>
           </div>
           <div className="p-4 rounded">
-            <h2 className="text-2xl font-semibold shadow-highlight mb-2">📞 전화번호</h2>
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2 flex items-center">
+              <img
+                src={`${process.env.PUBLIC_URL}/icon_phone.png`}
+                className="w-7 mr-2 relative bottom-1"
+                alt="• "
+              />
+              전화번호
+            </h2>
             <p className="text-xl">
               {place.placeTel || "전화번호 정보가 없습니다."}
             </p>
           </div>
           <div className="p-4 rounded">
-            <h2 className="text-2xl font-semibold shadow-highlight mb-2">🕖 운영시간</h2>
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2 flex items-center">
+              <img
+                src={`${process.env.PUBLIC_URL}/icon_clock.png`}
+                className="w-7 mr-2 relative bottom-1"
+                alt="• "
+              />
+              운영 시간
+            </h2>
             <p className="text-xl">
               {place.placeTime || "시간 정보가 없습니다."}
             </p>
           </div>
           <div className="p-4 rounded">
-            <h2 className="text-2xl font-semibold shadow-highlight mb-2">📄 상세 정보</h2>
+            <h2 className="text-2xl font-semibold shadow-highlight mb-2 flex items-center">
+              <img
+                src={`${process.env.PUBLIC_URL}/icon_info.png`}
+                className="w-7 mr-2 relative bottom-1"
+                alt="• "
+              />
+              상세 정보
+            </h2>
+
             <p className="text-xl whitespace-pre-line">
               {place.placeDetail || "메뉴 정보가 없습니다."}
             </p>
           </div>
         </div>
         <div className="w-full md:w-3/4 mt-8">
-          <h2 className="text-2xl text-start text-gray-800 py-4 border-b-2 border-gray-400 ">
+          <h2 className="text-2xl text-start font-semibold text-gray-800 py-4 border-b-2 border-gray-400 ">
             상세 위치
           </h2>
           {place.placeAddr && place.placeAddr.trim() !== "" ? (

@@ -320,7 +320,7 @@ const GroupTimerComponent = ({ studyNo }) => {
             onClick={handleCreateTimer}
             className="bg-yellow-300 py-2 px-4 rounded hover:bg-yellow-400"
           >
-            스톱워치 생성
+            타이머 생성
           </button>
         </div>
       )}
