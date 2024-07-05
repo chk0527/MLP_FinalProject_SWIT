@@ -10,6 +10,7 @@ import MapComponent from "./MapComponent";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import LoginRequireModal from "../common/LoginRequireModal";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
   placeNo: 0,
@@ -26,6 +27,8 @@ const PlaceDetailComponent = ({ placeNo }) => {
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     getPlaceDetail(placeNo).then((data) => {
@@ -61,6 +64,8 @@ const PlaceDetailComponent = ({ placeNo }) => {
         ...favoriteStatus,
         [placeNo]: !isFavorite,
       });
+      setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+      setShowModal(true);
     } catch (error) {
       console.error(error);
     }
@@ -71,6 +76,16 @@ const PlaceDetailComponent = ({ placeNo }) => {
       {showLoginModal && (
         <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
       )}
+
+      {showModal && (
+        <CommonModal
+          modalMessage={modalMessage}
+          callbackFn={() => setShowModal(false)}
+          closeMessage="확인"
+        />
+      )}
+
+      {/* <div className="py-6 flex justify-center items-center bg-yellow-100 shadow-md"> */}
       <div className="py-6 flex justify-center items-center border-gray-400 border-b-4">
         <h1 className="text-4xl font-bold text-gray-800">
           [{place.placeAddr.substring(0, 2)}] {place.placeName}

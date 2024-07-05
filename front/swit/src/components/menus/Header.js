@@ -59,6 +59,29 @@ const Header = () => {
         <Link to={"/"}>
           <img className="object-contain size-28" src={logo} alt="이미지"></img>
         </Link>
+        {isLogin ? (
+          <>
+            {" "}
+            {timeLeft !== null && (
+              <div className="absolute top-8 right-32 mr-3 flex items-center gap-2">
+                <p className="text-gray-600 text-xs">
+                  로그아웃까지:{" "}
+                  <span className="text-blue-300">
+                    {formatTimeLeft(timeLeft)}
+                  </span>
+                </p>
+                <button
+                  onClick={refreshAccessToken}
+                  className="text-gray-600 text-xs bg-yellow-200 px-2 py-1 rounded-full hover:bg-yellow-300"
+                >
+                  유지
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="p-6 flex sticky top-0 z-40 justify-center bg-gray-50 border shadow border-gray-200 font-GSans">
         <AnimatePresence>
@@ -92,23 +115,12 @@ const Header = () => {
       {result ? (
         <MyMenu callbackFn={closeModal} />
       ) : (
-        <div className="fixed top-0 right-0 z-50 p-6 flex items-center gap-4">
+        <div className="fixed top-0 right-0 z-50 p-6 flex  items-center">
           {isLogin ? (
             <div className="flex items-center gap-2">
-              {timeLeft !== null && (
-                <div className="flex items-center gap-2">
-                  <p className="text-gray-600 text-xs">로그아웃까지: <span className="text-blue-500">{formatTimeLeft(timeLeft)}</span></p>
-                  <button
-                    onClick={refreshAccessToken}
-                    className="text-gray-600 text-xs bg-yellow-200 px-2 py-1 rounded hover:bg-yellow-300 mr-20"
-                  >
-                    유지
-                  </button>
-                </div>
-              )}
               <GroupInquiryCheckComponent />
               <GroupJoinCheckComponent />
-              <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer flex items-center ml-10" onClick={openModal}>
+              <p className="text-gray-600 text-xs w-35 h-10 px-1 rounded cursor-pointer flex items-center" onClick={openModal}>
                 메뉴
               </p>
             </div>

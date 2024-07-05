@@ -3,10 +3,12 @@ import { addGroup, isMember } from '../../api/GroupApi';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { getUserIdFromToken } from '../../util/jwtDecode';
+import CommonModal from '../common/CommonModal';
 
 const GroupForm = ({ studyNo, closeModal }) => {
     const [questions, setQuestions] = useState({});
     const [answers, setAnswers] = useState({ a1: '', a2: '', a3: '', a4: '', a5: '', selfintro: '' });
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -24,54 +26,54 @@ const GroupForm = ({ studyNo, closeModal }) => {
     }, [studyNo]);
 
     const handleSubmit = async (e) => {
-      e.preventDefault();
+        e.preventDefault();
 
-      const userId = getUserIdFromToken();
-      let memberStatus = userId ? -1 : -2; // -1: 가입신청을 하지 않은경우, -2: 비회원(로그인 안 한 상태)
-      if (userId) {
-          memberStatus = await isMember(userId, studyNo);
-      }
+        const userId = getUserIdFromToken();
+        let memberStatus = userId ? -1 : -2; // -1: 가입신청을 하지 않은경우, -2: 비회원(로그인 안 한 상태)
+        if (userId) {
+            memberStatus = await isMember(userId, studyNo);
+        }
 
-      switch (memberStatus) {
-          case 0:
-              alert('승인 대기 중입니다.');
-              closeModal()
-              return;
-          case 1:
-              alert('이미 가입된 상태입니다.');
-              closeModal()
-              return;
-          case 2:
-              alert('가입이 거절되었습니다.');
-              closeModal()
-              return;
-          case 3:
-              alert('추방된 스터디 그룹입니다.');
-              closeModal()
-              return;              
-          default:
-              break;
-      }
+        switch (memberStatus) {
+            case 0:
+                alert('승인 대기 중입니다.');
+                closeModal()
+                return;
+            case 1:
+                alert('이미 가입된 상태입니다.');
+                closeModal()
+                return;
+            case 2:
+                alert('가입이 거절되었습니다.');
+                closeModal()
+                return;
+            case 3:
+                alert('추방된 스터디 그룹입니다.');
+                closeModal()
+                return;
+            default:
+                break;
+        }
 
-      const groupData = {
-          studyNo: parseInt(studyNo)
-      };
+        const groupData = {
+            studyNo: parseInt(studyNo)
+        };
 
-      const answerData = {
-          studyNo: parseInt(studyNo),
-          ...answers
-      };
+        const answerData = {
+            studyNo: parseInt(studyNo),
+            ...answers
+        };
 
-      try {
-          const response = await addGroup(groupData, answerData);
-          console.log('Group added successfully:', response);
-          alert('신청이 완료 되었습니다.');
-          closeModal(); // Close modal after successful submission
-      } catch (error) {
-          console.error('Error adding group:', error);
-          alert('Error adding group');
-      }
-  };
+        try {
+            const response = await addGroup(groupData, answerData);
+            console.log('Group added successfully:', response);
+            setShowModal(true);
+
+        } catch (error) {
+            console.error('Error adding group:', error);
+            alert('Error adding group');
+        }
+    };
 
     const handleAnswerChange = (e) => {
         const { name, value } = e.target;
@@ -162,6 +164,16 @@ const GroupForm = ({ studyNo, closeModal }) => {
             <button onClick={closeModal} className="bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded mt-4 ml-10">
                 닫기
             </button>
+
+
+            {showModal && (
+                <CommonModal
+                    modalMessage="신청이 완료되었습니다."
+                    callbackFn={closeModal}
+                    closeMessage="확인"
+                />
+            )}
+
         </form>
     );
 };
