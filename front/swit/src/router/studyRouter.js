@@ -1,6 +1,11 @@
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
-const Loading = <div>Loading...</div>
+import { PulseLoader } from "react-spinners";
+const Loading = (
+  <div className="flex justify-center items-center min-h-screen">
+      <PulseLoader size={20} color={"#F4CE14"} />
+  </div>
+);
 const StudyRead = lazy(() => import("../pages/study/StudyReadPage"))
 const StudyAddPage = lazy(() => import("../pages/study/StudyAddPage"))
 const StudyModifyPage = lazy(() => import("../pages/study/StudyModifyPage"))

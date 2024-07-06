@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import GroupForm from './GroupForm';
 import { isMember } from '../../api/GroupApi';
 import { getUserIdFromToken } from '../../util/jwtDecode';
+import { PulseLoader } from 'react-spinners';
 
 const GroupJoinComponent = ({ isModalOpen, closeModal, studyNo }) => {
     const [memberStatus, setMemberStatus] = useState(null);
@@ -68,7 +69,9 @@ const GroupJoinComponent = ({ isModalOpen, closeModal, studyNo }) => {
             <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg max-h-[70vh] overflow-y-auto mt-50">
                 <h2 className="text-xl font-bold mb-4">스터디 신청</h2>
                 {isLoading ? (
-                    <div>Loading...</div>
+                    <div className="flex justify-center items-center min-h-screen">
+                        <PulseLoader size={20} color={"#F4CE14"} loading={isLoading} />
+                    </div>
                 ) : (
                     memberStatus === -1 && <GroupForm studyNo={studyNo} closeModal={closeModal} />
                 )}

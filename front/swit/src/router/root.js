@@ -6,13 +6,18 @@ import examRouter from "./examRouter";
 import jobRouter from "./jobRouter";
 import placeRouter from "./placeRouter";
 import boardRouter from "./boardRouter";
+import { PulseLoader } from "react-spinners";
 
 
 // 필요한 순간까지 컴포넌트를 메모리상으로 올리지 않도록 지연로딩
 import { Suspense, lazy } from "react";
 const { createBrowserRouter } = require("react-router-dom");
 // 컴포넌트의 처리가 끝나지 않은 경우 화면에 'Loading…' 메시지 출력
-const Loading = <div>Loading...</div>;
+const Loading = (
+  <div className="flex justify-center items-center min-h-screen">
+      <PulseLoader size={20} color={"#F4CE14"} />
+  </div>
+);
 
 const Main = lazy(() => import("../pages/MainPage"))
 const MyPage = lazy(() => import("../pages/MyPage"))
