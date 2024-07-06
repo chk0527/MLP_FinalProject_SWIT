@@ -10,7 +10,7 @@ const BasicLayout = ({children}) => {
             </header> */}
             <MainHeader></MainHeader>
             <div className="bg-white w-full flex-col">
-                <main className="pb-5 ">{children}</main>
+                <main>{children}</main>
                 {/* <aside className="bg-green-300 md:w-1/5 lg:w-1/4 px-5 flex py-5">
 
                     <h1 className="text-2xl md:text-4xl">Sidebar</h1>

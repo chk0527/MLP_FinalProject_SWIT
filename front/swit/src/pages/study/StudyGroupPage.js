@@ -1,6 +1,6 @@
 import StudyGroupComponent from "../../components/study/StudyGroupComponent";
 import StudyInfoComponent from "../../components/study/StudyInfoComponent";
-import BasicLayout from "../../layouts/BasicLayout";
+import StudyLayout from "../../layouts/StudyLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { isMember } from "../../api/GroupApi";
@@ -10,7 +10,6 @@ import GroupMeetingComponent from "../../components/group/GroupMeetingComponent"
 import StudyTimerPage from "./StudyTimerPage";
 import { isLeader } from "../../api/GroupApi"; // 방장 여부를 확인하는 함수 가져오기
 import StudyListBtnComponent from "../../components/study/StudyListBtnComponent";
-import StudyModifyButtonComponent from "../../components/study/StudyModifyButton";
 import StudyTodoPage from "./StudyTodoPage";
 
 const StudyGroupPage = () => {
@@ -54,16 +53,16 @@ const StudyGroupPage = () => {
   }
 
   return (
-    <BasicLayout>
-      <div className="relative flex gap-10">
-        <div className="grow font-GSans">
+    <StudyLayout>
+      <div className="relative flex gap-10 justify-center">
+        <div className="grow font-GSans max-w-1000">
           <StudyInfoComponent
             studyNo={studyNo}
             ActionComponent={GroupMeetingComponent}
           />
           <StudyGroupComponent studyNo={studyNo} />
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="grow flex flex-col max-w-96 gap-8">
           <StudyChatPage />
           <StudyTimerPage studyNo={studyNo} />
           <StudyTodoPage studyNo={studyNo}/>
@@ -72,12 +71,8 @@ const StudyGroupPage = () => {
       {/* 목록으로 돌아가기 */}
       <div className="flex justify-center gap-4">
         <StudyListBtnComponent />
-        <StudyModifyButtonComponent
-          studyNo={studyNo}
-          isLeader={isLeaderState}
-        />
       </div>
-    </BasicLayout>
+    </StudyLayout>
   );
 };
 

@@ -1,8 +1,20 @@
+/* Banner.css */
+.h-dvh {
+  height: 100vh;
+}
+
+.bg-cover {
+  background-size: cover;
+  background-position: center;
+}
+
 .dots_custom {
   display: inline-block;
   vertical-align: middle;
   margin: auto 0;
   padding: 0;
+  position: absolute;
+  top:450px;
 }
 
 .dots_custom li {
@@ -11,6 +23,7 @@
   display: inline-block;
   margin: 0 15px;
   padding: 0;
+  
 }
 
 .dots_custom li button {
@@ -29,11 +42,34 @@
   background-color: rgb(254 249 195);
 }
 
-.slick-arrow {
-  background: #000;
+.slick-prev {
+  left: 25px !important;
+  z-index: 1000;
+  opacity: 1;
+}
+.slick-prev::before {
+  color: #000 !important;
+  font-size: 100px !important;
+  opacity: 1;
+}
+.slick-next {
+  right: 100px !important;
+  opacity: 1;
+  z-index: 1000;
+}
+.slick-next::before {
+  color: #000 !important;
+  font-size: 100px !important;
+  opacity: 1;
 }
 .slick-slide {
-  padding: 0 100px;
+  display: flex !important;
+  justify-content: center;
+}
+
+.StudySlide {
+  display: flex !important;
+  justify-content: center;
 }
 
 :root {
@@ -42,7 +78,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap");
-
 
 svg text {
   font-family: "Staatliches", cursive;

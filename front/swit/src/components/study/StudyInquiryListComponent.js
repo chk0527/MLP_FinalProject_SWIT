@@ -6,14 +6,17 @@ import {
 } from "../../api/StudyApi";
 import { isLeader } from "../../api/GroupApi";
 import reply from "../../img/reply.png";
+import CommonModal from "../common/CommonModal";
 
 const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
   const [responseContent, setResponseContent] = useState({});
   const [isResponseOpen, setIsResponseOpen] = useState({});
   const [isLeaderStatus, setIsLeaderStatus] = useState(false);
+  const [showModal, setShowModal] = useState(false); 
+  const [showConfirmModal, setShowConfirmModal] = useState(false); 
+  const [selectedInquiry, setSelectedInquiry] = useState(null); 
 
   useEffect(() => {
-    console.log(inquiries + "!!!!!!");
     const initializeData = async () => {
       const leaderStatus = await isLeader(studyNo);
       setIsLeaderStatus(leaderStatus);
@@ -30,13 +33,22 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
     setIsResponseOpen((prev) => ({ ...prev, [inquiryNo]: false }));
   };
 
-  const handleDeleteInquiry = async (inquiryNo) => {
-    const confirmed = window.confirm("문의를 삭제하시겠습니까?");
-    if (confirmed) {
-      await deleteInquiry(inquiryNo);
+  const handleDeleteInquiry = (inquiryNo) => {
+    setSelectedInquiry(inquiryNo);
+    setShowModal(true);
+  };
+
+  const confirmDeleteInquiry = async () => {
+    try {
+      await deleteInquiry(selectedInquiry);
       const inquiriesData = await fetchInquiries(studyNo);
       setInquiries(inquiriesData);
-      alert("삭제 되었습니다.");
+      setShowModal(false);
+      setShowConfirmModal(true);
+    } catch (error) {
+      console.error(error);
+      setShowModal(false);
+      alert("삭제에 실패했습니다.");
     }
   };
 
@@ -169,6 +181,24 @@ const StudyInquiryListComponent = ({ studyNo, inquiries, setInquiries }) => {
           )}
         </div>
       </div>
+
+      {showModal && (
+        <CommonModal
+          modalMessage="문의를 삭제하시겠습니까?"
+          callbackFn={()=>setShowModal(false)}
+          closeMessage="취소"
+          navigateFn={confirmDeleteInquiry}
+          navigateMessage="확인"
+        />
+      )}
+
+      {showConfirmModal && (
+        <CommonModal
+          modalMessage="삭제되었습니다."
+          callbackFn={() => setShowConfirmModal(false)}
+          closeMessage="확인"
+        />
+      )}
     </div>
   );
 };

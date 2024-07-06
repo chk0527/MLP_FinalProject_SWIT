@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.swit.domain.FavoritesJob;
 import com.swit.domain.FavoritesPlace;
 import com.swit.domain.Place;
 import com.swit.domain.User;
-import com.swit.dto.JobDTO;
 import com.swit.dto.PlaceDTO;
 import com.swit.repository.FavoritesPlaceRepository;
 import com.swit.repository.PlaceRepository;
@@ -103,6 +102,6 @@ public class PlaceService {
                 }
         }
 
-        //메인 -> 장소추천
-       
 }
+
+

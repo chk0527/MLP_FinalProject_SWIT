@@ -11,6 +11,8 @@ import searchIcon from "../../img/search-icon.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { getUserIdFromToken } from "../../util/jwtDecode";
+import LoginRequireModal from "../common/LoginRequireModal";
+import CommonModal from "../common/CommonModal";
 
 const initState = {
   dtoList: [],
@@ -33,6 +35,9 @@ const ListComponent = () => {
   const [sort, setSort] = useState("jobNo");
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const handleClickExamList = useCallback(() => {
     navigate({ pathname: "../../exam" });
@@ -79,7 +84,6 @@ const ListComponent = () => {
     { label: "의료", value: "의료" },
     { label: "연구·R&D", value: "연구·R&D" },
     { label: "금융·보험", value: "금융·보험" },
-    // { label: "공공·복지", value: "공공·복지" },
   ];
   const handleJobFieldClick = (field) => {
     setJobField(field);
@@ -90,11 +94,7 @@ const ListComponent = () => {
     //로그인x
     const userId = getUserIdFromToken();
     if (!userId) {
-      if (
-        window.confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")
-      ) {
-        navigate("/login");
-      }
+      setShowLoginModal(true);
       return;
     }
 
@@ -107,11 +107,8 @@ const ListComponent = () => {
         ...favoriteStatus,
         [jobNo]: !isFavorite,
       });
-      alert(
-        isFavorite
-          ? "즐겨찾기에서 삭제되었습니다."
-          : "즐겨찾기에 추가되었습니다."
-      );
+      setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+      setShowModal(true);
     } catch (error) {
       console.error(error);
     }
@@ -119,7 +116,18 @@ const ListComponent = () => {
 
   return (
     <div className="relative w-full font-GSans">
-      {/* <div className="flex justify-between items-center border-b-2 pb-4 mb-4"> */}
+      {showLoginModal && (
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
+
+      {showModal && (
+        <CommonModal
+          modalMessage={modalMessage}
+          callbackFn={() => setShowModal(false)}
+          closeMessage="확인"
+        />
+      )}
+
       <div className="flex w-full justify-between px-8">
         <div className="flex space-x-4">
           <div className="text-5xl pb-16 font-blackHans">채용</div>
@@ -146,19 +154,6 @@ const ListComponent = () => {
             </button>
           </div>
           <div className="flex justify-end pb-4 mb-4">
-            {/* 직무선택 그리드  */}
-            {/* <div className="grid grid-cols-5 gap-px bg-gray-300 border border-gray-300 w-full">
-        {jobFields.map((field, index) => (
-          <div
-            key={index}
-            onClick={() => handleJobFieldClick(field.value)}
-            className={`p-2 bg-white text-center border border-gray-300 hover:bg-gray-200 cursor-pointer ${jobField === field.value ? "bg-gray-200" : ""}`}
-          >
-            {field.label}
-          </div>
-        ))}
-      </div>
-      */}
             <select
               value={jobField}
               onChange={(e) => setJobField(e.target.value)}

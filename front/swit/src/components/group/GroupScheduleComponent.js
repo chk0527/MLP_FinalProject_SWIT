@@ -8,10 +8,14 @@ import {
 } from "../../api/CalendarApi";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import moment from "moment";
+import CommonModal from "../common/CommonModal";
 
 const GroupScheduleComponent = ({ studyNo }) => {
   const [study, setStudy] = useState({}); // 방장 id 추출에 필요한 study 조회
   const [events, setEvents] = useState([]); // 캘린더 - 일정 관리
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const currentUserId = getUserIdFromToken();
   const isManager = currentUserId === study.userId; // 현재 사용자가 방장인지 확인
@@ -52,12 +56,8 @@ const GroupScheduleComponent = ({ studyNo }) => {
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
     if (!isManager) {
-      alert(
-        "방장만 일정을 관리할 수 있습니다.\n" +
-          "방장 닉네임 : " +
-          study.userNick
-      );
-      return;
+      setAlertMessage("방장만 일정을 관리할 수 있습니다");
+      setShowModal(true);
     }
     const title = getNextTitle();
     const newEvent = {
@@ -96,11 +96,8 @@ const GroupScheduleComponent = ({ studyNo }) => {
   // 캘린더 - 일정 삭제
   const handleRemoveEvent = async (eventId) => {
     if (!isManager) {
-      alert(
-        "방장만 일정을 관리할 수 있습니다.\n" +
-          "방장 닉네임 : " +
-          study.userNick
-      );
+      setAlertMessage("방장만 일정을 관리할 수 있습니다");
+      setShowModal(true);
       return;
     }
     try {
@@ -114,11 +111,8 @@ const GroupScheduleComponent = ({ studyNo }) => {
   // 캘린더 - 일정 완료 상태 업데이트
   const handleCompleteEvent = async (eventId, completeChk) => {
     if (!isManager) {
-      alert(
-        "방장만 일정을 관리할 수 있습니다.\n" +
-          "방장 닉네임 : " +
-          study.userNick
-      );
+      setAlertMessage("방장만 일정을 관리할 수 있습니다");
+      setShowModal(true);
       return;
     }
     try {
@@ -181,6 +175,15 @@ const GroupScheduleComponent = ({ studyNo }) => {
           </ul>
         </div>
       </div>
+
+      {showModal && (
+        <CommonModal
+          modalMessage={alertMessage}
+          callbackFn={() => setShowModal(false)}
+          closeMessage="확인"
+        />
+      )}
+      
     </div>
   );
 };

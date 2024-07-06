@@ -2,10 +2,12 @@ import { useState, useEffect, useContext } from "react";
 import { getBoard, deleteOne } from "../../api/BoardApi";
 import { getComments, postAdd, deleteComment } from "../../api/CommentApi";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getUserIdFromToken } from "../../util/jwtDecode";
 import useCustomMove from "../../hooks/useCustomMove";
 import { LoginContext } from "../../contexts/LoginContextProvider";
 import "react-datepicker/dist/react-datepicker.css";
 import BoardDeleteModal from "./BoardDeleteModal";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const initState = {
   boardNo: 0,
@@ -31,6 +33,7 @@ const BoardReadComponent = ({ boardNo }) => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleChangeComment = (e) => {
     comment[e.target.name] = e.target.value;
@@ -52,6 +55,10 @@ const BoardReadComponent = ({ boardNo }) => {
   }, [boardNo]);
 
   const handleClickAdd = () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      setShowLoginModal(true);
+    }
     comment.userNo = userInfo.userNo;
     comment.userNick = userInfo.userNick;
     comment.boardNo = boardNo;
@@ -119,6 +126,9 @@ const BoardReadComponent = ({ boardNo }) => {
 
   return (
     <div className="flex justify-center font-GSans">
+       {showLoginModal && (
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
       <div className="relative w-full max-w-1000">
         {showDeleteModal && (
           <BoardDeleteModal
@@ -210,7 +220,7 @@ const BoardReadComponent = ({ boardNo }) => {
           <div className="flex justify-center">
             <button
               type="button"
-              className="rounded p-3 my-40 text-xl w-28 text-white bg-yellow-500"
+              className="rounded p-3 my-40 text-xl w-28 text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
               onClick={() => window.history.back()}
             >
               목록

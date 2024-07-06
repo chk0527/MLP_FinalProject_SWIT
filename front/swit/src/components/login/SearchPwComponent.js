@@ -40,6 +40,7 @@ function SearcPwComponent() {
   const [isNotVerified, setIsNotVerified] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const [mobilePrefix, setMobilePrefix] = useState('010');
   const [mobile1, setMobile1] = useState('');
@@ -177,15 +178,14 @@ function SearcPwComponent() {
     .then((response) => {
       
       console.log("sms 발송 nework에서 확인" + response.data);
+
       // 임시 처리
       setConfirm(response.data);
-      console.log(`setConfirm ${confirm.confirmNo}`);
-      console.log(`setConfirm ${confirm.confirmTarget}`);
-      console.log(`setConfirm ${confirm.confirmPath}`);
-      console.log(`setConfirm ${confirm.confirmNum}`);
+
 
       if (certifyType === '3' ) {
         console.log("이메일 인증번호 발송이 성공하였습니다.");
+        console.info("email confirmNum " + confirmNum);
             
         clearVerificationTimer();             // 초기화
         setIsVerificationCodeSent(true);      // 활성화
@@ -196,7 +196,9 @@ function SearcPwComponent() {
         // 원복KYW
         send_sms(response.data)
         .then((result) => {
+            setConfirm(result.data);
             console.log("SMS 인증번호 발송이 성공하였습니다.");
+            console.info("sms confirmNum " + confirmNum);
             
             clearVerificationTimer();             // 초기화
             setIsVerificationCodeSent(true);      // 활성화
@@ -244,12 +246,8 @@ function SearcPwComponent() {
       return;
     }
     try {
-      console.log(`try ${confirm.confirmNo}`);
-      console.log(`try ${confirm.userId}`);
-      console.log(`try ${confirm.confirmTarget}`);
-      console.log(`try ${confirm.confirmPath}`);
       console.log(`try ${confirmNum}`);
-      console.log(`try ${confirm.confirmLimitDate}`);
+ 
       searchId2({
         confirmNo: confirm.confirmNo,
         userId: confirm.userId,
@@ -259,14 +257,29 @@ function SearcPwComponent() {
         confirmLimitDate: confirm.confirmLimitDate
       })
       .then((response) => {
-        console.log("인증번호 일치입니다.");
-        setConfirm(response.data);
-        setIsVerificationCodeSent(false);
-        alert("인증번호 일치입니다.");
-        // 인증 성공 시
-        // setTimeRemaining(300); // 남은 시간 5분으로 초기화
-        // clearVerificationTimer();
-        setIsVerified(true);
+        // console.log("인증번호 일치입니다.");
+        // setConfirm(response.data);
+        // setIsVerificationCodeSent(false);
+        // alert("인증번호 일치입니다.");
+        // setIsVerified(true);
+        if (response.status === 200) {
+          console.log("인증번호가 일치합니다.");
+          alert("인증번호가 일치합니다.");
+          setConfirm(response.data);
+          setIsVerificationCodeSent(false);
+          setIsVerified(true);
+          setIsSuccess(true);
+        } else if (response.status === 410) {
+          console.error("인증번호 기간이 만료되었습니다.");
+          alert("인증번호 기간이 만료되었습니다. 다시 시도해 주세요.");
+        } else if (response.status === 424) {
+          console.error("인증번호가 일치하지 않습니다.");
+          alert("인증번호가 일치하지 않습니다. 다시 입력해 주세요.");
+          setIsNotVerified(true);
+        } else {
+          console.error("알 수 없는 오류가 발생했습니다.");
+          alert("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.");
+        }
       })
       .catch((error) => {
         alert("인증번호 불일치 합니다. 다시 입력해 주세요");
@@ -292,7 +305,7 @@ function SearcPwComponent() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    console.log(`${confirm.userId}`);
+    // console.log(`${confirm.userId}`);
 
     // 여기서 form 데이터를 서버로 전송하는 로직 작성
     // "1" 이메일 검증, "2" 핸드폰 검증
@@ -376,8 +389,13 @@ function SearcPwComponent() {
             return;
         }
     }
-    
-    setResultType("2");
+
+    if (isSuccess) {
+      setResultType("2");
+    } else {
+      console.log("인증 번호가 틀립니다.");
+      alert('인증 번호를 확인 하시기 바랍니다.');
+    }
   };
 
   // 비밀번호 변경
@@ -581,7 +599,7 @@ function SearcPwComponent() {
                         name="lb_confirmNum"
                         id="lb_confirmNum"
                         maxLength={certifyType === '3' ? 8 : 6}
-                        placeholder="인증 코드 입력"
+                        placeholder="인증 번호"
                         className="border border-gray-300 rounded-md px-4 py-2 w-1/2 mr-2"
                         value={confirmNum}
                         onChange={handleConfirmNumChange}

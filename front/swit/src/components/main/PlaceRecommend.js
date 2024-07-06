@@ -37,7 +37,14 @@ function getRandomElement(arr) {
 }
 
 const PlaceRecommend = () => {
-  const [places, setPlaces] = useState([initState, initState, initState, initState, initState, initState]);
+  const [places, setPlaces] = useState([
+    initState,
+    initState,
+    initState,
+    initState,
+    initState,
+    initState,
+  ]);
   const [addrHashtags, setAddrHashtags] = useState([]); //주소->지역해시태그
   const [randomHashtags, setRandomHashtags] = useState([]);
   const [randomSentences, setRandomSentences] = useState([]);
@@ -49,7 +56,7 @@ const PlaceRecommend = () => {
     "#편안한공간",
     "#집중력향상",
     "#프리미엄스터디카페",
-    "#쾌적"
+    "#쾌적",
   ];
 
   const sentences = [
@@ -61,24 +68,35 @@ const PlaceRecommend = () => {
     "쾌적한 환경에서 공부를",
     "집중력이 필요한 순간, 스터디카페에서",
     "프리미엄 학습 공간, 스터디카페",
-    "스터디카페에서 편안하게 자습하세요"
+    "스터디카페에서 편안하게 자습하세요",
   ];
 
   useEffect(() => {
     const fetchData = async () => {
       const allPlaces = await getPlaceAllList();
       const randomNumbers = getRandomNumbers(allPlaces.length);
-      const placeDetails = await Promise.all(randomNumbers.map(num => getPlaceDetail(num)));
+      const placeDetails = await Promise.all(
+        randomNumbers.map((num) => getPlaceDetail(num))
+      );
       setPlaces(placeDetails);
 
-      const tags = placeDetails.map(place => {
-        const parts = place.placeAddr.split(' ');
+      const tags = placeDetails.map((place) => {
+        const parts = place.placeAddr.split(" ");
         if (parts[0] === "서울") {
-          return parts.slice(0, 2).map(part => `#${part}`).join(' ');
+          return parts
+            .slice(0, 2)
+            .map((part) => `#${part}`)
+            .join(" ");
         } else if (parts[0] === "경기") {
-          return parts.slice(0, 3).map(part => `#${part}`).join(' ');
+          return parts
+            .slice(0, 3)
+            .map((part) => `#${part}`)
+            .join(" ");
         } else {
-          return parts.slice(0, 2).map(part => `#${parts[0]} ${parts[1]}`).join(' ');
+          return parts
+            .slice(0, 2)
+            .map((part) => `#${parts[0]} ${parts[1]}`)
+            .join(" ");
         }
       });
       setAddrHashtags(tags);
@@ -86,7 +104,9 @@ const PlaceRecommend = () => {
       const randomTags = placeDetails.map(() => getRandomElement(hashtags));
       setRandomHashtags(randomTags);
 
-      const randomSentencesList = placeDetails.map(() => getRandomElement(sentences));
+      const randomSentencesList = placeDetails.map(() =>
+        getRandomElement(sentences)
+      );
       setRandomSentences(randomSentencesList);
     };
 
@@ -118,40 +138,35 @@ const PlaceRecommend = () => {
   };
 
   return (
-    <div className="font-GSans">
+    <div className="font-GSans h-dvh bg-gray-200">
       <div className="flex justify-center">
         <div className="overflow-hidden px-10 pb-10 w-1900">
-          <p
-            className="mx-24 my-5 text-2xl w-56 py-4 text-center bg-mainBg"
-            style={{ backgroundImage: `url(${roundGradient})` }}
-          >
-            스터디 장소
+          <p className=" text-5xl text-center font-blackHans mt-40 mb-16">
+            스터디 장소 추천
           </p>
           <Slider {...settings}>
             {places.map((place, index) => (
               <div key={index}>
-                <div className="flex justify-between">
+                <div className="flex flex-col items-center gap-12">
+                  <div className="text-center">
+                    <p className="text-7xl font-blackHans">{place.placeName}</p>
+                    <p className="text-3xl">{randomSentences[index]}</p>
+                    <p className="text-3xl">
+                      {addrHashtags[index]} {randomHashtags[index]}
+                    </p>
+                  </div>
+                  <Link
+                    to={{ pathname: `/place/read/${place.placeNo}` }}
+                    state={1}
+                  >
+                    <div className="shadow text-2xl text-black bg-yellow-200 px-12 py-5 rounded">
+                      보러가기
+                    </div>
+                  </Link>
                   <img
-                    className="w-650 h-96 object-cover rounded-md"
+                    className="w-750 h-450 object-cover rounded mb-8"
                     src={place.placeImg}
                   ></img>
-                  <div className="relative w-1000 p-10">
-                    <div className="text-5xl pb-10">
-                      {place.placeName}
-                    </div>
-                    <div className="text-3xl leading-relaxed">
-                    <p>{randomSentences[index]}</p>
-                      <p>{addrHashtags[index]} {randomHashtags[index]}</p>
-                    </div>
-                    <Link
-                      to={{ pathname: `/place/read/${place.placeNo}` }}
-                      state={1}
-                    >
-                      <div className="absolute bottom-10 right-10 text-2xl text-black bg-gray-100 px-8 py-3 rounded">
-                        보러가기
-                      </div>
-                    </Link>
-                  </div>
                 </div>
               </div>
             ))}
@@ -163,3 +178,4 @@ const PlaceRecommend = () => {
 };
 
 export default PlaceRecommend;
+

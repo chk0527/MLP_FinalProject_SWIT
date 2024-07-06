@@ -8,6 +8,7 @@ import GroupJoinComponent from "../group/GroupJoinComponent";
 import { getUserIdFromToken } from "../../util/jwtDecode"; // JWT 디코딩 유틸리티 함수
 import StudyInquiryListComponent from "./StudyInquiryListComponent";
 import StudyInquiryFormComponent from "./StudyInquiryFormComponent";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const initState = {
   studyNo: 0,
@@ -35,6 +36,7 @@ const StudyReadComponent = ({ studyNo }) => {
   const [showInquiries, setShowInquiries] = useState(false);
   const [inquiries, setInquiries] = useState([]);
   const navigate = useNavigate(); // 이전 페이지로 이동하기 위한 함수
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,8 +53,9 @@ const StudyReadComponent = ({ studyNo }) => {
   const openModal = async () => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      alert("로그인 후 이용해주세요");
-      navigate("/login");
+      // alert("로그인 후 이용해주세요");
+      // navigate("/login");
+      setShowLoginModal(true);
       return;
     }
 
@@ -75,8 +78,9 @@ const StudyReadComponent = ({ studyNo }) => {
   const handleInquiryButtonClick = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      alert("로그인 후 이용해주세요");
-      navigate("/login");
+      // alert("로그인 후 이용해주세요");
+      // navigate("/login");
+      setShowLoginModal(true);
       return;
     }
     setShowInquiryForm(true);
@@ -123,6 +127,9 @@ const StudyReadComponent = ({ studyNo }) => {
         closeModal={closeModal}
         studyNo={studyNo}
       />
+      {showLoginModal && ( 
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
     </div>
   );
 };

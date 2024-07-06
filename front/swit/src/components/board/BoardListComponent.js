@@ -6,6 +6,7 @@ import { getUserIdFromToken } from "../../util/jwtDecode";
 import { useNavigate } from "react-router-dom";
 //아이콘
 import searchIcon from "../../img/search-icon.png";
+import LoginRequireModal from "../common/LoginRequireModal";
 
 const initState = {
   dtoList: [],
@@ -28,6 +29,7 @@ const BoardListComponent = () => {
     searchText: "",
     boardCategory: "",
   });
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -39,39 +41,56 @@ const BoardListComponent = () => {
 
   const handleSearch = (params = searchParams) => {
     const { searchType, searchText, boardCategory } = params;
+
+    if (!searchText && !boardCategory) {
+      // 검색 텍스트와 카테고리가 모두 없으면 전체 리스트 불러오기
+      getBoardList({ page, size }).then((data) => {
+        console.log(data);
+        setServerData(data);
+      });
+      return; // 이후 코드는 실행하지 않도록 리턴
+    }
+
+    // searchParams 객체를 직접 수정하지 않고 params 객체를 사용
     const searchParams = {
-      [searchType]: searchText,
+      boardTitle: searchType === 'boardTitle' ? searchText : '',
+      boardContent: searchType === 'boardContent' ? searchText : '',
+      userNick: searchType === 'userNick' ? searchText : '',
       boardCategory: boardCategory || "",  // 카테고리가 없으면 전체 가져오기
     };
-    console.log(searchParams)
+
+    console.log("검색 파라미터:");
+    console.log(searchParams);
     getBoardSearch(searchParams, { page, size }).then((data) => {
       console.log(data);
       setServerData(data);
     });
   };
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchParams((prevParams) => ({
       ...prevParams,
       [name]: value,
     }));
+    console.log("검색어 입력")
+    console.log(searchParams)
   };
+
   const handleCategoryChange = (category) => {
     setSearchParams((prevParams) => {
       const newCategory = prevParams.boardCategory === category ? "" : category;
       const newParams = { ...prevParams, boardCategory: newCategory };
-      
+
       handleSearch(newParams);  // 카테고리를 변경하자마자 검색 수행
-      
+
       return newParams;
     });
   };
   const handleAddBoard = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      alert("로그인이 필요합니다.");
-      navigate("/login");
+      setShowLoginModal(true);
       return;
     }
     navigate("/board/add", { state: 0 });
@@ -79,6 +98,9 @@ const BoardListComponent = () => {
 
   return (
     <div className="relative w-full font-GSans">
+      {showLoginModal && (
+        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
+      )}
       <div className="flex w-full justify-between px-8">
         <div className="text-5xl pb-16 font-blackHans">게시판</div>
         <div className="text-2xl -m-4 pb-10">
@@ -103,7 +125,7 @@ const BoardListComponent = () => {
               value={searchParams.searchText}
               onChange={handleInputChange}
             />
-            <button type="button" onClick={handleSearch}>
+            <button type="button" onClick={() => handleSearch(searchParams)}>
               <img className="size-6" src={searchIcon} alt="검색" />
             </button>
           </div>

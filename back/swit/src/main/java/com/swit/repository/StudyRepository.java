@@ -24,7 +24,9 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
                         "        LEFT JOIN study_image_list si ON si.study_study_no = s.study_no " +
                         "        LEFT JOIN group1 g ON g.study_no = s.study_no " +
                         "        WHERE s.study_title LIKE %:studyTitle% AND s.study_subject LIKE %:studySubject% " +
-                        "        AND s.study_addr LIKE %:studyAddr% AND s.study_online = :studyOnline" +
+                        "        AND s.study_addr LIKE %:studyAddr% " +
+                        // "        AND s.study_online = :studyOnline" +
+                        "        AND (:studyOnline IS NULL OR s.study_online = :studyOnline)" +
                         "    ) " +
                         "    SELECT * FROM RankedStudies WHERE rn = 1 " +
                         ") AS FinalResults " +

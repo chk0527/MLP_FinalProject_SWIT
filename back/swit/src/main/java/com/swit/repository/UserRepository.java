@@ -21,13 +21,20 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // @Modifying
     // @Query("UPDATE User u SET u.userName = :userName, u.userNick = :userNick, u.userPhone = :userPhone, u.userEmail = :userEmail WHERE u.userId = :userId")
     // Optional<User> updateOne(@Param("userId") String userId, @Param("userName") String userName, @Param("userNick") String userNick, @Param("userPhone") String userPhone, @Param("userEmail") String userEmail);
-
+    
+    // 회원 가입시 아이디, 닉네임, 이메일, 연락처 존재 여부 확인 
     Boolean existsByUserId(String userId);
-
+    Boolean existsByUserNick(String userNick);
+    Boolean existsByUserEmail(String userEmail);
+    Boolean existsByUserPhone(String userPhone);
+    
     Optional<User> findByUserId(String userId);
     Optional<User> findByUserNick(String userNick);
 
-    // 네이버 로그인 체크
+    // 네이버/카카오 로그인 체크(이메일로만 테이블에 존재하는지 검수 처리)
+    // 이메일, 전화번호 unique 처리
+    Optional<User> findByUserEmail(String userEmail);
+    
     // 아이디/비밀번호 찾기 확인 처리(이메일, 핸드폰번호)
     Optional<User> findByUserNameAndUserEmailAndUserSnsConnect(String userName, String userEmail, String userSnsConnect);
     Optional<User> findByUserNameAndUserPhoneAndUserSnsConnect(String userName, String userPhone, String userSnsConnect);

@@ -11,6 +11,7 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import axios from 'axios';
 import { getUserIdFromToken, getUserNickFromToken, getUserRoleFromToken } from "../../util/jwtDecode";
+import CommonModal from '../common/CommonModal';
 
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -34,6 +35,8 @@ const GroupCalendarComponent = ({ studyNo }) => {
   const [modalClass, setModalClass] = useState('modal');    // 모달창 css 클래스값 설정
   const [holidays, setHolidays] = useState([]);             // 공휴일 처리
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month'));
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   // 스터디의 방장 ID 추출
   useEffect(() => {
@@ -162,7 +165,9 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 생성
   const handleCreateEvent = async ({ start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      // alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      setAlertMessage("방장만 일정을 관리할 수 있습니다.");
+      setShowModal(true);
       return
     }
     const title = getNextTitle()
@@ -200,7 +205,8 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 삭제
   const handleRemoveEvent = async (eventId) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      setAlertMessage("방장만 일정을 관리할 수 있습니다.");
+      setShowModal(true);
       return
     }
     try {
@@ -214,7 +220,8 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 완료 상태 업데이트
   const handleCompleteEvent = async (eventId, completeChk) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      setAlertMessage("방장만 일정을 관리할 수 있습니다.");
+      setShowModal(true);
       return
     }
     try {
@@ -245,7 +252,8 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 드래그앤드롭 이벤트
   const handleDragEvent = async ({ event, start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      setAlertMessage("방장만 일정을 관리할 수 있습니다.");
+      setShowModal(true);
       return
     }
     const updatedEvent = {
@@ -264,7 +272,8 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 바 사이즈 늘리기 이벤트(날짜 범위 변경)
   const handleResizeEvent = async ({ event, start, end }) => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      setAlertMessage("방장만 일정을 관리할 수 있습니다.");
+      setShowModal(true);
       return
     }
     const updatedEvent = {
@@ -283,7 +292,8 @@ const GroupCalendarComponent = ({ studyNo }) => {
   // 캘린더 - 일정 정보 업데이트(모달창)
   const handleUpdateEvent = async () => {
     if (!isManager) {
-      alert("방장만 일정을 관리할 수 있습니다.\n" + "방장 닉네임 : " + study.userNick)
+      setAlertMessage("방장만 일정을 관리할 수 있습니다.");
+      setShowModal(true);
       return
     }
     const updatedEvent = {
@@ -418,6 +428,15 @@ const GroupCalendarComponent = ({ studyNo }) => {
               <button onClick={handleUpdateEvent} className="button-save">저장</button>
             </div>
           </div>
+
+          {showModal && (
+            <CommonModal
+              modalMessage={alertMessage}
+              callbackFn={() => setShowModal(false)}
+              closeMessage="확인"
+            />
+          )}
+
         </div>
       )}
     </div>

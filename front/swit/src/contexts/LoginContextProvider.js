@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import api from "../api/Api"
 import * as auth from "../api/LoginApi"
+// import * as Swal from "../api/alert"
 
 export const LoginContext = createContext();
 LoginContext.displayName = "LoginContextName";
@@ -121,11 +122,16 @@ const LoginContextProvider = ({ children }) => {
                 sessionStorage.setItem("refreshToken", refreshToken);
                 loginCheck();
                 alert('로그인 성공');
-                window.history.back(); // 로그인 성공 시 메인 페이지로 이동
+                // Swal.alert(`로그인 성공`, `메인화면으로 갑니다.`, "success", () => { window.history.back(); })
+                
+                // 메이페이지 처리가 되지 않고 계속 무한 반복 처리됨
+                // window.history.back(); // 로그인 성공 시 메인 페이지로 이동
+                window.location.href = '/'; //메인페이지로 이동
             }
 
         } catch (error) {
             alert('아이디나 비밀번호가 틀렸습니다.');
+            // Swal.alert(`로그인 실패`, `아이디 또는 비밀번호가 일치하지 않습니다.`, "error", () => { window.history.back(); })
         }
     };
 
