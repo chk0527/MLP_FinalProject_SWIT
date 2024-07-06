@@ -34,8 +34,6 @@ const MyInfoModifyComponent = ({ userId }) => {
       try {
         const userData = await getUserProfile(userId);
         setUser(userData);
-        console.log("불러오기 조회")
-        console.log(userData)
         setModalUser({ ...userData });
         setModalUser(prevState => ({
           ...prevState,
@@ -131,79 +129,77 @@ const MyInfoModifyComponent = ({ userId }) => {
     setConfirmPasswordErrors(newConfirmPasswordErrors);
   };
 
-// 닉네임 블러 핸들러
-const handleUserNickBlur = async (userInfo) => {
-  const newErrors = { ...errors };
-  const { userNick, userPhone, userEmail } = userInfo;
-  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+  // 닉네임 블러 핸들러
+  const handleUserNickBlur = async (userInfo) => {
+    const newErrors = { ...errors };
+    const { userNick, userPhone, userEmail } = userInfo;
+    const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
 
-  if (response.userNick && response.userNick !== user.userNick) {
-    newErrors.userNick = '닉네임이 이미 존재합니다.';
-  } else {
-    newErrors.userNick = '사용 가능한 닉네임입니다.';
-  }
+    if (response.userNick && response.userNick !== user.userNick) {
+      newErrors.userNick = '닉네임이 이미 존재합니다.';
+    } else {
+      newErrors.userNick = '사용 가능한 닉네임입니다.';
+    }
 
-  setErrors(newErrors);
-};
+    setErrors(newErrors);
+  };
 
-// 전화번호 블러 핸들러
-const handleUserPhoneBlur = async (userInfo) => {
-  const newErrors = { ...errors };
-  const { userNick, userPhone, userEmail } = userInfo;
-  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+  // 전화번호 블러 핸들러
+  const handleUserPhoneBlur = async (userInfo) => {
+    const newErrors = { ...errors };
+    const { userNick, userPhone, userEmail } = userInfo;
+    const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
 
-  if (response.userPhone && response.userPhone !== user.userPhone) {
-    newErrors.userPhone = '전화번호가 이미 존재합니다.';
-  } else {
-    newErrors.userPhone = '사용 가능한 전화번호입니다.';
-  }
+    if (response.userPhone && response.userPhone !== user.userPhone) {
+      newErrors.userPhone = '전화번호가 이미 존재합니다.';
+    } else {
+      newErrors.userPhone = '사용 가능한 전화번호입니다.';
+    }
 
-  setErrors(newErrors);
-};
+    setErrors(newErrors);
+  };
 
-// 이메일 블러 핸들러
-const handleUserEmailBlur = async (userInfo) => {
-  const newErrors = { ...errors };
-  const { userNick, userPhone, userEmail } = userInfo;
-  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+  // 이메일 블러 핸들러
+  const handleUserEmailBlur = async (userInfo) => {
+    const newErrors = { ...errors };
+    const { userNick, userPhone, userEmail } = userInfo;
+    const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
 
-  if (response.userEmail && response.userEmail !== user.userEmail) {
-    newErrors.userEmail = '이메일이 이미 존재합니다.';
-  } else {
-    newErrors.userEmail = '사용 가능한 이메일입니다.';
-  }
+    if (response.userEmail && response.userEmail !== user.userEmail) {
+      newErrors.userEmail = '이메일이 이미 존재합니다.';
+    } else {
+      newErrors.userEmail = '사용 가능한 이메일입니다.';
+    }
 
-  setErrors(newErrors);
-};
-
+    setErrors(newErrors);
+  };
 
   const handleTextChange = (e) => {
     const { name, value } = e.target;
     setModalUser((prev) => ({ ...prev, [name]: value }));
-    console.log(modalUser.userPassword)
   };
 
   const handleTextBlur = (e) => {
     const { name, value } = e.target;
-    if (name === "currentPassword") {
+    if (name === 'currentPassword') {
       setCurrentPassword(value);
-    } else if (name === "confirmPassword") {
+    } else if (name === 'confirmPassword') {
       setConfirmPassword(value);
     } else {
       setModalUser((prev) => ({ ...prev, [name]: value }));
     }
   
-    if (name === "currentPassword") {
+    if (name === 'currentPassword') {
       handleCurrentPasswordBlur();
-    } else if (name === "confirmPassword") {
+    } else if (name === 'confirmPassword') {
       handleConfirmPasswordBlur();
-    } else if (name === "userPassword") {
+    } else if (name === 'userPassword') {
       passwordValidate();
-    } else if (name === "userNick") {
+    } else if (name === 'userNick') {
       handleUserNickBlur(modalUser); // userInfo 인수를 전달
-    } else if (name === "userPhone") {
+    } else if (name === 'userPhone') {
       handleUserPhoneBlur(modalUser); // userInfo 인수를 전달
-    } else if (name === "userEmail") {
+    } else if (name === 'userEmail') {
       handleUserEmailBlur(modalUser); // userInfo 인수를 전달
     } 
   };
@@ -218,9 +214,7 @@ const handleUserEmailBlur = async (userInfo) => {
   const passwordValidate = () => {
     const newErrors = {};
     const value = modalUser.userPassword;
-    console.log(modalUser.userPassword)
-    console.log("에러확인")
-    console.log(value)
+
     if (!value.trim()) {
       newErrors.userPassword = '비밀번호는 필수 입력 항목입니다.';
     } else if (!/[A-Z]/.test(value)) {
@@ -237,8 +231,8 @@ const handleUserEmailBlur = async (userInfo) => {
       newErrors.userPassword = '사용 가능한 비밀번호입니다.'; // 모든 조건을 만족하는 경우 오류 메시지 삭제
     }
 
-    setPasswordErrors(newErrors)
-  }
+    setPasswordErrors(newErrors);
+  };
 
   const validate = async (userInfo) => {
     const { userNick, userPhone, userEmail } = userInfo;
@@ -288,7 +282,6 @@ const handleUserEmailBlur = async (userInfo) => {
   };
 
   const handleClickModify = async () => {
-    console.log(modalUser.userPassword)
     if (isSocialLogin) {
       alert('소셜 로그인 계정은 프로필 수정을 할 수 없습니다.');
       return;
@@ -309,8 +302,7 @@ const handleUserEmailBlur = async (userInfo) => {
       alert("수정할 수 없는 정보가 존재합니다");
       return;
     }
-    console.log("수정시")
-    console.log(modalUser)
+
     try {
       const response = await putUserProfile(modalUser);
       const { accessToken, refreshToken, RESULT } = response;
@@ -335,7 +327,7 @@ const handleUserEmailBlur = async (userInfo) => {
 
   return (
     <div className="flex flex-col justify-center items-center gap-10 bg-white p-6 rounded shadow relative">
-      <label htmlFor="fileInput" className="block cursor-pointer">
+      <label htmlFor="fileInput" className={`block cursor-pointer ${isSocialLogin ? 'pointer-events-none opacity-50' : ''}`}>
         <div className="relative">
           <div className="w-28 h-28 rounded-full shadow overflow-hidden">
             <img
@@ -357,6 +349,7 @@ const handleUserEmailBlur = async (userInfo) => {
           type="file"
           className="hidden"
           onChange={handleImageUpload}
+          disabled={isSocialLogin}
         />
       </label>
       <div className="flex gap-8">
@@ -380,6 +373,7 @@ const handleUserEmailBlur = async (userInfo) => {
                 type="password"
                 onChange={handleCurrentPasswordChange}
                 onBlur={handleTextBlur}
+                disabled={isSocialLogin}
               />
             </label>
             {currentPasswordErrors.currentPassword && (
@@ -402,6 +396,7 @@ const handleUserEmailBlur = async (userInfo) => {
                 type="password"
                 onChange={handleTextChange}
                 onBlur={handleTextBlur}
+                disabled={isSocialLogin}
               />
             </label>
             {passwordErrors.userPassword && (
@@ -424,6 +419,7 @@ const handleUserEmailBlur = async (userInfo) => {
                 type="password"
                 onChange={handleConfirmPasswordChange}
                 onBlur={handleTextBlur}
+                disabled={isSocialLogin}
               />
             </label>
             {confirmPasswordErrors.confirmPassword && (
@@ -460,6 +456,7 @@ const handleUserEmailBlur = async (userInfo) => {
                 value={modalUser.userNick}
                 onChange={handleTextChange}
                 onBlur={handleTextBlur}
+                disabled={isSocialLogin}
               />
             </label>
             {errors.userNick && (
@@ -483,6 +480,7 @@ const handleUserEmailBlur = async (userInfo) => {
                 value={modalUser.userPhone}
                 onChange={handleTextChange}
                 onBlur={handleTextBlur}
+                disabled={isSocialLogin}
               />
             </label>
             {errors.userPhone && (
@@ -506,6 +504,7 @@ const handleUserEmailBlur = async (userInfo) => {
                 value={modalUser.userEmail}
                 onChange={handleTextChange}
                 onBlur={handleTextBlur}
+                disabled={isSocialLogin}
               />
             </label>
             {errors.userEmail && (
@@ -524,7 +523,8 @@ const handleUserEmailBlur = async (userInfo) => {
       <div className="flex justify-center my-8">
         <button
           onClick={handleClickModify}
-          className="bg-yellow-500 rounded w-52 h-12 text-white text-center"
+          className={`bg-yellow-500 rounded w-52 h-12 text-white text-center ${isSocialLogin ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isSocialLogin}
         >
           수정
         </button>

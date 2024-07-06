@@ -27,7 +27,6 @@ const MyProfileComponent = ({ userId }) => {
   const [userImage, setUserImage] = useState(null);
   const [isSocialLogin, setIsSocialLogin] = useState(false);
 
-
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -50,8 +49,6 @@ const MyProfileComponent = ({ userId }) => {
     };
     fetchUserInfo();
   }, [userId]);
-
-
 
   return (
     <>
@@ -77,10 +74,10 @@ const MyProfileComponent = ({ userId }) => {
               <div className="w-96 flex items-center gap-5">
                 <span className="text-gray-400">전화번호 </span>
                 <span className="text-xl text-black">
-                  {user.userPhone.replace(
+                  {user.userPhone ? user.userPhone.replace(
                     /(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g,
                     "$1-$2-$3"
-                  )}
+                  ) : "비공개"}
                 </span>
               </div>
             </div>

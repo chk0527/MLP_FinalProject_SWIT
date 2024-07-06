@@ -12,10 +12,10 @@ const Footer = () => {
         <div>Copyright SWit. All rights reserved</div>
       </div>
       <div className="flex justify-between w-450" >
-        <p>이용약관</p>
+        {/* <p>이용약관</p>
         <p>운영정책</p>
         <p>개인정보처리방침</p>
-        <p>고객센터</p>
+        <p>고객센터</p> */}
       </div>
       </div>
     </div>
