@@ -123,7 +123,10 @@ const LoginContextProvider = ({ children }) => {
                 loginCheck();
                 alert('로그인 성공');
                 // Swal.alert(`로그인 성공`, `메인화면으로 갑니다.`, "success", () => { window.history.back(); })
-                window.history.back(); // 로그인 성공 시 메인 페이지로 이동
+                
+                // 메이페이지 처리가 되지 않고 계속 무한 반복 처리됨
+                // window.history.back(); // 로그인 성공 시 메인 페이지로 이동
+                window.location.href = '/'; //메인페이지로 이동
             }
 
         } catch (error) {

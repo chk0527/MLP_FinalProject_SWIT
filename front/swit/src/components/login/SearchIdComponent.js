@@ -21,6 +21,7 @@ function SearcIdComponent() {
   const [userEmail, setUserEmail] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [isNotVerified, setIsNotVerified] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const [mobilePrefix, setMobilePrefix] = useState('010');
   const [mobile1, setMobile1] = useState('');
@@ -141,14 +142,10 @@ function SearcIdComponent() {
       console.log("sms 발송 nework에서 확인" + response.data);
       // 임시 처리
       setConfirm(response.data);
-      console.log(`setConfirm ${confirm.confirmNo}`);
-      console.log(`setConfirm ${confirm.userId}`);
-      console.log(`setConfirm ${confirm.confirmTarget}`);
-      console.log(`setConfirm ${confirm.confirmPath}`);
-      console.log(`setConfirm ${confirm.confirmNum}`);
-      console.log(`setConfirm ${confirm.confirmLimitDate}`);
+
       if (certifyType === '1' ) {
         console.log("이메일 인증번호 발송이 성공하였습니다.");
+        console.info("email confirmNum " + confirmNum);
             
         clearVerificationTimer();             // 초기화
         setIsVerificationCodeSent(true);      // 활성화
@@ -159,7 +156,9 @@ function SearcIdComponent() {
         // 원복KYW
         send_sms(response.data)
         .then((result) => {
+            setConfirm(result.data);
             console.log("SMS 인증번호 발송이 성공하였습니다.");
+            console.info("sms confirmNum " + confirmNum);
             
             clearVerificationTimer();             // 초기화
             setIsVerificationCodeSent(true);      // 활성화
@@ -212,12 +211,7 @@ function SearcIdComponent() {
       return;
     }
     try {
-      console.log(`try ${confirm.confirmNo}`);
-      console.log(`try ${confirm.userId}`);
-      console.log(`try ${confirm.confirmTarget}`);
-      console.log(`try ${confirm.confirmPath}`);
-      console.log(`try ${confirmNum}`);
-      console.log(`try ${confirm.confirmLimitDate}`);
+      console.info("인증번호 " + confirmNum)
       searchId2({
         confirmNo: confirm.confirmNo,
         userId: confirm.userId,
@@ -227,13 +221,32 @@ function SearcIdComponent() {
         confirmLimitDate: confirm.confirmLimitDate
       })
       .then((response) => {
-        setConfirm(response.data);
-        setIsVerificationCodeSent(false);
-        alert("인증번호가 확인 되었습니다.");
-        // 인증 성공 시
-        // setTimeRemaining(300); // 남은 시간 5분으로 초기화
-        // clearVerificationTimer();
-        setIsVerified(true);
+        // console.log("인증번호가 일치입니다.");
+        // setConfirm(response.data);
+        // setIsVerificationCodeSent(false);
+        // alert("인증번호가 일치입니다.");
+        // // 인증 성공 시
+        // // setTimeRemaining(300); // 남은 시간 5분으로 초기화
+        // // clearVerificationTimer();
+        // setIsVerified(true);
+        if (response.status === 200) {
+          console.log("인증번호가 일치합니다.");
+          alert("인증번호가 일치합니다.");
+          setConfirm(response.data);
+          setIsVerificationCodeSent(false);
+          setIsVerified(true);
+          setIsSuccess(true);
+        } else if (response.status === 410) {
+          console.error("인증번호 기간이 만료되었습니다.");
+          alert("인증번호 기간이 만료되었습니다. 다시 시도해 주세요.");
+        } else if (response.status === 424) {
+          console.error("인증번호가 일치하지 않습니다.");
+          alert("인증번호가 일치하지 않습니다. 다시 입력해 주세요.");
+          setIsNotVerified(true);
+        } else {
+          console.error("알 수 없는 오류가 발생했습니다.");
+          alert("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.");
+        }
       })
       .catch((error) => {
         alert("인증번호가 불일치 합니다. 다시 입력해 주세요");
@@ -259,10 +272,10 @@ function SearcIdComponent() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    console.log(`${confirm.userId}`);
-
+    // console.log(`${confirm.userId}`);
     // 여기서 form 데이터를 서버로 전송하는 로직 작성
     // "1" 이메일 검증, "2" 핸드폰 검증
+
 
     if (certifyType == '1') {
         console.log("이메일 검증")
@@ -332,7 +345,13 @@ function SearcIdComponent() {
           return;
         }
     }
-    setResultType("2");
+
+    if (isSuccess) {
+      setResultType("2");
+    } else {
+      console.log("인증 번호가 틀립니다.");
+      alert('인증 번호를 확인 하시기 바랍니다.');
+    }
   };
 
   return (

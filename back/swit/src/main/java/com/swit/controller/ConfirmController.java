@@ -257,18 +257,21 @@ public class ConfirmController {
         
         int confirmNo = confirmDTO.getConfirmNo();
         String confirmNum = confirmDTO.getConfirmNum();
+        String ret = confirmDTO.getConfirmTarget();  // 0 :인증번호 정상, 1 : 시간초과, 2:인증번호 틀림
         
         System.out.println("confirmNo  " + confirmNo);
-        if (confirmNo == 0) {
-            
+        System.out.println("confirmNum  " + confirmNum);
+        System.out.println("ret  " + ret);
+        // 기간 만료
+        if (ret.equals("1")) {
             return new ResponseEntity<>(confirmDTO, HttpStatus.GONE);  // 410 기간만료 
         }
 
-        if (confirmNum.isEmpty() || confirmNum.length() == 0) {
+        if (ret.equals("2")) {
             System.out.println("confirmNum check " + confirmNum);
             return new ResponseEntity<>(confirmDTO, HttpStatus.FAILED_DEPENDENCY);  // 424 인증번호 다름 처리
         }
-        
+        // 정상
         return new ResponseEntity<>(confirmDTO, HttpStatus.OK);
     }
 
