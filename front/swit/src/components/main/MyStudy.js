@@ -325,7 +325,7 @@ const MyStudy = () => {
                 </div>
               )
             ) : (
-              <p className="text-center">스터디가 없습니다.</p>
+              <p className="text-center">가입된 스터디가 없습니다.</p>
             )
           ) : (
             <Slider {...settings} className="slider-container">
