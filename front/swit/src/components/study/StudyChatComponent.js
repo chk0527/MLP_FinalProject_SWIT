@@ -106,61 +106,71 @@ function StudyChatComponent({ studyNo }) {
           ref={chatContainerRef}
         >
           <div className="flex flex-col">
-            {messages.map((item, index) => (
-              <div
-                key={index}
-                className={`mb-2 flex ${
-                  item.userNick === getUserNickFromToken()
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div className="flex flex-col">
+            {messages.map((item, index) => {
+              const currentDate = new Date(item.createdDate).toLocaleDateString();
+              const previousDate = index > 0 ? new Date(messages[index - 1].createdDate).toLocaleDateString() : null;
+              
+              return (
+                <React.Fragment key={index}>
+                  {/* 각 날짜의 첫 채팅 메시지 위에 날짜 표시 */}
+                  {currentDate !== previousDate && (
+                    <div className="text-xs text-gray-500 text-center mb-2 ">
+                      <span className="bg-gray-300 p-1 px-8 rounded">{currentDate}</span>
+                    </div>
+                  )}
                   <div
-                    className={`text-xs text-gray-500 ${
+                    className={`mb-2 flex ${
                       item.userNick === getUserNickFromToken()
-                        ? "text-right"
-                        : "text-left"
+                        ? "justify-end"
+                        : "justify-start"
                     }`}
                   >
-                    {item.userNick === getUserNickFromToken()
-                      ? ""
-                      : item.userNick}
+                    <div className="flex flex-col">
+                      <div
+                        className={`text-xs text-gray-500 ${
+                          item.userNick === getUserNickFromToken()
+                            ? "text-right"
+                            : "text-left"
+                        }`}
+                      >
+                        {item.userNick === getUserNickFromToken() ? "" : item.userNick}
+                      </div>
+                      <div
+                        className={`flex items-end ${
+                          item.userNick === getUserNickFromToken()
+                            ? "flex-row-reverse"
+                            : "flex-row"
+                        }`}
+                      >
+                        <div className="w-9 h-9 p-1 ">
+                          <img
+                            className="w-7 h-7 bg-cover"
+                            src={`/api/study/display/${item.userImage}`}
+                            alt="이미지 오류"
+                            onError={(e) => (e.target.src = `/api/study/display/userBlank.png`)}
+                          />
+                        </div>
+                        <div
+                          className={`p-2 rounded shadow whitespace-pre-line max-w-48 break-all ${
+                            item.userNick === getUserNickFromToken()
+                              ? "bg-yellow-200"
+                              : "bg-white"
+                          }`}
+                        >
+                          {item.message}
+                        </div>
+                        <div className="text-2xs text-gray-500 ml-1 mr-1">
+                          {new Date(item.createdDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className={`flex items-end ${
-                      item.userNick === getUserNickFromToken()
-                        ? "flex-row-reverse"
-                        : "flex-row"
-                    }`}
-                  >
-                    <div className="w-9 h-9 p-1 ">
-                      <img className="w-7 h-7 bg-cover"
-                        src={`/api/study/display/${item.userImage}`}                        
-                        alt="이미지 오류"
-                        onError={(e) => (e.target.src = `/api/study/display/userBlank.png`)}
-                      />
-                    </div>
-                    <div
-                      className={`p-2 rounded shadow whitespace-pre-line max-w-48 break-all ${
-                        item.userNick === getUserNickFromToken()
-                          ? "bg-yellow-200"
-                          : "bg-white"
-                      }`}
-                    >
-                      {item.message}
-                    </div>
-                    
-                    <div className="text-2xs text-gray-500 ml-1 mr-1">
-                      {new Date(item.createdDate).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
       </div>
