@@ -86,13 +86,19 @@ const BoardAddComponent = () => {
       });
   };
 
-  // 이미지 파일 업로드 핸들러
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+// 이미지 파일 업로드 핸들러
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
     setImage(file);
     const objectURL = URL.createObjectURL(file);
     setImagePreview(objectURL);
-  };
+  } else {
+    // 파일이 선택되지 않았을 때 처리
+    setImage(null);
+    setImagePreview(null);
+  }
+};
 
   const closeModal = () => {
     moveToBoardList(result);
@@ -170,7 +176,7 @@ const BoardAddComponent = () => {
         {/* 이미지 업로드 */}
         <div className="flex items-center">
           <p className="w-24 py-2">이미지</p>
-          <div className="flex justify-between items-center border-2 border w-full p-2">
+          <div className="flex justify-between items-center border-2 rounded border w-full p-2">
             <input
               type="file"
               className=""

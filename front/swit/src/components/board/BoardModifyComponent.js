@@ -15,7 +15,7 @@ const initState = {
 };
 
 const BoardModifyComponent = ({ boardNo }) => {
-  const userNick = getUserNickFromToken()
+  const userNick = getUserNickFromToken();
   const { userInfo } = useContext(LoginContext);
   const navigate = useNavigate();
   const [image, setImage] = useState(null); // 업로드할 이미지 데이터
@@ -119,13 +119,19 @@ const BoardModifyComponent = ({ boardNo }) => {
       });
   };
 
-  // 파일 이미지 업로드 핸들러
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+// 이미지 파일 업로드 핸들러
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
     setImage(file);
     const objectURL = URL.createObjectURL(file);
     setImagePreview(objectURL);
-  };
+  } else {
+    // 파일이 선택되지 않았을 때 처리
+    setImage(null);
+    setImagePreview(null);
+  }
+};
 
   const handleClickDelete = () => {
     deleteOne(boardNo).then((result) => {
@@ -181,7 +187,12 @@ const BoardModifyComponent = ({ boardNo }) => {
             <option value="자유">자유</option>
           </select>
           <p className="w-24 py-2">닉네임</p>
-          <input type="text" readOnly className={inputStyle3} value={userNick} />
+          <input
+            type="text"
+            readOnly
+            className={inputStyle3}
+            value={userNick}
+          />
         </div>
 
         {/* 내용 */}
@@ -198,16 +209,27 @@ const BoardModifyComponent = ({ boardNo }) => {
           ></textarea>
         </div>
 
-        {/* 이미지 업로드 */}
-        <div className="flex justify-between">
+        <div className="flex items-center">
           <p className="w-24 py-2">이미지</p>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-        </div>
-        {imagePreview && (
-          <div className="flex justify-center mt-4">
-            <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover" />
+          <div className="flex justify-between rounded items-center border-2 border w-full p-2">
+            <input
+              type="file"
+              className=""
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+
+            {imagePreview && (
+              <div className="flex justify-center">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-16 h-16 object-cover"
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="my-20 flex justify-center">
           <button
