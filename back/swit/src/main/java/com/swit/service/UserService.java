@@ -82,7 +82,12 @@ public class UserService {
           user.setUserNick(newUserNick);  // userNick 변경
           user.setUserPhone(userDTO.getUserPhone());
           user.setUserEmail(userDTO.getUserEmail());
-          user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
+          if (userDTO.getUserPassword().length() > 1) {
+            log.info(userDTO.getUserPassword() + "검색 포인트");
+            user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
+          } else {
+            log.warn("패스워드가 너무 짧아서 설정되지 않았습니다.");
+        }
           userRepository.save(user);
 
           // 자식 테이블(timer)의 userNick 업데이트
