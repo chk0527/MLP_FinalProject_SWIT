@@ -77,15 +77,20 @@ const MyInfoModifyComponent = ({ userId }) => {
   };
 
   const handleCurrentPasswordBlur = async () => {
+    if (!currentPassword.trim()) {
+      setCurrentPasswordErrors({});
+      return;
+    }
+  
     const passwordValid = await validatePassword({ userId: userId, currentPassword });
     const newCurrentPasswordErrors = {};
-
+  
     if (!passwordValid) {
       newCurrentPasswordErrors.currentPassword = '현재 비밀번호가 일치하지 않습니다.';
     } else {
       newCurrentPasswordErrors.currentPassword = '비밀번호가 일치합니다.';
     }
-
+  
     setCurrentPasswordErrors(newCurrentPasswordErrors);
   };
 
@@ -94,6 +99,11 @@ const MyInfoModifyComponent = ({ userId }) => {
   };
 
   const handleConfirmPasswordBlur = () => {
+    if (!confirmPassword.trim()) {
+      setConfirmPasswordErrors({});
+      return;
+    }
+  
     const newConfirmPasswordErrors = {};
   
     // 비밀번호 규칙을 확인하는 함수 재사용
@@ -101,15 +111,15 @@ const MyInfoModifyComponent = ({ userId }) => {
       if (!password.trim()) {
         return '비밀번호는 필수 입력 항목입니다.';
       } else if (!/[A-Z]/.test(password)) {
-        return '비밀번호에 대문자(영문자)를 포함해야 합니다.'; 
+        return '비밀번호에 대문자(영문자)를 포함해야 합니다.';
       } else if (!/[a-z]/.test(password)) {
         return '비밀번호에 소문자(영문자)를 포함해야 합니다.';
       } else if (!/\d/.test(password)) {
-        return '비밀번호에 숫자를 포함해야 합니다.'; 
+        return '비밀번호에 숫자를 포함해야 합니다.';
       } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\-]/.test(password)) {
-        return '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.'; 
+        return '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.';
       } else if (password.length < 8) {
-        return '비밀번호는 8자 이상이어야 합니다.'; 
+        return '비밀번호는 8자 이상이어야 합니다.';
       } else {
         return '사용 가능한 비밀번호입니다.';
       }
@@ -218,27 +228,28 @@ const handleUserEmailBlur = async (userInfo) => {
   const passwordValidate = () => {
     const newErrors = {};
     const value = modalUser.userPassword;
-    console.log(modalUser.userPassword)
-    console.log("에러확인")
-    console.log(value)
+    
     if (!value.trim()) {
-      newErrors.userPassword = '비밀번호는 필수 입력 항목입니다.';
-    } else if (!/[A-Z]/.test(value)) {
-      newErrors.userPassword = '비밀번호에 대문자(영문자)를 포함해야 합니다.'; // 대문자 미포함 메시지 추가
-    } else if (!/[a-z]/.test(value)) {
-      newErrors.userPassword = '비밀번호에 소문자(영문자)를 포함해야 합니다.'; // 소문자 미포함 메시지 추가
-    } else if (!/\d/.test(value)) {
-      newErrors.userPassword = '비밀번호에 숫자를 포함해야 합니다.'; // 숫자 미포함 메시지 추가
-    } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\-]/.test(value)) {
-      newErrors.userPassword = '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.'; // 특수문자 미포함 메시지 추가
-    } else if (value.length < 8) {
-      newErrors.userPassword = '비밀번호는 8자 이상이어야 합니다.'; // 8자 미만인 경우 메시지 추가
-    } else {
-      newErrors.userPassword = '사용 가능한 비밀번호입니다.'; // 모든 조건을 만족하는 경우 오류 메시지 삭제
+      setPasswordErrors({});
+      return;
     }
-
-    setPasswordErrors(newErrors)
-  }
+    
+    if (!/[A-Z]/.test(value)) {
+      newErrors.userPassword = '비밀번호에 대문자(영문자)를 포함해야 합니다.';
+    } else if (!/[a-z]/.test(value)) {
+      newErrors.userPassword = '비밀번호에 소문자(영문자)를 포함해야 합니다.';
+    } else if (!/\d/.test(value)) {
+      newErrors.userPassword = '비밀번호에 숫자를 포함해야 합니다.';
+    } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\-]/.test(value)) {
+      newErrors.userPassword = '비밀번호에 특수문자를 한 문자 이상 포함해야 합니다.';
+    } else if (value.length < 8) {
+      newErrors.userPassword = '비밀번호는 8자 이상이어야 합니다.';
+    } else {
+      newErrors.userPassword = '사용 가능한 비밀번호입니다.';
+    }
+  
+    setPasswordErrors(newErrors);
+  };
 
   const validate = async (userInfo) => {
     const { userNick, userPhone, userEmail } = userInfo;
@@ -294,21 +305,27 @@ const handleUserEmailBlur = async (userInfo) => {
       return;
     }
 
-    const hasErrors = Object.keys(errors).some((key) => !errors[key].includes('사용 가능한')) ||
-      Object.keys(passwordErrors).some((key) => !passwordErrors[key].includes('사용 가능한')) ||
-      Object.keys(currentPasswordErrors).some((key) => !currentPasswordErrors[key].includes('합니다')) ||
-      Object.keys(confirmPasswordErrors).some((key) => !confirmPasswordErrors[key].includes('합니다')) ||
-      !modalUser.userNick.trim() || 
-      !modalUser.userPhone.trim() || 
-      !modalUser.userEmail.trim() || 
-      !modalUser.userPassword.trim() || 
-      !currentPassword.trim() || 
-      !confirmPassword.trim();
-      
-    if (hasErrors) {
-      alert("수정할 수 없는 정보가 존재합니다");
-      return;
-    }
+    const hasErrors = 
+    // 닉네임, 전화번호, 이메일이 긍정적인 에러 메시지를 가지는지 확인
+    (!errors.userNick || !errors.userNick.includes('사용 가능한')) ||
+    (!errors.userPhone || !errors.userPhone.includes('사용 가능한')) ||
+    (!errors.userEmail || !errors.userEmail.includes('사용 가능한'));
+  
+  let hasPasswordErrors = false;
+  
+  if (modalUser.userPassword.trim() || currentPassword.trim() || confirmPassword.trim()) {
+    // 비밀번호 관련 필드 중 하나라도 입력되어 있는 경우 모든 필드가 긍정적인 에러 메시지를 가져야 함
+    hasPasswordErrors = 
+      (!passwordErrors.userPassword || !passwordErrors.userPassword.includes('사용 가능한')) ||
+      (!currentPasswordErrors.currentPassword || !currentPasswordErrors.currentPassword.includes('합니다')) ||
+      (!confirmPasswordErrors.confirmPassword || !confirmPasswordErrors.confirmPassword.includes('합니다'));
+  }
+  
+  if (hasErrors || hasPasswordErrors) {
+    alert("수정할 수 없는 정보가 존재합니다");
+    return;
+  }
+
     console.log("수정시")
     console.log(modalUser)
     try {
