@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
-import { getMainStudies,getAllStudies, getMyStudy, API_SERVER_HOST } from "../../api/StudyApi";
+import {
+  getMainStudies,
+  getAllStudies,
+  getMyStudy,
+  API_SERVER_HOST,
+} from "../../api/StudyApi";
 import { getUserIdFromToken } from "../../util/jwtDecode";
 import roundGradient from "../../img/Rectangle23.png";
 import { isMember, isLeader, memberCount } from "../../api/GroupApi";
 import defaultImg from "../../img/defaultImage.png";
 import { motion, AnimatePresence } from "framer-motion";
+import { PulseLoader } from "react-spinners";
 import useCustomMove from "../../hooks/useCustomMove";
 import "./Banner.css";
 
@@ -64,7 +70,10 @@ const MyStudy = () => {
           });
         } else {
           // const allStudies = await getMainStudies('', '', '', userId, { StudyPage, StudySize });
-          const allStudies = await getAllStudies('', '', '',null, userId, { StudyPage, StudySize });
+          const allStudies = await getAllStudies("", "", "", null, userId, {
+            StudyPage,
+            StudySize,
+          });
           const studyListWithMemberCount = await Promise.all(
             allStudies.dtoList.map(async (study) => {
               const currentMemberCount = await memberCount(study.studyNo);
@@ -172,13 +181,16 @@ const MyStudy = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+      <PulseLoader size={20} color={"#F4CE14"} loading={loading} />
+    </div>);
   }
 
   return (
-    <div className="font-GSans -mt-550 h-dvh bg-gray-200 flex flex-col justify-center itmes-center">
+    <div className="font-GSans -my-52 h-dvh">
       <div className="flex justify-center itmes-center">
-        <div className="w-full z-0">
+        <div className="w-full z-0 ">
           {userId ? (
             studyList.length > 0 ? (
               //스터디 4개 이상

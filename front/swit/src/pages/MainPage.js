@@ -5,7 +5,7 @@ import PlaceRecommend from "../components/main/PlaceRecommend";
 import BoardRecommend from "../components/main/BoardRecommend";
 import MyStudy from "../components/main/MyStudy";
 import "../components/main/Banner.css";
-import arrow from "../img/thearrow.png"
+import arrow from "../img/thearrow.png";
 
 const MainPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -23,7 +23,7 @@ const MainPage = () => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   };
 
@@ -36,19 +36,22 @@ const MainPage = () => {
 
   return (
     <BasicLayout>
-      <BannerComponent />
-      <MyStudy />
-      <PlaceRecommend />
-      <BoardRecommend />
-      {isVisible && (
-        <button onClick={scrollToTop} className="z-20 w-20 font-blackHans bg-white rounded-full fixed bottom-16 right-16">
-          <img src={arrow}/>
-        </button>
-      )}
+      <div className=" bg-gray-100">
+        <BannerComponent />
+        <MyStudy />
+        <PlaceRecommend />
+        <BoardRecommend />
+        {isVisible && (
+          <button
+            onClick={scrollToTop}
+            className="z-20 w-20 font-blackHans bg-white rounded-full fixed bottom-16 right-16"
+          >
+            <img src={arrow} />
+          </button>
+        )}
+      </div>
     </BasicLayout>
   );
 };
-
-
 
 export default MainPage;

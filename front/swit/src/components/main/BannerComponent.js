@@ -63,14 +63,14 @@ const BannerComponent = () => {
         speed: 40,
       })
       .type(
-        '<br /><span class="font-GSans text-4xl text-white font-bold">다양한 주제로 열정적인 멤버들과 함께 공부하세요.</span>'
+        '<br /><span class="font-GSans text-2xl text-white font-bold">다양한 주제로 열정적인 멤버들과 함께 공부하세요.</span>'
       );
     return instance;
   };
 
   //스터디 가입 / 생성 버튼
   const mainButton =
-    "font-GSans bg-black shadow text-white w-fit px-4 py-2 rounded text-2xl cursor-pointer";
+    "font-GSans bg-black shadow text-white w-fit px-4 py-2 rounded text-xl cursor-pointer";
 
   return (
     <div className="w-full overflow-hidden font-blackHans">
@@ -91,7 +91,7 @@ const BannerComponent = () => {
         {/* 어두운 레이어 */}
         <div className="absolute top-96 left-20 z-0">
           <TypeIt getBeforeInit={getBeforeInit}>
-            <span className="text-9xl text-white">세상의 모든 스터디</span>
+            <span className="text-7xl text-white">세상의 모든 스터디</span>
           </TypeIt>
           {showButtons && (
             <motion.div
@@ -105,7 +105,7 @@ const BannerComponent = () => {
                   className={mainButton}
                   initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1}}
+                  transition={{ duration: 1 }}
                 >
                   {userId ? "스터디 가입" : "스터디 둘러보기"}
                 </motion.div>
@@ -116,7 +116,7 @@ const BannerComponent = () => {
                     className={mainButton}
                     initial={{ y: 100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 1}}
+                    transition={{ duration: 1 }}
                   >
                     스터디 만들기
                   </motion.div>
@@ -137,31 +137,52 @@ const BannerComponent = () => {
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="flex font-GSans text-white text-3xl gap-4 font-normal"
+                className="flex font-GSans text-white text-2xl gap-4 font-normal ha"
               >
-                <div
+                <motion.button
                   onClick={() => {
                     scrollToStudy();
                   }}
+                  whileHover={{ scale: 1.1 }}
+                  style={{
+                    fontSize: "25px",
+                    border: "none",
+                    color: "#fff",
+                    padding: "0 15px",
+                  }}
                 >
                   내 스터디
-                </div>{" "}
+                </motion.button>
                 |
-                <div
+                <motion.button
                   onClick={() => {
                     scrollToPlace();
                   }}
+                  whileHover={{ scale: 1.1 }}
+                  style={{
+                    fontSize: "25px",
+                    border: "none",
+                    color: "#fff",
+                    padding: "0 15px",
+                  }}
                 >
                   스터디 장소 추천
-                </div>{" "}
-                |{" "}
-                <div
+                </motion.button>
+                |
+                <motion.button
                   onClick={() => {
                     scrollToBoard();
                   }}
+                  whileHover={{ scale: 1.1 }}
+                  style={{
+                    fontSize: "25px",
+                    border: "none",
+                    color: "#fff",
+                    padding: "0 15px",
+                  }}
                 >
                   최근 게시물
-                </div>
+                </motion.button>
               </motion.div>{" "}
             </motion.div>
           )}

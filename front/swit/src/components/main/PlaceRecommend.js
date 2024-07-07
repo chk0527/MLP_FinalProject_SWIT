@@ -138,10 +138,10 @@ const PlaceRecommend = () => {
   };
 
   return (
-    <div className="font-GSans h-dvh bg-gray-200">
+    <div className="font-GSans h-dvh">
       <div className="flex justify-center">
         <div className="overflow-hidden px-10 pb-10 w-1900">
-          <p className=" text-5xl text-center font-blackHans mt-40 mb-16">
+          <p className=" text-5xl text-center font-blackHans mb-16">
             스터디 장소 추천
           </p>
           <Slider {...settings}>
