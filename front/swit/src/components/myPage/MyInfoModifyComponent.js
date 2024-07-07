@@ -309,17 +309,23 @@ const handleUserEmailBlur = async (userInfo) => {
     // 닉네임, 전화번호, 이메일이 긍정적인 에러 메시지를 가지는지 확인
     (!errors.userNick || !errors.userNick.includes('사용 가능한')) ||
     (!errors.userPhone || !errors.userPhone.includes('사용 가능한')) ||
-    (!errors.userEmail || !errors.userEmail.includes('사용 가능한')) ||
-    // 비밀번호 관련 필드가 모두 비어있지 않으면 모든 필드가 긍정적인 에러 메시지를 가져야 함
-    ((modalUser.userPassword.trim() || currentPassword.trim() || confirmPassword.trim()) &&
-      (!passwordErrors.userPassword || !passwordErrors.userPassword.includes('사용 가능한')) &&
-      (!currentPasswordErrors.currentPassword || !currentPasswordErrors.currentPassword.includes('합니다')) &&
-      (!confirmPasswordErrors.confirmPassword || !confirmPasswordErrors.confirmPassword.includes('합니다')));
-      
-    if (hasErrors) {
-      alert("수정할 수 없는 정보가 존재합니다");
-      return;
-    }
+    (!errors.userEmail || !errors.userEmail.includes('사용 가능한'));
+  
+  let hasPasswordErrors = false;
+  
+  if (modalUser.userPassword.trim() || currentPassword.trim() || confirmPassword.trim()) {
+    // 비밀번호 관련 필드 중 하나라도 입력되어 있는 경우 모든 필드가 긍정적인 에러 메시지를 가져야 함
+    hasPasswordErrors = 
+      (!passwordErrors.userPassword || !passwordErrors.userPassword.includes('사용 가능한')) ||
+      (!currentPasswordErrors.currentPassword || !currentPasswordErrors.currentPassword.includes('합니다')) ||
+      (!confirmPasswordErrors.confirmPassword || !confirmPasswordErrors.confirmPassword.includes('합니다'));
+  }
+  
+  if (hasErrors || hasPasswordErrors) {
+    alert("수정할 수 없는 정보가 존재합니다");
+    return;
+  }
+
     console.log("수정시")
     console.log(modalUser)
     try {
