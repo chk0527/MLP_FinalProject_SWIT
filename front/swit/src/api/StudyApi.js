@@ -51,9 +51,15 @@ export const deleteOne = async (studyNo) => {
 };
 
 export const putOne = async (studyNo, study) => {
+  const token = sessionStorage.getItem("accessToken");
+  console.log("react sessionStorage Token값:" + token);
+  if (!token) {
+    throw new Error("No access token found");
+  }
   const res = await axios.put(`${prefix}/${studyNo}`, study, {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      'Content-Type': 'multipart/form-data',
+      "Authorization": `Bearer ${token}`
     }
   });
   return res.data;
