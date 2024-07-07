@@ -24,9 +24,9 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
                                                                                                                       // 값만
                                                                                                                       // 가져옴)
 
-  @Query("SELECT g.groupJoin as groupJoin, g.groupLeader as groupLeader, u.userId as userId, u.userNick as userNick, u.userEmail as userEmail, u.userCreateDate as userCreateDate "
-      +
-      "FROM Group g JOIN g.user u WHERE g.study.studyNo = :studyNo")
+@Query("SELECT g.groupJoin as groupJoin, g.groupLeader as groupLeader, u.userId as userId, u.userNick as userNick, u.userEmail as userEmail, u.userCreateDate as userCreateDate " +
+       "FROM Group g JOIN g.user u " +
+       "WHERE g.study.studyNo = :studyNo AND g.groupJoin = 1")
   List<GroupMemberProjection> findGroupMembersByStudyNo(@Param("studyNo") Integer studyNo);
 
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { getStudyWithQuestion, putOne, deleteOne } from "../../api/StudyApi"
+import { API_SERVER_HOST, getStudyWithQuestion, putOne, deleteOne } from "../../api/StudyApi"
 import useCustomMove from "../../hooks/useCustomMove";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
@@ -32,7 +32,8 @@ const StudyModifyComponent = ({ studyNo }) => {
     const [studyQuestion, setStudyQuestion] = useState({ ...questionInit })
     const [result, setResult] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
-    const uploadRef = useRef()
+    const [prevImage, setPrevImage] = useState(''); // 이전 이미지 데이터 조회
+    const uploadRef = useRef();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
@@ -58,6 +59,21 @@ const StudyModifyComponent = ({ studyNo }) => {
                 questions: question ? Array.from({ length: questionCount }, (_, i) => question[`q${i + 1}`] || '') : [""]
             })
             setStartDate(new Date(study.studyStartDate));
+
+            // 기존 이미지 파일명 로드
+            if (study.uploadFileNames.length > 0) {
+                setPrevImage(study.uploadFileNames[0]);
+
+                // 기존 이미지 파일을 데이터로 불러오기
+                fetch(`/api/study/display/${study.uploadFileNames[0]}`)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const file = new File([blob], study.uploadFileNames[0], { type: blob.type });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        uploadRef.current.files = dataTransfer.files;
+                    });
+            }
         })
     }, [studyNo]);
 
@@ -79,8 +95,10 @@ const StudyModifyComponent = ({ studyNo }) => {
         const files = uploadRef.current.files;
         const formData = new FormData();
 
-        for (let i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                formData.append("files", files[i]);
+            }
         }
 
         const formatDate = (date) => date.toISOString().split('T')[0];
@@ -348,10 +366,11 @@ const StudyModifyComponent = ({ studyNo }) => {
                     <input
                         ref={uploadRef}
                         className={inputStyle1}
-                        type={"file"}
+                        type="file"
                         accept="image/*"
-                    ></input>
+                    />
                 </div>
+
 
                 {/* 질문 */}
                 <div className="flex">

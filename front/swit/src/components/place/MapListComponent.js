@@ -1,14 +1,19 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // Add useNavigate
-import { getPlaceAllList, isPlaceFavorite, addPlaceFavorite, removePlaceFavorite } from "../../api/PlaceApi";
-import searchIcon from "../../img/search-icon.png";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  getPlaceAllList,
+  isPlaceFavorite,
+  addPlaceFavorite,
+  removePlaceFavorite,
+} from "../../api/PlaceApi";
 import PlaceListComponent from "./PlaceListComponent";
 import { getUserIdFromToken } from "../../util/jwtDecode";
-import { getMyStudy } from "../../api/StudyApi"; // isMember 함수를 가져옴
+import { getMyStudy } from "../../api/StudyApi";
 import PostComponent from "./PostComponent";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import CommonModal from "../common/CommonModal";
 import LoginRequireModal from "../common/LoginRequireModal";
+import FavoritePlacesModal from "./FavoritePlacesModal";
 
 const MapListComponent = () => {
   const [placeList, setPlaceList] = useState([]);
@@ -20,19 +25,20 @@ const MapListComponent = () => {
   const [filteredPlaceList, setFilteredPlaceList] = useState([]);
   const [myStudyData, setMyStudyData] = useState([]);
   const [favoriteStatus, setFavoriteStatus] = useState({});
-  const apiKey = "b0eff766121570e5d6bb6985397aed73";
-  const navigate = useNavigate(); // Initialize navigate
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState("");
+  const [showFavoriteModal, setShowFavoriteModal] = useState(false);
+  const [favoritePlaces, setFavoritePlaces] = useState([]);
 
+  const apiKey = "b0eff766121570e5d6bb6985397aed73";
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 장소 목록 가져오기
     getPlaceAllList().then((data) => {
       setPlaceList(data);
 
-      // 각 장소에 대한 즐겨찾기 상태 판별
       const userId = getUserIdFromToken();
       const status = {};
       data.forEach((place) => {
@@ -41,7 +47,7 @@ const MapListComponent = () => {
             status[place.placeNo] = isFavorite;
           });
         } else {
-          status[place.placeNo] = false; // 비로그인 상태에서는 모두 즐겨찾기하지 않은 상태로 설정
+          status[place.placeNo] = false;
         }
       });
       setFavoriteStatus(status);
@@ -181,34 +187,22 @@ const MapListComponent = () => {
           setTimeout(() => {
             setPage((prevPage) => prevPage + 1);
             setIsLoading(false);
-          }, 1000);
+          }, 3000);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [hasMore, isLoading]
+    [isLoading, hasMore]
   );
 
-  const currentPlaces = filteredPlaceList.slice(0, page * 9);
-
-  useEffect(() => {
-    setHasMore(filteredPlaceList.length > currentPlaces.length);
-  }, [currentPlaces, filteredPlaceList]);
-
-  const handleAddrChange = (address) => {
-    setSearchText(address);
-  };
-
-  // 내 스터디 검색
   useEffect(() => {
     const userId = getUserIdFromToken();
     if (userId) {
       getMyStudy(userId).then((data) => {
         setMyStudyData(data);
       });
-    }
-    else {
-      setMyStudyData([])
+    } else {
+      setMyStudyData([]);
     }
   }, []);
 
@@ -238,30 +232,62 @@ const MapListComponent = () => {
       setFavoriteStatus({
         ...favoriteStatus,
         [placeNo]: !isFavorite,
-
       });
-      setModalMessage(isFavorite ? '즐겨찾기에서 삭제했습니다.' : '즐겨찾기에 추가했습니다.');
+      setModalMessage(isFavorite ? "즐겨찾기에서 삭제했습니다." : "즐겨찾기에 추가했습니다.");
       setShowModal(true);
+
+      // Update favoritePlaces
+      if (isFavorite) {
+        setFavoritePlaces((prevPlaces) =>
+          prevPlaces.filter((place) => place.placeNo !== placeNo)
+        );
+      } else {
+        const newFavoritePlace = placeList.find((place) => place.placeNo === placeNo);
+        setFavoritePlaces((prevPlaces) => [...prevPlaces, newFavoritePlace]);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleShowFavorites = async () => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    const favorites = [];
+    for (const placeNo in favoriteStatus) {
+      if (favoriteStatus[placeNo]) {
+        const place = placeList.find((place) => place.placeNo === parseInt(placeNo));
+        if (place) {
+          favorites.push(place);
+        }
+      }
+    }
+    setFavoritePlaces(favorites);
+    setShowFavoriteModal(true);
+  };
+
+  const handleAddrChange = (address) => {
+    setSearchText(address);
+  };
+
   return (
     <div className="relative w-full font-GSans z-0">
-
-      {showLoginModal && (
-        <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
-      )}
-
+      {showLoginModal && <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />}
       {showModal && (
-        <CommonModal
-          modalMessage={modalMessage}
-          callbackFn={() => setShowModal(false)}
-          closeMessage="확인"
+        <CommonModal modalMessage={modalMessage} callbackFn={() => setShowModal(false)} closeMessage="확인" />
+      )}
+      {showFavoriteModal && (
+        <FavoritePlacesModal
+          favoritePlaces={favoritePlaces}
+          onClose={() => setShowFavoriteModal(false)}
+          handleFavorite={handleFavorite} // 추가된 함수
+          favoriteStatus={favoriteStatus} // 추가된 상태
         />
       )}
-
       <div className="flex w-full justify-between px-8">
         <div className="text-5xl pb-16 font-blackHans">
           <div>스터디 장소</div>
@@ -271,7 +297,7 @@ const MapListComponent = () => {
             <PostComponent setAddress={handleAddrChange}></PostComponent>
           </div>
           <div className="flex text-2xl">
-            <button>즐겨찾기</button>
+            <button onClick={handleShowFavorites}>즐겨찾기</button>
             {myStudyData ? (
               <select
                 className="w-36 text-gray-900 rounded-lg focus:ring-none block p-2 mx-4"
@@ -290,10 +316,9 @@ const MapListComponent = () => {
           </div>
         </div>
       </div>
-
       <div id="map" className="w-full h-650 border-2 border-black mb-16"></div>
       <PlaceListComponent
-        currentPlaces={currentPlaces}
+        currentPlaces={filteredPlaceList}
         lastPlaceElementRef={lastPlaceElementRef}
         isLoading={isLoading}
         favoriteStatus={favoriteStatus}

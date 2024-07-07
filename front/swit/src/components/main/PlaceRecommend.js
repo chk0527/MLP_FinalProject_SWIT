@@ -141,15 +141,15 @@ const PlaceRecommend = () => {
     <div className="font-GSans h-dvh">
       <div className="flex justify-center">
         <div className="overflow-hidden px-10 pb-10 w-1900">
-          <p className=" text-5xl text-center font-blackHans mb-16">
+          <p className=" text-5xl text-center font-blackHans my-14">
             스터디 장소 추천
           </p>
           <Slider {...settings}>
             {places.map((place, index) => (
               <div key={index}>
-                <div className="flex flex-col items-center gap-12">
+                <div className="flex flex-col items-center gap-4">
                   <div className="text-center">
-                    <p className="text-7xl font-blackHans">{place.placeName}</p>
+                    <p className="text-5xl font-blackHans">{place.placeName}</p>
                     <p className="text-3xl">{randomSentences[index]}</p>
                     <p className="text-3xl">
                       {addrHashtags[index]} {randomHashtags[index]}
@@ -164,7 +164,7 @@ const PlaceRecommend = () => {
                     </div>
                   </Link>
                   <img
-                    className="w-750 h-450 object-cover rounded mb-8"
+                    className="w-750 h-450 object-cover rounded"
                     src={place.placeImg}
                   ></img>
                 </div>

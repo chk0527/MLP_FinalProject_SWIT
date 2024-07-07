@@ -108,17 +108,29 @@ function StudyChatComponent({ studyNo }) {
         >
           <div className="flex flex-col">
             {messages.map((item, index) => {
-              const currentDate = new Date(item.createdDate).toLocaleDateString();
-              const previousDate = index > 0 ? new Date(messages[index - 1].createdDate).toLocaleDateString() : null;
-              
+              const currentDate = new Date(
+                item.createdDate
+              ).toLocaleDateString();
+              const previousDate =
+                index > 0
+                  ? new Date(
+                      messages[index - 1].createdDate
+                    ).toLocaleDateString()
+                  : null;
+
               return (
                 <React.Fragment key={index}>
                   {/* 각 날짜의 첫 채팅 메시지 위에 날짜 표시 */}
                   {currentDate !== previousDate && (
-                    <div className="text-xs text-gray-500 text-center mb-2 ">
-                      <span className="bg-gray-300 p-1 px-8 rounded">{currentDate}</span>
+                    <div className="bg-yellow-100 px-2 rounded-full text-xs text-yellow-800 text-center my-4 relative">
+                      <span className="w-full relative inline-block before:content-[''] before:block before:absolute before:border-t before:border-yellow-800 before:w-full before:top-1/2 before:left-0 before:transform before:-translate-y-1/2">
+                        <span className="relative bg-yellow-100 px-2">
+                          {currentDate}
+                        </span>
+                      </span>
                     </div>
                   )}
+
                   <div
                     className={`mb-2 flex ${
                       item.userNick === getUserNickFromToken()
@@ -134,7 +146,9 @@ function StudyChatComponent({ studyNo }) {
                             : "text-left"
                         }`}
                       >
-                        {item.userNick === getUserNickFromToken() ? "" : item.userNick}
+                        {item.userNick === getUserNickFromToken()
+                          ? ""
+                          : item.userNick}
                       </div>
                       <div
                         className={`flex items-end ${
@@ -148,7 +162,9 @@ function StudyChatComponent({ studyNo }) {
                             className="w-7 h-7 bg-cover"
                             src={`/api/study/display/${item.userImage}`}
                             alt="이미지 오류"
-                            onError={(e) => (e.target.src = `/api/study/display/userBlank.png`)}
+                            onError={(e) =>
+                              (e.target.src = `/api/study/display/userBlank.png`)
+                            }
                           />
                         </div>
                         <div

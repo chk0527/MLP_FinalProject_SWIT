@@ -93,7 +93,7 @@ const BoardListComponent = () => {
       setShowLoginModal(true);
       return;
     }
-    navigate("/board/add", { state: 0 });
+    navigate("/board/add", { state: 3 });
   };
 
   return (
