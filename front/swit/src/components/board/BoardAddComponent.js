@@ -108,10 +108,7 @@ const BoardAddComponent = () => {
   return (
     <div className="flex justify-center font-GSans">
       {result ? (
-        <ResultModal
-          content={"작성"}
-          callbackFn={closeModal}
-        />
+        <ResultModal content={"작성"} callbackFn={closeModal} />
       ) : (
         <></>
       )}
@@ -148,7 +145,12 @@ const BoardAddComponent = () => {
             <option value="자유">자유</option>
           </select>
           <p className="w-24 py-2">닉네임</p>
-          <input type="text" readOnly className={inputStyle3} value={userNick} />
+          <input
+            type="text"
+            readOnly
+            className={inputStyle3}
+            value={userNick}
+          />
         </div>
 
         {/* 내용 */}
@@ -166,15 +168,27 @@ const BoardAddComponent = () => {
         </div>
 
         {/* 이미지 업로드 */}
-        <div className="flex justify-between">
+        <div className="flex items-center">
           <p className="w-24 py-2">이미지</p>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-        </div>
-        {imagePreview && (
-          <div className="flex justify-center mt-4">
-            <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover" />
+          <div className="flex justify-between items-center border-2 border w-full p-2">
+            <input
+              type="file"
+              className=""
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+
+            {imagePreview && (
+              <div className="flex justify-center">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-16 h-16 object-cover"
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="my-20 flex justify-center">
           <button
