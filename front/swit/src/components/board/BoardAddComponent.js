@@ -86,13 +86,19 @@ const BoardAddComponent = () => {
       });
   };
 
-  // 이미지 파일 업로드 핸들러
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+// 이미지 파일 업로드 핸들러
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
     setImage(file);
     const objectURL = URL.createObjectURL(file);
     setImagePreview(objectURL);
-  };
+  } else {
+    // 파일이 선택되지 않았을 때 처리
+    setImage(null);
+    setImagePreview(null);
+  }
+};
 
   const closeModal = () => {
     moveToBoardList(result);
