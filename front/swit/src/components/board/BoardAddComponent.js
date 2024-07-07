@@ -170,7 +170,7 @@ const BoardAddComponent = () => {
         {/* 이미지 업로드 */}
         <div className="flex items-center">
           <p className="w-24 py-2">이미지</p>
-          <div className="flex justify-between items-center border-2 border w-full p-2">
+          <div className="flex justify-between items-center border-2 rounded border w-full p-2">
             <input
               type="file"
               className=""
