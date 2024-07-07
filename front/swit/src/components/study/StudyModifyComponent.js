@@ -65,7 +65,7 @@ const StudyModifyComponent = ({ studyNo }) => {
                 setPrevImage(study.uploadFileNames[0]);
 
                 // 기존 이미지 파일을 데이터로 불러오기
-                fetch(`${API_SERVER_HOST}/api/study/display/${study.uploadFileNames[0]}`)
+                fetch(`/api/study/display/${study.uploadFileNames[0]}`)
                     .then(response => response.blob())
                     .then(blob => {
                         const file = new File([blob], study.uploadFileNames[0], { type: blob.type });
