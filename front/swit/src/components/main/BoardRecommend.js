@@ -65,16 +65,16 @@ const BoardRecommend = () => {
   return (
     <div className="font-GSans w-full h-dvh relative">
       <div className="flex flex-col items-center justify-center">
-        <p className="text-5xl text-center font-blackHans mb-14">
+        <p className="text-5xl text-center font-blackHans my-14">
           최근 게시물
         </p>
-        <div className="absolute top-16 text-3xl text-center">
+        <div className="absolute top-32 text-3xl text-center">
           다양한 주제와 관심사를 공유하고 토론할 수 있는 <br />
           SWit 에서 자유롭게 이야기를 나누세요.
         </div>
         <img src={bg} className="absolute top-40 z-0 w-1000" />
         <motion.div // Framer Motion의 motion.div로 감싸서 애니메이션을 적용
-          className="grid grid-cols-2 gap-x-650 gap-y-20"
+          className="grid grid-cols-2 gap-x-650 gap-y-12"
           initial={{ opacity: 0 }} // 초기 상태 설정
           animate={controls} // 애니메이션을 controls 변수로 전달
         >
