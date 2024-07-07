@@ -94,18 +94,30 @@ public class StudyController {
 
     @PutMapping("/{studyNo}")
     public Map<String, String> modify(
-        @PathVariable(name = "studyNo") Integer studyNo,
-        @ModelAttribute StudyDTO studyDTO) { // 수정된 부분
-    StudyDTO currentStudyDTO = service.get(studyNo);
-    List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
-    List<MultipartFile> newFiles = studyDTO.getFiles();
-    List<String> uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
-    studyDTO.setUploadFileNames(uploadFileNames);
-    studyDTO.setStudyNo(studyNo);
-    log.info("Modify:" + studyDTO);
-    service.modify(studyDTO, studyDTO.getQuestions());
-    return Map.of("RESULT", "SUCCESS");
-}
+            @PathVariable(name = "studyNo") Integer studyNo,
+            @ModelAttribute StudyDTO studyDTO,
+            @RequestParam(value = "existingFileName", required = false) String existingFileName) { // 수정된 부분
+
+        StudyDTO currentStudyDTO = service.get(studyNo);
+        List<String> oldFileNames = currentStudyDTO.getUploadFileNames();
+        List<MultipartFile> newFiles = studyDTO.getFiles();
+
+        // 기존 파일명을 유지하는 로직
+        List<String> uploadFileNames;
+        if (newFiles != null && !newFiles.isEmpty()) {
+            uploadFileNames = fileUtil.modifyFiles(newFiles, oldFileNames);
+        } else if (existingFileName != null && !existingFileName.isEmpty()) {
+            uploadFileNames = List.of(existingFileName);
+        } else {
+            uploadFileNames = oldFileNames;
+        }
+
+        studyDTO.setUploadFileNames(uploadFileNames);
+        studyDTO.setStudyNo(studyNo);
+        log.info("Modify:" + studyDTO);
+        service.modify(studyDTO, studyDTO.getQuestions());
+        return Map.of("RESULT", "SUCCESS");
+    }
 
 
 
