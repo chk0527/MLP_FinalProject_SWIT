@@ -156,16 +156,28 @@ const handleUserNickBlur = async (userInfo) => {
   setErrors(newErrors);
 };
 
+const validatePhoneNumber = (phone) => {
+  const phoneRegex = /^[0-9]+$/;
+  return phoneRegex.test(phone) ? '사용 가능한 전화번호입니다.' : '전화번호는 숫자만 입력 가능합니다.';
+};
+
+const validateEmail = (email) => {
+  const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+$/;
+  return emailRegex.test(email) ? '사용 가능한 이메일입니다.' : '이메일 형식이 올바르지 않습니다.';
+};
 // 전화번호 블러 핸들러
 const handleUserPhoneBlur = async (userInfo) => {
   const newErrors = { ...errors };
   const { userNick, userPhone, userEmail } = userInfo;
-  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
 
-  if (response.userPhone && response.userPhone !== user.userPhone) {
-    newErrors.userPhone = '전화번호가 이미 존재합니다.';
+  const phoneValidationResult = validatePhoneNumber(userPhone);
+  if (phoneValidationResult !== '사용 가능한 전화번호입니다.') {
+    newErrors.userPhone = phoneValidationResult;
   } else {
-    newErrors.userPhone = '사용 가능한 전화번호입니다.';
+    const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+    newErrors.userPhone = response.userPhone && response.userPhone !== user.userPhone 
+      ? '전화번호가 이미 존재합니다.' 
+      : '사용 가능한 전화번호입니다.';
   }
 
   setErrors(newErrors);
@@ -175,17 +187,19 @@ const handleUserPhoneBlur = async (userInfo) => {
 const handleUserEmailBlur = async (userInfo) => {
   const newErrors = { ...errors };
   const { userNick, userPhone, userEmail } = userInfo;
-  const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
 
-  if (response.userEmail && response.userEmail !== user.userEmail) {
-    newErrors.userEmail = '이메일이 이미 존재합니다.';
+  const emailValidationResult = validateEmail(userEmail);
+  if (emailValidationResult !== '사용 가능한 이메일입니다.') {
+    newErrors.userEmail = emailValidationResult;
   } else {
-    newErrors.userEmail = '사용 가능한 이메일입니다.';
+    const response = await checkDuplicate({ userNick, userPhone, userEmail, currentUserId: userId });
+    newErrors.userEmail = response.userEmail && response.userEmail !== user.userEmail 
+      ? '이메일이 이미 존재합니다.' 
+      : '사용 가능한 이메일입니다.';
   }
 
   setErrors(newErrors);
 };
-
 
   const handleTextChange = (e) => {
     const { name, value } = e.target;
