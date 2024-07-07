@@ -1,5 +1,4 @@
 /* Banner.css */
-
 .h-dvh {
   height: 100vh;
 }
@@ -14,6 +13,8 @@
   vertical-align: middle;
   margin: auto 0;
   padding: 0;
+  position: absolute;
+  top:450px;
 }
 
 .dots_custom li {
@@ -22,6 +23,7 @@
   display: inline-block;
   margin: 0 15px;
   padding: 0;
+  
 }
 
 .dots_custom li button {
@@ -59,6 +61,10 @@
   color: #000 !important;
   font-size: 100px !important;
   opacity: 1;
+}
+.slick-slide {
+  display: flex !important;
+  justify-content: center;
 }
 
 .StudySlide {

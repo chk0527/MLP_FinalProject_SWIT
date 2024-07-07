@@ -217,7 +217,6 @@ public class ConfirmService {
 
     // 인증번호가 틀리면
     // (confirmNum = "" or Null)
-    confirmDTO.setConfirmNum(null);
     confirmDTO.setConfirmTarget("2");  // "2" 인증번호 틀리면
 
     return confirmDTO;
