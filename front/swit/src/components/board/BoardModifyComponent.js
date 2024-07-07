@@ -1,7 +1,7 @@
 import { useRef, useState, useContext, useEffect } from "react";
 import { getBoard, putOne, deleteOne } from "../../api/BoardApi";
 import { useNavigate } from "react-router-dom";
-import { getUserNickFromToken,getUserIdFromToken } from "../../util/jwtDecode";
+import { getUserNickFromToken, getUserIdFromToken } from "../../util/jwtDecode";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
 import { LoginContext } from "../../contexts/LoginContextProvider";
@@ -18,6 +18,9 @@ const BoardModifyComponent = ({ boardNo }) => {
   const userNick = getUserNickFromToken()
   const { userInfo } = useContext(LoginContext);
   const navigate = useNavigate();
+  const [image, setImage] = useState(null); // 업로드할 이미지 데이터
+  const [imagePreview, setImagePreview] = useState(null); // 미리보기 이미지 데이터
+
   useEffect(() => {
     const userId = getUserNickFromToken();
     if (!userId) {
@@ -32,6 +35,16 @@ const BoardModifyComponent = ({ boardNo }) => {
         if (userInfo.userNo !== data.userNo) {
           alert("작성자가 아닙니다.");
           navigate(-1);
+        } else {
+          // 기존 이미지 로드
+          const imageName = localStorage.getItem(`board_${data.boardNo}`);
+          if (imageName) {
+            const imageUrl = localStorage.getItem(imageName);
+            if (imageUrl) {
+              data.imageData = imageUrl;
+              setImagePreview(imageUrl);
+            }
+          }
         }
       })
       .catch((error) => {
@@ -58,15 +71,60 @@ const BoardModifyComponent = ({ boardNo }) => {
 
   const handleClickModify = () => {
     if (board.boardTitle.trim() !== "" && board.boardContent.trim() !== "") {
-      putOne(board).then((result) => {
-        console.log("modify result : " + result);
-        setResult("수정");
-      });
+      if (image) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          const imageName = `boardImage_${userInfo.userNick}_${Date.now()}`;
+          localStorage.setItem(imageName, base64data);
+
+          // 기존 이미지 삭제
+          const oldImageName = localStorage.getItem(`board_${board.boardNo}`);
+          if (oldImageName) {
+            localStorage.removeItem(oldImageName);
+          }
+
+          // 새로운 이미지 URL을 로컬 스토리지에 저장
+          localStorage.setItem(`board_${board.boardNo}`, imageName);
+
+          // 이미지 URL을 함께 저장
+          saveBoardData(imageName);
+        };
+        reader.readAsDataURL(image);
+      } else {
+        saveBoardData(null); // 이미지 없이 저장
+      }
     } else if (board.boardTitle.trim() === "") {
       alert("제목을 입력해주세요");
     } else if (board.boardContent.trim() === "") {
       alert("내용을 입력해주세요");
     }
+  };
+
+  const saveBoardData = (imageName) => {
+    board.userNo = userInfo.userNo;
+    board.userNick = userInfo.userNick;
+    putOne(board)
+      .then((result) => {
+        console.log(result);
+        if (imageName) {
+          // 게시글 수정 후에 이미지 URL을 로컬 스토리지에 저장
+          const imageUrl = localStorage.getItem(imageName);
+          localStorage.setItem(`board_${board.boardNo}`, imageUrl);
+        }
+        setResult("수정");
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  // 파일 이미지 업로드 핸들러
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    const objectURL = URL.createObjectURL(file);
+    setImagePreview(objectURL);
   };
 
   const handleClickDelete = () => {
@@ -139,6 +197,17 @@ const BoardModifyComponent = ({ boardNo }) => {
             onChange={handleChangeBoard}
           ></textarea>
         </div>
+
+        {/* 이미지 업로드 */}
+        <div className="flex justify-between">
+          <p className="w-24 py-2">이미지</p>
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+        </div>
+        {imagePreview && (
+          <div className="flex justify-center mt-4">
+            <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover" />
+          </div>
+        )}
 
         <div className="my-20 flex justify-center">
           <button
