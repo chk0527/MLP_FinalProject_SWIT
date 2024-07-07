@@ -41,14 +41,19 @@ const BoardReadComponent = ({ boardNo }) => {
   };
 
   const { moveToBoardList } = useCustomMove();
+
   useEffect(() => {
     getBoard(boardNo).then((data) => {
       console.log(data);
+      // 이미지 데이터 불러오기
+      const imageUrl = localStorage.getItem(`board_${data.boardNo}`);
+      if (imageUrl) {
+        data.imageData = imageUrl;
+      }
       setBoard(data);
     });
 
     getComments(boardNo).then((data) => {
-      // 댓글 데이터를 가져오는 API 호출
       console.log(data);
       setComments(data);
     });
@@ -87,6 +92,12 @@ const BoardReadComponent = ({ boardNo }) => {
       deleteOne(boardNo)
         .then((result) => {
           console.log(result);
+          // 로컬에서 이미지 데이터 삭제
+          const imageName = localStorage.getItem(`board_${boardNo}_image`);
+          if (imageName) {
+            localStorage.removeItem(imageName);
+          }
+          localStorage.removeItem(`board_${boardNo}_image`);
           navigate(-1);
         })
         .catch((e) => {
@@ -126,7 +137,7 @@ const BoardReadComponent = ({ boardNo }) => {
 
   return (
     <div className="flex justify-center font-GSans">
-       {showLoginModal && (
+      {showLoginModal && (
         <LoginRequireModal callbackFn={() => setShowLoginModal(false)} />
       )}
       <div className="relative w-full max-w-1000">
@@ -168,7 +179,8 @@ const BoardReadComponent = ({ boardNo }) => {
             <></>
           )}
         </div>
-        <div className="text-xl py-10 px-2 min-h-450 whitespace-pre-line  border-gray-700 border-b-2">
+        <div className="text-xl py-10 px-2 min-h-450 whitespace-pre-line border-gray-700 border-b-2">
+          {board.imageData && <img src={board.imageData} alt="Uploaded" className="mt-4 w-128 h-128 object-cover" />}
           {board.boardContent}
         </div>
 

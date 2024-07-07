@@ -2,7 +2,7 @@ import { useRef, useState, useContext, useEffect } from "react";
 import { postAdd } from "../../api/BoardApi";
 
 import { useNavigate } from "react-router-dom";
-import { getUserIdFromToken ,getUserNickFromToken } from "../../util/jwtDecode";
+import { getUserIdFromToken, getUserNickFromToken } from "../../util/jwtDecode";
 import "react-datepicker/dist/react-datepicker.css";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
@@ -32,6 +32,8 @@ const BoardAddComponent = () => {
   const { userInfo } = useContext(LoginContext);
   const [board, setBoard] = useState({ ...initState });
   const [result, setResult] = useState(null);
+  const [image, setImage] = useState(null); // 업로드할 이미지 데이터
+  const [imagePreview, setImagePreview] = useState(null); // 미리보기 이미지 데이터
 
   const { moveToBoardList } = useCustomMove();
 
@@ -42,22 +44,54 @@ const BoardAddComponent = () => {
 
   const handleClickAdd = () => {
     if (board.boardTitle.trim() !== "" && board.boardContent.trim() !== "") {
-      board.userNo = userInfo.userNo;
-      board.userNick = userInfo.userNick;
-      postAdd(board)
-        .then((result) => {
-          console.log(result);
-          setResult(result.boardNo);
-          setBoard({ ...initState });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      if (image) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          const imageName = `boardImage_${userInfo.userNick}_${Date.now()}`;
+          localStorage.setItem(imageName, base64data);
+
+          // 이미지 이름을 로컬 스토리지에 저장 후 게시글 작성
+          saveBoardData(imageName);
+        };
+        reader.readAsDataURL(image);
+      } else {
+        saveBoardData(null); // 이미지 없이 저장
+      }
     } else if (board.boardTitle.trim() === "") {
       alert("제목을 입력해주세요");
     } else if (board.boardContent.trim() === "") {
       alert("내용을 입력해주세요");
     }
+  };
+
+  // 게시글 작성 내용 저장
+  const saveBoardData = (imageName) => {
+    board.userNo = userInfo.userNo;
+    board.userNick = userInfo.userNick;
+    postAdd(board)
+      .then((result) => {
+        console.log(result);
+        if (imageName) {
+          // 게시글 작성 후에 이미지 URL을 로컬 스토리지에 저장
+          const imageUrl = localStorage.getItem(imageName);
+          localStorage.setItem(`board_${result.boardNo}`, imageUrl);
+        }
+        setResult(result.boardNo);
+        setBoard({ ...initState });
+        setImage(null);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  // 이미지 파일 업로드 핸들러
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    const objectURL = URL.createObjectURL(file);
+    setImagePreview(objectURL);
   };
 
   const closeModal = () => {
@@ -130,6 +164,17 @@ const BoardAddComponent = () => {
             onChange={handleChangeBoard}
           ></textarea>
         </div>
+
+        {/* 이미지 업로드 */}
+        <div className="flex justify-between">
+          <p className="w-24 py-2">이미지</p>
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+        </div>
+        {imagePreview && (
+          <div className="flex justify-center mt-4">
+            <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover" />
+          </div>
+        )}
 
         <div className="my-20 flex justify-center">
           <button
