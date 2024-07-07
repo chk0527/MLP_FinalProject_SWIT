@@ -372,12 +372,13 @@ const StudyModifyComponent = ({ studyNo }) => {
                         onChange={handleChangeStudy}
                     ></textarea>
                 </div>
+                {/* 이미지 */}
                 <div className="flex justify-center mb-4">
                     {prevImageUrl && (
                         <img
                             src={prevImageUrl}
                             alt="StudyImage"
-                            className="w-16 h-16 rounded"
+                            className="w-48 h-48 rounded"
                         />
                     )}
                 </div>

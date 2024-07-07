@@ -157,8 +157,14 @@ const handleUserNickBlur = async (userInfo) => {
 };
 
 const validatePhoneNumber = (phone) => {
-  const phoneRegex = /^[0-9]+$/;
-  return phoneRegex.test(phone) ? '사용 가능한 전화번호입니다.' : '전화번호는 숫자만 입력 가능합니다.';
+  // '-'가 포함되어 있는지 확인
+  if (phone.includes('-')) {
+    return "'-' 를 제거하고 입력해주세요.";
+  }
+
+  // 전화번호 형식 검사
+  const phoneRegex = /^\d{3}\d{4}\d{4}$/;
+  return phoneRegex.test(phone) ? '사용 가능한 전화번호입니다.' : '올바른 전화번호를 입력해주세요';
 };
 
 const validateEmail = (email) => {

@@ -4,7 +4,7 @@ const prefix = `${API_SERVER_HOST}/api/comment`;
 
 export const postAdd = async (comment) => {
     const token = sessionStorage.getItem("accessToken");
-    console.log("react sessionStorage Token값:" + token);
+    // console.log("react sessionStorage Token값:" + token);
     if (!token) {
       throw new Error("No access token found");
     }
@@ -25,7 +25,7 @@ export const postAdd = async (comment) => {
 
 export const deleteComment = async (commentNo) => {
   const token = sessionStorage.getItem("accessToken");
-  console.log("react sessionStorage Token값:" + token);
+  // console.log("react sessionStorage Token값:" + token);
   if (!token) {
     throw new Error("No access token found");
   }

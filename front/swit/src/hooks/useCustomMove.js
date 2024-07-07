@@ -13,10 +13,10 @@ const getNum = (param, defaultValue) => {
 };
 
 const useCustomMove = (options = {}) => {
-  const navigate = useNavigate()
-  const [queryParams] = useSearchParams()
-  const page = getNum(queryParams.get('page'), 1)
-  const size = getNum(queryParams.get('size'), 10)  
+  const navigate = useNavigate();
+  const [queryParams] = useSearchParams();
+  const page = getNum(queryParams.get("page"), 1);
+  const size = getNum(queryParams.get("size"), 10);
 
   const { setPage, setSize } = options;
 
@@ -24,37 +24,44 @@ const useCustomMove = (options = {}) => {
   const StudySize = getNum(queryParams.get("StudySize"), 16);
 
   const queryDefault = createSearchParams({ page, size }).toString();
-  const StudyqueryDefault = createSearchParams({ StudyPage, StudySize }).toString();
-
+  const StudyqueryDefault = createSearchParams({
+    StudyPage,
+    StudySize,
+  }).toString();
 
   const moveToExamList = (pageParam) => {
-    let queryStr = ""
+    let queryStr = "";
     if (pageParam) {
-      const pageNum = getNum(pageParam.page, 1)
-      const sizeNum = getNum(pageParam.size, 10)
+      const pageNum = getNum(pageParam.page, 1);
+      const sizeNum = getNum(pageParam.size, 10);
       const location = {};
       location.state = 1;
-      queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
+      queryStr = createSearchParams({
+        page: pageNum,
+        size: sizeNum,
+      }).toString();
     } else {
-      queryStr = queryDefault
+      queryStr = queryDefault;
     }
-    navigate({ pathname: `../list`, search: queryStr })
+    navigate({ pathname: `../list`, search: queryStr });
   };
 
   const moveToJobList = (pageParam) => {
-    let queryStr = ""
+    let queryStr = "";
     if (pageParam) {
-      const pageNum = getNum(pageParam.page, 1)
-      const sizeNum = getNum(pageParam.size, 10)
+      const pageNum = getNum(pageParam.page, 1);
+      const sizeNum = getNum(pageParam.size, 10);
       const location = {};
       location.state = 1;
-      queryStr = createSearchParams({ page: pageNum, size: sizeNum }).toString()
+      queryStr = createSearchParams({
+        page: pageNum,
+        size: sizeNum,
+      }).toString();
     } else {
-      queryStr = queryDefault
+      queryStr = queryDefault;
     }
-    navigate({ pathname: `../list`, search: queryStr })
-
-  }
+    navigate({ pathname: `../list`, search: queryStr });
+  };
   // navigate({ pathname: `../list`, search: queryStr });
 
   const moveToStudy = (pageParam) => {
@@ -111,14 +118,15 @@ const useCustomMove = (options = {}) => {
   };
 
   const moveToBoardRead = (num) => {
+    const location = {};
+    location.state = 1;
     navigate({ pathname: `../board/read/${num}`, search: queryDefault }); //조회시에 기존의 쿼리문자열을 유지하기 위해
   };
-
 
   // 마이페이지 - 작성한 게시글 모음 페이징 처리
   // 페이지 url 뒤에 파라미터 붙이지 않고 페이징 처리
   const moveToUserBoardList = (pageParam) => {
-    const size = 5; 
+    const size = 5;
     if (pageParam) {
       const pageNum = getNum(pageParam.page, 1);
       if (setPage) setPage(pageNum);
@@ -132,7 +140,7 @@ const useCustomMove = (options = {}) => {
   // 마이페이지 - 작성한 문의글 모음 페이징 처리
   // 페이지 url 뒤에 파라미터 붙이지 않고 페이징 처리
   const moveToUserInquiryList = (pageParam) => {
-    const size = 5; 
+    const size = 5;
     if (pageParam) {
       const pageNum = getNum(pageParam.page, 1);
       if (setPage) setPage(pageNum);
@@ -159,7 +167,7 @@ const useCustomMove = (options = {}) => {
     moveToBoardList,
     moveToBoardRead,
     moveToUserBoardList,
-    moveToUserInquiryList
+    moveToUserInquiryList,
   };
 };
 

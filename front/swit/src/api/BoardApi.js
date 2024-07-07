@@ -9,7 +9,7 @@ export const getBoard = async (boardNo) => {
 
 export const postAdd = async (board) => {
   const token = sessionStorage.getItem("accessToken");
-  console.log("react sessionStorage Token값:" + token);
+  // console.log("react sessionStorage Token값:" + token);
   if (!token) {
     throw new Error("No access token found");
   }
@@ -31,7 +31,7 @@ export const getBoardList = async (pageParam) => {
 
 export const deleteOne = async (boardNo) => {
   const token = sessionStorage.getItem("accessToken");
-  console.log("react sessionStorage Token값:" + token);
+  // console.log("react sessionStorage Token값:" + token);
   if (!token) {
     throw new Error("No access token found");
   }
@@ -46,7 +46,7 @@ export const deleteOne = async (boardNo) => {
 
 export const putOne = async (board) => {
   const token = sessionStorage.getItem("accessToken");
-  console.log("react sessionStorage Token값:" + token);
+  // console.log("react sessionStorage Token값:" + token);
   if (!token) {
     throw new Error("No access token found");
   }
