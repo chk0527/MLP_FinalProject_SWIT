@@ -306,10 +306,10 @@ const handleUserEmailBlur = async (userInfo) => {
     }
 
     const hasErrors = 
-    // 닉네임, 전화번호, 이메일이 긍정적인 에러 메시지를 가지는지 확인
-    (!errors.userNick || !errors.userNick.includes('사용 가능한')) ||
-    (!errors.userPhone || !errors.userPhone.includes('사용 가능한')) ||
-    (!errors.userEmail || !errors.userEmail.includes('사용 가능한'));
+    // 닉네임, 전화번호, 이메일이 부정적인 에러 메시지를 가지는지 확인
+    (errors.userNick && !errors.userNick.includes('사용 가능한')) ||
+    (errors.userPhone && !errors.userPhone.includes('사용 가능한')) ||
+    (errors.userEmail && !errors.userEmail.includes('사용 가능한'));
   
   let hasPasswordErrors = false;
   
