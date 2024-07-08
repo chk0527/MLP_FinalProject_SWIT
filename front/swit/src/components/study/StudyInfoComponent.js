@@ -143,7 +143,7 @@ const StudyInfoComponent = ({ studyNo, ActionComponent }) => {
           </div>
         </div>
       </div>
-      <div className="w-full h-52 my-4 p-4 border border-gray-300 bg-yellow-100 text-left whitespace-pre-line">
+      <div className="w-full h-52 my-4 p-4 border border-gray-300 bg-yellow-100 text-left whitespace-pre-line overflow-auto custom-scrollbar">
         <p>{study.studyContent}</p>
       </div>
       <hr className="border border-black my-8 w-full" />
