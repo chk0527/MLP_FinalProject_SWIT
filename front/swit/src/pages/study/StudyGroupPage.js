@@ -58,7 +58,7 @@ const StudyGroupPage = () => {
         <div className="grow font-GSans max-w-1000">
           <StudyInfoComponent
             studyNo={studyNo}
-            ActionComponent={GroupMeetingComponent}
+            ActionComponent={(props) => <GroupMeetingComponent {...props} />}
           />
           <StudyGroupComponent studyNo={studyNo} />
         </div>
