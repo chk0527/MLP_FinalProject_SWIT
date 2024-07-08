@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "../../css/GroupMeetingComponent.css"
 
-const GroupMeetingComponent = () => {
+const GroupMeetingComponent = ({ studyUuid }) => {
   const [meetingUrl, setMeetingUrl] = useState("");
 
   useEffect(() => {
     const domain = "meet.jit.si";
-    const roomName = `Meeting_${Math.random().toString(36).substring(2, 15)}`;
+    const roomName = `Meeting_${studyUuid}`; // studyUuid를 roomName으로 사용
     const url = `https://${domain}/${roomName}`;
     setMeetingUrl(url);
-  }, []);
+  }, [studyUuid]);
 
   const handleJoinMeeting = () => {
     window.open(meetingUrl, "_blank", "noopener noreferrer");

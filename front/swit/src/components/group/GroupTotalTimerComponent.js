@@ -16,6 +16,7 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
   const [endDate, setEndDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalUserTimers, setModalUserTimers] = useState([]);
+  const [selectedUserNick, setSelectedUserNick] = useState(""); // 추가된 상태
 
   useEffect(() => {
     const fetchTimers = async () => {
@@ -165,8 +166,9 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
     return userTotalTime;
   };
 
-  const openTotalDetail = (userTimers) => {
+  const openTotalDetail = (userNick, userTimers) => {
     setModalUserTimers(userTimers);
+    setSelectedUserNick(userNick); // 추가된 코드
     setIsModalOpen(true);
   };
 
@@ -221,7 +223,7 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
                   </td>
                   <td
                     className="py-2 border-b text-center cursor-pointer"
-                    onClick={() => openTotalDetail(userTimers)}
+                    onClick={() => openTotalDetail(userNick, userTimers)}
                   >
                     보기
                   </td>
@@ -233,7 +235,7 @@ const GroupTotalTimerComponent = ({ studyNo }) => {
                 </tr>
               ))}
             <DetailTimerModal
-              userNick={userNick}
+              userNick={selectedUserNick} // 수정된 코드
               userTimers={modalUserTimers}
               isOpen={isModalOpen}
               onClose={closeModal}

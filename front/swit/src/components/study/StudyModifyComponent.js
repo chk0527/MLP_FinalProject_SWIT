@@ -32,7 +32,8 @@ const StudyModifyComponent = ({ studyNo }) => {
     const [studyQuestion, setStudyQuestion] = useState({ ...questionInit })
     const [result, setResult] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
-    const [prevImage, setPrevImage] = useState(''); // 이전 이미지 데이터 조회
+    const [prevImage, setPrevImage] = useState(''); // 이전 이미지 파일명
+    const [prevImageUrl, setPrevImageUrl] = useState(''); // 이전 이미지 URL
     const uploadRef = useRef();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
@@ -60,22 +61,25 @@ const StudyModifyComponent = ({ studyNo }) => {
             })
             setStartDate(new Date(study.studyStartDate));
 
-            // 기존 이미지 파일명 로드
+            // 기존 이미지 파일명 로드 및 미리보기 URL 생성
             if (study.uploadFileNames.length > 0) {
                 setPrevImage(study.uploadFileNames[0]);
-
-                // 기존 이미지 파일을 데이터로 불러오기
-                fetch(`/api/study/display/${study.uploadFileNames[0]}`)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const file = new File([blob], study.uploadFileNames[0], { type: blob.type });
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(file);
-                        uploadRef.current.files = dataTransfer.files;
-                    });
+                setPrevImageUrl(`/api/study/display/${study.uploadFileNames[0]}`);
             }
         })
     }, [studyNo]);
+
+    // 파일 선택 이벤트 핸들러
+    const handleFileChange = (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPrevImageUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleChangeStudy = (e) => {
         study[e.target.name] = e.target.value
@@ -94,11 +98,14 @@ const StudyModifyComponent = ({ studyNo }) => {
 
         const files = uploadRef.current.files;
         const formData = new FormData();
-
+    
         if (files.length > 0) {
             for (let i = 0; i < files.length; i++) {
                 formData.append("files", files[i]);
             }
+        } else {
+            // 파일이 없으면 기존 파일명을 유지
+            formData.append("existingFileName", prevImage);
         }
 
         const formatDate = (date) => date.toISOString().split('T')[0];
@@ -232,6 +239,10 @@ const StudyModifyComponent = ({ studyNo }) => {
         "w-full rounded  border-0 px-3.5 py-2 mb-4 resize-none text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300";
     const inputStyle4 =
         "w-52 rounded text-center border-0 py-2 mb-4 -ml-2 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300";
+    const labelStyle =
+        "w-24 py-2 flex items-center";
+    const fileInputStyle =
+        "w-full rounded border-0 px-3.5 py-2 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300";
 
     return (
         <div className="flex justify-center font-GSans">
@@ -361,13 +372,24 @@ const StudyModifyComponent = ({ studyNo }) => {
                         onChange={handleChangeStudy}
                     ></textarea>
                 </div>
-                <div className="flex justify-between">
-                    <div className="w-24 py-2">대표 사진</div>
+                {/* 이미지 */}
+                <div className="flex justify-center mb-4">
+                    {prevImageUrl && (
+                        <img
+                            src={prevImageUrl}
+                            alt="StudyImage"
+                            className="w-48 h-48 rounded"
+                        />
+                    )}
+                </div>
+                <div className="flex justify-between items-center mb-4">
+                    <div className={labelStyle}>대표 사진</div>
                     <input
                         ref={uploadRef}
-                        className={inputStyle1}
+                        className={fileInputStyle}
                         type="file"
                         accept="image/*"
+                        onChange={handleFileChange} // 파일 변경 핸들러 추가
                     />
                 </div>
 
