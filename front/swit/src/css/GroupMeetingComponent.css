@@ -1,0 +1,32 @@
+.meeting-container {
+  text-align: center;
+  padding: 0px;
+  font-family: Arial, sans-serif;
+}
+
+.join-button {
+  background-color: rgb(111, 138, 208); 
+  border: none;
+  color: white; /* 흰색 글자 */
+  padding: 5px 15px; /* 버튼 패딩 */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px; /* 글자 크기 */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: -40px; /* 왼쪽으로 이동 */
+}
+
+.join-button:hover {
+  background-color: rgb(65, 100, 192); /* 호버 시 색상 변화 */
+}
+
+.join-button-a {
+  color: #0645ad; /* 링크 색상 */
+  text-decoration: none; /* 링크 밑줄 제거 */
+}
+
+.join-button-a:hover {
+  text-decoration: underline; /* 호버 시 밑줄 추가 */
+}

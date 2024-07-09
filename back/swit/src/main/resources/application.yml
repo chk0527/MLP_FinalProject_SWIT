@@ -1,6 +1,44 @@
+server:
+  port: 8181
+
 spring:
+  profiles.include: login
+  config:
+    import: classpath:application-apiKey.yml
   datasource:
-    url: jdbc:mysql://localhost:3306/scottdb
-    username: scott
-    password: tiger
+    url: jdbc:mysql://localhost:3306/switdb
+    username: swit
+    password: swit1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.naver.com #smtp 서버 주소
+    port: 465 # 메일 인증서버 포트
+    username: fullstack21@naver.com
+    password: A1s2d3f4
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+          ssl:
+            enable: true #반드시 필요 -> SSL 필요로 되어있으면 
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+
+  servlet:
+    multipart: 
+      max-request-size: 30MB
+      max-file-size: 20MB  
+
+
+com:
+    swit:
+        upload:
+            path: upload

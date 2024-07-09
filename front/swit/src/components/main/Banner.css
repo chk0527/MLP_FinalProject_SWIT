@@ -1,0 +1,121 @@
+/* Banner.css */
+.h-dvh {
+  height: 100vh;
+}
+
+.bg-cover {
+  background-size: cover;
+  background-position: center;
+}
+
+.dots_custom {
+  display: inline-block;
+  vertical-align: middle;
+  margin: auto 0;
+  padding: 0;
+}
+
+.dots_custom li {
+  list-style: none;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 15px;
+  padding: 30px 0;
+}
+
+.dots_custom li button {
+  border: none;
+  background: #d1d1d1;
+  color: transparent;
+  cursor: pointer;
+  display: block;
+  height: 10px;
+  width: 10px;
+  border-radius: 100%;
+  padding: 0;
+}
+
+.dots_custom li.slick-active button {
+  background-color: rgb(254 249 195);
+}
+
+.slick-prev {
+  left: 25px !important;
+  top: 180px !important;
+  z-index: 1000;
+  opacity: 0.7;
+}
+.slick-prev::before {
+  color: #f6f075 !important;
+  font-size: 80px !important;
+  border-radius: 100%;
+  padding: 10px 5px 0 5px;
+}
+
+.slick-next {
+  right: 100px !important;
+  top: 180px !important;
+  opacity: 0.7;
+  z-index: 1000;
+}
+.slick-next::before {
+  color: #f6f075 !important;
+  font-size: 80px !important;
+  border-radius: 100%;
+  padding: 10px 5px 0 5px;
+}
+.slick-slide {
+  display: flex !important;
+  justify-content: center;
+}
+
+.StudySlide {
+  display: flex !important;
+  justify-content: center;
+}
+
+:root {
+  --ti-cursor-color: transparent;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap");
+
+svg text {
+  font-family: "Staatliches", cursive;
+  font-size: 6em;
+  fill: transparent;
+  stroke-dasharray: 326px;
+  animation: stroke 1s linear;
+  animation-fill-mode: forwards;
+}
+svg text:nth-child(1) {
+  animation-delay: 0s;
+}
+svg text:nth-child(2) {
+  animation-delay: 0.5s;
+}
+svg text:nth-child(3) {
+  animation-delay: 1s;
+}
+svg text:nth-child(4) {
+  animation-delay: 1.5s;
+}
+@keyframes stroke {
+  0% {
+    stroke: #f1c164;
+    stroke-width: 3px;
+    stroke-dashoffset: 326px;
+  }
+  70% {
+    fill: transparent;
+  }
+  98% {
+    stroke: #f1c164;
+    stroke-width: 3px;
+  }
+  100% {
+    fill: #f1c164;
+    stroke-dashoffset: 0px;
+  }
+}
