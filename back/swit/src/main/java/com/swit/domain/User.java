@@ -33,7 +33,7 @@ public class User {
   @Column(name = "user_no")
   private Integer userNo;
 
-  @Column(unique = true, nullable = true)
+  @Column(unique = true, nullable = false)
   private String userId;
 
   private String userEmail;

@@ -86,6 +86,8 @@ public class UserService {
             log.info(userDTO.getUserPassword() + "검색 포인트");
             user.setUserPassword(bCryptPasswordEncoder.encode(userDTO.getUserPassword()));
           } else {
+            log.info(userDTO.getUserPassword().length());
+            log.info(userDTO.getUserPassword());
             log.warn("패스워드가 너무 짧아서 설정되지 않았습니다.");
         }
           userRepository.save(user);
